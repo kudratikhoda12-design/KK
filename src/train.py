@@ -136,8 +136,22 @@ def main():
     fig.savefig(os.path.join(OUT_DIR, "training_curves.png"), dpi=140)
     plt.close(fig)
 
-    # ---- Test-set evaluation ----
+    # ---- Pick an operating threshold on the validation set (never on test) ----
     model.eval()
+    val_probs, val_labels = [], []
+    with torch.no_grad():
+        for xb, yb in val_loader:
+            logits = model(xb.to(DEVICE)).squeeze(1)
+            val_probs.append(torch.sigmoid(logits).cpu().numpy())
+            val_labels.append(yb.numpy())
+    val_probs = np.concatenate(val_probs)
+    val_labels = np.concatenate(val_labels)
+    thresholds = np.linspace(0.05, 0.95, 91)
+    f1s = [f1_score(val_labels, (val_probs >= t).astype(int)) for t in thresholds]
+    threshold = float(thresholds[int(np.argmax(f1s))])
+    print(f"Operating threshold selected on validation set: {threshold:.2f}")
+
+    # ---- Test-set evaluation ----
     all_probs, all_labels = [], []
     with torch.no_grad():
         for xb, yb in test_loader:
@@ -146,7 +160,7 @@ def main():
             all_labels.append(yb.numpy())
     probs = np.concatenate(all_probs)
     labels = np.concatenate(all_labels)
-    preds = (probs >= 0.5).astype(int)
+    preds = (probs >= threshold).astype(int)
 
     test_auc = roc_auc_score(labels, probs)
     precision = precision_score(labels, preds)
@@ -156,6 +170,7 @@ def main():
     report = classification_report(labels, preds, target_names=["normal", "tumor"])
 
     metrics_text = (
+        f"Operating threshold (tuned on val): {threshold:.2f}\n"
         f"Test ROC-AUC:  {test_auc:.4f}\n"
         f"Test Precision:{precision:.4f}\n"
         f"Test Recall:   {recall:.4f}\n"

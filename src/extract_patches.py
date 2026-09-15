@@ -20,12 +20,15 @@ CENTER = 32  # PCam-style: label decided by the central 32x32 region
 TISSUE_SAT_THRESH = 0.08      # HSV saturation threshold separating tissue from glass
 TISSUE_MIN_FRACTION = 0.35    # fraction of pixels in patch that must look like tissue
 
+# Slide-disjoint splits: every slide appears in exactly one split, so
+# validation genuinely measures generalization to unseen tissue/staining
+# rather than just interpolating within slides already seen in training.
 SLIDES = {
     "train": [
         ("tumor_091", True), ("normal_108", False),
         ("tumor_075", True), ("normal_042", False),
-        ("tumor_082", True), ("normal_004", False),
     ],
+    "val": [("tumor_082", True), ("normal_004", False)],
     "test": [("tumor_084", True), ("normal_150", False)],
 }
 
@@ -162,14 +165,11 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     rng = np.random.default_rng(42)
 
-    x_train_all, y_train_all = build_split("train", rng)
-    x_train_all, y_train_all = balance_classes(x_train_all, y_train_all, rng)
+    x_train, y_train = build_split("train", rng)
+    x_train, y_train = balance_classes(x_train, y_train, rng)
+    x_val, y_val = build_split("val", rng)
+    x_val, y_val = balance_classes(x_val, y_val, rng)
     x_test, y_test = build_split("test", rng)
-
-    n = len(y_train_all)
-    n_val = max(1, int(0.15 * n))
-    x_val, y_val = x_train_all[:n_val], y_train_all[:n_val]
-    x_train, y_train = x_train_all[n_val:], y_train_all[n_val:]
 
     np.savez_compressed(
         os.path.join(OUT_DIR, "patches.npz"),

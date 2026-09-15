@@ -1,18 +1,18 @@
-Test ROC-AUC:  0.6036
-Test Precision:0.5601
-Test Recall:   0.4478
-Test F1-score: 0.4977
+Test ROC-AUC:  0.7061
+Test Precision:0.5477
+Test Recall:   0.9733
+Test F1-score: 0.7009
 
 Confusion matrix (rows=true, cols=pred) [normal, tumor]:
-[[1167  633]
- [ 994  806]]
+[[ 353 1447]
+ [  48 1752]]
 
               precision    recall  f1-score   support
 
-      normal       0.54      0.65      0.59      1800
-       tumor       0.56      0.45      0.50      1800
+      normal       0.88      0.20      0.32      1800
+       tumor       0.55      0.97      0.70      1800
 
-    accuracy                           0.55      3600
-   macro avg       0.55      0.55      0.54      3600
-weighted avg       0.55      0.55      0.54      3600
+    accuracy                           0.58      3600
+   macro avg       0.71      0.58      0.51      3600
+weighted avg       0.71      0.58      0.51      3600
 
