@@ -21,7 +21,11 @@ TISSUE_SAT_THRESH = 0.08      # HSV saturation threshold separating tissue from 
 TISSUE_MIN_FRACTION = 0.35    # fraction of pixels in patch that must look like tissue
 
 SLIDES = {
-    "train": [("tumor_091", True), ("normal_108", False), ("tumor_075", True), ("normal_042", False)],
+    "train": [
+        ("tumor_091", True), ("normal_108", False),
+        ("tumor_075", True), ("normal_042", False),
+        ("tumor_082", True), ("normal_004", False),
+    ],
     "test": [("tumor_084", True), ("normal_150", False)],
 }
 
@@ -66,6 +70,23 @@ def is_tissue(patch_rgb):
     return (sat > TISSUE_SAT_THRESH).mean() >= TISSUE_MIN_FRACTION
 
 
+# Reference LAB statistics for Reinhard color normalization, estimated once
+# from ~400 tissue tiles of tumor_091. Every patch (train AND test, from every
+# slide) is re-mapped onto this single reference so that per-slide staining/
+# scanner color shift is no longer a shortcut feature the CNN can exploit.
+REF_LAB_MEAN = np.array([136.72, 156.67, 102.10], dtype=np.float32)
+REF_LAB_STD = np.array([61.34, 14.79, 14.73], dtype=np.float32)
+
+
+def reinhard_normalize(patch_rgb):
+    lab = cv2.cvtColor(patch_rgb, cv2.COLOR_RGB2LAB).astype(np.float32)
+    mean = lab.mean(axis=(0, 1))
+    std = lab.std(axis=(0, 1)) + 1e-6
+    lab = (lab - mean) / std * REF_LAB_STD + REF_LAB_MEAN
+    lab = np.clip(lab, 0, 255).astype(np.uint8)
+    return cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
+
+
 def extract_from_slide(name, has_tumor, rng):
     img_path = os.path.join(DATA_DIR, f"{name}.tif")
     level = pick_level(img_path, target_downsample=8.0)
@@ -98,15 +119,15 @@ def extract_from_slide(name, has_tumor, rng):
             center = m[c0:c0 + CENTER, c0:c0 + CENTER]
             if center.any():
                 if len(pos) < MAX_POS_PER_SLIDE:
-                    pos.append(patch.copy())
+                    pos.append(reinhard_normalize(patch))
                 continue
             if m.any():
                 continue  # ambiguous tumor-boundary patch, skip
             if len(neg) < MAX_NEG_PER_SLIDE:
-                neg.append(patch.copy())
+                neg.append(reinhard_normalize(patch))
         else:
             if len(neg) < MAX_NEG_PER_SLIDE:
-                neg.append(patch.copy())
+                neg.append(reinhard_normalize(patch))
 
         if len(pos) >= MAX_POS_PER_SLIDE and len(neg) >= MAX_NEG_PER_SLIDE:
             break
