@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+data/
+outputs/patches.npz
+outputs/histo_cnn.pt
+*.tif
