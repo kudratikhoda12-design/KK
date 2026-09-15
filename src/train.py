@@ -81,22 +81,77 @@ def run_epoch(model, loader, criterion, optimizer=None):
     return total_loss / len(labels), auc
 
 
+def predict(model, loader):
+    model.eval()
+    all_probs, all_labels = [], []
+    with torch.no_grad():
+        for xb, yb in loader:
+            logits = model(xb.to(DEVICE)).squeeze(1)
+            all_probs.append(torch.sigmoid(logits).cpu().numpy())
+            all_labels.append(yb.numpy())
+    return np.concatenate(all_probs), np.concatenate(all_labels)
+
+
+def evaluate_split(name, probs, labels, threshold, out_dir):
+    preds = (probs >= threshold).astype(int)
+    auc = roc_auc_score(labels, probs)
+    precision = precision_score(labels, preds, zero_division=0)
+    recall = recall_score(labels, preds, zero_division=0)
+    f1 = f1_score(labels, preds, zero_division=0)
+    cm = confusion_matrix(labels, preds)
+    report = classification_report(labels, preds, target_names=["normal", "tumor"], zero_division=0)
+
+    text = (
+        f"=== {name} (threshold={threshold:.2f}) ===\n"
+        f"ROC-AUC:   {auc:.4f}\n"
+        f"Precision: {precision:.4f}\n"
+        f"Recall:    {recall:.4f}\n"
+        f"F1-score:  {f1:.4f}\n\n"
+        f"Confusion matrix (rows=true, cols=pred) [normal, tumor]:\n{cm}\n\n"
+        f"{report}\n"
+    )
+    print(text)
+
+    fpr, tpr, _ = roc_curve(labels, probs)
+    fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+    ax[0].plot(fpr, tpr, label=f"AUC = {auc:.3f}")
+    ax[0].plot([0, 1], [0, 1], "--", color="gray")
+    ax[0].set_xlabel("False Positive Rate"); ax[0].set_ylabel("True Positive Rate")
+    ax[0].set_title(f"ROC Curve ({name})"); ax[0].legend()
+    ax[1].imshow(cm, cmap="Blues")
+    ax[1].set_xticks([0, 1]); ax[1].set_xticklabels(["normal", "tumor"])
+    ax[1].set_yticks([0, 1]); ax[1].set_yticklabels(["normal", "tumor"])
+    ax[1].set_xlabel("Predicted"); ax[1].set_ylabel("True"); ax[1].set_title(f"Confusion Matrix ({name})")
+    for i in range(2):
+        for j in range(2):
+            ax[1].text(j, i, str(cm[i, j]), ha="center", va="center",
+                       color="white" if cm[i, j] > cm.max() / 2 else "black")
+    fig.tight_layout()
+    fig.savefig(os.path.join(out_dir, f"roc_confusion_{name}.png"), dpi=140)
+    plt.close(fig)
+    return text, preds
+
+
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     data = np.load(os.path.join(OUT_DIR, "patches.npz"))
     x_train, y_train = data["x_train"], data["y_train"]
     x_val, y_val = data["x_val"], data["y_val"]
     x_test, y_test = data["x_test"], data["y_test"]
-    print(f"train={x_train.shape} val={x_val.shape} test={x_test.shape}")
+    x_holdout, y_holdout = data["x_holdout"], data["y_holdout"]
+    print(f"train={x_train.shape} val={x_val.shape} test={x_test.shape} holdout={x_holdout.shape}")
     print(f"device={DEVICE}")
 
     train_ds = PatchDataset(x_train, y_train, train=True)
     val_ds = PatchDataset(x_val, y_val, train=False)
     test_ds = PatchDataset(x_test, y_test, train=False)
 
+    holdout_ds = PatchDataset(x_holdout, y_holdout, train=False)
+
     train_loader = DataLoader(train_ds, batch_size=32, shuffle=True, num_workers=2)
     val_loader = DataLoader(val_ds, batch_size=64, shuffle=False, num_workers=2)
     test_loader = DataLoader(test_ds, batch_size=64, shuffle=False, num_workers=2)
+    holdout_loader = DataLoader(holdout_ds, batch_size=64, shuffle=False, num_workers=2)
 
     model = HistoCNN().to(DEVICE)
     criterion = nn.BCEWithLogitsLoss()
@@ -137,77 +192,36 @@ def main():
     plt.close(fig)
 
     # ---- Pick an operating threshold on the validation set (never on test) ----
-    model.eval()
-    val_probs, val_labels = [], []
-    with torch.no_grad():
-        for xb, yb in val_loader:
-            logits = model(xb.to(DEVICE)).squeeze(1)
-            val_probs.append(torch.sigmoid(logits).cpu().numpy())
-            val_labels.append(yb.numpy())
-    val_probs = np.concatenate(val_probs)
-    val_labels = np.concatenate(val_labels)
+    val_probs, val_labels = predict(model, val_loader)
     thresholds = np.linspace(0.05, 0.95, 91)
     f1s = [f1_score(val_labels, (val_probs >= t).astype(int)) for t in thresholds]
     threshold = float(thresholds[int(np.argmax(f1s))])
     print(f"Operating threshold selected on validation set: {threshold:.2f}")
 
-    # ---- Test-set evaluation ----
-    all_probs, all_labels = [], []
-    with torch.no_grad():
-        for xb, yb in test_loader:
-            logits = model(xb.to(DEVICE)).squeeze(1)
-            all_probs.append(torch.sigmoid(logits).cpu().numpy())
-            all_labels.append(yb.numpy())
-    probs = np.concatenate(all_probs)
-    labels = np.concatenate(all_labels)
-    preds = (probs >= threshold).astype(int)
+    # ---- Evaluate on the in-distribution test split AND the cross-slide holdout ----
+    test_probs, test_labels = predict(model, test_loader)
+    holdout_probs, holdout_labels = predict(model, holdout_loader)
 
-    test_auc = roc_auc_score(labels, probs)
-    precision = precision_score(labels, preds)
-    recall = recall_score(labels, preds)
-    f1 = f1_score(labels, preds)
-    cm = confusion_matrix(labels, preds)
-    report = classification_report(labels, preds, target_names=["normal", "tumor"])
+    test_text, test_preds = evaluate_split("test", test_probs, test_labels, threshold, OUT_DIR)
+    holdout_text, holdout_preds = evaluate_split("holdout_cross_slide", holdout_probs, holdout_labels, threshold, OUT_DIR)
 
-    metrics_text = (
-        f"Operating threshold (tuned on val): {threshold:.2f}\n"
-        f"Test ROC-AUC:  {test_auc:.4f}\n"
-        f"Test Precision:{precision:.4f}\n"
-        f"Test Recall:   {recall:.4f}\n"
-        f"Test F1-score: {f1:.4f}\n\n"
-        f"Confusion matrix (rows=true, cols=pred) [normal, tumor]:\n{cm}\n\n"
-        f"{report}\n"
-    )
-    print(metrics_text)
     with open(os.path.join(OUT_DIR, "metrics.txt"), "w") as f:
-        f.write(metrics_text)
+        f.write(f"Operating threshold (tuned on val): {threshold:.2f}\n\n")
+        f.write("'test' = pooled, patch-level split from the 6 slides used in training.\n")
+        f.write("'holdout_cross_slide' = 2 whole slides never seen in train/val/test,\n")
+        f.write("a much harder and more realistic measure of generalization.\n\n")
+        f.write(test_text)
+        f.write("\n")
+        f.write(holdout_text)
 
-    fpr, tpr, _ = roc_curve(labels, probs)
-    fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-    ax[0].plot(fpr, tpr, label=f"AUC = {test_auc:.3f}")
-    ax[0].plot([0, 1], [0, 1], "--", color="gray")
-    ax[0].set_xlabel("False Positive Rate"); ax[0].set_ylabel("True Positive Rate")
-    ax[0].set_title("ROC Curve"); ax[0].legend()
-    im = ax[1].imshow(cm, cmap="Blues")
-    ax[1].set_xticks([0, 1]); ax[1].set_xticklabels(["normal", "tumor"])
-    ax[1].set_yticks([0, 1]); ax[1].set_yticklabels(["normal", "tumor"])
-    ax[1].set_xlabel("Predicted"); ax[1].set_ylabel("True"); ax[1].set_title("Confusion Matrix")
-    for i in range(2):
-        for j in range(2):
-            ax[1].text(j, i, str(cm[i, j]), ha="center", va="center",
-                       color="white" if cm[i, j] > cm.max() / 2 else "black")
-    fig.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "roc_confusion.png"), dpi=140)
-    plt.close(fig)
-
-    # ---- Grad-CAM on a few representative test patches ----
+    # ---- Grad-CAM on representative cross-slide holdout patches ----
     target_layer = model.features[3]  # last conv block (256 channels, no pooling)
     cam_engine = GradCAM(model, target_layer)
 
-    tp = np.where((labels == 1) & (preds == 1))[0]
-    tn = np.where((labels == 0) & (preds == 0))[0]
-    fp = np.where((labels == 0) & (preds == 1))[0]
-    fn = np.where((labels == 1) & (preds == 0))[0]
+    tp = np.where((holdout_labels == 1) & (holdout_preds == 1))[0]
+    tn = np.where((holdout_labels == 0) & (holdout_preds == 0))[0]
+    fp = np.where((holdout_labels == 0) & (holdout_preds == 1))[0]
+    fn = np.where((holdout_labels == 1) & (holdout_preds == 0))[0]
     picks = []
     for name, idx_arr in [("TP", tp), ("TN", tn), ("FP", fp), ("FN", fn)]:
         if len(idx_arr) > 0:
@@ -216,15 +230,13 @@ def main():
     fig, axes = plt.subplots(2, len(picks), figsize=(3 * len(picks), 6))
     if len(picks) == 1:
         axes = axes.reshape(2, 1)
-    mean_t = torch.tensor(IMAGENET_MEAN).view(3, 1, 1)
-    std_t = torch.tensor(IMAGENET_STD).view(3, 1, 1)
     for col, (name, idx) in enumerate(picks):
-        raw = x_test[idx]
-        xb, _ = test_ds[idx]
+        raw = x_holdout[idx]
+        xb, _ = holdout_ds[idx]
         xb = xb.unsqueeze(0).to(DEVICE)
         cam = cam_engine(xb)
         overlay = overlay_heatmap(raw, cam)
-        axes[0, col].imshow(raw); axes[0, col].set_title(f"{name} p={probs[idx]:.2f}"); axes[0, col].axis("off")
+        axes[0, col].imshow(raw); axes[0, col].set_title(f"{name} p={holdout_probs[idx]:.2f}"); axes[0, col].axis("off")
         axes[1, col].imshow(overlay); axes[1, col].set_title("Grad-CAM"); axes[1, col].axis("off")
     fig.tight_layout()
     fig.savefig(os.path.join(OUT_DIR, "gradcam_examples.png"), dpi=140)

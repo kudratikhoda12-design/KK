@@ -5,8 +5,9 @@ Source data: public AWS Open Data mirror of the CAMELYON16 challenge
 (https://camelyon-dataset.s3.amazonaws.com/CAMELYON16/), the same lymph-node
 histopathology slides that the PatchCamelyon (PCam) benchmark was derived
 from. This script re-derives a small PCam-style patch dataset directly from
-raw whole-slide TIFFs + tumor annotation masks, using a slide-level
-train/test split so evaluation slides are never seen during training.
+raw whole-slide TIFFs + tumor annotation masks: six slides feed a pooled,
+patch-level stratified train/val/test split, and two further slides are
+kept fully separate as a slide-disjoint cross-slide holdout set.
 """
 import os
 import numpy as np
@@ -20,17 +21,18 @@ CENTER = 32  # PCam-style: label decided by the central 32x32 region
 TISSUE_SAT_THRESH = 0.08      # HSV saturation threshold separating tissue from glass
 TISSUE_MIN_FRACTION = 0.35    # fraction of pixels in patch that must look like tissue
 
-# Slide-disjoint splits: every slide appears in exactly one split, so
-# validation genuinely measures generalization to unseen tissue/staining
-# rather than just interpolating within slides already seen in training.
-SLIDES = {
-    "train": [
-        ("tumor_091", True), ("normal_108", False),
-        ("tumor_075", True), ("normal_042", False),
-    ],
-    "val": [("tumor_082", True), ("normal_004", False)],
-    "test": [("tumor_084", True), ("normal_150", False)],
-}
+# Six slides feed a pooled, patch-level stratified train/val/test split
+# (the standard PCam-style setup). Two further slides are kept completely
+# separate as a slide-disjoint "cross-slide" holdout set: it never
+# contributes any patch to train/val/test, so it measures generalization
+# to tissue and staining the model has truly never seen -- a much harder
+# and more realistic test than a random patch split.
+MAIN_SLIDES = [
+    ("tumor_091", True), ("normal_108", False),
+    ("tumor_075", True), ("normal_042", False),
+    ("tumor_082", True), ("normal_004", False),
+]
+HOLDOUT_SLIDES = [("tumor_084", True), ("normal_150", False)]
 
 MAX_POS_PER_SLIDE = 1800
 MAX_NEG_PER_SLIDE = 1800
@@ -139,16 +141,15 @@ def extract_from_slide(name, has_tumor, rng):
     return pos, neg
 
 
-def build_split(split_name, rng):
+def build_pool(slide_list, rng):
     all_x, all_y = [], []
-    for name, has_tumor in SLIDES[split_name]:
+    for name, has_tumor in slide_list:
         pos, neg = extract_from_slide(name, has_tumor, rng)
         all_x.extend(pos + neg)
         all_y.extend([1] * len(pos) + [0] * len(neg))
     x = np.stack(all_x).astype(np.uint8)
     y = np.array(all_y, dtype=np.int64)
-    idx = rng.permutation(len(y))
-    return x[idx], y[idx]
+    return x, y
 
 
 def balance_classes(x, y, rng):
@@ -161,25 +162,48 @@ def balance_classes(x, y, rng):
     return x[keep], y[keep]
 
 
+def stratified_split(x, y, rng, fracs=(0.70, 0.15, 0.15)):
+    """Split into train/val/test preserving the class ratio in each part."""
+    idx_splits = [[], [], []]
+    for c in np.unique(y):
+        idx_c = np.where(y == c)[0]
+        rng.shuffle(idx_c)
+        n = len(idx_c)
+        n_train = int(fracs[0] * n)
+        n_val = int(fracs[1] * n)
+        idx_splits[0].extend(idx_c[:n_train])
+        idx_splits[1].extend(idx_c[n_train:n_train + n_val])
+        idx_splits[2].extend(idx_c[n_train + n_val:])
+    out = []
+    for idx in idx_splits:
+        idx = np.array(idx)
+        rng.shuffle(idx)
+        out.append((x[idx], y[idx]))
+    return out
+
+
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     rng = np.random.default_rng(42)
 
-    x_train, y_train = build_split("train", rng)
-    x_train, y_train = balance_classes(x_train, y_train, rng)
-    x_val, y_val = build_split("val", rng)
-    x_val, y_val = balance_classes(x_val, y_val, rng)
-    x_test, y_test = build_split("test", rng)
+    x_pool, y_pool = build_pool(MAIN_SLIDES, rng)
+    x_pool, y_pool = balance_classes(x_pool, y_pool, rng)
+    (x_train, y_train), (x_val, y_val), (x_test, y_test) = stratified_split(x_pool, y_pool, rng)
+
+    x_holdout, y_holdout = build_pool(HOLDOUT_SLIDES, rng)
+    x_holdout, y_holdout = balance_classes(x_holdout, y_holdout, rng)
 
     np.savez_compressed(
         os.path.join(OUT_DIR, "patches.npz"),
         x_train=x_train, y_train=y_train,
         x_val=x_val, y_val=y_val,
         x_test=x_test, y_test=y_test,
+        x_holdout=x_holdout, y_holdout=y_holdout,
     )
-    print("train:", x_train.shape, np.bincount(y_train))
-    print("val:  ", x_val.shape, np.bincount(y_val))
-    print("test: ", x_test.shape, np.bincount(y_test))
+    print("train:   ", x_train.shape, np.bincount(y_train))
+    print("val:     ", x_val.shape, np.bincount(y_val))
+    print("test:    ", x_test.shape, np.bincount(y_test))
+    print("holdout: ", x_holdout.shape, np.bincount(y_holdout))
     print("Saved ->", os.path.join(OUT_DIR, "patches.npz"))
 
 
