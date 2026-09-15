@@ -1,0 +1,45 @@
+Operating threshold (tuned on val): 0.43
+
+'test' = pooled, patch-level split from the 6 slides used in training.
+'holdout_cross_slide' = 2 whole slides never seen in train/val/test,
+a much harder and more realistic measure of generalization.
+
+=== test (threshold=0.43) ===
+ROC-AUC:   0.9727
+Precision: 0.8578
+Recall:    0.9639
+F1-score:  0.9078
+
+Confusion matrix (rows=true, cols=pred) [normal, tumor]:
+[[163  31]
+ [  7 187]]
+
+              precision    recall  f1-score   support
+
+      normal       0.96      0.84      0.90       194
+       tumor       0.86      0.96      0.91       194
+
+    accuracy                           0.90       388
+   macro avg       0.91      0.90      0.90       388
+weighted avg       0.91      0.90      0.90       388
+
+
+=== holdout_cross_slide (threshold=0.43) ===
+ROC-AUC:   0.6464
+Precision: 0.5617
+Recall:    0.7611
+F1-score:  0.6464
+
+Confusion matrix (rows=true, cols=pred) [normal, tumor]:
+[[ 731 1069]
+ [ 430 1370]]
+
+              precision    recall  f1-score   support
+
+      normal       0.63      0.41      0.49      1800
+       tumor       0.56      0.76      0.65      1800
+
+    accuracy                           0.58      3600
+   macro avg       0.60      0.58      0.57      3600
+weighted avg       0.60      0.58      0.57      3600
+
