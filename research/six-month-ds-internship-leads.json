@@ -1,0 +1,1050 @@
+[
+  {
+    "name": "Amazon",
+    "sector": "Big tech",
+    "city": "Bengaluru, Hyderabad, Chennai",
+    "role": "Applied Scientist / Data Science intern",
+    "duration": "6-month intern (first-hand account)",
+    "evidence": "strong",
+    "stipend": "~₹80k/month reported (6-month AS intern, Bengaluru)",
+    "ppo": "PPO as Applied Scientist-1 reported: base ₹32L, total ~₹90L (IIT M.Tech)",
+    "pay": "high",
+    "email": "",
+    "phone": "080 3327 3000",
+    "phoneNote": "older directory listing, may be outdated",
+    "address": "Brigade World Trade Centre, 26/1 Dr Rajkumar Road, Malleshwaram West, Bengaluru 560055",
+    "careers": "https://www.amazon.jobs/en/business_categories/university-recruiting",
+    "sources": [
+      "https://leetcode.com/discuss/compensation/1105507/amazon-applied-scientist-intern-bangalore/",
+      "https://leetcode.com/discuss/compensation/1908331/amazon-india-applied-scientist-1-ppo-offer/",
+      "https://in.kompass.com/c/amazon-india/in882937/"
+    ]
+  },
+  {
+    "name": "Uber",
+    "sector": "Big tech",
+    "city": "Bengaluru, Hyderabad",
+    "role": "Data Science / Decision Scientist intern",
+    "duration": "24 weeks (~6 months), per Uber",
+    "evidence": "strong",
+    "stipend": "₹1L+/month reported",
+    "ppo": "PPO opportunity listed with the internship",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "Bengaluru tech hub (see careers page)",
+    "careers": "https://jobs.uber.com/en/locations/bengaluru/",
+    "sources": [
+      "https://www.uber.com/blog/bangalore-data-science-internships/",
+      "https://www.themuse.com/jobs/uber/2026-data-science-internship-india"
+    ]
+  },
+  {
+    "name": "Microsoft",
+    "sector": "Big tech",
+    "city": "Hyderabad, Bengaluru",
+    "role": "Data Science / Applied Sciences intern (Research, Applied & Data Sciences)",
+    "duration": "Follows academic calendar; ask about a Jan–Jun slot",
+    "evidence": "unconfirmed",
+    "stipend": "₹70k–1.2L/month (estimate on job sites)",
+    "ppo": "PPOs common for strong interns",
+    "pay": "high",
+    "email": "",
+    "phone": "+91 40 6693 0000",
+    "phoneNote": "India Development Center switchboard (Bldg 1–2); Bldg 3: +91 40 6694 0000",
+    "address": "Microsoft Campus, Gachibowli, Hyderabad 500032",
+    "careers": "https://in.prosple.com/graduate-employers/microsoft-india/jobs-internships/data-science-internship",
+    "sources": [
+      "https://in.prosple.com/graduate-employers/microsoft-india/jobs-internships/data-science-internship",
+      "https://www.microsoft.com/en-in/msidc/hyderabad-campus"
+    ]
+  },
+  {
+    "name": "Google",
+    "sector": "Big tech",
+    "city": "Bengaluru",
+    "role": "Student Researcher (Google Research, DeepMind, Cloud)",
+    "duration": "Set by the project; you must return to your degree afterwards",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Research program, not a PPO track",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "Bengaluru",
+    "careers": "https://www.google.com/about/careers/applications/jobs/results/103667844620657350-student-researcher/",
+    "sources": [
+      "https://www.google.com/about/careers/applications/jobs/results/103667844620657350-student-researcher/",
+      "https://newskarnataka.com/bengaluru/google-opens-research-internship-opportunities-in-bengaluru/24062026/"
+    ]
+  },
+  {
+    "name": "Adobe",
+    "sector": "Big tech",
+    "city": "Bengaluru, Noida",
+    "role": "Research Intern (AI/ML & Data Systems); Research Scientist/Engineer intern",
+    "duration": "6–12 months full-time reported",
+    "evidence": "reported",
+    "stipend": "₹1.3L–2.1L/month reported for research roles",
+    "ppo": "PPO opportunity listed",
+    "pay": "high",
+    "email": "",
+    "phone": "+91 80 4193 9500",
+    "phoneNote": "Bengaluru office; Noida: +91 120 444 4711",
+    "address": "Prestige Platina Technology Park, Building 1, Block A, Bengaluru 560103",
+    "careers": "https://www.adobe.com/about-adobe/contact/offices.html",
+    "sources": [
+      "https://coursejoiner.com/internship/scientist-engineer-internship-adobe/",
+      "https://myinternships.in/job/adobe-is-hiring-research-intern-ai-ml-and-data-systems-bengaluru-52df1f",
+      "https://www.adobe.com/about-adobe/contact/offices.html"
+    ]
+  },
+  {
+    "name": "Intuit",
+    "sector": "Big tech",
+    "city": "Bengaluru",
+    "role": "Data Science intern / co-op",
+    "duration": "6-month co-op program in Bengaluru, per Intuit",
+    "evidence": "strong",
+    "stipend": "Paid; amount not published",
+    "ppo": "Interns considered for conversion",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "EcoSpace, Intuit Campus 4A/6A/8, Bellandur, Bengaluru 560103",
+    "careers": "https://www.intuit.com/in/careers/internships/",
+    "sources": [
+      "https://www.intuit.com/in/careers/internships/",
+      "https://www.intuit.com/careers/programs/internships/"
+    ]
+  },
+  {
+    "name": "Walmart Global Tech",
+    "sector": "Retail & consumer",
+    "city": "Bengaluru, Chennai",
+    "role": "Data Science & ML intern",
+    "duration": "6-month winter internship (first-hand account)",
+    "evidence": "strong",
+    "stipend": "Not published",
+    "ppo": "PPO opportunity listed; Glassdoor puts India Data Scientist pay at ₹10–23L",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "Aura Building, Block B, 4th Floor, Outer Ring Road, Bengaluru 560103",
+    "careers": "https://careers.walmart.com/technology",
+    "sources": [
+      "https://www.quora.com/I-will-be-joining-Walmart-Global-Tech-as-a-winter-intern-for-six-months-How-do-I-convert-it-to-PPO-and-what-are-my-chances",
+      "https://gethiredfaster.in/walmart-global-tech-hiring-india-data-science-ml-intern-ppo/",
+      "https://www.glassdoor.co.in/Salary/Walmart-Global-Tech-Data-Scientist-Salaries-E3293060_D_KO20,34.htm"
+    ]
+  },
+  {
+    "name": "Target India",
+    "sector": "Retail & consumer",
+    "city": "Bengaluru",
+    "role": "Data Sciences Intern (Data Analytics India team)",
+    "duration": "36-week program, per Target's job page",
+    "evidence": "strong",
+    "stipend": "Stipend described as \"industry-par\", plus food and transport benefits",
+    "ppo": "Conversion to a full-time role offered",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "C-2, Manyata Embassy Business Park, Nagavara, Outer Ring Road, Bengaluru 560045",
+    "careers": "https://jobs.target.com/job/bengaluru/data-sciences-intern-v/1118/52717697392",
+    "sources": [
+      "https://jobs.target.com/job/bengaluru/data-sciences-intern-v/1118/52717697392",
+      "https://india.target.com/contact-us"
+    ]
+  },
+  {
+    "name": "Flipkart",
+    "sector": "Consumer tech",
+    "city": "Bengaluru",
+    "role": "Intern + full-time (analytics, data science, engineering)",
+    "duration": "6-month internships reported alongside summer ones",
+    "evidence": "reported",
+    "stipend": "₹1L/month in one intern + full-time notice",
+    "ppo": "Same notice listed ₹32 LPA total pay",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "Embassy Tech Village, Outer Ring Road, Devarabeesanahalli, Bengaluru 560103",
+    "careers": "https://www.flipkartcareers.com/students",
+    "sources": [
+      "https://www.vaishno.edu.in/flipkart-is-hiringsalary-inr-32-lpa,stipend-inr-1-lacmonthfor-our-students.html",
+      "https://www.flipkartcareers.com/students"
+    ]
+  },
+  {
+    "name": "Myntra",
+    "sector": "Consumer tech",
+    "city": "Bengaluru",
+    "role": "Data Scientist Intern (Personalization & Vision); RampUp intern",
+    "duration": "RampUp runs Jan–Jun (6 months), mainly for B.Tech",
+    "evidence": "reported",
+    "stipend": "₹70k/month (RampUp)",
+    "ppo": "PPO for top performers",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "Embassy Tech Village, Outer Ring Road, Bengaluru 560103",
+    "careers": "https://life.myntra.com/campus-corner/",
+    "sources": [
+      "https://www.coursejoin.com/internship/myntra-rampup-internship-program-2026/",
+      "https://myinternships.in/internships/myntra-is-hiring-data-scientist-intern-personalization-and-vision-bengaluru-39a52e",
+      "https://life.myntra.com/campus-corner/"
+    ]
+  },
+  {
+    "name": "PhonePe",
+    "sector": "Fintech",
+    "city": "Bengaluru",
+    "role": "Analytics / Data Science intern (Internship + PPO drive)",
+    "duration": "6-month internship reported",
+    "evidence": "reported",
+    "stipend": "₹80k/month reported",
+    "ppo": "Runs \"Internship + PPO\" drives for the 2026 batch",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "Office-2, Floor 5, Wing A, Block A, Salarpuria Softzone, Bellandur, Bengaluru 560103",
+    "careers": "https://www.phonepe.com/contact-us/",
+    "sources": [
+      "https://www.scribd.com/document/929942342/PhonePe-Internship-PPO-for-2026-Batch-Student-Registration-List",
+      "https://in.prosple.com/graduate-employers/phonepe/jobs-internships/analytics-intern",
+      "https://www.glassdoor.co.in/Intern-Salary/PhonePe-Internship-Salary-E2289138.htm"
+    ]
+  },
+  {
+    "name": "Swiggy",
+    "sector": "Consumer tech",
+    "city": "Bengaluru",
+    "role": "Data Science intern",
+    "duration": "6-month DS interns reported",
+    "evidence": "reported",
+    "stipend": "One drive at another college: ₹40k/month",
+    "ppo": "\"Internship cum PPO\" drives; that drive listed ₹12 LPA",
+    "pay": "mid",
+    "email": "",
+    "phone": "080 6842 2422",
+    "phoneNote": "corporate number from company profile",
+    "address": "Embassy Tech Village, Outer Ring Road, Devarabisanahalli, Bengaluru 560103 (registered office moved to Sumadhura Capitol Towers, K.R. Puram from Apr 2026)",
+    "careers": "https://www.swiggy.com/corporate/contact-us/",
+    "sources": [
+      "https://coursejoiner.com/internship/swiggy-data-science-internship/",
+      "https://www.scribd.com/document/942526752/Registration-for-Swiggy-Internship-Cum-PPO-Recruitment-Drive-2026-Graduating-Batch",
+      "https://www.goodreturns.in/company/swiggy/profile.html"
+    ]
+  },
+  {
+    "name": "Meesho",
+    "sector": "Consumer tech",
+    "city": "Bengaluru",
+    "role": "6-month intern + full-time (DS and SDE tracks)",
+    "duration": "6-month intern + SDE-1 (first-hand on-campus account)",
+    "evidence": "strong",
+    "stipend": "₹35k–1L/month across drives",
+    "ppo": "Full-time ₹15–20L+ in drives; one SDE post cited ₹34 LPA total",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "3rd Floor, Tower E, Helios Business Park, Kadubeesanahalli, Bengaluru 560103",
+    "careers": "https://www.meesho.io/jobs",
+    "sources": [
+      "https://leetcode.com/discuss/post/7424523/",
+      "https://www.scribd.com/document/870822428/Registration-for-Meesho-Internship-Cum-PPO-Recruitment-Drive-2024-2025-Batch",
+      "https://www.meesho.io/jobs"
+    ]
+  },
+  {
+    "name": "Zepto",
+    "sector": "Consumer tech",
+    "city": "Bengaluru, Mumbai",
+    "role": "Business Analytics intern",
+    "duration": "6 months reported",
+    "evidence": "reported",
+    "stipend": "₹30k–40k/month reported",
+    "ppo": "PPO for strong performers",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://gethiredfaster.in/zepto-in-bangalore-hiring-2026-analytics-intern-ppo-pan-india/",
+    "sources": [
+      "https://gethiredfaster.in/zepto-in-bangalore-hiring-2026-analytics-intern-ppo-pan-india/",
+      "https://notesgallery.com/zepto-internship-2026/"
+    ]
+  },
+  {
+    "name": "Zomato (Eternal)",
+    "sector": "Consumer tech",
+    "city": "Gurugram",
+    "role": "Data analytics intern",
+    "duration": "1–6 months reported",
+    "evidence": "reported",
+    "stipend": "₹10k–40k/month reported",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://www.naukri.com/code360/library/internships-at-zomato",
+    "sources": [
+      "https://www.naukri.com/code360/library/internships-at-zomato"
+    ]
+  },
+  {
+    "name": "CRED",
+    "sector": "Fintech",
+    "city": "Bengaluru",
+    "role": "Data Science intern (2026 program)",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "\"Competitive\"; amount not published",
+    "ppo": "PPO for exceptional interns",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://internshipshub.in/internships/cred-data-science-internship-2026",
+    "sources": [
+      "https://internshipshub.in/internships/cred-data-science-internship-2026"
+    ]
+  },
+  {
+    "name": "Razorpay",
+    "sector": "Fintech",
+    "city": "Bengaluru",
+    "role": "DS/ML intern; AI Builder intern",
+    "duration": "AI Builder internship: 6 or 12 months",
+    "evidence": "reported",
+    "stipend": "₹75k/month (AI Builder)",
+    "ppo": "Many interns receive PPOs, per listing",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4673429005",
+    "sources": [
+      "https://www.placement-officer.com/2026/07/razorpay-dsml-intern-recruitment-2026.html",
+      "https://careersincloud.com/blog/razorpay-ai-buildathon-2026-75000-stipend-internship-for-students"
+    ]
+  },
+  {
+    "name": "Sprinklr",
+    "sector": "Enterprise software",
+    "city": "Gurugram, Bengaluru",
+    "role": "Machine Learning intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Varies by listing; check the posting",
+    "ppo": "PPO opportunity listed",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "0124 427 4365",
+    "phoneNote": "Gurugram office, business directory listing",
+    "address": "DLF Downtown, Block B, 6th Floor, Sector 25A, DLF Phase 3, Gurugram 122002",
+    "careers": "https://www.sprinklr.com/careers/internship-and-early-careers/",
+    "sources": [
+      "https://leetcode.com/discuss/compensation/1401202/sprinklr-internship-gurgaon/",
+      "https://www.sprinklr.com/careers/internship-and-early-careers/",
+      "https://www.bharatibiz.com/en/sprinklr-0124-427-4365"
+    ]
+  },
+  {
+    "name": "MakeMyTrip",
+    "sector": "Consumer tech",
+    "city": "Gurugram, Bengaluru",
+    "role": "Tech / product intern (data roles included)",
+    "duration": "2–6 months",
+    "evidence": "reported",
+    "stipend": "Up to ₹50k/month reported",
+    "ppo": "Program is designed to feed full-time hiring",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://careers.makemytrip.com/prod/campus/internship",
+    "sources": [
+      "https://careers.makemytrip.com/prod/campus/internship",
+      "https://internshipshub.in/internships/makemytrip-tech-internship-2026"
+    ]
+  },
+  {
+    "name": "Nykaa",
+    "sector": "Consumer tech",
+    "city": "Mumbai, Delhi",
+    "role": "Data Science & Analytics intern; Data Analyst intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "₹35k–50k/month reported",
+    "ppo": "PPO opportunity listed",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://gethiredfaster.in/nykaa-hiring-data-analyst-intern-jobs-2026-mumbai-maharashtra-ppo/",
+    "sources": [
+      "https://gethiredfaster.in/nykaa-hiring-data-analyst-intern-jobs-2026-mumbai-maharashtra-ppo/",
+      "https://myinternships.in/internships/nykaa-data-science-and-analytics-intern-delhi-163bb3"
+    ]
+  },
+  {
+    "name": "Paytm",
+    "sector": "Fintech",
+    "city": "Noida",
+    "role": "Data Science intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "PPO opportunity listed",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://myinternships.in/internships/paytm-is-hiring-data-science-intern-noida-16co5o",
+    "sources": [
+      "https://myinternships.in/internships/paytm-is-hiring-data-science-intern-noida-16co5o"
+    ]
+  },
+  {
+    "name": "Samsung R&D Institute (SRI-B)",
+    "sector": "Tech R&D",
+    "city": "Bengaluru",
+    "role": "AI Research intern; SDE intern",
+    "duration": "6-month intern + PPO (first-hand account, SDE track)",
+    "evidence": "strong",
+    "stipend": "Not published",
+    "ppo": "PPO after the 6-month internship",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "#2870 Phoenix Building, Bagmane Constellation Business Park, Outer Ring Road, Doddanekundi, Bengaluru 560037",
+    "careers": "https://research.samsung.com/sri-b",
+    "sources": [
+      "https://www.geeksforgeeks.org/interview-experiences/samsung-r-d-institute-interview-experience-srid-sde-intern-6-months-ppo-2025/",
+      "https://myinternships.in/internships/samsung-r-and-d-institute-india-bangalore-ai-research-intern-bengaluru-9f5e0a",
+      "https://research.samsung.com/sri-b"
+    ]
+  },
+  {
+    "name": "SAP Labs India",
+    "sector": "Enterprise software",
+    "city": "Bengaluru",
+    "role": "Intern (engineering and data roles)",
+    "duration": "6-month internships (first-hand accounts)",
+    "evidence": "strong",
+    "stipend": "Not published",
+    "ppo": "PPO based on performance and open positions",
+    "pay": "mid",
+    "email": "",
+    "phone": "+91 80 4139 5139",
+    "phoneNote": "Whitefield office; RMZ NXT office: +91 80 5139 9000",
+    "address": "#138, EPIP Zone, Whitefield, Bengaluru 560066",
+    "careers": "https://www.sap.com/india/about/labs-india.html",
+    "sources": [
+      "https://www.geeksforgeeks.org/sap-labs-internship-interview-experience/",
+      "https://www.sap.com/india/about/company/office-locations/india.html"
+    ]
+  },
+  {
+    "name": "Qualcomm India",
+    "sector": "Tech R&D",
+    "city": "Hyderabad, Bengaluru, Chennai",
+    "role": "Engineering intern (ML roles exist)",
+    "duration": "6-month track, Jan–Jun or Jul–Dec, reported",
+    "evidence": "reported",
+    "stipend": "₹40k–60k/month reported",
+    "ppo": "Described as a strong PPO pipeline",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "+91 40 3011 0000",
+    "phoneNote": "Hyderabad office, directory listing",
+    "address": "Wing B, Survey No. 64, Mindspace, Hitech City, Hyderabad 500081",
+    "careers": "https://www.qualcomm.com/company/locations/india",
+    "sources": [
+      "https://cloudsoftsol.com/jobs/qualcomm-engineering-intern-hardware-software-2026/",
+      "https://www.sulekha.com/qualcomm-india-pvt-ltd-hitech-city-hyderabad-contact-address"
+    ]
+  },
+  {
+    "name": "Intel India",
+    "sector": "Tech R&D",
+    "city": "Bengaluru, Hyderabad",
+    "role": "Intern roles incl. machine learning",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://intel.wd1.myworkdayjobs.com/External/page/385e15908e0110015685c55415990005",
+    "sources": [
+      "https://vkyacademy.com/various-internship-opportunities-intel-india-for-b-e-b-tech-m-e-m-tech-ms/"
+    ]
+  },
+  {
+    "name": "American Express",
+    "sector": "Banking & finance",
+    "city": "Gurugram, Bengaluru",
+    "role": "Data Science / Analytics intern (AIM)",
+    "duration": "6-month internship, Jan–Jun, for final-year students",
+    "evidence": "reported",
+    "stipend": "Not officially published",
+    "ppo": "PPO opportunity listed; Levels.fyi shows Data Scientist ₹24–43L total (by band)",
+    "pay": "midhigh",
+    "email": "IndiaCampusRecruitment@aexp.com",
+    "emailNote": "official India campus-recruitment address",
+    "phone": "+91 124 670 2000",
+    "phoneNote": "Gurugram corporate office, directory listing",
+    "address": "Cyber City, Tower C, DLF Building 8, Sector 25, DLF Phase 2, Gurugram 122002",
+    "careers": "https://www.americanexpress.com/en-us/careers/student-programs/india/",
+    "sources": [
+      "https://www.foundit.in/career-advice/american-express-internship-apply/",
+      "https://www.americanexpress.com/en-us/careers/student-programs/india/",
+      "https://www.levels.fyi/companies/american-express/salaries/data-scientist"
+    ]
+  },
+  {
+    "name": "Goldman Sachs",
+    "sector": "Banking & finance",
+    "city": "Bengaluru, Hyderabad, Mumbai",
+    "role": "Summer Analyst (Strats / Data / Engineering)",
+    "duration": "8–10 week summer program; ask about a 6-month slot",
+    "evidence": "unconfirmed",
+    "stipend": "₹1.5L/month reported (10-week intern)",
+    "ppo": "PPO reported: base ₹23L, total ₹36.5L",
+    "pay": "high",
+    "email": "",
+    "phone": "+91 80 4127 1600",
+    "phoneNote": "Bengaluru office",
+    "address": "Helios Business Park, 150 Outer Ring Road, Kadubeesanahalli, Bengaluru 560103",
+    "careers": "https://www.goldmansachs.com/worldwide/india/careers",
+    "sources": [
+      "https://leetcode.com/discuss/post/5437127/Goldman-Sachs-India-:-Analyst-:-Internship-+-PPO/",
+      "https://www.goldmansachs.com/careers/students/programs-and-internships/india/summer-analyst-program",
+      "https://www.goldmansachs.com/worldwide/india"
+    ]
+  },
+  {
+    "name": "Morgan Stanley",
+    "sector": "Banking & finance",
+    "city": "Mumbai",
+    "role": "Fixed Income (FID) Research intern: statistics, models, coding",
+    "duration": "6-month internship (Fall and Spring intakes), per posting",
+    "evidence": "strong",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "",
+    "phone": "+91 22 6118 1000",
+    "phoneNote": "Mumbai office; Goregaon East: +91 22 6641 1000",
+    "address": "18th Floor, Tower 2, One World Center, Senapati Bapat Marg, Lower Parel, Mumbai 400013",
+    "careers": "https://prosple.com/graduate-employers/morgan-stanley-india/jobs-internships/fid-research-fall-intern-program",
+    "sources": [
+      "https://prosple.com/graduate-employers/morgan-stanley-india/jobs-internships/fid-research-fall-intern-program",
+      "https://themuse.com/jobs/morganstanley/2025-fid-research-spring-intern-program-mumbai",
+      "https://www.morganstanley.com/about-us/global-offices/asia-pacific/india/about-us"
+    ]
+  },
+  {
+    "name": "JPMorgan Chase",
+    "sector": "Banking & finance",
+    "city": "Mumbai, Bengaluru, Hyderabad",
+    "role": "Data & AI / Quantitative Research intern",
+    "duration": "9–10 week summer program; ask about a 6-month slot",
+    "evidence": "unconfirmed",
+    "stipend": "₹35k–1.25L/month reported",
+    "ppo": "PPOs for strong interns",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://www.jpmorganchase.com/careers/explore-opportunities/programs/data-analytics-opportunities",
+    "sources": [
+      "https://www.jpmorganchase.com/careers/explore-opportunities/programs/data-analytics-opportunities",
+      "https://in.prosple.com/graduate-employers/jp-morgan-india"
+    ]
+  },
+  {
+    "name": "Capital One",
+    "sector": "Banking & finance",
+    "city": "Bengaluru",
+    "role": "Business / Data Analyst (mainly full-time)",
+    "duration": "6-month internship not confirmed",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Levels.fyi: Business Analyst India ₹44L–1.08Cr total (all levels)",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "3rd Floor, Voyager Building, ITPB SEZ, ITPL, Bengaluru 560066",
+    "careers": "https://www.capitalonecareers.com/india",
+    "sources": [
+      "https://www.capitalonecareers.com/india",
+      "https://www.levels.fyi/companies/capital-one/salaries/business-analyst/locations/india"
+    ]
+  },
+  {
+    "name": "Wells Fargo",
+    "sector": "Banking & finance",
+    "city": "Bengaluru, Hyderabad",
+    "role": "Intern Analyst, Quantitative Analytics (2026 Campus Program)",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "6th Floor, West Tower, 2A Outer Ring Road, Bellandur, Bengaluru 560103 · Wells Fargo Centre, Bldg 1A, Divyasree NSL SEZ, Raidurga, Hyderabad 500032",
+    "careers": "https://www.wellsfargojobs.com/en/early-careers/international-programs/india-programs/india/corporate-investment-banking/",
+    "sources": [
+      "https://www.wellsfargojobs.com/en/early-careers/international-programs/india-programs/india/corporate-investment-banking/",
+      "https://www.wellsfargojobs.com/en/locations/wf-india-and-philippines/"
+    ]
+  },
+  {
+    "name": "Barclays",
+    "sector": "Banking & finance",
+    "city": "Pune, Chennai",
+    "role": "Tech / data intern",
+    "duration": "2–6 months reported",
+    "evidence": "reported",
+    "stipend": "Not published",
+    "ppo": "Top interns considered for PPO",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://internshipshub.in/internships/barclays-india-tech-internship-2026",
+    "sources": [
+      "https://internshipshub.in/internships/barclays-india-tech-internship-2026"
+    ]
+  },
+  {
+    "name": "HSBC",
+    "sector": "Banking & finance",
+    "city": "Bengaluru, Hyderabad, Kolkata",
+    "role": "Data Science intern (Asset Management, Wealth & Premier Banking)",
+    "duration": "Project and pre-placement internships up to 6 months",
+    "evidence": "reported",
+    "stipend": "Stipend paid; amount not published",
+    "ppo": "Strong PPO potential, per listing",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "Global Service Centres incl. Kolkata (see careers page)",
+    "careers": "https://www.hsbc.com/careers/where-we-hire/india",
+    "sources": [
+      "https://theglobalscholarship.org/internships/data-science-internship-by-hsbc-group",
+      "https://www.hsbc.com/careers/students-and-graduates/university-students-and-graduates/data-analytics"
+    ]
+  },
+  {
+    "name": "BNP Paribas India",
+    "sector": "Banking & finance",
+    "city": "Mumbai, Chennai, Bengaluru",
+    "role": "Data Science Intern (official posting)",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "+91 22 6521 4000",
+    "phoneNote": "Mumbai office; Chennai: +91 44 7114 9000",
+    "address": "Block B3, 9th Floor, Nirlon Knowledge Park, Goregaon East, Mumbai 400063",
+    "careers": "https://www.bnpparibas.bank.in/en/jobs/data-science-intern-2/",
+    "sources": [
+      "https://www.bnpparibas.bank.in/en/jobs/data-science-intern-2/",
+      "https://group.bnpparibas/en/careers/job-offer/data-science-intern-1",
+      "https://apac.bnppispl.com/dist/contact-us.html"
+    ]
+  },
+  {
+    "name": "Mastercard",
+    "sector": "Banking & finance",
+    "city": "Gurugram, Pune",
+    "role": "Data Scientist Intern (AI Garage)",
+    "duration": "Summer internship; ask about a 6-month slot",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "4th Floor, DLF Plaza Tower, DLF Phase 1, Gurugram 122002 · Business Bay, Tower A, 10th Floor, Pune 411006",
+    "careers": "https://careers.mastercard.com/us/en/early-careers/internships",
+    "sources": [
+      "https://mastercard.wd1.myworkdayjobs.com/en-US/Campus/job/Data-Scientist-Intern--Summer-2025---India_R-228651",
+      "https://careers.mastercard.com/us/en/early-careers/internships"
+    ]
+  },
+  {
+    "name": "Citi",
+    "sector": "Banking & finance",
+    "city": "Mumbai, Pune, Bengaluru",
+    "role": "Quantitative Analysis / Markets intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Full-time analyst offers after successful internship",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://jobs.citi.com/early-career-programs-internships",
+    "sources": [
+      "https://jobs.citi.com/early-career-programs-internships"
+    ]
+  },
+  {
+    "name": "Tower Research Capital",
+    "sector": "Quant & trading",
+    "city": "Gurugram",
+    "role": "Quant Trader / Quant Researcher intern",
+    "duration": "6-month quant trader internship reported",
+    "evidence": "reported",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "3rd Floor, Two Horizon Centre, DLF Phase 5, Golf Course Road, Gurugram 122002",
+    "careers": "https://tower-research.com/internships/",
+    "sources": [
+      "https://www.quantinsti.com/articles/hft-prop-trading-firms/",
+      "https://tower-research.com/internships/",
+      "https://tower-research.com/offices/"
+    ]
+  },
+  {
+    "name": "AlphaGrep",
+    "sector": "Quant & trading",
+    "city": "Mumbai",
+    "role": "Quantitative Research Intern",
+    "duration": "6-month internship, per job posting",
+    "evidence": "strong",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "info@alpha-grep.com",
+    "emailNote": "general contact address",
+    "phone": "+91 22 6146 2900",
+    "phoneNote": "Mumbai office",
+    "address": "Parinee Crescenzo, 13th Floor, Unit 12A-05, G Block, Bandra Kurla Complex, Mumbai 400051",
+    "careers": "https://www.alpha-grep.com/career/",
+    "sources": [
+      "https://job-boards.greenhouse.io/alphagrepsecurities/jobs/7018259002",
+      "https://www.alpha-grep.com/connect/"
+    ]
+  },
+  {
+    "name": "iRage",
+    "sector": "Quant & trading",
+    "city": "Mumbai",
+    "role": "Intern: Quant Analyst / Software Developer",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "recruitment@irage.in",
+    "emailNote": "recruitment address",
+    "phone": "",
+    "address": "",
+    "careers": "https://irage.in/recruitment.php",
+    "sources": [
+      "https://irage.in/job_descriptions.php?jd_id=37",
+      "https://irage.in/recruitment.php"
+    ]
+  },
+  {
+    "name": "Graviton Research Capital",
+    "sector": "Quant & trading",
+    "city": "Gurugram",
+    "role": "Quant intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Stipends equal to ₹57L a year reported in news",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "14th Floor, Tower C, DLF Building 8, DLF Cyber City, Gurugram 122002",
+    "careers": "https://www.gravitontrading.com/careers.html",
+    "sources": [
+      "https://www.whalesbook.com/news/English/technology/Graviton-Research-Offers-indian-rupee57-Lakh-Stipends-to-Quant-Interns/6a7213b20f4505b5a042607c",
+      "https://www.gravitontrading.com/office.html"
+    ]
+  },
+  {
+    "name": "NK Securities Research",
+    "sector": "Quant & trading",
+    "city": "India (see job board)",
+    "role": "Quant Researcher",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://job-boards.eu.greenhouse.io/nksecuritiesresearch/jobs/4470772101",
+    "sources": [
+      "https://job-boards.eu.greenhouse.io/nksecuritiesresearch/jobs/4470772101"
+    ]
+  },
+  {
+    "name": "Quadeye",
+    "sector": "Quant & trading",
+    "city": "Gurugram",
+    "role": "Quant intern (hires through IIT campuses)",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://in.linkedin.com/company/quadeye",
+    "sources": [
+      "https://in.linkedin.com/company/quadeye"
+    ]
+  },
+  {
+    "name": "WorldQuant",
+    "sector": "Quant & trading",
+    "city": "Mumbai",
+    "role": "Quantitative Research Intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "high",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://www.worldquant.com/career-listing/?id=4084570006",
+    "sources": [
+      "https://www.worldquant.com/career-listing/?id=4084570006"
+    ]
+  },
+  {
+    "name": "AB InBev GCC India",
+    "sector": "Retail & consumer",
+    "city": "Bengaluru",
+    "role": "Data Science intern / Junior Data Scientist",
+    "duration": "3–6 months reported",
+    "evidence": "reported",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://placemeright.in/companies/ab-inbev-gcc-india/",
+    "sources": [
+      "https://internshala.com/job/detail/data-scientist-job-in-bangalore-at-ab-inbev-gcc-india1769733056",
+      "https://placemeright.in/companies/ab-inbev-gcc-india/"
+    ]
+  },
+  {
+    "name": "Novartis",
+    "sector": "Pharma & health",
+    "city": "Hyderabad",
+    "role": "Data Science Intern (official posting)",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "\"Best-in-industry\" stipend, per posting",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "+91 40 6767 1000",
+    "phoneNote": "Hyderabad office",
+    "address": "Salarpuria Sattva Knowledge City, Inorbit Mall Road, HITEC City, Hyderabad 500081",
+    "careers": "https://www.novartis.com/careers/career-search/job/details/req-10087679-intern-data-science",
+    "sources": [
+      "https://www.novartis.com/careers/career-search/job/details/req-10087679-intern-data-science",
+      "https://www.novartis.com/in-en/india-site-locations"
+    ]
+  },
+  {
+    "name": "Eli Lilly",
+    "sector": "Pharma & health",
+    "city": "Bengaluru",
+    "role": "Data Scientist Intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Up to ₹6 LPA (~₹50k/month) reported",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://cse.noticebard.com/internships/data-scientist-intern-at-lilly-ba/",
+    "sources": [
+      "https://cse.noticebard.com/internships/data-scientist-intern-at-lilly-ba/"
+    ]
+  },
+  {
+    "name": "AstraZeneca",
+    "sector": "Pharma & health",
+    "city": "Chennai, Bengaluru",
+    "role": "Data Science & AI intern",
+    "duration": "10–12 weeks listed; ask about 6 months",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://careers.astrazeneca.com/india",
+    "sources": [
+      "https://careers.astrazeneca.com/india",
+      "https://careers.astrazeneca.com/early-careers-internships"
+    ]
+  },
+  {
+    "name": "Siemens Healthineers",
+    "sector": "Pharma & health",
+    "city": "Bengaluru",
+    "role": "Data Sciences intern (Center for Innovation in Diagnostics)",
+    "duration": "3- or 6-month projects; technical internships 6–12 months",
+    "evidence": "reported",
+    "stipend": "₹17k–33k/month reported",
+    "ppo": "Not stated",
+    "pay": "lower",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://unstop.com/internships/data-sciences-internship-siemens-healthineers-977880",
+    "sources": [
+      "https://unstop.com/internships/data-sciences-internship-siemens-healthineers-977880",
+      "https://www.biotecnika.org/2024/05/siemens-healthineers-data-science-internship-opportunity-apply-online/"
+    ]
+  },
+  {
+    "name": "Mercedes-Benz R&D India",
+    "sector": "Automotive & industrial",
+    "city": "Bengaluru, Pune",
+    "role": "ML / computer vision / data science intern",
+    "duration": "6-month full-time internships (ML, CV, DL); DS 3–6 months",
+    "evidence": "reported",
+    "stipend": "Not published",
+    "ppo": "High performers regularly offered PPOs, per listing",
+    "pay": "mid",
+    "email": "",
+    "phone": "",
+    "address": "Plot 9 & 10, Whitefield Palms, Whitefield Main Road, EPIP Zone Phase 1, Bengaluru 560066",
+    "careers": "https://group.mercedes-benz.com/careers/about-us/locations/location-detail-page-18185.html",
+    "sources": [
+      "https://in.prosple.com/graduate-employers/mercedes-benz-india/jobs-internships/machine-learning-artificial-intelligence-intern",
+      "https://group.mercedes-benz.com/careers/about-us/locations/location-detail-page-18185.html"
+    ]
+  },
+  {
+    "name": "Bosch Global Software Technologies",
+    "sector": "Automotive & industrial",
+    "city": "Bengaluru",
+    "role": "ML / Data Science (fresher roles)",
+    "duration": "Internship length not confirmed",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Not stated",
+    "pay": "lower",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://cloudsoftsol.com/blog/bosch-global-software-machine-learning-data-science-fresher-bangalore-2026/",
+    "sources": [
+      "https://cloudsoftsol.com/blog/bosch-global-software-machine-learning-data-science-fresher-bangalore-2026/"
+    ]
+  },
+  {
+    "name": "Wadhwani AI",
+    "sector": "AI labs & startups",
+    "city": "Remote (offices: Mumbai, New Delhi)",
+    "role": "Machine Learning intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "₹30k–40k/month reported",
+    "ppo": "PPO for outstanding performers",
+    "pay": "mid",
+    "email": "careers@wadhwaniai.org",
+    "emailNote": "careers address",
+    "phone": "",
+    "address": "275, 4th Floor, Westend Marg, Saidulajab, Saket, New Delhi 110030",
+    "careers": "https://www.wadhwaniai.org/careers/",
+    "sources": [
+      "https://gethiredfaster.in/wadhwani-ai-machine-learning-intern-job-2026/",
+      "https://www.wadhwaniai.org/contact-us/"
+    ]
+  },
+  {
+    "name": "Sarvam AI",
+    "sector": "AI labs & startups",
+    "city": "Bengaluru, Kochi",
+    "role": "GenAI intern; ML & speech data pipeline intern",
+    "duration": "Not stated",
+    "evidence": "unconfirmed",
+    "stipend": "Not published",
+    "ppo": "Path to PPO, per listing",
+    "pay": "midhigh",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "careers": "https://www.sarvam.ai/careers",
+    "sources": [
+      "https://www.sarvam.ai/careers",
+      "https://myinternships.in/internships/sarvam-ai-is-hiring-intern-ml-and-speech-data-pipeline-bengaluru-39a4f9"
+    ]
+  },
+  {
+    "name": "Tredence",
+    "sector": "Analytics services",
+    "city": "Bengaluru (remote roles)",
+    "role": "Data Science intern; Data Analyst intern",
+    "duration": "6 months reported",
+    "evidence": "reported",
+    "stipend": "₹27k/month reported (analyst)",
+    "ppo": "PPO opportunity listed",
+    "pay": "lower",
+    "email": "info@tredence.com",
+    "emailNote": "general contact address",
+    "phone": "",
+    "address": "11th & 12th Floor, Building 2, Prestige Tech Park IV, Kadubeesanahalli, Bengaluru 560103",
+    "careers": "https://www.tredence.com/contact-us",
+    "sources": [
+      "https://myinternships.in/internships/tredence-is-hiring-data-science-intern-mumbai-6b4300",
+      "https://www.tredence.com/contact-us"
+    ]
+  },
+  {
+    "name": "Sigmoid",
+    "sector": "Analytics services",
+    "city": "Bengaluru, Hyderabad",
+    "role": "Data Analyst intern",
+    "duration": "6 months reported",
+    "evidence": "reported",
+    "stipend": "₹36k/month reported",
+    "ppo": "PPO opportunity listed",
+    "pay": "lower",
+    "email": "",
+    "phone": "",
+    "address": "SJR I Park, 2nd Floor, Tower 2, Road No. 9, EPIP Zone, Whitefield, Bengaluru 560066",
+    "careers": "https://www.sigmoid.com/careers/",
+    "sources": [
+      "https://myinternships.in/job/sigmoid-data-analyst-intern-hyderabad-fc2743",
+      "https://leetcode.com/discuss/post/1372746/sigmoid-analytics-internship-and-recruitment/",
+      "https://www.sigmoid.com/careers/"
+    ]
+  }
+]
