@@ -1,0 +1,80 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage[a4paper,margin=1.4cm,top=1.1cm,bottom=1.1cm]{geometry}
+\usepackage{tabularx,array,enumitem,titlesec,xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\titleformat{\section}{\centering\bfseries\scshape}{}{0em}{}[\vspace{-0.4em}\rule{\linewidth}{0.4pt}]
+\titlespacing*{\section}{0pt}{0.55em}{0.35em}
+\setlist[itemize]{leftmargin=1.1em,itemsep=0.05em,topsep=0.1em,parsep=0pt}
+\newcommand{\proj}[3]{\item \textbf{#1} \hfill {\small #2}\\[-0.1em]
+  {\small\textit{#3}}}
+% Replace with your supervisor's name (shown in red so it is not missed)
+\newcommand{\PROF}{\textcolor{red}{Prof.\ [Supervisor Name]}}
+
+\begin{document}
+
+{\LARGE\textbf{Kudrati Khoda}}\\[0.2em]
+M.Tech Quality, Reliability and Operations Research\\
+Indian Statistical Institute, Kolkata\\
+Mob.\ +91 8759363639 \;|\; \href{mailto:kudratikhoda12@gmail.com}{kudratikhoda12@gmail.com}
+
+\vspace{0.5em}
+{\small
+\begin{tabularx}{\linewidth}{@{}Xllr@{}}
+\hline
+\textbf{Course} & \textbf{College/University} & \textbf{Year} & \textbf{CGPA/\%}\\
+\hline
+M.Tech (QR \& OR) & Indian Statistical Institute, Kolkata & 2025--27 & 71.3\%\\
+B.E.\ (Electrical Engineering) & Jadavpur University & 2025 & 6.88\\
+Senior Secondary & Hallyan High School (WBCHSE) & 2019 & 81.2\%\\
+Secondary & Akhriganj High School (WBBSE) & 2017 & 74.7\%\\
+\hline
+\end{tabularx}}
+
+\section{Projects}
+\begin{itemize}
+\proj{Credit Risk Modelling \& Portfolio Stress Testing}{Python, scikit-learn, LightGBM}{LendingClub loan data, 2007--2018}
+  \begin{itemize}
+  \item Built PD models (Logistic Regression baseline, LightGBM challenger) on \textbf{1.34M resolved loans}, using only features available at origination (no leakage); out-of-time (2017) \textbf{AUC 0.70 / 0.71}, KS 0.29 / 0.30.
+  \item Validated across 2015--2018 vintages with decile calibration, aggregate backtesting and PSI ($\leq$\,0.027); identified systematic PD underprediction in 2017 (\textbf{19.9\% predicted vs 23.1\% observed}, $\sim$5.4K excess defaults).
+  \item Combined PD, realized LGD (93.3\%) and EAD to estimate portfolio \textbf{Expected Credit Loss of \$494.7M}; simulated correlated defaults (one-factor Gaussian, 10K loans $\times$ 2K scenarios) to obtain \textbf{VaR$_{99}$ \$68.5M} and ES$_{99}$ \$74.6M.
+  \item Stress and sensitivity testing: PD odds $\times$1.5 with LGD +5\,pp raised VaR$_{99}$ to \$83.0M; raising default correlation $\rho$ from 0 to 0.5 increased VaR$_{99}$ \textbf{3.6$\times$} (\$30.5M $\to$ \$108.4M), showing dependence as the key driver of tail risk.
+  \end{itemize}
+\proj{Interpretable Survival Risk Prediction using CoxKAN}{Python}{Guide: \PROF}
+  \begin{itemize}
+  \item Implemented CoxKAN (Kolmogorov--Arnold Networks) for right-censored time-to-event risk prediction and benchmarked it against Cox Proportional Hazards and DeepSurv.
+  \item Learned nonlinear hazard functions with interpretable B-spline activations, enabling feature selection and symbolic recovery of the risk equation.
+  \item Evaluated with the Concordance Index (C-index) and survival prediction metrics.
+  \end{itemize}
+\proj{Time-to-Event Prediction using KAN-AFT}{Python}{Guide: \PROF}
+  \begin{itemize}
+  \item Developed a KAN-based Accelerated Failure Time model and compared it with Weibull, Log-Normal AFT and DeepAFT.
+  \item Studied nonlinear survival-time modelling and the effect of censoring adjustments (IPCW, Buckley--James).
+  \item Validated on synthetic, clinical and \textbf{financial} datasets using the C-index.
+  \end{itemize}
+\end{itemize}
+
+\section{Technical Skills}
+\begin{itemize}
+\item \textbf{Programming:} Python, SQL \quad \textbf{Libraries:} Pandas, NumPy, scikit-learn, LightGBM, SciPy \quad \textbf{Tools:} Excel, Power BI
+\item \textbf{Credit Risk \& Validation:} PD / LGD / EAD, Expected Credit Loss, AUC / KS / Gini, Brier score, calibration, backtesting, PSI, VaR, Expected Shortfall, Monte Carlo simulation, stress testing
+\item \textbf{Statistics \& ML:} Regression, Classification, Hypothesis Testing, Survival Analysis (Kaplan--Meier, Log-Rank, Cox PH, AFT, IPCW), MLP, KAN
+\end{itemize}
+
+\section{Relevant Courses}
+Survival Analysis \;|\; Statistical Quality Control \;|\; Reliability Engineering \;|\; Stochastic Processes \;|\; Multivariate Statistics \;|\; Statistical Methods \;|\; Probability Theory
+
+\section{Positions of Responsibility}
+\begin{itemize}
+\item JU Reunion Convener \;|\; Jadavpur University
+\item Hostel Mess Committee Member
+\end{itemize}
+
+\section{Extracurricular Activities}
+Biking \;|\; Traveling \;|\; Card Games
+
+\end{document}
