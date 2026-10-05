@@ -16,7 +16,7 @@ Everything here is re-created by script, and every file is checked against Binan
 | File pattern | `https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-YYYY-MM.zip` (+ `.CHECKSUM`) |
 | Columns (no header) | open_time, open, high, low, close, volume, close_time, quote_volume, n_trades, taker_buy_base, taker_buy_quote, ignore |
 | Timestamp unit | **milliseconds before 2025-01-01, microseconds from 2025-01-01**. Detected automatically per file. |
-| Expected rows | ≈ 4.80 million one-minute candles if nothing is missing (3,331 days × 1,440). The audit reports the true count. |
+| Expected rows | 4,797,840 one-minute candles from 2017-08-17 04:00 to 2026-09-30 23:59 if nothing were missing. Measured: 4,789,279 rows, of which 21,602 are off the minute grid (see audit). |
 | Disk (estimate) | Zips ≈ 0.2–0.4 GB; combined parquet ≈ 0.2–0.4 GB. Measured values go in the audit. |
 | Memory (estimate) | ≈ 0.5 GB for the full typed 1-minute table in pandas (13 columns × 8 bytes × 4.8M rows). |
 | Optional, later | ETHUSDT (second-asset robustness); BTCUSDT USD-M `fundingRate` |

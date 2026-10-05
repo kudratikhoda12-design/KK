@@ -1,0 +1,5 @@
+question,spearman,naive_p,n
+same-hour volume vs |return|,0.4063695601871294,0.0,54940
+volume now vs next-hour |return|,0.17628982068977422,0.0,54940
+volume now vs next-hour return,0.012268947210773571,0.004030099714829357,54940
+return now vs next-hour return,-0.07907716122154902,6.311369463569428e-77,54940

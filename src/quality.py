@@ -125,33 +125,54 @@ def missing_value_checks(df: pd.DataFrame) -> pd.Series:
 
 
 def gap_analysis(open_times: pd.Series) -> tuple[pd.DataFrame, pd.DataFrame, int]:
-    """Missing minutes on the full grid; returns (gap table, missing by year, n_missing)."""
+    """Minutes absent from the regular 1-minute grid.
+
+    Returns (gap table, missing by year, n_missing_on_grid). Each gap records
+    how many rows exist inside it with a timestamp OFF the minute grid
+    (phase-shifted candles), so true outages and misaligned stretches can be
+    told apart. Both are treated as missing on the grid.
+    """
     t = pd.DatetimeIndex(open_times.drop_duplicates().sort_values())
-    grid = pd.date_range(t[0], t[-1], freq="1min")
-    present = grid.isin(t)
-    missing = ~present
-    # Run-length encode missing stretches
+    aligned = t[(t.second == 0) & (t.microsecond == 0) & (t.nanosecond == 0)]
+    off_grid = t.difference(aligned)
+    grid = pd.date_range(aligned[0], aligned[-1], freq="1min")
+    missing = ~grid.isin(aligned)
     m = missing.astype(np.int8)
     edges = np.diff(np.concatenate([[0], m, [0]]))
     starts, ends = np.flatnonzero(edges == 1), np.flatnonzero(edges == -1)
     gaps = pd.DataFrame({"gap_start": grid[starts], "gap_end": grid[ends - 1],
                          "missing_minutes": ends - starts})
+    # rows inside each gap whose timestamps are off the minute grid
+    og = off_grid.asi8 if len(off_grid) else np.array([], dtype=np.int64)
+    lo = np.searchsorted(og, pd.DatetimeIndex(gaps["gap_start"]).as_unit(off_grid.unit if len(off_grid) else "ns").asi8) if len(og) else 0
+    hi = np.searchsorted(og, (pd.DatetimeIndex(gaps["gap_end"]) + ONE_MIN).as_unit(off_grid.unit if len(off_grid) else "ns").asi8) if len(og) else 0
+    gaps["off_grid_rows_inside"] = (hi - lo) if len(og) else 0
+    share = gaps["off_grid_rows_inside"] / gaps["missing_minutes"]
+    gaps["kind"] = np.select([share > 0.5, share > 0],
+                             ["phase-shifted candles (data exist, off grid)",
+                              "mixed: outage + phase-shifted candles"], "no data (outage / archive gap)")
     gaps = gaps.sort_values("missing_minutes", ascending=False).reset_index(drop=True)
     by_year = pd.DataFrame({"year": grid.year, "missing": missing}).groupby("year").agg(
         expected_minutes=("missing", "size"), missing_minutes=("missing", "sum"))
     by_year["missing_pct"] = 100 * by_year["missing_minutes"] / by_year["expected_minutes"]
+    gaps.attrs["grid_minutes"] = len(grid)
+    gaps.attrs["off_grid_rows"] = len(off_grid)
     return gaps, by_year.reset_index(), int(missing.sum())
 
 
-def outlier_scan(df: pd.DataFrame, z_thresh: float = 15.0, abs_thresh: float = 0.03) -> pd.DataFrame:
+def outlier_scan(df: pd.DataFrame, z_thresh: float = 15.0, abs_thresh: float = 0.03,
+                 scale_floor: float = 1e-4) -> pd.DataFrame:
     """Flag extreme 1-minute moves and gather evidence on whether each is genuine.
 
-    Robust scale = 1.4826 x rolling (1-day, centred) median of |r|. Centred
+    Robust scale = 1.4826 x rolling (1-day, centred) median of |r|, floored at
+    1 bp: in illiquid periods (2017) most minutes have zero price change, the
+    median is 0 and an unfloored z-score is infinite for any move. Centred
     windows are fine here: this is a data-quality diagnostic, never a feature.
+    Flags: 'large' = |r| or high-low range > abs_thresh; 'local' = |z| > z_thresh only.
     """
     d = df.drop_duplicates("open_time").set_index("open_time").sort_index()
     r = np.log(d["close"]).diff()
-    scale = 1.4826 * r.abs().rolling(1441, center=True, min_periods=300).median()
+    scale = np.maximum(1.4826 * r.abs().rolling(1441, center=True, min_periods=300).median(), scale_floor)
     z = r / scale
     wick = np.log(d["high"] / d["low"])
     flag = (z.abs() > z_thresh) | (r.abs() > abs_thresh) | (wick > abs_thresh)
@@ -159,6 +180,8 @@ def outlier_scan(df: pd.DataFrame, z_thresh: float = 15.0, abs_thresh: float = 0
     ev["ret_1m"] = r[flag]
     ev["robust_z"] = z[flag]
     ev["wick_range"] = wick[flag]
+    ev["flag_type"] = np.where((ev["ret_1m"].abs() > abs_thresh) | (ev["wick_range"] > abs_thresh),
+                               "large (>3% move or range)", "local (|z|>15 only)")
     # Evidence: does the price level persist over the next 10 minutes, and was
     # there real trading activity? A one-print spike on tiny volume that fully
     # reverses is suspicious; a high-volume move that persists is a market event.
@@ -219,8 +242,7 @@ def audit(df: pd.DataFrame) -> dict:
     stale = stale_checks(df)
     monthly = monthly_profile(df)
 
-    n_unique = df["open_time"].nunique()
-    expected = n_unique + n_missing
+    expected = gaps.attrs["grid_minutes"]
     rows = [
         ("Rows / columns", f"{schema['n_rows']:,} rows, {schema['n_cols']} cols", "info",
          "None"),
@@ -247,9 +269,11 @@ def audit(df: pd.DataFrame) -> dict:
          "low" if dup["rows_with_duplicate_timestamp"] else "info", "See conflicting"),
         ("Conflicting duplicates", f"{len(dup['conflicting_timestamps'])} timestamps",
          "high" if len(dup["conflicting_timestamps"]) else "info", "Minute set to missing"),
-        ("Missing 1-min intervals", f"{n_missing:,} of {expected:,} "
+        ("Missing 1-min intervals", f"{n_missing:,} of {expected:,} grid minutes "
                                     f"({100 * n_missing / expected:.3f}%) in {len(gaps)} gaps; "
-                                    f"longest {int(gaps['missing_minutes'].max()) if len(gaps) else 0} min",
+                                    f"longest {int(gaps['missing_minutes'].max()) if len(gaps) else 0} min; "
+                                    f"{int((gaps['kind'] != 'no data (outage / archive gap)').sum())} gaps are "
+                                    f"phase-shifted candles ({gaps.attrs['off_grid_rows']:,} off-grid rows)",
          "medium" if n_missing else "info", "Left missing; features need >=90% window coverage"),
         ("Gaps longer than 60 min", f"{int((gaps['missing_minutes'] > 60).sum())}",
          "medium" if (gaps["missing_minutes"] > 60).any() else "info",
@@ -263,8 +287,9 @@ def audit(df: pd.DataFrame) -> dict:
          "low" if vol["zero_volume"] else "info", "Kept and flagged (no trading is real)"),
         ("Abnormal volume (>50x daily median)", f"{vol['volume_gt_50x_daily_median']}",
          "info", "Kept; investigated in EDA"),
-        ("Extreme 1-min moves", f"{len(outl)} flagged; "
-                                f"{int((outl['assessment'] != 'consistent with genuine market move').sum())} suspect",
+        ("Extreme 1-min moves", f"{int((outl['flag_type'] != 'local (|z|>15 only)').sum())} large (>3% move or range), "
+                                f"{int((outl['flag_type'] == 'local (|z|>15 only)').sum())} locally extreme (|z|>15); "
+                                f"{int((outl['assessment'] != 'consistent with genuine market move').sum())} look suspect (thin + full reversal)",
          "medium" if len(outl) else "info", "Kept and flagged; listed individually"),
         ("Stale prices", f"longest unchanged-close run {stale['longest_unchanged_close_run']} min; "
                          f"{stale['runs_ge_threshold']} runs >= 30 min",

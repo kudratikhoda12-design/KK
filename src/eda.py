@@ -158,7 +158,8 @@ def fig_return_tails(hourly_ret: pd.Series, path) -> None:
     lim = max(abs(np.quantile(z, [0.0005, 0.9995])).max(), 4)
     ax.plot([-lim, lim], [-lim, lim], color=MUTED, lw=0.8, label="normal")
     ax.set_xlabel("normal quantile"); ax.set_ylabel("standardised return quantile")
-    ax.set_title("Hourly returns have fat tails"); ax.legend(frameon=False)
+    ax.set_title(f"Hourly returns vs normal (excess kurtosis {stats.kurtosis(r):.0f}; normal = 0)")
+    ax.legend(frameon=False)
     fig.tight_layout(); fig.savefig(path); plt.close(fig)
 
 

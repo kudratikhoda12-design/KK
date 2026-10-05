@@ -1,0 +1,5 @@
+treatment,count
+drop exact duplicate rows,0
+conflicting duplicate timestamps -> missing,0
+impossible / incomplete candles -> missing,0
+minutes missing on regular grid (left as NaN),30163

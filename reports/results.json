@@ -1,0 +1,156 @@
+{
+  "BTCUSDT_audit": {
+    "schema": {
+      "n_rows": 4789279,
+      "n_cols": 16,
+      "missing_columns": [],
+      "unexpected_columns": []
+    },
+    "timestamps": {
+      "first": "2017-08-17 04:00:00+00:00",
+      "last": "2026-09-30 23:59:00+00:00",
+      "timezone": "UTC",
+      "misaligned_to_minute": 21602,
+      "bad_close_time": 18,
+      "files_us": 21,
+      "files_ms": 89,
+      "unit_mismatch_files": [],
+      "rows_outside_file_period": 0,
+      "files_not_ordered": []
+    },
+    "duplicates": {
+      "exact_duplicate_rows": 0,
+      "rows_with_duplicate_timestamp": 0,
+      "conflicting_timestamps": 0
+    },
+    "volume": {
+      "negative_volume": 0,
+      "zero_volume": 24003,
+      "zero_trades": 24003,
+      "volume_without_trades": 0,
+      "trades_without_volume": 0,
+      "taker_buy_gt_volume": 0,
+      "volume_gt_50x_daily_median": 5516
+    },
+    "stale": {
+      "longest_unchanged_close_run": 81,
+      "runs_ge_threshold": 32
+    },
+    "n_outliers": 24314,
+    "n_gaps": 33,
+    "missing_minutes": 30163,
+    "grid_rows": 4797840,
+    "treatments": {
+      "drop exact duplicate rows": 0,
+      "conflicting duplicate timestamps -> missing": 0,
+      "impossible / incomplete candles -> missing": 0,
+      "minutes missing on regular grid (left as NaN)": 30163
+    },
+    "files_checksum_ok": 110,
+    "files_in_manifest": 110,
+    "parquet_mb": 355.9,
+    "memory_mb": 517.2
+  },
+  "eda": {
+    "dependence": [
+      {
+        "series": "return",
+        "acf_lag1": -0.047076521635423,
+        "acf_lag2": -0.0328161151236596,
+        "acf_lag3": -0.0009212998806975,
+        "acf_lag6": -0.0149795205856715,
+        "acf_lag12": 0.0084304462889722,
+        "acf_lag24": -0.0447242490868652,
+        "ljung_box_lag": 24,
+        "ljung_box_p": 9.087065007207176e-72
+      },
+      {
+        "series": "|return|",
+        "acf_lag1": 0.3068911301133861,
+        "acf_lag2": 0.2832269165544957,
+        "acf_lag3": 0.2652909769897465,
+        "acf_lag6": 0.2403400109314319,
+        "acf_lag12": 0.2324379979385728,
+        "acf_lag24": 0.2149994870289585,
+        "ljung_box_lag": 24,
+        "ljung_box_p": 0.0
+      },
+      {
+        "series": "return^2",
+        "acf_lag1": 0.1776611796298195,
+        "acf_lag2": 0.187843261976891,
+        "acf_lag3": 0.193135757106955,
+        "acf_lag6": 0.0916013396418384,
+        "acf_lag12": 0.0831978067361713,
+        "acf_lag24": 0.0611259713607922,
+        "ljung_box_lag": 24,
+        "ljung_box_p": 0.0
+      }
+    ]
+  },
+  "features": {
+    "decisions": 79964,
+    "usable": 78522,
+    "dropped_for_missing": 1442,
+    "up_rate_dev": 0.5078168772253249,
+    "leakage_features_changed": 0,
+    "leakage_checks": 24,
+    "leakage_target_changed": 24,
+    "significant_features_holm": [
+      "ret_5m",
+      "ret_15m",
+      "ret_30m",
+      "ret_60m",
+      "ret_4h",
+      "ret_24h",
+      "ma_dist_24h",
+      "log_rv_60m",
+      "log_rv_24h",
+      "vol_ratio",
+      "range_rel_60m",
+      "rel_volume_60m",
+      "taker_imb_60m",
+      "clv_60m"
+    ]
+  },
+  "validation": {
+    "selection": {
+      "model": "lgbm",
+      "params": {
+        "n_estimators": 200,
+        "learning_rate": 0.03,
+        "num_leaves": 7,
+        "min_child_samples": 500,
+        "subsample": 0.8,
+        "subsample_freq": 1,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 1.0
+      },
+      "k": 1.5,
+      "mode": "long_flat",
+      "features": [
+        "ret_1m",
+        "ret_5m",
+        "ret_15m",
+        "ret_30m",
+        "ret_60m",
+        "ret_4h",
+        "ret_24h",
+        "ma_dist_24h",
+        "log_rv_60m",
+        "log_rv_24h",
+        "vol_ratio",
+        "range_rel_60m",
+        "rel_volume_60m",
+        "volume_chg_60m",
+        "taker_imb_60m",
+        "clv_60m"
+      ],
+      "horizon": 60,
+      "lag": 1,
+      "offset": 0,
+      "reason": "LightGBM AUC gain +0.0064 (needs >0.005), log-loss better in 70% of folds (needs >=70%) -> LightGBM; signal k=1.5, mode=long_flat (best mean validation net Sharpe among eligible configs)"
+    },
+    "n_trials": 13
+  }
+}

@@ -350,3 +350,49 @@ def permutation_test(data: pd.DataFrame, sel: Selection, n_perm: int = config.PE
     null = np.asarray(null)
     return dict(real_auc=real_auc, null_mean=float(null.mean()), null_p95=float(np.quantile(null, 0.95)),
                 p_value=float((np.sum(null >= real_auc) + 1) / (n_perm + 1)), n_perm=n_perm)
+
+
+def ic_by_block(data: pd.DataFrame, block_months: int = config.VALIDATION_BLOCK_MONTHS) -> pd.DataFrame:
+    """H1 stability criterion: Spearman correlation of each feature with the forward
+    return in every 6-month block of the DEVELOPMENT period."""
+    from scipy import stats as sstats
+    dev = data[data.index < config.TEST_START]
+    block = dev.index.year.astype(str) + np.where(dev.index.month <= 6, "H1", "H2")
+    rows = []
+    for b, sub in dev.groupby(block):
+        rows.append({"block": b, "n": len(sub), **{
+            f: sstats.spearmanr(sub[f], sub["fwd_logret"], nan_policy="omit").statistic for f in FEATURES}})
+    return pd.DataFrame(rows)
+
+
+def regime_ic_ci(data: pd.DataFrame, n_boot: int = 500, seed: int = config.RANDOM_SEED) -> pd.DataFrame:
+    """H3 criterion: block-bootstrap 95% CI of the Spearman correlation within each regime.
+
+    Pairs (feature, forward return) are resampled jointly in blocks, so the CI
+    reflects the sampling uncertainty of the correlation itself.
+    """
+    from scipy import stats as sstats
+    from .stats import stationary_bootstrap_indices
+    dev = data[data.index < config.TEST_START]
+    rng = np.random.default_rng(seed)
+    rows = []
+    for col in ["vol_regime", "trend_regime"]:
+        for reg, sub in dev.groupby(col):
+            for f in FEATURES:
+                m = sub[[f, "fwd_logret"]].dropna()
+                rx, ry = sstats.rankdata(m[f]), sstats.rankdata(m["fwd_logret"])
+                idx = stationary_bootstrap_indices(len(m), config.BOOTSTRAP_BLOCK_HOURS, n_boot, rng)
+                dist = np.array([np.corrcoef(rx[i], ry[i])[0, 1] for i in idx])
+                rows.append(dict(regime_type=col, regime=reg, feature=f, n=len(m),
+                                 spearman=sstats.spearmanr(m[f], m["fwd_logret"]).statistic,
+                                 ci_low=np.quantile(dist, 0.025), ci_high=np.quantile(dist, 0.975)))
+    out = pd.DataFrame(rows)
+    # Pre-registered comparison: high vs low volatility, trending vs range
+    comp = []
+    for f in FEATURES:
+        for a, b, col in [("high_vol", "low_vol", "vol_regime"), ("trending", "range", "trend_regime")]:
+            ra = out[(out.feature == f) & (out.regime == a)].iloc[0]
+            rb = out[(out.feature == f) & (out.regime == b)].iloc[0]
+            comp.append(dict(feature=f, comparison=f"{a} vs {b}", ic_a=ra.spearman, ic_b=rb.spearman,
+                             cis_overlap=not (ra.ci_low > rb.ci_high or rb.ci_low > ra.ci_high)))
+    return out, pd.DataFrame(comp)

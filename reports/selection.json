@@ -1,0 +1,39 @@
+{
+  "model": "lgbm",
+  "params": {
+    "n_estimators": 200,
+    "learning_rate": 0.03,
+    "num_leaves": 7,
+    "min_child_samples": 500,
+    "subsample": 0.8,
+    "subsample_freq": 1,
+    "colsample_bytree": 0.8,
+    "reg_lambda": 1.0
+  },
+  "k": 1.5,
+  "mode": "long_flat",
+  "features": [
+    "ret_1m",
+    "ret_5m",
+    "ret_15m",
+    "ret_30m",
+    "ret_60m",
+    "ret_4h",
+    "ret_24h",
+    "ma_dist_24h",
+    "log_rv_60m",
+    "log_rv_24h",
+    "vol_ratio",
+    "range_rel_60m",
+    "rel_volume_60m",
+    "volume_chg_60m",
+    "taker_imb_60m",
+    "clv_60m"
+  ],
+  "horizon": 60,
+  "lag": 1,
+  "offset": 0,
+  "reason": "LightGBM AUC gain +0.0064 (needs >0.005), log-loss better in 70% of folds (needs >=70%) -> LightGBM; signal k=1.5, mode=long_flat (best mean validation net Sharpe among eligible configs)",
+  "frozen_utc": "2026-10-05T21:23:10.168505+00:00",
+  "code_commit": "9f5aa93"
+}

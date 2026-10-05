@@ -29,7 +29,7 @@ from src import config, eda, plots, quality, risk, stress_test  # noqa: E402
 from src.backtest import capacity_check  # noqa: E402
 from src.data import load_funding, load_interim, load_processed  # noqa: E402
 from src.features import FEATURES, build_dataset, minute_features, perturbation_leakage_check, timing_table  # noqa: E402
-from src.pipeline import (Selection, periods_per_year, permutation_test, regime_ic,  # noqa: E402
+from src.pipeline import (Selection, ic_by_block, periods_per_year, permutation_test, regime_ic, regime_ic_ci,  # noqa: E402
                           robustness_stage, test_stage, univariate_tests, validation_stage)
 from src.validation import ExperimentLog  # noqa: E402
 
@@ -141,6 +141,11 @@ def stage_features(symbol: str) -> None:
     uni = univariate_tests(d)
     uni.to_csv(T / "h1_h2_univariate_dev.csv", index=False)
     regime_ic(d).to_csv(T / "h3_regime_ic_dev.csv", index=False)
+    blk = ic_by_block(d)
+    blk.to_csv(T / "h1_ic_by_block_dev.csv", index=False)
+    ci, comp = regime_ic_ci(d)
+    ci.to_csv(T / "h3_regime_ic_ci_dev.csv", index=False)
+    comp.to_csv(T / "h3_regime_comparison_dev.csv", index=False)
     d[FEATURES].describe().T.to_csv(T / "feature_summary.csv")
     save_results("features", dict(
         decisions=len(d), usable=int(usable.sum()), dropped_for_missing=int((~usable).sum()),

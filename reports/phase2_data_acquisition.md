@@ -24,7 +24,7 @@ The rule for this project is no fabricated data. When the data is unreachable, t
 | Format | Zip containing one headerless CSV with 12 columns |
 | Columns | open_time, open, high, low, close, volume, close_time, quote_volume, n_trades, taker_buy_base, taker_buy_quote, ignore |
 | Range | 2017-08 to 2026-09: 110 files, 3,331 days |
-| Expected observations | 4,796,640 one-minute candles if nothing is missing |
+| Expected observations | 4,797,840 one-minute candles (2017-08-17 04:00 to 2026-09-30 23:59) if nothing were missing |
 | Storage | `data/raw/spot/BTCUSDT/1m/` (zips + manifest) → `data/interim/BTCUSDT_1m_raw.parquet` → `data/processed/BTCUSDT_1m_grid.parquet` |
 | Memory | About 0.5 GB for the typed 1-minute table; the full run fits in 16 GB RAM |
 | Why the full history | It covers several regimes: the 2017 bubble, the 2018 bear market, the March 2020 crash, the 2021 bull market, the 2022 LUNA/FTX collapses, and 2024–26. Using a shorter window to save compute would weaken the robustness tests. |
