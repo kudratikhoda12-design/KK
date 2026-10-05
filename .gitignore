@@ -1,0 +1,8 @@
+# Raw and processed data are downloaded by script, never committed (size + CC BY-NC-SA licence)
+data/
+*.zip
+*.parquet
+*.csv
+__pycache__/
+.ipynb_checkpoints/
+.venv/
