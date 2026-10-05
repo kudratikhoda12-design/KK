@@ -24,7 +24,10 @@ import run_pipeline as rp
 from src import config
 T, F = config.TABLES_DIR, config.FIGURES_DIR
 SYMBOL = config.SYMBOL
-RUN_STAGE = True   # set False to only display previously saved outputs
+# False (default): display the outputs saved by scripts/run_pipeline.py.
+# True re-computes the stage. Do NOT re-run 'validation' or 'test' casually:
+# validation resets the experiment log and every test run adds a TEST row.
+RUN_STAGE = False
 def show(name, **kw):
     display(Markdown(f"**{name}**")); display(pd.read_csv(T / name, **kw))
 def fig(name):

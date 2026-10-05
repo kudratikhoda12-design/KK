@@ -1,6 +1,6 @@
 # Phase 2: Data Acquisition
 
-**Status: BLOCKED in the cloud environment. Code complete and tested. No data has been downloaded and none has been substituted.**
+**Status (updated 5 Oct 2026): RESOLVED.** Network access to `data.binance.vision` was enabled. 110 / 110 BTCUSDT files (235 MB), 81 / 81 funding files and 110 / 110 ETHUSDT files were downloaded, and every file passed SHA-256 verification. The audit results are in `final_report.md` §5. The text below records the original blocked state.
 
 ## A. What we did
 

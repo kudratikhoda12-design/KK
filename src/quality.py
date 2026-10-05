@@ -272,7 +272,7 @@ def audit(df: pd.DataFrame) -> dict:
         ("Missing 1-min intervals", f"{n_missing:,} of {expected:,} grid minutes "
                                     f"({100 * n_missing / expected:.3f}%) in {len(gaps)} gaps; "
                                     f"longest {int(gaps['missing_minutes'].max()) if len(gaps) else 0} min; "
-                                    f"{int((gaps['kind'] != 'no data (outage / archive gap)').sum())} gaps are "
+                                    f"{int((gaps['kind'] != 'no data (outage / archive gap)').sum())} gaps involve "
                                     f"phase-shifted candles ({gaps.attrs['off_grid_rows']:,} off-grid rows)",
          "medium" if n_missing else "info", "Left missing; features need >=90% window coverage"),
         ("Gaps longer than 60 min", f"{int((gaps['missing_minutes'] > 60).sum())}",
