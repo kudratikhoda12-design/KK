@@ -86,13 +86,15 @@ class ExperimentLog:
     def add(self, stage: str, model: str, params: dict, features: list[str], horizon: int,
             lag: int, offset: int, train_period: str, eval_period: str, metrics: dict,
             note: str = "") -> None:
-        self.rows.append(dict(
+        fixed = dict(
             logged_utc=datetime.now(timezone.utc).isoformat(timespec="seconds"),
             stage=stage, model=model, params=json.dumps(params, default=str),
             n_features=len(features), features=",".join(features), horizon_min=horizon,
-            lag_min=lag, offset_min=offset, train_period=train_period, eval_period=eval_period,
-            **{k: (round(v, 6) if isinstance(v, float) else v) for k, v in metrics.items()},
-            note=note))
+            lag_min=lag, offset_min=offset, train_period=train_period, eval_period=eval_period)
+        # Metric names that collide with fixed fields (e.g. 'model') are prefixed, never dropped
+        extra = {(f"metric_{k}" if k in fixed or k == "note" else k):
+                 (round(v, 6) if isinstance(v, float) else v) for k, v in metrics.items()}
+        self.rows.append({**fixed, **extra, "note": note})
 
     def frame(self) -> pd.DataFrame:
         return pd.DataFrame(self.rows)

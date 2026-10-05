@@ -30,3 +30,11 @@ def test_deflated_sharpe_penalises_more_trials():
     few = deflated_sharpe(net, rng.normal(0, 0.01, 5))["dsr"]
     many = deflated_sharpe(net, rng.normal(0, 0.01, 500))["dsr"]
     assert many < few
+
+
+def test_psi_zero_for_same_distribution_and_large_for_shift():
+    from src.models import psi
+    rng = np.random.default_rng(0)
+    a = rng.normal(size=20000)
+    assert psi(a, rng.normal(size=20000)) < 0.01
+    assert psi(a, rng.normal(1.0, 1, 20000)) > 0.25

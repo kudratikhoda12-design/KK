@@ -21,7 +21,8 @@ from . import config
 from .backtest import buy_and_hold, positions_from_probs, positions_from_score, run_backtest
 from .features import FEATURE_GROUPS, FEATURES, build_dataset
 from .models import (auc_bootstrap_ci, calibration_deciles, classification_metrics, confusion,
-                     feature_importance, fit_final, logloss_improvement_test, walk_forward_predict)
+                     feature_importance, feature_psi_by_block, fit_final, logloss_improvement_test, psi,
+                     walk_forward_predict)
 from .risk import deflated_sharpe, performance, probabilistic_sharpe, sharpe_ci
 from .stats import holm, spearman_block_test
 from .validation import ExperimentLog, development_folds, test_folds
@@ -249,6 +250,14 @@ def test_stage(data: pd.DataFrame, sel: Selection, log: ExperimentLog, trial_sha
             {**cls, **{f"test_{a}": v for a, v in perf.items() if isinstance(v, (int, float))},
              "dsr": dsr.get("dsr", np.nan)}, note="frozen selection, single run")
 
+    # Drift monitoring (same PSI idea as the credit module's vintage stability):
+    # feature distributions per test block vs the development period, and the
+    # model-score distribution per block vs the first test block.
+    dev_mask = pd.Series(data.index < config.TEST_START, index=data.index)
+    drift = feature_psi_by_block(data, sel.features, dev_mask, pr["fold"])
+    first = pr.loc[pr["fold"] == pr["fold"].iloc[0], "p"]
+    drift["score_psi_vs_first_block"] = [psi(first, pr.loc[pr["fold"] == b, "p"]) for b in drift["block"]]
+
     # Importance of the model that actually traded in the last test block
     final_model = fit_final(data, folds[-1].train_mask, sel.model, sel.params, sel.features)
     return dict(predictions=pr, positions=pos, backtest=bt, buy_hold=bh, momentum=mom,
@@ -257,7 +266,7 @@ def test_stage(data: pd.DataFrame, sel: Selection, log: ExperimentLog, trial_sha
                 benchmarks=pd.DataFrame([dict(strategy="model strategy", **perf),
                                          dict(strategy="buy and hold", **performance(bh, ppy)),
                                          dict(strategy="momentum 1h sign", **performance(mom, ppy))]),
-                calibration=calibration_deciles(d["y"], pr["p"], d["fwd_logret"]),
+                calibration=calibration_deciles(d["y"], pr["p"], d["fwd_logret"]), drift=drift,
                 confusion=confusion(d["y"], pr["p"]),
                 importance=feature_importance(final_model, sel.features))
 
@@ -266,10 +275,16 @@ def test_stage(data: pd.DataFrame, sel: Selection, log: ExperimentLog, trial_sha
 # Robustness / kill tests (post-hoc, reported, never used for selection)
 # --------------------------------------------------------------------------
 def _variant(data, sel: Selection, log: ExperimentLog, label: str, cost=config.BASE_COST_PER_SIDE,
-             **changes) -> dict:
+             preds: pd.DataFrame | None = None, **changes) -> dict:
+    """Re-run the frozen pipeline with one change. `preds` re-uses model output when
+    only the trading rule changes (threshold / mode), avoiding a needless refit."""
     s = Selection(**{**asdict(sel), **changes})
     ppy = periods_per_year(s.horizon)
-    pr, pos = run_frozen(data, s, test_folds(data))
+    if preds is None:
+        pr, pos = run_frozen(data, s, test_folds(data))
+    else:
+        pr = preds
+        pos = positions_from_probs(pr["p"], pr["train_pred_sd"], s.k, s.mode)
     bt = run_backtest(data, pos, cost)
     d = data.loc[pr.index]
     m = classification_metrics(d["y"], pr["p"], d["fwd_logret"])
@@ -286,10 +301,11 @@ def robustness_stage(grid: pd.DataFrame, data: pd.DataFrame, sel: Selection, log
                      include_lgbm_swap: bool = True, mfeat: pd.DataFrame | None = None) -> pd.DataFrame:
     """mfeat: precomputed minute features (they do not depend on lag/offset/horizon)."""
     rows = []
-    # Thresholds and modes around the chosen one (frozen model predictions)
+    # Thresholds and modes around the chosen one (same frozen model predictions)
+    base_pr, _ = run_frozen(data, sel, test_folds(data))
     for k in config.THRESHOLD_K_GRID:
         for mode in config.POSITION_MODES:
-            rows.append(_variant(data, sel, log, f"threshold k={k}, {mode}", k=k, mode=mode))
+            rows.append(_variant(data, sel, log, f"threshold k={k}, {mode}", preds=base_pr, k=k, mode=mode))
     # Feature-group removal
     for g, cols in FEATURE_GROUPS.items():
         feats = [f for f in sel.features if f not in cols]

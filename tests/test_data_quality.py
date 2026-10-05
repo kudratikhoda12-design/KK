@@ -58,3 +58,17 @@ def test_processed_grid_applies_rules_without_filling(tmp_path):
     assert len(grid) == 100                           # regular grid over the full range
     assert grid["close"].isna().sum() == 5            # 3 gap + 1 conflicting + 1 impossible
     assert dict(zip(log["treatment"], log["count"]))["drop exact duplicate rows"] == 1
+
+
+def test_close_time_check_is_resolution_safe(tmp_path):
+    a = audit(_interim(tmp_path))
+    assert a["timestamps"]["bad_close_time"] == 0
+
+
+def test_funding_lookup_counts_payments_inside_holding_window():
+    from src.backtest import funding_between
+    f = pd.DataFrame({"funding_time": pd.to_datetime(["2024-01-01 00:00", "2024-01-01 08:00"], utc=True),
+                      "funding_rate": [0.0001, 0.0002]})
+    entry = pd.Series(pd.to_datetime(["2023-12-31 23:01", "2024-01-01 01:01"], utc=True))
+    exit_ = entry + pd.Timedelta("60min")
+    assert np.allclose(funding_between(entry, exit_, f), [0.0001, 0.0])

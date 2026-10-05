@@ -67,7 +67,10 @@ def performance(bt: pd.DataFrame, periods_per_year: float) -> dict:
         if gross.std() > 0 else np.nan,
         exposure=float(in_mkt.mean()), n_position_changes=int((bt["turnover"] > 0).sum()),
         turnover_per_year=float(bt["turnover"].sum() / years) if years > 0 else np.nan,
+        # position_changes_per_year counts every entry, exit and flip (an isolated
+        # one-hour trade = 2 changes); round_trips_per_year = turnover / 2.
         trades_per_year=float((bt["turnover"] > 0).sum() / years) if years > 0 else np.nan,
+        round_trips_per_year=float(bt["turnover"].sum() / 2 / years) if years > 0 else np.nan,
         win_rate=float((net[in_mkt] > 0).mean()) if in_mkt.any() else np.nan,
         avg_win=float(wins.mean()) if len(wins) else np.nan,
         avg_loss=float(losses.mean()) if len(losses) else np.nan,
@@ -124,13 +127,19 @@ def var_es(daily: pd.Series, levels=config.VAR_LEVELS) -> pd.DataFrame:
         h_es = -x[x <= -h_var].mean()
         n_var = -(mu + sd * stats.norm.ppf(q))
         n_es = -(mu - sd * stats.norm.pdf(stats.norm.ppf(q)) / q)
-        t_var = -stats.t.ppf(q, df_t, loc_t, scale_t)
-        # ES of a location-scale t: closed form
-        tq = stats.t.ppf(q, df_t)
-        t_es = -(loc_t - scale_t * (df_t + tq ** 2) / (df_t - 1) * stats.t.pdf(tq, df_t) / q)
+        if df_t > 2:
+            t_var = -stats.t.ppf(q, df_t, loc_t, scale_t)
+            # ES of a location-scale t: closed form
+            tq = stats.t.ppf(q, df_t)
+            t_es = -(loc_t - scale_t * (df_t + tq ** 2) / (df_t - 1) * stats.t.pdf(tq, df_t) / q)
+        else:
+            # Fit is degenerate (e.g. a mostly-flat strategy with many exact-zero days):
+            # df <= 2 implies infinite variance, so the parametric t answer is not meaningful.
+            t_var = t_es = np.nan
         rows += [dict(level=a, method="historical", VaR=h_var, ES=h_es),
                  dict(level=a, method="parametric normal", VaR=n_var, ES=n_es),
-                 dict(level=a, method=f"Student-t (df={df_t:.1f})", VaR=t_var, ES=t_es)]
+                 dict(level=a, method=f"Student-t (df={df_t:.1f})" + ("" if df_t > 2 else " - fit degenerate, n/a"),
+                      VaR=t_var, ES=t_es)]
     return pd.DataFrame(rows)
 
 

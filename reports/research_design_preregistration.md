@@ -161,4 +161,5 @@ Sub-periods (half-years); volatility and trend regimes; thresholds around the ch
 
 | Date | Change | Reason | Effect on results |
 |---|---|---|---|
-| (none yet) | | | |
+| 2026-10-05 (before any data) | Added a PSI drift table: feature and score distributions per test block vs development | Diagnostic for "why did performance change", using the same PSI method as the credit module | None: it does not enter selection, the strategy or the classification |
+| 2026-10-05 (before any data) | Clarified that "trades per year" in the eligibility rule (§7) means **position changes** (entries, exits, flips), as implemented from the start; added round trips per year as a separate reported metric | Avoid ambiguity: one in-and-out trade = 2 position changes = 1 round trip | None: the definition matches the code that implements the rule |

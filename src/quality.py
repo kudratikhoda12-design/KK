@@ -54,18 +54,23 @@ def file_summary(df: pd.DataFrame) -> pd.DataFrame:
 def timestamp_checks(df: pd.DataFrame, fs: pd.DataFrame) -> dict:
     t = df["open_time"]
     misaligned = int(((t.dt.second != 0) | (t.dt.microsecond != 0) | (t.dt.nanosecond != 0)).sum())
-    dur = df["close_time"] - df["open_time"]
-    expected_dur = np.where(df["ts_unit"].astype(str) == "us",
-                            pd.Timedelta(microseconds=59_999_999).value,
-                            pd.Timedelta(milliseconds=59_999).value)
-    bad_close = int((dur.to_numpy().astype("int64") != expected_dur).sum())
+    # Compare as Timedeltas (resolution-safe: pandas may store ms/us/ns internally)
+    dur = (df["close_time"] - df["open_time"]).astype("timedelta64[ns]")
+    is_us = (df["ts_unit"].astype(str) == "us").to_numpy()
+    expected_dur = pd.Series(np.where(is_us, 59_999_999_000, 59_999_000_000),
+                             index=df.index).astype("timedelta64[ns]")
+    bad_close = int((dur != expected_dur).sum())
     # Documented change: spot files from 2025-01-01 use microseconds
     fs = fs.copy()
     fs["expected_unit"] = np.where(fs["first"] >= pd.Timestamp("2025-01-01", tz="UTC"), "us", "ms")
     unit_mismatch = fs.loc[fs["ts_unit"].astype(str) != fs["expected_unit"], "source_file"].tolist()
     # Rows whose timestamp falls outside the period named in their file
-    period = df["source_file"].astype(str).str.extract(r"-(\d{4}-\d{2})", expand=False)
-    outside = int((df["open_time"].dt.strftime("%Y-%m") != period).sum())
+    # (vectorised: parse each file name once, compare year*100+month integers)
+    sf = df["source_file"].astype("category")
+    file_ym = sf.cat.categories.str.extract(r"-(\d{4})-(\d{2})", expand=True).astype(int)
+    file_ym = (file_ym[0] * 100 + file_ym[1]).to_numpy()[sf.cat.codes.to_numpy()]
+    row_ym = (df["open_time"].dt.year * 100 + df["open_time"].dt.month).to_numpy()
+    outside = int((row_ym != file_ym).sum())
     return dict(
         first=t.min(), last=t.max(), timezone=str(t.dt.tz),
         misaligned_to_minute=misaligned, bad_close_time=bad_close,
@@ -182,11 +187,12 @@ def stale_checks(df: pd.DataFrame, run_minutes: int = 30) -> dict:
 def monthly_profile(df: pd.DataFrame) -> pd.DataFrame:
     """Coverage and activity by month, to detect changes in data coverage/regimes."""
     d = df.drop_duplicates("open_time")
-    m = d.groupby(d["open_time"].dt.strftime("%Y-%m")).agg(
+    m = d.groupby(d["open_time"].dt.tz_localize(None).dt.to_period("M")).agg(
         rows=("open_time", "size"), volume_btc=("volume", "sum"),
         quote_volume_usdt=("quote_volume", "sum"), trades=("n_trades", "sum"),
         mean_price=("close", "mean"))
     m["avg_trade_size_btc"] = m["volume_btc"] / m["trades"].astype("float64")
+    m.index = m.index.astype(str)
     m.index.name = "month"
     return m.reset_index()
 

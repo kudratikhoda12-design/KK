@@ -42,10 +42,12 @@ def funding_between(entry: pd.Series, exit_: pd.Series, funding: pd.DataFrame | 
     """Sum of funding rates with funding_time in (entry, exit]."""
     if funding is None or funding.empty:
         return np.zeros(len(entry))
-    ft = funding["funding_time"].to_numpy()
+    def ns(x):   # int64 nanoseconds, independent of pandas' internal resolution / timezone
+        return pd.DatetimeIndex(x).as_unit("ns").asi8
+    ft = ns(funding["funding_time"])
     cum = np.concatenate([[0.0], np.cumsum(funding["funding_rate"].to_numpy())])
-    lo = np.searchsorted(ft, entry.to_numpy(), side="right")
-    hi = np.searchsorted(ft, exit_.to_numpy(), side="right")
+    lo = np.searchsorted(ft, ns(entry), side="right")
+    hi = np.searchsorted(ft, ns(exit_), side="right")
     return cum[hi] - cum[lo]
 
 

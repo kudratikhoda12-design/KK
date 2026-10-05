@@ -86,7 +86,7 @@ LGBM_MIN_FOLD_WIN_SHARE = 0.70
 # (past information only).
 THRESHOLD_K_GRID = (0.0, 0.25, 0.5, 1.0, 1.5)
 POSITION_MODES = ("long_short", "long_flat")
-MIN_TRADES_PER_YEAR = 100       # a configuration trading less is not eligible
+MIN_TRADES_PER_YEAR = 100       # position changes (entries, exits, flips) per year; fewer = not eligible
 
 # --------------------------------------------------------------------------
 # Costs: fraction of notional, per side (one buy or one sell)

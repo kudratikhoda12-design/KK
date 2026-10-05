@@ -20,15 +20,20 @@ from . import config
 
 def stationary_bootstrap_indices(n: int, mean_block: float, n_boot: int,
                                  rng: np.random.Generator) -> np.ndarray:
-    """(n_boot, n) array of resampled positions. Blocks wrap around the end."""
+    """(n_boot, n) array of resampled positions. Blocks wrap around the end.
+
+    Each position starts a new block with probability 1/mean_block (position 0
+    always does); within a block, positions advance by one. Vectorised: for
+    every position we find where its block began and add the offset.
+    """
     p = 1.0 / mean_block
-    idx = np.empty((n_boot, n), dtype=np.int64)
-    idx[:, 0] = rng.integers(0, n, n_boot)
     new_block = rng.random((n_boot, n)) < p
+    new_block[:, 0] = True
     starts = rng.integers(0, n, (n_boot, n))
-    for j in range(1, n):
-        idx[:, j] = np.where(new_block[:, j], starts[:, j], (idx[:, j - 1] + 1) % n)
-    return idx
+    pos = np.arange(n)
+    block_begin = np.maximum.accumulate(np.where(new_block, pos, 0), axis=1)
+    rows = np.arange(n_boot)[:, None]
+    return (starts[rows, block_begin] + (pos - block_begin)) % n
 
 
 def bootstrap_stat(arrays: tuple[np.ndarray, ...], func, mean_block: float,

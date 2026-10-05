@@ -1,0 +1,13 @@
+# Tested with Python 3.11 and the versions in brackets.
+pandas>=2.2          # [3.0.6]
+numpy>=1.26          # [2.4.6]
+scipy>=1.11          # [1.17.1]
+scikit-learn>=1.4    # [1.9.1]
+lightgbm>=4.0        # [4.7.0]
+statsmodels>=0.14    # [0.15.0]
+matplotlib>=3.8      # [3.11.2]
+pyarrow>=14          # [25.0.1]
+pytest>=8            # [9.1.1]
+nbformat>=5.9        # [5.11.1]
+nbconvert>=7         # notebooks are executed with: jupyter nbconvert --execute
+ipykernel>=6

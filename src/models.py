@@ -174,3 +174,30 @@ def feature_importance(model, features: list[str]) -> pd.DataFrame:
         return pd.DataFrame({"feature": features, "gain": gain,
                              "gain_share": gain / gain.sum()}).sort_values("gain", ascending=False)
     return pd.DataFrame()
+
+
+def psi(reference: np.ndarray, current: np.ndarray, n_bins: int = 10) -> float:
+    """Population Stability Index with decile bins taken from the reference sample.
+
+    Same definition as the credit module's vintage PSI:
+    sum((cur% - ref%) * ln(cur% / ref%)). Rule of thumb: < 0.1 stable,
+    0.1-0.25 moderate shift, > 0.25 large shift.
+    """
+    ref = np.asarray(reference, float); ref = ref[np.isfinite(ref)]
+    cur = np.asarray(current, float); cur = cur[np.isfinite(cur)]
+    edges = np.unique(np.quantile(ref, np.linspace(0, 1, n_bins + 1)))
+    if len(edges) < 3:
+        return np.nan
+    r = np.histogram(np.clip(ref, edges[0], edges[-1]), edges)[0] / len(ref)
+    c = np.histogram(np.clip(cur, edges[0], edges[-1]), edges)[0] / len(cur)
+    r, c = np.clip(r, 1e-6, None), np.clip(c, 1e-6, None)
+    return float(np.sum((c - r) * np.log(c / r)))
+
+
+def feature_psi_by_block(data: pd.DataFrame, features: list[str], reference_mask: pd.Series,
+                         blocks: pd.Series) -> pd.DataFrame:
+    """PSI of each feature in each evaluation block vs the reference (development) period."""
+    rows = []
+    for b, idx in blocks.groupby(blocks).groups.items():
+        rows.append({"block": b, **{f: psi(data.loc[reference_mask, f], data.loc[idx, f]) for f in features}})
+    return pd.DataFrame(rows)
