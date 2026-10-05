@@ -126,28 +126,30 @@ def stage_eda(symbol: str) -> None:
 
 
 def stage_features(symbol: str) -> None:
+    # Outputs of a second asset are prefixed so they never overwrite the primary (BTC) results
+    pre = "" if symbol == config.SYMBOL else f"{symbol}_"
     g = load_processed(symbol)
     mf = minute_features(g)
     d = build_dataset(g, mfeat=mf)
     d.to_parquet(dataset_path(symbol))
-    timing_table().to_csv(T / "feature_timing_table.csv", index=False)
+    timing_table().to_csv(T / f"{pre}feature_timing_table.csv", index=False)
     # Leakage audit on the REAL data at 24 random decision times spread over the sample
     rng = np.random.default_rng(config.RANDOM_SEED)
     ok = d.dropna(subset=FEATURES).index
     sample = pd.DatetimeIndex(np.sort(rng.choice(ok, 24, replace=False)))
     leak = perturbation_leakage_check(g, sample)
-    leak.to_csv(T / "leakage_perturbation_real_data.csv", index=False)
+    leak.to_csv(T / f"{pre}leakage_perturbation_real_data.csv", index=False)
     usable = d[FEATURES + ["y"]].notna().all(axis=1)
     uni = univariate_tests(d)
-    uni.to_csv(T / "h1_h2_univariate_dev.csv", index=False)
-    regime_ic(d).to_csv(T / "h3_regime_ic_dev.csv", index=False)
+    uni.to_csv(T / f"{pre}h1_h2_univariate_dev.csv", index=False)
+    regime_ic(d).to_csv(T / f"{pre}h3_regime_ic_dev.csv", index=False)
     blk = ic_by_block(d)
-    blk.to_csv(T / "h1_ic_by_block_dev.csv", index=False)
+    blk.to_csv(T / f"{pre}h1_ic_by_block_dev.csv", index=False)
     ci, comp = regime_ic_ci(d)
-    ci.to_csv(T / "h3_regime_ic_ci_dev.csv", index=False)
-    comp.to_csv(T / "h3_regime_comparison_dev.csv", index=False)
-    d[FEATURES].describe().T.to_csv(T / "feature_summary.csv")
-    save_results("features", dict(
+    ci.to_csv(T / f"{pre}h3_regime_ic_ci_dev.csv", index=False)
+    comp.to_csv(T / f"{pre}h3_regime_comparison_dev.csv", index=False)
+    d[FEATURES].describe().T.to_csv(T / f"{pre}feature_summary.csv")
+    save_results(f"{pre}features", dict(
         decisions=len(d), usable=int(usable.sum()), dropped_for_missing=int((~usable).sum()),
         up_rate_dev=float(d.loc[d.index < config.TEST_START, "y"].mean()),
         leakage_features_changed=int(leak["features_changed"].sum()),
@@ -280,11 +282,14 @@ def stage_second_asset(symbol: str = config.SECOND_ASSET) -> None:
     d = pd.read_parquet(dataset_path(symbol))
     log = load_log()
     trials = np.load(config.PROCESSED_DIR / "trial_sharpes.npy")
-    out = test_stage(d, sel, log, trials)
+    out = test_stage(d, sel, log, trials, stage_label=f"second-asset {symbol}")
     log.save()
-    out["benchmarks"].to_csv(T / f"second_asset_{symbol}_benchmarks.csv", index=False)
+    for k in ["benchmarks", "per_block", "calibration"]:
+        out[k].to_csv(T / f"second_asset_{symbol}_{k}.csv", index=False)
     save_results(f"second_asset_{symbol}", dict(classification=out["classification"],
-                                                performance=out["performance"]))
+                                                logloss_test=out["logloss_test"],
+                                                performance=out["performance"],
+                                                per_block=out["per_block"].to_dict("records")))
 
 
 STAGES = ["audit", "eda", "features", "validation", "test", "risk", "stress", "robustness"]

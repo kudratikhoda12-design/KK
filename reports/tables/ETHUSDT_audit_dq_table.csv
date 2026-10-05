@@ -1,0 +1,19 @@
+check,result,severity,action
+Rows / columns,"4,789,278 rows, 16 cols",info,None
+Schema,missing cols: none; unexpected: none,info,Stop if any expected column is missing
+Timestamp units,"89 files ms, 21 files us; unexpected unit in 0 files",info,Unit detected per file and converted to UTC datetime
+Timestamp alignment,21602 not on minute boundary; 18 with close_time != open+59.999s,medium,Misaligned rows reported; grid uses open_time
+Rows outside their file's month,0,info,Reported
+Ordering within files,0 files not time-ordered,info,Data sorted by open_time
+Missing values (cells),0,info,Minute treated as missing
+Duplicate rows (exact),0,info,Keep one copy
+Duplicate timestamps,0 rows,info,See conflicting
+Conflicting duplicates,0 timestamps,info,Minute set to missing
+Missing 1-min intervals,"30,164 of 4,797,840 grid minutes (0.629%) in 33 gaps; longest 20413 min; 2 gaps are phase-shifted candles (21,602 off-grid rows)",medium,Left missing; features need >=90% window coverage
+Gaps longer than 60 min,28,medium,Decisions whose windows/labels touch them are dropped
+Invalid OHLC,high_lt_low=0; high_lt_open_or_close=0; low_gt_open_or_close=0; nonpositive_price=0; vwap_outside_range=0,info,Minute set to missing
+Invalid volume,"negative=0, taker>volume=0, volume w/o trades=0",info,Minute set to missing if negative
+Zero-volume minutes,32237 (zero trades: 32237),low,Kept and flagged (no trading is real)
+Abnormal volume (>50x daily median),11548,info,Kept; investigated in EDA
+Extreme 1-min moves,"897 large (>3% move or range), 28388 locally extreme (|z|>15); 8318 look suspect (thin + full reversal)",medium,Kept and flagged; listed individually
+Stale prices,longest unchanged-close run 93 min; 60 runs >= 30 min,low,Reported

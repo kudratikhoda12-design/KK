@@ -218,7 +218,7 @@ def run_frozen(data: pd.DataFrame, sel: Selection, folds) -> tuple[pd.DataFrame,
 
 
 def test_stage(data: pd.DataFrame, sel: Selection, log: ExperimentLog, trial_sharpes: np.ndarray,
-               funding=None) -> dict:
+               funding=None, stage_label: str = "TEST") -> dict:
     ppy = periods_per_year(sel.horizon)
     folds = test_folds(data)
     pr, pos = run_frozen(data, sel, folds)
@@ -245,7 +245,7 @@ def test_stage(data: pd.DataFrame, sel: Selection, log: ExperimentLog, trial_sha
                               net_cum_return=p_["cumulative_return"],
                               buy_hold_cum_return=performance(bh.loc[bh.index.intersection(idx)], ppy)["cumulative_return"],
                               exposure=p_["exposure"]))
-    log.add("TEST", key(sel.model, sel.params), dict(k=sel.k, mode=sel.mode), sel.features, sel.horizon,
+    log.add(stage_label, key(sel.model, sel.params), dict(k=sel.k, mode=sel.mode), sel.features, sel.horizon,
             sel.lag, sel.offset, "expanding, refit every 6 months", "2024-01-01..end",
             {**cls, **{f"test_{a}": v for a, v in perf.items() if isinstance(v, (int, float))},
              "dsr": dsr.get("dsr", np.nan)}, note="frozen selection, single run")
