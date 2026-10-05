@@ -205,6 +205,7 @@ def read_kline_zip(path: Path) -> pd.DataFrame:
         out[c] = pd.to_numeric(df[c], errors="coerce").astype("float64")
     out["n_trades"] = pd.to_numeric(df["n_trades"], errors="coerce").astype("Int64")
     out["ts_unit"] = unit
+    out["row_in_file"] = np.arange(len(out), dtype="int64")   # original order, for the audit
     out["source_file"] = path.name
     out["has_header"] = has_header
     return out
