@@ -1,8 +1,10 @@
-# Raw and processed data are downloaded by script, never committed (size + CC BY-NC-SA licence)
-data/
+# Data is downloaded by script and never committed (size + CC BY-NC-SA licence)
+data/raw/
+data/interim/
+data/processed/
 *.zip
-*.parquet
-*.csv
+*.zip.bad
 __pycache__/
 .ipynb_checkpoints/
+.pytest_cache/
 .venv/
