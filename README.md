@@ -129,6 +129,7 @@ The notebooks `02`–`10` display the saved outputs (`RUN_STAGE = False`). Do no
 | Document | Content |
 |---|---|
 | [`reports/final_report.md`](reports/final_report.md) | Full research report (27 sections) |
+| [`reports/teaching/`](reports/teaching/Project_Walkthrough_Raw_Data_to_Verdict.md) | **From Raw Data to Final Verdict**: full teaching and interview-defence guide traced to the code (Markdown, Word, PDF), with a reproducibility check |
 | [`reports/project_walkthrough.md`](reports/project_walkthrough.md) | Step-by-step walkthrough in simple English: raw data, cleaning, features, models, results (what, why, how) |
 | [`reports/research_design_preregistration.md`](reports/research_design_preregistration.md) | Frozen design and deviation log |
 | [`reports/pipeline_validation.md`](reports/pipeline_validation.md) | Synthetic negative and positive controls (about the method) |
