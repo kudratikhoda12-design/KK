@@ -167,5 +167,32 @@ def main() -> None:
         print(abl); print(mon); print(reg)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and "--edge" not in sys.argv:
     main()
+
+
+def edge_by_confidence() -> None:
+    """EXPLORATORY (development only; does not change the frozen delta): mean gross trade return of the
+    primary model by confidence |P(up) - 0.5|, including thresholds beyond the pre-registered grid, to show
+    whether any confidence level comes close to covering a base round trip."""
+    cfg = load_config(); rs = cfg["research"]; H = rs["primary_horizon"]
+    paths = Paths(cfg["data_dir"])
+    sel = json.loads((TAB / "primary_model_selection.json").read_text())
+    research = V.development_only(pl.read_parquet(paths.processed / "research" / "ETHUSDT-research.parquet"), rs["holdout"]["start"])
+    oof = pl.read_parquet(paths.processed / "oof" / f"{sel['selected']}.parquet")
+    g = ST.grid_with_preds(research, oof, V._d(rs["walk_forward"]["first_validation"]), V._d(rs["walk_forward"]["end_exclusive"]))
+    e = g["exec_px"].to_numpy(); p = g["p"].to_numpy().astype(float)
+    r = np.full(len(e), np.nan); r[: -(H + 1)] = e[H + 1:] / e[1:-H] - 1
+    side = np.sign(p - 0.5); conf = np.abs(p - 0.5)
+    rows = []
+    for d in (0.0, 0.02, 0.05, 0.075, 0.10, 0.125, 0.15, 0.20):
+        m = np.isfinite(r) & np.isfinite(p) & (conf > d)
+        rows.append({"min_confidence": d, "n_signals": int(m.sum()), "share_of_minutes": float(m.mean()),
+                     "mean_gross_trade_bps": float((side[m] * r[m]).mean() * 1e4) if m.any() else None,
+                     "hit_rate": float((side[m] * r[m] > 0).mean()) if m.any() else None,
+                     "base_round_trip_bps": 2 * ST.cost_scenarios(cfg)["base"].per_side * 1e4})
+    t = pl.DataFrame(rows); t.write_csv(TAB / "dev_edge_by_confidence_EXPLORATORY.csv"); print(t)
+
+
+if __name__ == "__main__" and "--edge" in sys.argv:
+    edge_by_confidence()

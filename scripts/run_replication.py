@@ -59,7 +59,8 @@ def main() -> None:
     for fset in ("A_price", "C_plus_flow", frozen["feature_set"]):
         preds = []
         for fo in folds:
-            tr, va = V.split(dev, fo, H, stride=wf["train_stride"])
+            st_ = frozen["rf_train_stride"] if frozen["model"] == "rf" else wf["train_stride"]
+            tr, va = V.split(dev, fo, H, stride=st_)
             tr = tr.filter(pl.col(f"fwd_ret_{H}").is_not_null()); va = va.filter(pl.col(f"fwd_ret_{H}").is_not_null())
             est = make_model(frozen["model"], frozen).fit(tr.select(FEATURE_SETS[fset]).to_numpy().astype(np.float32),
                                                           tr[f"up_{H}"].to_numpy())

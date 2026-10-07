@@ -3,7 +3,8 @@
 
 The model is trained on the training window of the second-to-last development fold (F6) and explained on
 F6's own validation block (2025-06-01 .. 2025-08-31), so permutation importance is measured out of sample.
-  * LightGBM gain importance
+  * permutation importance of the PRIMARY model (random forest) and its impurity importance
+  * LightGBM (runner-up, near-identical validation scores) gain importance and exact TreeSHAP
   * permutation importance (single features, and whole feature groups permuted jointly), metric = AUC drop
     and log-loss increase, 3 repeats, seed fixed
   * SHAP values via LightGBM's exact TreeSHAP (pred_contrib) on 20,000 validation rows
@@ -53,12 +54,21 @@ def main() -> None:
     Xtr, ytr = tr.select(feats).to_numpy().astype(np.float32), tr[f"up_{H}"].to_numpy()
     Xva, yva = va.select(feats).to_numpy().astype(np.float32), va[f"up_{H}"].to_numpy()
     params = json.loads((TAB / "lgbm_selected_params.json").read_text())
-    model = M.lightgbm(**params).fit(Xtr, ytr)
+    sel = json.loads((TAB / "primary_model_selection.json").read_text())["selected"]
+    rfp = {k: v for k, v in rs["models"]["rf"].items() if k != "train_stride"}
+    # primary model (random forest, its own training stride) -> permutation importance
+    tr_rf, _ = V.split(dev, fo, H, stride=rs["models"]["rf"]["train_stride"])
+    tr_rf = tr_rf.filter(pl.col(f"fwd_ret_{H}").is_not_null())
+    model = M.random_forest(**rfp).fit(tr_rf.select(feats).to_numpy().astype(np.float32), tr_rf[f"up_{H}"].to_numpy())
+    # runner-up LightGBM (near-identical validation performance) -> gain + exact TreeSHAP
+    lgbm = M.lightgbm(**params).fit(Xtr, ytr)
     p0 = model.predict_proba(Xva)[:, 1]
     auc0, ll0 = roc_auc_score(yva, p0), log_loss(yva, p0)
-    out = {"fold": fo.as_dict(), "n_train": len(ytr), "n_valid": len(yva), "auc": auc0, "log_loss": ll0}
+    out = {"primary_model": sel, "fold": fo.as_dict(), "n_train_rf": tr_rf.height, "n_valid": len(yva),
+           "auc_rf": auc0, "log_loss_rf": ll0,
+           "auc_lgbm": float(roc_auc_score(yva, lgbm.predict_proba(Xva)[:, 1]))}
 
-    gain = model.booster_.feature_importance("gain")
+    gain = lgbm.booster_.feature_importance("gain")
     imp = pl.DataFrame({"feature": feats, "group": [GROUP_OF[f] for f in feats], "gain": gain,
                         "gain_share": gain / gain.sum()})
 
@@ -92,7 +102,9 @@ def main() -> None:
 
     # SHAP (exact TreeSHAP from LightGBM)
     ssub = sub[:20_000]
-    contrib = model.booster_.predict(Xva[ssub], pred_contrib=True)[:, :-1]
+    contrib = lgbm.booster_.predict(Xva[ssub], pred_contrib=True)[:, :-1]
+    rf_imp = model[-1].feature_importances_[: len(feats)]
+    imp = imp.join(pl.DataFrame({"feature": feats, "rf_impurity_importance": rf_imp}), on="feature")
     imp = imp.join(pl.DataFrame({"feature": feats, "mean_abs_shap": np.abs(contrib).mean(axis=0)}), on="feature")
     imp = imp.sort("perm_auc_drop", descending=True)
     imp.write_csv(TAB / "interpret_feature_importance.csv")
@@ -111,7 +123,7 @@ def main() -> None:
     for a, f in zip(ax, ("ofi_1", "dist_vwap_15", "obi_1pct", "ret_15")):
         j = feats.index(f)
         a.scatter(Xva[ssub, j], contrib[:, j], s=2, alpha=0.25, color=GCOL[GROUP_OF[f]])
-        a.set_xlabel(f); a.set_title(f"SHAP dependence: {f}")
+        a.set_xlabel(f); a.set_title(f"LightGBM SHAP: {f}")
         lo, hi = np.nanquantile(Xva[ssub, j], [0.005, 0.995]); a.set_xlim(lo, hi)
     ax[0].set_ylabel("SHAP (log-odds of UP)")
     save(fig, FIG / "shap_dependence.png")
@@ -120,7 +132,7 @@ def main() -> None:
     fig, ax = plt.subplots(1, 2, figsize=(13, 5.2))
     ax[0].barh(top["feature"][::-1], top["perm_auc_drop"][::-1] * 1e3, xerr=top["perm_auc_drop_sd"][::-1] * 1e3,
                color=[GCOL[g] for g in top["group"][::-1]])
-    ax[0].set_xlabel("AUC drop when permuted (x 1e-3)"); ax[0].set_title("Permutation importance (top 20, out of sample)")
+    ax[0].set_xlabel("AUC drop when permuted (x 1e-3)"); ax[0].set_title("Primary RF: permutation importance (top 20, out of sample)")
     ax[1].bar(gimp["group"], gimp["perm_auc_drop"] * 1e3, yerr=gimp["perm_auc_drop_sd"] * 1e3,
               color=[GCOL[g] for g in gimp["group"]])
     ax[1].set_ylabel("AUC drop (x 1e-3)"); ax[1].set_title("Feature groups permuted jointly")

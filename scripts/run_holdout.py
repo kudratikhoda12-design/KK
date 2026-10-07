@@ -98,7 +98,8 @@ def main() -> None:
            "frozen": frozen}
 
     # ------------------------------------------------------------------ primary model
-    preds, rows = walk_holdout(full, blocks, frozen["model"], frozen["feature_set"], H, frozen, stride)
+    primary_stride = frozen["rf_train_stride"] if frozen["model"] == "rf" else stride
+    preds, rows = walk_holdout(full, blocks, frozen["model"], frozen["feature_set"], H, frozen, primary_stride)
     preds.write_parquet(paths.processed / f"holdout_preds_{sym}_primary.parquet")
     blk = pl.DataFrame(rows)
     blk.write_csv(TAB / "primary_blocks.csv")
@@ -227,7 +228,7 @@ def main() -> None:
         for h in [x for x in rs["horizons"] if x != H]:
             for fset in ("A_price", "C_plus_flow", "E_all"):
                 for kind in ("logit", "lgbm"):
-                    pr, _ = walk_holdout(full, blocks, kind, fset, h, frozen, stride)
+                    pr, _ = walk_holdout(full, blocks, kind, fset, h, frozen, stride)  # same as development
                     m = EV.classification(pr["y"].to_numpy(), pr["p"].to_numpy(), pr["fwd"].to_numpy())
                     hrows.append({"model": kind, "fset": fset, "h": h, "auc": m["auc"], "log_loss": m["log_loss"],
                                   "log_loss_baseline": m["log_loss_baseline"], "ic_spearman": m["ic_spearman"]})

@@ -1,0 +1,83 @@
+{
+ "rule": "lowest mean validation log loss, feature set E_all, h=15",
+ "candidates": [
+  {
+   "config": "rf_E_all_h15",
+   "log_loss_mean": 0.6910792730603974,
+   "auc_mean": 0.5380546436319827,
+   "auc_sd": 0.008704909231549342
+  },
+  {
+   "config": "lgbm_E_all_h15",
+   "log_loss_mean": 0.6911252929485833,
+   "auc_mean": 0.5387774537232121,
+   "auc_sd": 0.0083776960052558
+  },
+  {
+   "config": "logit_E_all_h15",
+   "log_loss_mean": 0.6916694555963788,
+   "auc_mean": 0.5366560170441984,
+   "auc_sd": 0.008137584365079388
+  }
+ ],
+ "selected": "rf_E_all_h15",
+ "delta_rule": "highest out-of-fold net Sharpe at base cost",
+ "delta_selected": 0.05,
+ "delta_table": [
+  {
+   "delta": 0.005,
+   "active_share": 0.909698234503934,
+   "sharpe_base": -24.514731692727498,
+   "total_return_base": -0.9999999966501272,
+   "sharpe_gross": 1.2735146404314572,
+   "sum_gross": 1.1113688506420776,
+   "breakeven_bps": 0.2964509365129117,
+   "n_trades": 758470,
+   "turnover_per_day": 63.78422567645365
+  },
+  {
+   "delta": 0.01,
+   "active_share": 0.8208369314910766,
+   "sharpe_base": -24.269668790958853,
+   "total_return_base": -0.9999999950811166,
+   "sharpe_gross": 1.2887460002661337,
+   "sum_gross": 1.1073859765600726,
+   "breakeven_bps": 0.3012496286083404,
+   "n_trades": 684381,
+   "turnover_per_day": 62.599194012665514
+  },
+  {
+   "delta": 0.02,
+   "active_share": 0.6501283342928421,
+   "sharpe_base": -23.587948685349502,
+   "total_return_base": -0.9999999786146077,
+   "sharpe_gross": 1.2947722897948633,
+   "sum_gross": 1.0368320874271366,
+   "breakeven_bps": 0.30557069238650475,
+   "n_trades": 542051,
+   "turnover_per_day": 57.866666666666674
+  },
+  {
+   "delta": 0.03,
+   "active_share": 0.4971790443293034,
+   "sharpe_base": -22.11845291495758,
+   "total_return_base": -0.9999997677024622,
+   "sharpe_gross": 1.5275562171868042,
+   "sum_gross": 1.097155126099166,
+   "breakeven_bps": 0.3700418737675343,
+   "n_trades": 414528,
+   "turnover_per_day": 50.693839953943574
+  },
+  {
+   "delta": 0.05,
+   "active_share": 0.2609455958549223,
+   "sharpe_base": -17.818939821247955,
+   "total_return_base": -0.9999305994814887,
+   "sharpe_gross": 2.092124226512229,
+   "sum_gross": 1.1073977511571211,
+   "breakeven_bps": 0.5731705908863916,
+   "n_trades": 217566,
+   "turnover_per_day": 33.08624064478987
+  }
+ ]
+}
