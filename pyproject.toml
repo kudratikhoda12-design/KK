@@ -1,0 +1,6 @@
+# Tool configuration only. Dependencies are listed in requirements.txt and the
+# project is run from the repository root (it is not installed as a package).
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]          # lets a bare `pytest` import `src` from the repository root

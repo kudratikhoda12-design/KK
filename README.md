@@ -14,6 +14,39 @@
 | Robustness | 23 kill tests: AUC 0.534–0.548 in all; **net negative in all 23** |
 | Verdict (pre-registered rule) | **WEAK / INCONCLUSIVE**: a real but economically worthless signal. Do not deploy. |
 
+## Start here (for reviewers)
+
+| Question | Answer |
+|---|---|
+| **What is this project?** | An out-of-sample test of whether BTCUSDT's next-hour direction can be predicted and traded profitably, using 4.8M Binance one-minute candles, a pre-registered design and a costed backtest. |
+| **What problem does it solve?** | It separates *predictive* skill from *economic* value: the signal is real (AUC 0.545) but worth ~0.19 bp per trade side against ~7 bp of cost. |
+| **Where is the write-up?** | [`reports/Final_Gravia_Project_Report.pdf`](reports/Final_Gravia_Project_Report.pdf) (17 pages) and [`reports/Gravia_Project_One_Page_Summary.pdf`](reports/Gravia_Project_One_Page_Summary.pdf) |
+| **Where are the results?** | [`reports/results.json`](reports/results.json) (every headline number), [`reports/selection.json`](reports/selection.json) (frozen choice), [`reports/tables/`](reports/tables/) (65 tables), [`figures/`](figures/) |
+| **Where is the main code?** | [`src/`](src/) (data → quality → features → validation/models → backtest → risk/stress → pipeline) and [`scripts/run_pipeline.py`](scripts/run_pipeline.py) |
+| **Where should I look first?** | [`reports/TECHNICAL_REVIEWER_README.md`](reports/TECHNICAL_REVIEWER_README.md) — a 2-minute / 10-minute reading map |
+
+**Install and test** (Python 3.11; no data needed for the tests):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate              # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python -m pytest -q                    # 26 passed
+code .                                 # open in VS Code (tests appear in the Testing panel)
+```
+
+**Reproduce the pipeline** (downloads ~0.45 GB of public Binance data first; full recipe in [`reproduction/README.md`](reproduction/README.md)):
+
+```bash
+python -m src.data download --symbol BTCUSDT --funding && python -m src.data build --symbol BTCUSDT
+python -m src.data download --symbol ETHUSDT && python -m src.data build --symbol ETHUSDT
+python scripts/verify_checksums.py                     # same files as the study?
+python scripts/run_pipeline.py --stage all             # ~10 min
+python scripts/run_pipeline.py --stage second_asset    # ETH replication
+```
+
+To exercise every stage without downloading anything or touching any result: `python scripts/smoke_test_synthetic.py` (synthetic data, temporary folder, ~7 min).
+
 ---
 
 ## 1. Motivation
@@ -144,7 +177,9 @@ Use historical **prediction-market prices, fills / order book and settlement dat
 | 9 | Risk analysis | `reports/tables/risk_*.csv`, `stress_*.csv`, `figures/risk_mc_one_year.png` |
 | 10 | Robustness results | `reports/tables/robustness_variants.csv`, `robustness_spot_fee_check.csv`, `figures/robustness_variants.png` |
 | 11 | ETH replication | `reports/tables/second_asset_ETHUSDT_*.csv`, `ETHUSDT_*.csv`, `results.json` → `second_asset_ETHUSDT` |
-| 12 | Final interview documentation | `reports/teaching/` (walkthrough, readiness audit, final completion report; Markdown, Word, PDF), `reports/gravia_mapping_and_cv.md` |
+| 12 | Final report and interview documentation | `reports/Final_Gravia_Project_Report.*` (formal report: PDF, Word, Markdown), `reports/Gravia_Project_One_Page_Summary.pdf`, `reports/TECHNICAL_REVIEWER_README.md`, `reports/teaching/` (teaching walkthrough, readiness audit, completion report), `reports/gravia_mapping_and_cv.md` |
+| — | Reproduction recipe and reference checksums | `reproduction/README.md`, `reproduction/checksums/`, `scripts/verify_checksums.py` |
+| — | Every file explained | `PROJECT_FILE_MANIFEST.md`; licence and data notes in `PROJECT_NOTES.md` |
 | — | Every trial, including failures | `reports/tables/experiment_log.csv` (44 rows, 1 TEST row) |
 | — | Full research report | `reports/final_report.md` |
 | — | Tests | `tests/` (26 tests incl. synthetic negative/positive pipeline controls) |
@@ -167,6 +202,8 @@ python -m src.data build --symbol ETHUSDT
 python scripts/run_pipeline.py --stage all                     # ~10 min
 python scripts/run_pipeline.py --stage second_asset            # ETH replication, ~4 min
 python scripts/run_spot_fee_check.py                           # pre-registered spot-fee check
+python scripts/verify_checksums.py                             # compare downloads with the study's reference hashes
+python scripts/make_report_figures.py                          # three report figures, from saved tables only
 ```
 
 **Expected key outputs:** `reports/selection.json` → LightGBM config 1, k = 1.5, long_flat; `reports/results.json` → test AUC 0.5448, net Sharpe −5.841; `reports/tables/robustness_variants.csv` → 23 rows, all net Sharpe < 0.
@@ -177,7 +214,10 @@ python scripts/run_spot_fee_check.py                           # pre-registered 
 
 | Document | Content |
 |---|---|
-| [`reports/final_report.md`](reports/final_report.md) | Full research report (27 sections + addendum) |
+| [`reports/Final_Gravia_Project_Report.pdf`](reports/Final_Gravia_Project_Report.pdf) | **Formal project report** (17 pages; also `.docx` and `.md`) |
+| [`reports/Gravia_Project_One_Page_Summary.pdf`](reports/Gravia_Project_One_Page_Summary.pdf) | One-page summary |
+| [`reports/TECHNICAL_REVIEWER_README.md`](reports/TECHNICAL_REVIEWER_README.md) | Where to look, by time available and by topic |
+| [`reports/final_report.md`](reports/final_report.md) | Detailed working report (27 sections + addendum) |
 | [`reports/teaching/Final_Completion_Report.md`](reports/teaching/Final_Completion_Report.md) | Completion checklist, verification, reproducibility, CV bullets, claims, interview answers |
 | [`reports/teaching/Final_Interview_Readiness_Audit.md`](reports/teaching/Final_Interview_Readiness_Audit.md) | Credit-module evidence status, selection-rule wording, claims audit |
 | [`reports/teaching/Project_Walkthrough_Raw_Data_to_Verdict.md`](reports/teaching/Project_Walkthrough_Raw_Data_to_Verdict.md) | Complete teaching walkthrough traced to the code |

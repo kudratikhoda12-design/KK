@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quantitative Market Signal Research — One-Page Summary</title>
+<style>
+  @page { size: A4; margin: 0; }
+  :root { --ink: #16181d; --muted: #555a63; --rule: #d6dbe3; --blue: #2a78d6; --orange: #eb6834; --tint: #f3f6fb; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  body { font-family: "Liberation Sans", Arial, Helvetica, sans-serif; color: var(--ink); font-size: 8.9pt; line-height: 1.36; }
+  .page { width: 210mm; height: 297mm; padding: 13mm 14mm 11mm 14mm; display: flex; flex-direction: column; }
+  header h1 { font-size: 16.5pt; margin: 0; color: #1f3864; letter-spacing: -0.2px; }
+  header .sub { font-size: 9.6pt; color: var(--blue); margin: 2px 0 3px; }
+  header .who { font-size: 8.3pt; color: var(--muted); padding-bottom: 6px; border-bottom: 2px solid var(--blue); }
+  .lead { margin: 8px 0 7px; font-size: 9.4pt; }
+  .tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 8px; }
+  .tile { background: var(--tint); border-radius: 6px; padding: 6px 7px 5px; }
+  .tile .v { font-size: 13.5pt; font-weight: 700; color: #1f3864; line-height: 1.1; }
+  .tile .v.neg { color: #b5462a; }
+  .tile .l { font-size: 7.4pt; color: var(--muted); margin-top: 2px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  h2 { font-size: 9.6pt; color: #1f3864; margin: 7px 0 3px; padding-bottom: 2px; border-bottom: 1px solid var(--rule); }
+  p { margin: 0 0 4px; }
+  ul { margin: 0 0 4px; padding-left: 13px; }
+  li { margin-bottom: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 2px 0 4px; }
+  th, td { text-align: left; padding: 2.5px 4px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { background: #e4eaf3; font-weight: 700; }
+  td.n { text-align: right; white-space: nowrap; }
+  figure { margin: 4px 0 2px; }
+  figure img { width: 100%; display: block; border: 1px solid var(--rule); border-radius: 4px; }
+  figcaption { font-size: 7.2pt; color: var(--muted); margin-top: 2px; }
+  .concl { margin-top: 8px; background: #fdf1ea; border-left: 3px solid var(--orange); padding: 6px 9px; font-size: 9pt; }
+  footer { margin-top: auto; font-size: 7.2pt; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Quantitative Market Signal Research &amp; Portfolio Risk Analysis</h1>
+    <div class="sub">Out-of-sample BTCUSDT directional prediction, trading-cost analysis, robustness testing and risk evaluation</div>
+    <div class="who">Kudrati Khoda · M.Tech Quality, Reliability &amp; Operations Research, Indian Statistical Institute, Kolkata · October 2026</div>
+  </header>
+
+  <p class="lead"><b>Question.</b> Can information available at time <i>t</i> predict the direction of the next 60-minute BTCUSDT return out of sample, well enough to beat no-skill <i>and</i> make money after realistic trading costs? <b>Answer:</b> the direction is slightly but robustly predictable; the edge is far too small to pay for trading it.</p>
+
+  <div class="tiles">
+    <div class="tile"><div class="v">0.545</div><div class="l">test AUC (95% CI 0.538–0.552)</div></div>
+    <div class="tile"><div class="v">p = 0.004</div><div class="l">log-loss gain vs base rate (Newey–West)</div></div>
+    <div class="tile"><div class="v neg">−5.84</div><div class="l">net Sharpe (CI −6.94 to −4.77)</div></div>
+    <div class="tile"><div class="v">0.19 bp</div><div class="l">break-even cost per side vs 7 bp assumed</div></div>
+    <div class="tile"><div class="v neg">23 / 23</div><div class="l">robustness variants negative after costs</div></div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h2>Data</h2>
+      <p>Binance Vision spot BTCUSDT 1-minute candles, 17 Aug 2017 – 30 Sep 2026: <b>4,789,279 rows</b> from 110 monthly files, every one SHA-256 verified; ETHUSDT and perpetual funding rates as secondary data. The audit found no duplicates or impossible candles, 0.63% missing minutes (none in 2024–26), Binance's 2025 switch from millisecond to microsecond timestamps, and 21,602 candles shifted 20.8 s / 14.8 s off the minute. Those were treated as missing, because snapping them to the grid would leak future seconds into "closed" features.</p>
+
+      <h2>Method</h2>
+      <ul>
+        <li>Design, parameters and verdict rule <b>committed to git before any data was downloaded</b>.</li>
+        <li>Decide on the hour from closed candles only; enter at the next minute's open; exit 60 minutes later. Label = sign of that log return; labels never overlap.</li>
+        <li>16 scale-free features (returns, momentum, realised volatility, relative volume, taker-buy imbalance, candle position). Randomising all data after <i>t</i> at 24 real times changed <b>0 of 16</b> features.</li>
+        <li>Logistic regression vs small LightGBM; purged expanding walk-forward over 10 half-years (2019–23); LightGBM kept only if it raised mean AUC by &gt; 0.005 <i>and</i> beat LR on log-loss in ≥ 70% of folds (it passed at exactly 7/10).</li>
+        <li>Selection frozen, then <b>one untouched test</b>, Jan 2024 – Sep 2026, with six-monthly refits.</li>
+      </ul>
+
+      <h2>What the model learned</h2>
+      <p>A short-term <b>reversal</b>: after a rise, the next hour is slightly more likely to be weaker. It replicated on ETHUSDT with no re-tuning (AUC 0.546). Accuracy was 53.5% against a 50.5% base rate, but mean next-hour returns across probability deciles span only −1.3 to +1.9 bp.</p>
+    </div>
+    <div>
+      <h2>Trading result (untouched test)</h2>
+      <table>
+        <tr><th></th><th>Strategy</th><th>Buy &amp; hold</th></tr>
+        <tr><td>Cost model</td><td colspan="2">7 bp/side (5 bp fee + 1 bp spread + 1 bp slippage, last two assumed) + actual funding</td></tr>
+        <tr><td>Net return</td><td class="n"><b>−92.2%</b></td><td class="n">+97.6%</td></tr>
+        <tr><td>Net / gross Sharpe</td><td class="n">−5.84 / 0.16</td><td class="n">0.76</td></tr>
+        <tr><td>Max drawdown</td><td class="n">−92.3%</td><td class="n">−53.7%</td></tr>
+        <tr><td>Time in market; round trips/yr</td><td class="n">9.1%; 667</td><td class="n">100%</td></tr>
+      </table>
+      <figure>
+        <img src="../figures/test_equity.png" alt="Growth of one unit over the test period: strategy net and gross of costs versus buy-and-hold">
+        <figcaption>Test period, log scale: strategy net and gross of costs vs buy-and-hold (figures/test_equity.png).</figcaption>
+      </figure>
+
+      <h2>Robustness and risk</h2>
+      <p>23 pre-specified variants (thresholds, feature removal, model swap, 0/5-min execution lag, shifted hours, 15/30-min horizons): AUC 0.534–0.548 in every one, net Sharpe negative in every one. Only zero costs are profitable; a spot-fee variant gives −9.86. Daily 99% VaR 3.53% vs 2.18% under normality; rolling VaR passes Kupiec (p = 0.42, 0.60); 5,000 block-bootstrap years: none profitable. AUC fell from 0.567 (2024H2) to 0.532 (2026H2) as volatility features drifted (PSI up to 3.5).</p>
+    </div>
+  </div>
+
+  <div class="concl"><b>Conclusion.</b> The study found a small, persistent and statistically detectable reversal signal in BTCUSDT, and showed that it is not economically viable for a taker at realistic costs. Predictive accuracy did not become profit. Pre-registered verdict: <b>weak / inconclusive</b>; the strategy should not be deployed.</div>
+
+  <h2>Relevance to quantitative research at Gravia</h2>
+  <p>Hypothesis testing with pre-registered pass/fail criteria · ML that turns probabilities into positions and costed trades · scepticism toward backtests (leakage test, purged walk-forward, one test run, every trial logged) · messy multi-million-row crypto data · understanding why a signal fails and decays. <i>Not covered:</i> prediction-market order books or fills, on-chain/wallet data, SQL/Polars, live trading.</p>
+
+  <footer>Code, tests, reports and reproduction instructions: repository <b>KK</b> (README.md, reports/Final_Gravia_Project_Report.pdf). Market data © Binance via Binance Vision (CC BY-NC-SA 4.0), not redistributed. Research on historical data; not investment advice.</footer>
+</div>
+</body>
+</html>
