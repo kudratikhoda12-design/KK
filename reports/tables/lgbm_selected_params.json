@@ -1,0 +1,5 @@
+{
+ "num_leaves": 15,
+ "min_child_samples": 500,
+ "n_estimators": 200
+}

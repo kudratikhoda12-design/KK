@@ -1,0 +1,119 @@
+{
+ "symbol": "ETHUSDT",
+ "holdout_rows": 525600,
+ "blocks": [
+  {
+   "name": "F1",
+   "train_start": "2023-03-01T00:00:00+00:00",
+   "train_end": "2025-09-30T00:00:00+00:00",
+   "valid_start": "2025-10-01T00:00:00+00:00",
+   "valid_end": "2026-01-01T00:00:00+00:00"
+  },
+  {
+   "name": "F2",
+   "train_start": "2023-03-01T00:00:00+00:00",
+   "train_end": "2025-12-31T00:00:00+00:00",
+   "valid_start": "2026-01-01T00:00:00+00:00",
+   "valid_end": "2026-04-01T00:00:00+00:00"
+  },
+  {
+   "name": "F3",
+   "train_start": "2023-03-01T00:00:00+00:00",
+   "train_end": "2026-03-31T00:00:00+00:00",
+   "valid_start": "2026-04-01T00:00:00+00:00",
+   "valid_end": "2026-07-01T00:00:00+00:00"
+  },
+  {
+   "name": "F4",
+   "train_start": "2023-03-01T00:00:00+00:00",
+   "train_end": "2026-06-30T00:00:00+00:00",
+   "valid_start": "2026-07-01T00:00:00+00:00",
+   "valid_end": "2026-10-01T00:00:00+00:00"
+  }
+ ],
+ "frozen": {
+  "frozen_at_utc": "2026-10-07T14:21:08+00:00",
+  "model": "rf",
+  "feature_set": "E_all",
+  "horizon": 15,
+  "lgbm_params": {
+   "num_leaves": 15,
+   "min_child_samples": 500,
+   "n_estimators": 200
+  },
+  "logit_C": 0.1,
+  "rf_params": {
+   "n_estimators": 200,
+   "min_samples_leaf": 500,
+   "max_depth": 10
+  },
+  "rf_train_stride": 15,
+  "delta": 0.05,
+  "train_stride": 5,
+  "embargo_days": 1,
+  "block_months": 3,
+  "flow_rule_z": 1.0,
+  "costs": {
+   "low": {
+    "fee_bps": 2.0,
+    "slippage_bps": 0.5
+   },
+   "base": {
+    "fee_bps": 4.5,
+    "slippage_bps": 1.0
+   },
+   "high": {
+    "fee_bps": 5.0,
+    "slippage_bps": 2.0
+   },
+   "half_spread_bps": 0.023
+  },
+  "neutral_band": 0.0011,
+  "holdout": {
+   "start": "2025-10-01",
+   "end_exclusive": "2026-10-01"
+  },
+  "selection": {
+   "rule": "lowest mean validation log loss, feature set E_all, h=15",
+   "candidates": [
+    {
+     "config": "rf_E_all_h15",
+     "log_loss_mean": 0.6910792730603974,
+     "auc_mean": 0.5380546436319827,
+     "auc_sd": 0.008704909231549342
+    },
+    {
+     "config": "lgbm_E_all_h15",
+     "log_loss_mean": 0.6911252929485833,
+     "auc_mean": 0.5387774537232121,
+     "auc_sd": 0.0083776960052558
+    },
+    {
+     "config": "logit_E_all_h15",
+     "log_loss_mean": 0.6916694555963788,
+     "auc_mean": 0.5366560170441984,
+     "auc_sd": 0.008137584365079388
+    }
+   ],
+   "selected": "rf_E_all_h15",
+   "delta_rule": "highest out-of-fold net Sharpe at base cost",
+   "delta_selected": 0.05
+  }
+ },
+ "primary_classification_pooled": {
+  "n": 525540,
+  "base_rate": 0.4979525821060243,
+  "auc": 0.543606219678212,
+  "log_loss": 0.6902045026035231,
+  "log_loss_baseline": 0.6931387966964506,
+  "brier": 0.2485324424381809,
+  "accuracy": 0.5314019865281425,
+  "precision": 0.5289816683010772,
+  "recall": 0.5379909359786621,
+  "f1": 0.533448266062954,
+  "ece": 0.002838464205784008,
+  "pred_up_share": 0.5064333828062564,
+  "ic_spearman": 0.06237439458977318
+ },
+ "primary_tradable_auc": 0.5480055153216572
+}

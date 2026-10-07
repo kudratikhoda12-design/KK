@@ -1,0 +1,6 @@
+# Resume bullets (numbers from the executed pipeline)
+
+- Built a reproducible, checksum-verified data pipeline. It processes **1.88 billion** Binance ETHUSDT-perpetual trades and **3.7 million** order-book depth snapshots into a 1.89-million-row one-minute research dataset. It detected and handled a month-long frozen order-book feed hidden in the public archive.
+- Engineered 47 causal microstructure features (order-flow imbalance, trade imbalance, large-trade flow, percentage-band depth imbalance, funding/OI). I verified them with an automated leakage audit that recomputes features on truncated data (34.8 million values, zero differences). HAC regressions with Holm correction showed that 1-minute order flow predicts a small reversal (t = −9.7).
+- Ran leakage-controlled walk-forward ML (logistic, random forest, LightGBM) with purge/embargo, feature ablation and a frozen, hash-logged methodology. Achieved an untouched-holdout AUC of **0.544** (95% CI 0.539–0.548), well calibrated and above 0.5 in 12/12 months. Replicated on SOL.
+- Designed a cost-aware backtest (next-bar VWAP execution, fees, slippage, funding). It showed that the signal's gross Sharpe of **2.03** has a break-even cost of only **0.49 bps/side**, versus a realistic 5.5 bps, so the result is a rigorous negative: **statistically significant but economically untradable**.

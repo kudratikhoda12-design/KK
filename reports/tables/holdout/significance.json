@@ -1,0 +1,43 @@
+{
+ "holdout_auc": {
+  "auc": 0.543606219678212,
+  "boot_se": 0.0022274530627834016,
+  "ci95": [
+   0.5393970059477575,
+   0.5479816231166232
+  ],
+  "z_vs_0.5": 19.57671764527425
+ },
+ "sharpe_gross": {
+  "sharpe": 2.0281028795480665,
+  "ci95": [
+   0.321926417511777,
+   3.749298344850706
+  ],
+  "days": 365
+ },
+ "sharpe_net": {
+  "sharpe": -20.372191730426405,
+  "ci95": [
+   -23.047706863456796,
+   -18.26535580892077
+  ],
+  "days": 365
+ },
+ "n_configs_development": 43,
+ "n_binary_classifier_configs_development": 41,
+ "n_signal_thresholds": 5,
+ "n_univariate_stat_tests": 36,
+ "bonferroni": {
+  "alpha": 0.05,
+  "n_tests": 43,
+  "one_sided_z_needed": 3.0451579519337932,
+  "holdout_auc_z": 19.57671764527425,
+  "passes": true
+ },
+ "sharpe_hurdle_max_of_noise": {
+  "n_strategy_variants": 215,
+  "expected_max_sharpe_noise": 3.277388603180179,
+  "years": 1.0
+ }
+}
