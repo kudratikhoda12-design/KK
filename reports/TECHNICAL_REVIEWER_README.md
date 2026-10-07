@@ -67,7 +67,7 @@ python -m pytest -q                          # 26 tests, no data needed
 python scripts/smoke_test_synthetic.py       # every stage on synthetic data, temporary folder only
 ```
 
-The full pipeline needs the Binance data first; see `reproduction/README.md`. Notebooks `02`–`10` display the saved outputs of each stage without re-running anything.
+The full pipeline needs the Binance data first; see `reproduction/README.md`. A clean extraction of the delivery package, run end to end on the study's input files, reproduced every value in `results.json` and every pipeline table exactly (checked on 7 October 2026). Notebooks `02`–`10` display the saved outputs of each stage without re-running anything.
 
 ## Known limitations (stated up front)
 

@@ -63,6 +63,8 @@ Individual stages can be run with `--stage audit`, `--stage eda`, and so on. The
 
 All random processes use seed 42 and LightGBM runs in deterministic mode, so a re-run on the same files should reproduce these values; tiny floating-point differences across library versions are possible.
 
+**Verified on 7 October 2026.** The delivery ZIP was extracted into an empty folder, installed into a new virtual environment with `pip install -r requirements.txt` (Python 3.11.15, the tested versions), and steps 1 and 3 were run on the study's Binance files. Result: 26/26 tests passed; all 670 numeric values in `reports/results.json`, `reports/selection.json` and all 63 pipeline tables were **identical** to the committed ones; the experiment log matched row for row except for its timestamps. Notebooks `02`–`10` also executed without error.
+
 ## 5. Two things to know before re-running
 
 1. **Re-running creates a new experiment record.** `--stage validation` starts a fresh `reports/tables/experiment_log.csv`, and each `--stage test` adds a TEST row. The evidence that the original test was run exactly once lives in the git history (`selection.json` committed in `231634d` before the test results in `bd2963f`). To keep the original record, work on a copy of the repository.

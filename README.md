@@ -45,7 +45,7 @@ python scripts/run_pipeline.py --stage all             # ~10 min
 python scripts/run_pipeline.py --stage second_asset    # ETH replication
 ```
 
-To exercise every stage without downloading anything or touching any result: `python scripts/smoke_test_synthetic.py` (synthetic data, temporary folder, ~7 min).
+To exercise every stage without downloading anything or touching any result: `python scripts/smoke_test_synthetic.py` (synthetic data, temporary folder, ~7 min). A clean extraction of this package, run end to end on the study's Binance files, reproduced every value in `reports/results.json` and every pipeline table exactly.
 
 ---
 
