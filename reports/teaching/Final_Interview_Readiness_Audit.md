@@ -176,7 +176,7 @@ Column 2 uses **YES**, **YES, WITH QUALIFICATION** or **NO**.
 | Features use only closed candles | YES | "Features are computed per minute and shifted one minute, so at t they come from the candle that closed at t." | `build_dataset`; leakage unit tests |
 | Leakage audit | YES, WITH QUALIFICATION | "At 24 real decision times I randomised everything at or after t; 0 of 16 features changed, while every target did. That tests feature look-ahead; purging and in-fold scaling handle the other leakage routes. It can't prove there is no leakage of any kind." | `leakage_perturbation_real_data.csv` |
 | Pre-registration | YES, WITH QUALIFICATION | "I committed the design and every parameter to git before downloading any data. It's a self-registration in my own repository, so the evidence is the commit history, not a public registry." | `b312d58` 20:26 UTC; first download 21:08 UTC |
-| Nothing changed after seeing data | YES, WITH QUALIFICATION | "Every later change is in the deviation log; none changed the model, features, selection or test. One pre-registered check, a 10 bp spot-fee scenario, was not run." | Deviation log; `FEE_SPOT_TAKER` unused |
+| Nothing changed after seeing data | YES, WITH QUALIFICATION | "Every later change is in the deviation log; none changed the model, features, selection or test. One pre-registered check, a 10 bp spot-fee scenario, was run late (7 Oct 2026) by re-pricing the frozen positions: net Sharpe −9.86." | Deviation log; `robustness_spot_fee_check.csv` |
 
 ## C. Models
 
@@ -252,7 +252,7 @@ Column 2 uses **YES**, **YES, WITH QUALIFICATION** or **NO**.
 
 | Skill | Can I claim it? | Correct interview wording | Evidence |
 |---|---|---|---|
-| Python / pandas | YES | "A 13-module pandas pipeline over 4.8M rows with 25 tests." | `src/`, `tests/` |
+| Python / pandas | YES | "A 13-module pandas pipeline over 4.8M rows with 26 tests." | `src/`, `tests/` |
 | Polars / SQL / ClickHouse | NO | "Not in this project; I used pandas and parquet." | — |
 | Statistical intuition | YES | "Block bootstrap, Newey–West, Holm, permutation, Deflated Sharpe — and knowing significance isn't size." | Stats code and outputs |
 | Predictive modelling | YES | "LR and LightGBM with calibration, importance and drift analysis." | Test outputs |
@@ -298,7 +298,7 @@ Column 2 uses **YES**, **YES, WITH QUALIFICATION** or **NO**.
 
 ## 1. FINAL PROJECT STATUS
 
-**Is it interview-ready?** The market module is. It is complete, reproducible from public data, internally consistent, and every headline number traces to code and a saved output (25/25 tests pass). The credit module is presentable **only with honest wording**: its numbers come from your original report, and its LightGBM result cannot be reproduced.
+**Is it interview-ready?** The market module is. It is complete, reproducible from public data, internally consistent, and every headline number traces to code and a saved output (26/26 tests pass after the completion pass). The credit module is presentable **only with honest wording**: its numbers come from your original report, and its LightGBM result cannot be reproduced.
 
 **What is strong.**
 * Pre-registration committed before the data, a frozen selection committed before the test, and exactly one test run, all visible in git and the experiment log.
@@ -310,7 +310,7 @@ Column 2 uses **YES**, **YES, WITH QUALIFICATION** or **NO**.
 * Spread and slippage are assumptions → "break-even is below the fee alone, so the conclusion doesn't depend on them."
 * LightGBM was selected at the threshold and lost more money than LR → "a lesson: I'd add an economic criterion to the rule next time."
 * The permutation test used LR, not the selected model → say so.
-* One venue, two correlated assets; strong feature drift; a pre-registered spot-fee check not run.
+* One venue, two correlated assets; strong feature drift; a pre-registered spot-fee check that was only run late (it made the loss worse: net Sharpe −9.86).
 * Credit module: no data, no saved outputs, LightGBM code missing.
 
 **What MUST be fixed before the interview.** Only your CV (see "Remaining actions"). The repository documentation fixes were made in this audit.

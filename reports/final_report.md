@@ -345,3 +345,16 @@ That is "statistical evidence on test without positive net performance". Stated 
 ## 27. Gravia relevance
 
 See `reports/gravia_mapping_and_cv.md` for the requirement-by-requirement mapping. In short, the project shows the full loop the JD describes: question → data → hypothesis → test → model → backtest → kill tests → a defensible conclusion. The conclusion is negative, which is the point of having skepticism toward backtests.
+
+---
+
+## Addendum (7 October 2026): pre-registered spot-fee check, executed after the test
+
+Pre-registration §8 listed a spot-trading alternative (0.10% taker fee per side, long/flat only) as a robustness check. It was not run in the original pipeline. It was executed on 7 October 2026 with `scripts/run_spot_fee_check.py`, which re-prices the **frozen** test positions (no refit, no re-selection) at 10 bp fee + 1 bp half-spread + 1 bp slippage = 12 bp per side, without funding.
+
+| Scenario | Cost per side | Net Sharpe (95% CI) | Cumulative net | Max drawdown |
+|---|---|---|---|---|
+| Frozen test, perpetual taker fee + actual funding (original; re-priced check reproduces it exactly) | 7 bp | −5.84 (−6.94, −4.77) | −92.2% | −92.3% |
+| Pre-registered spot alternative | 12 bp | **−9.86** (−10.97, −8.79) | −98.7% | −98.7% |
+
+The result is numerically identical to the existing "+5 bp extra slippage" stress row (§21), as it should be: both are 12 bp per side without funding. **Nothing in sections 1–27 changes**: not the selection, the test result, the robustness results or the WEAK / INCONCLUSIVE classification. Outputs: `reports/tables/robustness_spot_fee_check.csv`, `reports/spot_fee_check.json`.

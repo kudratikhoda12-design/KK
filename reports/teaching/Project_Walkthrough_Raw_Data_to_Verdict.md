@@ -23,7 +23,7 @@ Every number carries one of these labels when it matters:
 | **REPORTED BUT NOT CURRENTLY REPRODUCIBLE FROM THE REPOSITORY** | It appears in a report, but the code or output that would reproduce it is missing. |
 | **HYPOTHETICAL EXAMPLE** | A made-up number used only to teach. Never quote it as a result. |
 
-**What I inspected:** `README.md`; `src/` (13 modules: `config`, `data`, `quality`, `eda`, `features`, `validation`, `models`, `backtest`, `risk`, `stress_test`, `stats`, `pipeline`, `plots`); `scripts/run_pipeline.py`; `reports/selection.json`; `reports/results.json`; all 64 CSV files in `reports/tables/`; the 10 figures; the pre-registration and its deviation log; `data/raw/.../manifest.csv`; the interim and processed parquet files; the credit notebook `01_credit_risk.ipynb`; `credit_module/Credit_Risk_Project_Report.pdf`; and the git log. I also ran the test suite: **25 of 25 tests pass**.
+**What I inspected:** `README.md`; `src/` (13 modules: `config`, `data`, `quality`, `eda`, `features`, `validation`, `models`, `backtest`, `risk`, `stress_test`, `stats`, `pipeline`, `plots`); `scripts/run_pipeline.py`; `reports/selection.json`; `reports/results.json`; all 64 CSV files in `reports/tables/`; the 10 figures; the pre-registration and its deviation log; `data/raw/.../manifest.csv`; the interim and processed parquet files; the credit notebook `01_credit_risk.ipynb`; `credit_module/Credit_Risk_Project_Report.pdf`; and the git log. I also ran the test suite: **25 of 25 tests passed** (26 of 26 after one test was added on 7 Oct 2026).
 
 **Most important teaching rule used throughout.** For every major step you will see six labels: **WHAT** (what we did), **WHY** (why we did it), **HOW** (exactly how), **RESULT** (what we got), **INTERPRETATION** (what it means) and **INTERVIEW** (how to say it).
 
@@ -775,7 +775,7 @@ The pre-registration explicitly says "No robust signal" is a valid and expected 
 
 **Small inconsistency to know about.** The pre-registration text says the AUC gain must be "≥ 0.005"; the code (`src/pipeline.py`) uses "> 0.005". The actual gain was +0.0064, so the difference did not matter. Both wordings were written before any data was downloaded, and the clarification is now recorded in the deviation log (entry dated 2026-10-07) without editing the original §5 sentence.
 
-**One pre-registered check that was not run.** Pre-registration §8 lists a "spot alternative: 0.10% fee per side, long/flat only" as a robustness check. `FEE_SPOT_TAKER` is defined in `config.py` but **never used**, and no output contains this scenario. Because the strategy already loses at 7 bp, a 10 bp fee could only make it worse, but you should disclose it if asked: **pre-registered, not run.**
+**One pre-registered check that was run late.** Pre-registration §8 lists a "spot alternative: 0.10% fee per side, long/flat only" as a robustness check. It was not part of the original pipeline (`FEE_SPOT_TAKER` was defined but unused). It was executed on 2026-10-07, after the test, by `scripts/run_spot_fee_check.py`: the frozen test positions are re-priced at 10 bp fee + 1 bp half-spread + 1 bp slippage = 12 bp per side, with no funding (spot). No model was refitted and nothing was re-selected. Result: net Sharpe **−9.86** (95% CI −10.97 to −8.79), cumulative −98.7% (`reports/tables/robustness_spot_fee_check.csv`). It does not change the selection, the test result or the verdict; it only confirms that higher spot fees make the loss worse.
 
 **INTERPRETATION.** The git history proves the rules came before the data, and the selection came before the test.
 
@@ -1892,7 +1892,7 @@ Only skills the repository actually demonstrates are claimed.
 | Signal discovery | 5 pre-registered hypotheses; found a reversal (supported), order flow (partly), regime dependence (not supported), economic value (rejected) |
 | Skepticism about backtests | Design committed before data; selection frozen before test; one TEST row in the log; 23 kill tests; gross-vs-net and best-variant traps called out |
 | ML | Logistic regression and LightGBM with a pre-registered simplicity rule; calibration; feature importance; drift |
-| Python | 13 modules, a staged runner, 25 passing tests |
+| Python | 13 modules, a staged runner, 26 passing tests |
 | Pandas | 4.79M-row time series: resampling, rolling windows with coverage rules, reindexing, vectorised backtest |
 | Messy data | ms → µs switch, 21,602 phase-shifted candles, 33 gaps, 18 truncated candles, thin 2017 market — each with a written rule |
 | Feature engineering | 16 scale-free features, timing table, perturbation leakage test |
@@ -2327,7 +2327,7 @@ Format: **Simple** → **In this project** → **Example** → **Likely intervie
 * *Simple:* several, each caught by a test or by checking claims against tables.
 * *Technical:* close-time check assumed nanoseconds; outlier z divided by a zero median in 2017; gap denominator counted off-grid rows; a runner bug that would have overwritten BTC with ETH; notebooks that would re-run the test; a degenerate Student-t VaR.
 * *Attack:* "So the code is unreliable."
-* *Response:* "It's verified: 25 tests pass, and none of the fixes changed a treatment or the selection — they're in the deviation log."
+* *Response:* "It's verified: 26 tests pass, and none of the fixes changed a treatment or the selection — they're in the deviation log."
 
 **Q50. How reproducible is it?**
 * *Simple:* one command rebuilds everything from the public data.
@@ -2526,7 +2526,7 @@ for m in config.COST_MULTIPLIERS:            # 0, 1, 2, 3
 * Validation folds, model table, simplicity-rule outcome (+0.0064, 70%), signal grid, baselines, `selection.json`.
 * Test metrics (AUC, CI, HAC, accuracy, confusion, calibration, per-block AUC and net Sharpe, importance, PSI), backtest, benchmarks, capacity.
 * VaR/ES, Kupiec, Monte Carlo, all stress tables, 23 robustness variants, permutation test, ETH replication.
-* 25 of 25 unit/integration tests pass.
+* 26 of 26 unit/integration tests pass (25 when this walkthrough was first written; one phase-shift test added on 7 Oct 2026).
 
 ## Re-derived (not in a saved table, but recomputed read-only from saved files and matching the report)
 
@@ -2542,7 +2542,7 @@ for m in config.COST_MULTIPLIERS:            # 0, 1, 2, 3
 * **Credit LightGBM challenger** (AUC 0.708, KS 0.301, Gini 0.416, Brier 0.1615): no code in the notebook.
 * **All credit-module numbers** come from the original PDF; the notebook code exists for the logistic model but has **no saved outputs** and the LendingClub file is not in the repository.
 * **Exploratory Polymarket decile table** (`exploratory_polymarket_event_deciles.csv`, 56.6% / 55.9%): the table exists, but the code that produced it is not committed.
-* **Pre-registered but not run:** the spot-fee (10 bp, long/flat) robustness scenario (`FEE_SPOT_TAKER` is defined but unused); the "zero-return" baseline is not reported as a row.
+* **Pre-registered, run late (2026-10-07):** the spot-fee (10 bp, long/flat) robustness scenario, by re-pricing the frozen positions (net Sharpe −9.86; `robustness_spot_fee_check.csv`). The "zero-return" baseline (never trade) is trivial and is not reported as a row.
 * **Not saved:** the per-fold threshold scales `s` (`train_pred_sd`), LR coefficients, and test-period predictions (only positions and returns are saved).
 
 ## Assumptions

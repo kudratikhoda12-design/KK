@@ -1,0 +1,47 @@
+{
+  "label": "Pre-registered robustness check (pre-registration section 8), executed after the test",
+  "executed_utc": "2026-10-07T11:42:17+00:00",
+  "code_commit": "481cf56",
+  "definition": "frozen test positions re-priced at FEE_SPOT_TAKER + HALF_SPREAD + SLIPPAGE per side, no funding",
+  "selection_unchanged": true,
+  "test_result_unchanged": true,
+  "base_reprice_matches_recorded_sharpe": true,
+  "results": [
+    {
+      "scenario": "frozen test, perpetual taker fee (original, re-priced check)",
+      "cost_per_side_bp": 7.0,
+      "funding": "actual funding",
+      "net_sharpe": -5.840965662479859,
+      "net_sharpe_ci_low": -6.943011733923619,
+      "net_sharpe_ci_high": -4.765682708943791,
+      "gross_sharpe": 0.16452577743238744,
+      "cumulative_return": -0.9216832927951005,
+      "annualized_return": -0.6041111540056434,
+      "max_drawdown": -0.9230058736612097,
+      "daily_VaR99_hist": 0.035308671792911195,
+      "exposure": 0.09122224527910355,
+      "round_trips_per_year": 667.2273915750155,
+      "cost_sum": 2.5676,
+      "gross_sum": 0.06998500542458375,
+      "net_sum": -2.5130176645754165
+    },
+    {
+      "scenario": "pre-registered spot alternative (executed 2026-10-07)",
+      "cost_per_side_bp": 12.0,
+      "funding": "none (spot)",
+      "net_sharpe": -9.85610095343863,
+      "net_sharpe_ci_low": -10.974867104403693,
+      "net_sharpe_ci_high": -8.787600319672997,
+      "gross_sharpe": 0.16452577743238744,
+      "cumulative_return": -0.9873150710785861,
+      "annualized_return": -0.7958462439140587,
+      "max_drawdown": -0.9874417206617095,
+      "daily_VaR99_hist": 0.037712725856632545,
+      "exposure": 0.09122224527910355,
+      "round_trips_per_year": 667.2273915750155,
+      "cost_sum": 4.4016,
+      "gross_sum": 0.06998500542458375,
+      "net_sum": -4.331614994575416
+    }
+  ]
+}

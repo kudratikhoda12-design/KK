@@ -72,3 +72,25 @@ def test_funding_lookup_counts_payments_inside_holding_window():
     entry = pd.Series(pd.to_datetime(["2023-12-31 23:01", "2024-01-01 01:01"], utc=True))
     exit_ = entry + pd.Timedelta("60min")
     assert np.allclose(funding_between(entry, exit_, f), [0.0001, 0.0])
+
+
+def test_phase_shifted_candles_become_missing_not_snapped(tmp_path):
+    """Candles that start 20.799 s after the minute (as in Binance's Dec 2017 archive) must not be
+    snapped onto the grid: flooring them would let a 'closed' candle carry future seconds."""
+    base = 1704067200000   # 2024-01-01 00:00 UTC in ms
+    rows = []
+    for i in range(60):
+        t = base + i * 60000 + (20799 if 20 <= i < 30 else 0)   # 10 phase-shifted candles
+        o = 100 + i * 0.01
+        rows.append(f"{t},{o},{o + 0.05},{o - 0.05},{o + 0.01},2,{t + 59999},{2 * o},7,1,{o},0")
+    df = read_kline_zip(_zip(tmp_path, "BTCUSDT-1m-2024-01.zip", "\n".join(rows) + "\n"))
+    a = audit(df)
+    assert a["timestamps"]["misaligned_to_minute"] == 10
+    gap = a["gaps"].iloc[0]
+    assert gap["missing_minutes"] == 10 and gap["off_grid_rows_inside"] == 10
+    assert gap["kind"].startswith("phase-shifted")
+    grid, _ = build_processed(df)
+    assert len(grid) == 60
+    assert (grid.index.second == 0).all()                      # nothing off the minute grid
+    assert grid["close"].iloc[20:30].isna().all()              # treated as missing
+    assert grid["close"].drop(grid.index[20:30]).notna().all()

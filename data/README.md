@@ -17,9 +17,9 @@ Everything here is re-created by script, and every file is checked against Binan
 | Columns (no header) | open_time, open, high, low, close, volume, close_time, quote_volume, n_trades, taker_buy_base, taker_buy_quote, ignore |
 | Timestamp unit | **milliseconds before 2025-01-01, microseconds from 2025-01-01**. Detected automatically per file. |
 | Expected rows | 4,797,840 one-minute candles from 2017-08-17 04:00 to 2026-09-30 23:59 if nothing were missing. Measured: 4,789,279 rows, of which 21,602 are off the minute grid (see audit). |
-| Disk (estimate) | Zips ≈ 0.2–0.4 GB; combined parquet ≈ 0.2–0.4 GB. Measured values go in the audit. |
+| Disk (measured) | BTCUSDT zips 235 MB; ETHUSDT zips 219 MB; funding 0.1 MB; BTCUSDT interim parquet 356 MB |
 | Memory (estimate) | ≈ 0.5 GB for the full typed 1-minute table in pandas (13 columns × 8 bytes × 4.8M rows). |
-| Optional, later | ETHUSDT (second-asset robustness); BTCUSDT USD-M `fundingRate` |
+| Also used | ETHUSDT 1m (110 files, second-asset replication); BTCUSDT USD-M `fundingRate` (81 files, 2020-01 → 2026-09, cost model) |
 
 ## Option A: let the cloud session download it (preferred)
 
@@ -42,6 +42,11 @@ python -m src.data download --symbol BTCUSDT --start 2017-08 --end 2026-09
 # 3. Combine into one typed parquet file (no cleaning happens here)
 python -m src.data build --symbol BTCUSDT
 #    -> data/interim/BTCUSDT_1m_raw.parquet
+
+# 4. Funding rates (cost model) and ETHUSDT (replication)
+python -m src.data download --symbol BTCUSDT --funding     # klines already present are skipped
+python -m src.data download --symbol ETHUSDT
+python -m src.data build --symbol ETHUSDT
 ```
 
 On Linux or macOS, `bash scripts/download_data.sh BTCUSDT 2017-08 2026-09` is a shell-only alternative for step 2.
