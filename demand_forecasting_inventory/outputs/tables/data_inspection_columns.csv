@@ -1,0 +1,25 @@
+table,column,dtype,missing,unique
+calendar,date,datetime64[us],0,1969
+calendar,wm_yr_wk,int64,0,282
+calendar,weekday,str,0,7
+calendar,wday,int64,0,7
+calendar,month,int64,0,12
+calendar,year,int64,0,6
+calendar,d,str,0,1969
+calendar,event_name_1,str,1807,30
+calendar,event_type_1,str,1807,4
+calendar,event_name_2,str,1964,4
+calendar,event_type_2,str,1964,2
+calendar,snap_CA,int64,0,2
+calendar,snap_TX,int64,0,2
+calendar,snap_WI,int64,0,2
+sell_prices,store_id,category,0,10
+sell_prices,item_id,category,0,3049
+sell_prices,wm_yr_wk,int64,0,282
+sell_prices,sell_price,float32,0,1048
+sales_train_evaluation (id columns),id,category,0,30490
+sales_train_evaluation (id columns),item_id,category,0,3049
+sales_train_evaluation (id columns),dept_id,category,0,7
+sales_train_evaluation (id columns),cat_id,category,0,3
+sales_train_evaluation (id columns),store_id,category,0,10
+sales_train_evaluation (id columns),state_id,category,0,3

@@ -1,0 +1,7 @@
+H,case,row,series_id,origin_date,prediction,actual
+7,largest prediction,1478,FOODS_2_347_TX_2,2016-01-06,71.74976348876953,42.0
+7,median prediction,512,FOODS_3_784_CA_3,2015-10-14,5.385822772979736,7.0
+7,Christmas in forecast window,107,FOODS_3_449_CA_3,2015-12-18,23.590688705444336,24.0
+28,largest prediction,199,FOODS_3_449_CA_3,2016-04-23,239.78271484375,193.0
+28,median prediction,2036,HOBBIES_1_034_TX_2,2015-08-07,21.891719818115234,19.0
+28,Christmas in forecast window,94,FOODS_3_449_CA_3,2015-11-27,111.63053894042969,104.0

@@ -1,0 +1,7 @@
+policy_group,factor,relative_range_of_mean_total_cost,levels
+A_historical,lead time (3/7/14 d),0.5528930420491858,"3: 581, 7: 769, 14: 1,017"
+A_historical,service level (90/95/98 %),0.17135547552919442,"0.9: 855, 0.95: 792, 0.98: 720"
+A_historical,stockout-penalty scenario (LOW/MEDIUM/HIGH),1.0400364598871439,"HIGH: 1,262, LOW: 441, MEDIUM: 665"
+B_forecast_driven,lead time (3/7/14 d),0.4001108208310884,"3: 559, 7: 679, 14: 836"
+B_forecast_driven,service level (90/95/98 %),0.082729703684116,"0.9: 718, 0.95: 696, 0.98: 661"
+B_forecast_driven,stockout-penalty scenario (LOW/MEDIUM/HIGH),0.8514610879145631,"HIGH: 1,031, LOW: 442, MEDIUM: 602"

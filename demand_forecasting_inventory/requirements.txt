@@ -1,0 +1,20 @@
+# Tested with CPython 3.13 (Linux).  Install with:  pip install -r requirements.txt
+# Core pipeline
+numpy==2.5.3
+pandas==3.0.5
+scipy==1.18.1
+statsmodels==0.15.0
+scikit-learn==1.9.1      # required by the xgboost scikit-learn API and by shap
+xgboost==3.4.1
+shap==0.52.0
+matplotlib==3.11.2
+pyarrow==25.0.1          # parquet for data/processed
+joblib==1.6.0            # parallel model fitting across series
+requests==2.34.2         # dataset download (verified public mirrors)
+tabulate==0.10.0         # DataFrame.to_markdown for the generated reports
+# Tests
+pytest==9.1.1
+# Optional: execute the walkthrough notebook (notebooks/01_results_walkthrough.ipynb)
+nbformat==5.11.1
+nbconvert==7.17.1
+ipykernel==7.4.0

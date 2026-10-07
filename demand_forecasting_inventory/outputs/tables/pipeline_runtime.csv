@@ -1,0 +1,13 @@
+stage,seconds
+env,1.0
+acquire,1.4
+inspect,19.3
+prepare,11.0
+eda,8.2
+forecast,96.6
+evaluate,18.8
+explain,4.1
+uncertainty,2.1
+inventory,9.1
+audit,3.9
+tests,9.3

@@ -1,0 +1,4 @@
+tier,series_idx,series_id,train_mean,sb_class
+high,6,FOODS_2_347_TX_2,3.9985272459499264,smooth
+medium,2,FOODS_3_784_CA_3,1.345360824742268,intermittent
+low,5,HOUSEHOLD_2_228_CA_3,0.5132547864506627,intermittent

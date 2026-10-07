@@ -1,0 +1,4 @@
+table,rows,columns,memory_MB,missing_cells,duplicate_rows,date_min,date_max,unique_days,n_items,n_stores,n_weeks,n_departments,n_categories,n_states,n_day_columns
+calendar,1969,14,0.2,7542,0,2011-01-29,2016-06-19,1969.0,,,,,,,
+sell_prices,6841121,4,102.7,0,0,,,,3049.0,10.0,282.0,,,,
+sales_train_evaluation,30490,1947,119.8,0,0,2011-01-29,2016-05-22,,3049.0,10.0,,7.0,3.0,3.0,1941.0

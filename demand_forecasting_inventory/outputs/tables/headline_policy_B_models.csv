@@ -1,0 +1,4 @@
+lead_time,model,selection_rule
+3,XGBoost,lowest pooled VALIDATION WAPE at horizon H = L
+7,SARIMA,lowest pooled VALIDATION WAPE at horizon H = L
+14,SARIMA,lowest pooled VALIDATION WAPE at horizon H = L

@@ -1,0 +1,52 @@
+{
+  "stores": [
+    "CA_3",
+    "TX_2",
+    "WI_3"
+  ],
+  "n_series_in_selected_stores": 9147,
+  "n_eligible_listed_all_train_days": 3590,
+  "eligible_by_store": {
+    "CA_3": 1223,
+    "TX_2": 1208,
+    "WI_3": 1159
+  },
+  "n_eligible_also_listed_after_train": 3590,
+  "share_eligible_also_listed_after_train": 1.0,
+  "tier_thresholds_mean_daily_sales": {
+    "low": [
+      0.22091310751104565,
+      0.6008836524300442
+    ],
+    "medium": [
+      0.8071060382916053,
+      1.4748527245949927
+    ],
+    "high": [
+      3.3453240058910163,
+      12.637731958762881
+    ]
+  },
+  "pool_mean_quantiles": {
+    "p5": 0.15095729013254786,
+    "p10": 0.22091310751104565,
+    "p25": 0.44035346097201766,
+    "p50": 0.937039764359352,
+    "p75": 2.0631443298969074,
+    "p90": 4.776435935198822,
+    "p97": 12.637731958762881,
+    "p99": 23.36955081001474
+  },
+  "candidates_per_cell": {
+    "CA_3|high": 200,
+    "CA_3|medium": 263,
+    "CA_3|low": 204,
+    "TX_2|high": 125,
+    "TX_2|medium": 243,
+    "TX_2|low": 357,
+    "WI_3|high": 102,
+    "WI_3|medium": 209,
+    "WI_3|low": 336
+  },
+  "selected_all_listed_after_train": true
+}

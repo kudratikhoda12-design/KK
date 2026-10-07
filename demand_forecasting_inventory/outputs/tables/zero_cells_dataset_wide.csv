@@ -1,0 +1,5 @@
+category,cells,share_of_zero_cells
+zero cells (all series-days),40241819,1.0
+A. structural: item not listed that week (no price row),12299413,0.3056376005269543
+B. store-wide closure / outage day (listed item),128154,0.0031845975948552427
+"C. ambiguous: store open, item listed, zero sales (true zero demand OR stockout)",27814252,0.6911778018781904

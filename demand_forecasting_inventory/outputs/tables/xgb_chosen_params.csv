@@ -1,0 +1,5 @@
+H,max_depth,learning_rate,subsample,colsample_bytree,min_child_weight,n_estimators,train_rows,final_fit_rows
+3,6,0.02,0.8,1.0,40,412,23904,29142
+7,3,0.05,0.8,1.0,5,371,23832,29070
+14,6,0.1,1.0,0.7,40,70,23706,28944
+28,5,0.05,0.8,0.5,20,94,23454,28692

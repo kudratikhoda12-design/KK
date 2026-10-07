@@ -1,0 +1,4 @@
+period,first_day_index,last_day_index,n_days,first_date,last_date,share_of_days
+train,0,1357,1358,2011-01-29,2014-10-17,0.6996
+validation,1358,1648,291,2014-10-18,2015-08-04,0.1499
+test,1649,1940,292,2015-08-05,2016-05-22,0.1504

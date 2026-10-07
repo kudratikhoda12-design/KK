@@ -1,0 +1,10 @@
+# raw data are large (~450 MB) and re-created by `python run_project.py` (verified download); never commit them
+data/raw/*.csv
+data/raw/*.part
+# python / tooling
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+# scratch
+*.log

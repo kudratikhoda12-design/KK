@@ -1,0 +1,41 @@
+check,status,detail
+split is chronological,PASS,train 2011-01-29..2014-10-17 | val 2014-10-18..2015-08-04 | test 2015-08-05..2016-05-22
+periods are disjoint and exhaustive,PASS,1358 + 291 + 292 = 1941 days
+evaluation windows stay inside their period (H=3),PASS,"val origins 1357..1645, test origins 1648..1937"
+training targets end before validation starts (H=3),PASS,max target day 1357 <= 1357
+final-fit targets end before test starts (H=3),PASS,max target day 1648 <= 1648
+evaluation windows stay inside their period (H=7),PASS,"val origins 1357..1641, test origins 1648..1933"
+training targets end before validation starts (H=7),PASS,max target day 1357 <= 1357
+final-fit targets end before test starts (H=7),PASS,max target day 1648 <= 1648
+evaluation windows stay inside their period (H=14),PASS,"val origins 1357..1634, test origins 1648..1926"
+training targets end before validation starts (H=14),PASS,max target day 1357 <= 1357
+final-fit targets end before test starts (H=14),PASS,max target day 1648 <= 1648
+evaluation windows stay inside their period (H=28),PASS,"val origins 1357..1620, test origins 1648..1912"
+training targets end before validation starts (H=28),PASS,max target day 1357 <= 1357
+final-fit targets end before test starts (H=28),PASS,max target day 1648 <= 1648
+no random splitting / shuffling API used for fitting or evaluation,PASS,no occurrences
+"rolling_mean_7(t) uses t-6..t (past only), not a centred window",PASS,value 4.2857 == past-window mean 4.2857; centred-window mean would be 5.0000
+"lags, rolling windows (end at the origin), window counts and targets equal explicit loops",PASS,"400 random rows checked, mismatches: 0"
+history/calendar-origin features at origin <= cut-off are unchanged when ALL later sales and prices are perturbed,PASS,"22 features x 3 random cut-offs, 34,452 rows each: identical"
+known-ahead (window) features depend only on the published calendar,PASS,"3 features identical under random sales/price perturbation: snap_days_window, event_days_window, christmas_in_window"
+XGBoost H=3: tuning rows contain no validation/test information,PASS,"23,904 rows, last target day 1357 < validation start 1358"
+XGBoost H=3: final-fit rows contain no test information,PASS,"29,142 rows, last target day 1648 < test start 1649"
+XGBoost H=7: tuning rows contain no validation/test information,PASS,"23,832 rows, last target day 1357 < validation start 1358"
+XGBoost H=7: final-fit rows contain no test information,PASS,"29,070 rows, last target day 1648 < test start 1649"
+XGBoost H=14: tuning rows contain no validation/test information,PASS,"23,706 rows, last target day 1357 < validation start 1358"
+XGBoost H=14: final-fit rows contain no test information,PASS,"28,944 rows, last target day 1648 < test start 1649"
+XGBoost H=28: tuning rows contain no validation/test information,PASS,"23,454 rows, last target day 1357 < validation start 1358"
+XGBoost H=28: final-fit rows contain no test information,PASS,"28,692 rows, last target day 1648 < test start 1649"
+"hyper-parameter search scored on validation rows only (log has validation metrics, no test metrics)",PASS,"columns: H, config_id, is_default, max_depth, learning_rate, subsample, colsample_bytree, min_child_weight ..."
+SES: forecasts at origins <= cut-off unchanged by later data,PASS,max abs diff 0.00e+00
+Holt: forecasts at origins <= cut-off unchanged by later data,PASS,max abs diff 0.00e+00
+HoltWinters: forecasts at origins <= cut-off unchanged by later data,PASS,max abs diff 0.00e+00
+ETS parameters estimated on the training window are independent of later data,PASS,smoothing parameters identical
+SARIMA: forecasts at origins <= cut-off unchanged by later data (state updated one day at a time),PASS,max abs diff 0.00e+00
+XGBoost predictions at origins <= cut-off unchanged by later data,PASS,"31,014 rows, max abs diff 0.00e+00"
+all models forecast the same origins (identical array shapes in val and test),PASS,12 models
+no NaN forecasts in any model/phase,PASS,none
+Policy A reorder-point inputs on day j use data up to day j only,PASS,trailing 28-day mean/std unchanged for days 0..100 after perturbing later demand
+simulation decisions up to day j are independent of demand after day j,PASS,orders and inventory position identical on days 0..100
+sigma_L (Policy B safety stock) is invariant to test-period actuals and test-phase forecasts,PASS,"162 (model, horizon, series) sigmas identical after perturbing all data from day 1649 on"
+validation residual windows end before the test period starts,PASS,last validation window ends on day 1648 < 1649
