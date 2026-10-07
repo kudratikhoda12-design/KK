@@ -95,6 +95,7 @@ Reminder: these are *cumulative resting quantity/notional within ±1…5 % of th
 - Snapshots kept: **3,702,274** (expected ≈ 3,772,800 at 2880/day = 98.131%)
 - Raw rows 38,458,156; invalid removed 0; exact dups 0; conflicting dups 0; rows of extra bands not used (Binance added +-0.2 % bands from 2026-01-15; schema extension, not errors) 1,435,416; incomplete snapshots (≠10 bands) 0; non-monotone cumulative depth 0
 - Gaps between consecutive snapshots > 90 s: **9,511**
+- **Frozen feed:** 97,491 snapshots repeat all 20 band values of their predecessor (2.63%); the longest run is 94,730 snapshots (2025-04-16 10:31:05+00:00 → 2025-05-19 10:26:32+00:00). Book age is measured from the last *changed* snapshot, so these minutes are flagged `book_stale` (`docs/stage2/book_frozen_runs.csv`).
 - Short/missing days (< 90% of 2880 snapshots), flagged `book_short_day` in the bars and **not interpolated**: 12
 
 | date | file_present | n_snapshots |
@@ -127,7 +128,20 @@ Longest snapshot gaps:
 | 2025-07-23 07:36:03+00:00 | 2025-07-23 06:06:32+00:00 | 5,371 |
 | 2023-05-14 00:39:03+00:00 | 2023-05-13 23:56:31+00:00 | 2,552 |
 
-- Bars whose as-of snapshot is older than 120 s (`book_stale`): **14,256** (0.756%); bars with no snapshot at all: 11
+Longest frozen-feed runs:
+
+| start | end | snapshots |
+|---|---|---|
+| 2025-04-16 10:31:05+00:00 | 2025-05-19 10:26:32+00:00 | 94,730 |
+| 2026-03-20 01:44:33+00:00 | 2026-03-20 04:26:32+00:00 | 296 |
+| 2026-04-22 06:34:31+00:00 | 2026-04-22 09:25:00+00:00 | 284 |
+| 2025-08-26 06:43:31+00:00 | 2025-08-26 08:17:01+00:00 | 171 |
+| 2025-12-01 12:11:12+00:00 | 2025-12-01 13:14:05+00:00 | 127 |
+| 2025-05-19 10:28:01+00:00 | 2025-05-19 11:12:02+00:00 | 89 |
+| 2025-08-26 11:24:32+00:00 | 2025-08-26 12:07:30+00:00 | 86 |
+| 2025-07-23 07:38:03+00:00 | 2025-07-23 08:10:40+00:00 | 56 |
+
+- Bars whose as-of snapshot is older than 120 s (`book_stale`): **62,390** (3.307%); bars with no snapshot at all: 11
 
 **Sign-convention / time-zone check.** Average price of resting quantity within the 1% band (notional/depth) vs. the trade VWAP of the minute containing the snapshot, with the snapshot clock shifted by whole hours:
 
@@ -160,15 +174,15 @@ Longest snapshot gaps:
 - n_expected_rows: 377,280
 - n_gaps_gt_5min: 11
 - n_minutes_in_gaps: 755
-- n_nonpositive_open_interest: 78
-- n_null_open_interest: 0
+- n_nonpositive_open_interest_set_null: 78
+- n_null_open_interest_raw: 0
 
 ## 7. Outputs
 
 | output | files | MB |
 |---|---|---|
-| bars_1m | 43 | 408.3 |
-| book_snapshots | 1 | 351.6 |
+| bars_1m | 43 | 415.2 |
+| book_snapshots | 1 | 365.1 |
 | funding | 1 | 0.05606 |
 | metrics | 1 | 15.88 |
 
@@ -235,6 +249,8 @@ Processed 1-minute bar schema (`processed/bars_1m/*.parquet`):
 | ask_notional_3 | Float64 |
 | ask_notional_4 | Float64 |
 | ask_notional_5 | Float64 |
+| book_frozen | Boolean |
+| last_change_ts | Datetime(time_unit='us', time_zone='UTC') |
 | book_age_s | Int64 |
 | book_stale | Boolean |
 | book_short_day | Boolean |
@@ -250,7 +266,8 @@ Preview (last 3 traded minutes of the final month):
 
 ## 8. Data-quality issues relevant to the research
 
-1. **Order book is coarse.** Percentage bands only; no best bid/ask, no spread, no queue information. Book features are null on 14,256 stale minutes (0.756%) and on the 12 short days listed in §4; nothing is interpolated.
+1. **Order book is coarse.** Percentage bands only; no best bid/ask, no spread, no queue information. Book features are null on 62,390 stale minutes (3.307%) and on the 12 short days listed in §4; nothing is interpolated.
+1b. **Frozen order-book feed:** 2025-04-16 10:31:05+00:00 → 2025-05-19 10:26:32+00:00 the archive repeats a single snapshot (94,730 identical snapshots; the daily files look complete but compress unusually well). Without value-change detection the book features would silently carry month-old information; they are null there instead. The open-interest series also contains 78 zero readings, set to missing.
 2. **Schema change inside the holdout:** extra ±0.2 % band rows appear from 2026-01-15. Not used, because they are unavailable in the development period.
 3. **Extreme moves are real.** 212 one-minute bars move > 3%; 0 meet the error-candidate rule (full reversal on < 20 trades). All are kept: they are liquidation cascades with tens of thousands of trades, i.e. exactly the events a strategy must survive.
 4. **Trading halts / no-trade minutes:** 53 minutes in 4 runs. Prices are forward-filled for features (backward-looking only); positions cannot be traded there, so execution uses the last price and the minute is flagged.
