@@ -2,3 +2,4 @@ config,model,fset,h,task,params
 logit_A_price_h15,logit,A_price,15,binary,{"C": 0.1}
 tune_lgbm_E_h15_g0,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
 tune_lgbm_E_h15_g1,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 600}
+tune_lgbm_E_h15_g2,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 5000; "n_estimators": 200}
