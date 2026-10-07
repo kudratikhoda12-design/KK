@@ -121,6 +121,7 @@ python scripts/run_stage2.py --symbol SOLUSDT --data-dir data/sol && \
 python scripts/build_dataset.py --symbol SOLUSDT --data-dir data/sol && \
 python scripts/run_replication.py && python scripts/run_holdout.py --symbol SOLUSDT --data-dir data/sol --tag replication --skip-secondary
 python scripts/run_significance.py && python scripts/make_results_table.py && python scripts/make_notebooks.py
+python scripts/make_pdf_report.py          # end-to-end PDF: reports/ETH_OrderFlow_Alpha_Report.pdf
 ```
 
 - **Data URLs:** `https://data.binance.vision/data/futures/um/{daily|monthly}/{aggTrades|bookDepth|metrics|fundingRate|bookTicker}/{SYMBOL}/{SYMBOL}-{dataset}-{period}.zip` (+ `.CHECKSUM`).
