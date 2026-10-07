@@ -60,6 +60,13 @@ def build_book(cfg: dict, paths: Paths, symbol: str) -> tuple[pl.DataFrame, pl.D
     book = pl.concat(frames).sort("ts")
     n0 = book.height
     book = book.unique(subset=["ts"], keep="first", maintain_order=True)  # cross-file overlap guard
+    # Frozen feed detection: a snapshot whose 20 band values all equal the previous snapshot carries no new
+    # information (2025-04-16..2025-05-19 the archive repeats one snapshot for a month). Book age is measured
+    # from the last snapshot whose values CHANGED, so frozen periods become stale instead of looking fresh.
+    vals = [c for c in book.columns if c != "ts"]
+    book = book.with_columns(book_frozen=pl.all_horizontal([pl.col(c) == pl.col(c).shift(1) for c in vals]).fill_null(False))
+    book = book.with_columns(last_change_ts=pl.when(~pl.col("book_frozen")).then(pl.col("ts")).otherwise(None).forward_fill())
+    log.info("book: %d snapshots identical to their predecessor (frozen feed)", int(book["book_frozen"].sum()))
     for q_ in qcs:   # list-valued field -> string for the CSV
         q_["extra_band_values"] = ",".join(str(v) for v in q_.get("extra_band_values", []))
     qc_df = pl.DataFrame(qcs, infer_schema_length=None)
@@ -117,8 +124,11 @@ def build_metrics(cfg: dict, paths: Paths, symbol: str) -> dict:
           "n_exact_duplicates_removed": n_exact,
           "n_expected_rows": len(files) * 288,
           "n_gaps_gt_5min": gaps.height, "n_minutes_in_gaps": float((gaps["gap_min"] - 5).sum() or 0),
-          "n_nonpositive_open_interest": int((m["sum_open_interest"] <= 0).sum()),
-          "n_null_open_interest": int(m["sum_open_interest"].is_null().sum())}
+          "n_nonpositive_open_interest_set_null": int((m["sum_open_interest"] <= 0).sum()),
+          "n_null_open_interest_raw": int(m["sum_open_interest"].is_null().sum())}
+    # open interest of exactly 0 for a liquid perpetual is a recording error -> missing (counted above)
+    m = m.with_columns([pl.when(pl.col(c) <= 0).then(None).otherwise(pl.col(c)).alias(c)
+                        for c in ("sum_open_interest", "sum_open_interest_value")])
     gaps.select("ts", "gap_min").write_csv(paths.reports / "metrics_gaps.csv")
     out = paths.processed / "metrics" / f"{symbol}-metrics.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)

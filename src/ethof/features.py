@@ -162,7 +162,11 @@ def build_features(bars: pl.DataFrame, funding: pl.DataFrame | None = None,
         stale = (pl.col("_tau") - pl.col("oi_avail")).dt.total_minutes() > 15
         out = out.with_columns([pl.when(stale).then(None).otherwise(pl.col(c)).alias(c)
                                 for c in ("oi_chg_60", "oi_chg_1440")])
-    return out.drop([c for c in ("_tau",) if c in out.columns])
+    out = out.drop([c for c in ("_tau",) if c in out.columns])
+    # undefined ratios (x/0, log 0) -> missing, never +-inf
+    feats = [c for c in sum(GROUPS.values(), []) if c in out.columns]
+    return out.with_columns([pl.when(pl.col(c).is_infinite()).then(None).otherwise(pl.col(c)).alias(c)
+                             for c in feats if out.schema[c].is_float()])
 
 
 PRICE = ["ret_1", "ret_5", "ret_15", "ret_30", "ret_60", "vol_15", "vol_60", "vol_240", "vol_1440",

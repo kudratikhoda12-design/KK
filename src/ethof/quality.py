@@ -153,6 +153,11 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
     ex = bq.filter(pl.col("n_extra_band_rows_not_used").fill_null(0) > 0)
     first_extra = str(ex["date"].min()) if ex.height else "n/a"
     n_stale = int(allb["book_stale"].sum())
+    fz = book.with_columns(r=(pl.col("book_frozen") != pl.col("book_frozen").shift(1)).fill_null(True).cum_sum()) \
+             .filter(pl.col("book_frozen")).group_by("r").agg(start=pl.col("ts").min(), end=pl.col("ts").max(),
+                                                               snapshots=pl.len()).drop("r").sort("snapshots", descending=True)
+    fz.write_csv(csv_out / "book_frozen_runs.csv")
+    n_frozen = int(book["book_frozen"].sum())
     n_no_book = int(allb["book_ts"].is_null().sum())
     stale_by_day = allb.filter(pl.col("book_stale")).group_by(pl.col("ts").dt.date().alias("date")) \
         .agg(stale_minutes=pl.len()).sort("stale_minutes", descending=True)
@@ -228,11 +233,17 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
         f"+-0.2 % bands from {first_extra}; schema extension, not errors) {n_bad_book['n_extra_band_rows_not_used']:,}; incomplete snapshots (≠10 bands) "
         f"{n_bad_book['n_incomplete_snapshots']:,}; non-monotone cumulative depth {n_bad_book['n_snapshots_non_monotone_depth']:,}")
     add(f"- Gaps between consecutive snapshots > {q['book_gap_seconds']} s: **{bgap.height:,}**")
+    add(f"- **Frozen feed:** {n_frozen:,} snapshots repeat all 20 band values of their predecessor "
+        f"({n_frozen / book.height:.2%}); the longest run is {fz['snapshots'][0]:,} snapshots "
+        f"({fz['start'][0]} → {fz['end'][0]}). Book age is measured from the last *changed* snapshot, so these "
+        f"minutes are flagged `book_stale` (`docs/stage2/book_frozen_runs.csv`).")
     add(f"- Short/missing days (< {q['book_short_day_ratio']:.0%} of {exp_snaps} snapshots), flagged "
         f"`book_short_day` in the bars and **not interpolated**: {short.height}\n")
     add(_md_table(short, 20))
     add("Longest snapshot gaps:\n")
     add(_md_table(bgap.head(10)))
+    add("Longest frozen-feed runs:\n")
+    add(_md_table(fz.head(8)))
     add(f"- Bars whose as-of snapshot is older than {q['book_stale_seconds']} s (`book_stale`): "
         f"**{n_stale:,}** ({n_stale / n_bars:.3%}); bars with no snapshot at all: {n_no_book:,}\n")
     add("**Sign-convention / time-zone check.** Average price of resting quantity within the 1% band "
@@ -254,6 +265,11 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
     add(f"1. **Order book is coarse.** Percentage bands only; no best bid/ask, no spread, no queue information. "
         f"Book features are null on {n_stale:,} stale minutes ({n_stale / n_bars:.3%}) and on the {short.height} short days "
         f"listed in §4; nothing is interpolated.")
+    add(f"1b. **Frozen order-book feed:** {fz['start'][0]} → {fz['end'][0]} the archive repeats a single snapshot "
+        f"({fz['snapshots'][0]:,} identical snapshots; the daily files look complete but compress unusually well). "
+        f"Without value-change detection the book features would silently carry month-old information; they are "
+        f"null there instead. The open-interest series also contains "
+        f"{mq.get('n_nonpositive_open_interest_set_null', 'n/a')} zero readings, set to missing.")
     add(f"2. **Schema change inside the holdout:** extra ±0.2 % band rows appear from {first_extra}. Not used, "
         f"because they are unavailable in the development period.")
     add(f"3. **Extreme moves are real.** {ext.height} one-minute bars move > {q['extreme_bar_abs_logret']:.0%}; "

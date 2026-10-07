@@ -160,3 +160,13 @@ def test_asof_book_flags_stale():
     book = pl.DataFrame({"ts": [T0], "bid_depth_1": [1.0]})
     out = pp.asof_book_to_bars(bars, book, stale_seconds=120)
     assert out["book_stale"].item() is True and out["bid_depth_1"].item() == 1.0
+
+
+def test_asof_book_frozen_feed_is_stale():
+    # snapshots keep arriving but their values stopped changing at 00:00:30 -> age counts from 00:00:30
+    bars = pl.DataFrame({"ts": [T0 + timedelta(minutes=5)]})
+    book = pl.DataFrame({"ts": [T0 + timedelta(seconds=30 * k) for k in range(1, 11)],
+                         "bid_depth_1": [1.0] * 10,
+                         "last_change_ts": [T0 + timedelta(seconds=30)] * 10})
+    out = pp.asof_book_to_bars(bars, book, stale_seconds=120)
+    assert out["book_age_s"].item() == 330 and out["book_stale"].item() is True

@@ -347,11 +347,14 @@ def asof_book_to_bars(bars: pl.DataFrame, book: pl.DataFrame, stale_seconds: flo
     """Attach to each bar [ts, ts+1m) the last book snapshot stamped strictly before the bar close.
 
     Book timestamps have 1-second resolution, so "strictly before ts+60s" == "<= ts+59s".
+    If the snapshot table carries `last_change_ts` (time of the last snapshot whose values changed), the
+    book age is measured from it, so a frozen feed (identical repeated snapshots) is flagged stale.
     """
     b = book.rename({"ts": "book_ts"}).sort("book_ts")
     left = bars.with_columns(_key=pl.col("ts") + pl.duration(seconds=59)).sort("_key")
     out = left.join_asof(b, left_on="_key", right_on="book_ts", strategy="backward")
-    out = out.with_columns(book_age_s=((pl.col("ts") + pl.duration(minutes=1)) - pl.col("book_ts"))
+    ref = "last_change_ts" if "last_change_ts" in out.columns else "book_ts"
+    out = out.with_columns(book_age_s=((pl.col("ts") + pl.duration(minutes=1)) - pl.col(ref))
                            .dt.total_seconds())
     out = out.with_columns(book_stale=pl.col("book_ts").is_null() | (pl.col("book_age_s") > stale_seconds))
     return out.drop("_key")
