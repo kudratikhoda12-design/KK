@@ -788,6 +788,23 @@ def build_final_report(f: Facts) -> None:
       f"(ii) forecasts {'under-predict' if f.metric('XGBoost', 7, 'bias') < 0 else 'over-predict'} on average (XGBoost bias {f.metric('XGBoost', 7, 'bias'):+.2f} units at 7 days). "
       "A nominal service level is therefore a *design input*, not a guarantee.")
     A("")
+    sv = f.inv_final[(f.inv_final.Cost_Scenario == "MEDIUM") & (f.inv_final.Service_Level == 0.95)]
+    svA = sv[sv.Policy == "A_historical"].set_index("Lead_Time_days")
+    svB = sv[sv.Policy == "B_forecast_driven"].set_index("Lead_Time_days")
+    better_cycle = [int(L_) for L_ in svA.index if svB.loc[L_, "Cycle_Service_Level"] > svA.loc[L_, "Cycle_Service_Level"]]
+    better_fill = [int(L_) for L_ in svA.index if svB.loc[L_, "Fill_Rate"] > svA.loc[L_, "Fill_Rate"]]
+    fewer_days = [int(L_) for L_ in svA.index if svB.loc[L_, "Stockouts"] < svA.loc[L_, "Stockouts"]]
+    fewer_units = [int(L_) for L_ in svA.index if svB.loc[L_, "Stockout_Units"] < svA.loc[L_, "Stockout_Units"]]
+    A("**Service by lead time (95% target, MEDIUM; A -> B):** " + "; ".join(
+        f"L={int(L_)} ({svB.loc[L_, 'Forecast_Model']}): stockout series-days {int(svA.loc[L_, 'Stockouts'])} -> {int(svB.loc[L_, 'Stockouts'])}, lost units {svA.loc[L_, 'Stockout_Units']:.0f} -> {svB.loc[L_, 'Stockout_Units']:.0f}, "
+        f"fill rate {100 * svA.loc[L_, 'Fill_Rate']:.1f}% -> {100 * svB.loc[L_, 'Fill_Rate']:.1f}%, cycle service level {100 * svA.loc[L_, 'Cycle_Service_Level']:.0f}% -> {100 * svB.loc[L_, 'Cycle_Service_Level']:.0f}%" for L_ in svA.index)
+      + f". B has the higher cycle service level at lead times {better_cycle}, the higher fill rate at {better_fill}, fewer stockout series-days at {fewer_days} and fewer lost units at {fewer_units}; "
+      + (f"the improvement in service is therefore not uniform across lead times and measures (the fill rate is not higher at L = {', '.join(str(int(x)) for x in svA.index if int(x) not in better_fill)}, although total cost is "
+         f"{'lower' if all(svB.loc[int(x), 'Total_Cost'] < svA.loc[int(x), 'Total_Cost'] for x in svA.index if int(x) not in better_fill) else 'not always lower'} there)."
+         if set(better_fill) != set(int(x) for x in svA.index) else "service improves at every lead time on every measure.")
+      + " The unit penalty scales with each item's price, so a policy can lose more units yet pay less in stockout cost when the lost units are the cheaper items: the average penalty per lost unit (A -> B) is "
+      + ", ".join(f"L={int(L_)}: ${svA.loc[L_, 'Stockout_Cost'] / svA.loc[L_, 'Stockout_Units']:.2f} -> ${svB.loc[L_, 'Stockout_Cost'] / svB.loc[L_, 'Stockout_Units']:.2f}" for L_ in svA.index) + ".")
+    A("")
     A(f"![trajectory]({FIG}inv_01_trajectory_FOODS_2_347_TX_2.png)")
     A(f"![stockouts]({FIG}inv_02_stockout_periods.png)")
     A("")
