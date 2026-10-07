@@ -7,5 +7,3 @@ __pycache__/
 
 # per-config fold tables (aggregated into reports/tables/model_folds_all.csv)
 reports/tables/folds/
-# appended during runs; committed once the runs finish
-reports/tables/experiment_registry.csv

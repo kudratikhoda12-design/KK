@@ -1,0 +1,44 @@
+config,model,fset,h,task,params
+logit_A_price_h15,logit,A_price,15,binary,{"C": 0.1}
+logit_B_price_volume_h15,logit,B_price_volume,15,binary,{"C": 0.1}
+logit_C_plus_flow_h15,logit,C_plus_flow,15,binary,{"C": 0.1}
+logit_D_plus_book_h15,logit,D_plus_book,15,binary,{"C": 0.1}
+logit_E_all_h15,logit,E_all,15,binary,{"C": 0.1}
+logit_A_price_h5,logit,A_price,5,binary,{"C": 0.1}
+logit_C_plus_flow_h5,logit,C_plus_flow,5,binary,{"C": 0.1}
+logit_E_all_h5,logit,E_all,5,binary,{"C": 0.1}
+logit_A_price_h30,logit,A_price,30,binary,{"C": 0.1}
+logit_C_plus_flow_h30,logit,C_plus_flow,30,binary,{"C": 0.1}
+tune_lgbm_E_h15_g0,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+logit_E_all_h30,logit,E_all,30,binary,{"C": 0.1}
+logit_A_price_h60,logit,A_price,60,binary,{"C": 0.1}
+logit_C_plus_flow_h60,logit,C_plus_flow,60,binary,{"C": 0.1}
+logit_E_all_h60,logit,E_all,60,binary,{"C": 0.1}
+rf_A_price_h15,rf,A_price,15,binary,{"n_estimators": 200; "min_samples_leaf": 500; "max_depth": 10}
+rf_B_price_volume_h15,rf,B_price_volume,15,binary,{"n_estimators": 200; "min_samples_leaf": 500; "max_depth": 10}
+rf_C_plus_flow_h15,rf,C_plus_flow,15,binary,{"n_estimators": 200; "min_samples_leaf": 500; "max_depth": 10}
+rf_D_plus_book_h15,rf,D_plus_book,15,binary,{"n_estimators": 200; "min_samples_leaf": 500; "max_depth": 10}
+rf_E_all_h15,rf,E_all,15,binary,{"n_estimators": 200; "min_samples_leaf": 500; "max_depth": 10}
+tune_lgbm_E_h15_g1,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 600}
+tune_lgbm_E_h15_g2,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 5000; "n_estimators": 200}
+tune_lgbm_E_h15_g3,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 5000; "n_estimators": 600}
+tune_lgbm_E_h15_g4,lgbm,E_all,15,binary,{"num_leaves": 63; "min_child_samples": 500; "n_estimators": 200}
+tune_lgbm_E_h15_g5,lgbm,E_all,15,binary,{"num_leaves": 63; "min_child_samples": 500; "n_estimators": 600}
+tune_lgbm_E_h15_g6,lgbm,E_all,15,binary,{"num_leaves": 63; "min_child_samples": 5000; "n_estimators": 200}
+tune_lgbm_E_h15_g7,lgbm,E_all,15,binary,{"num_leaves": 63; "min_child_samples": 5000; "n_estimators": 600}
+lgbm_A_price_h15,lgbm,A_price,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_B_price_volume_h15,lgbm,B_price_volume,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_C_plus_flow_h15,lgbm,C_plus_flow,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_D_plus_book_h15,lgbm,D_plus_book,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_E_all_h15,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_A_price_h5,lgbm,A_price,5,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_C_plus_flow_h5,lgbm,C_plus_flow,5,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_E_all_h5,lgbm,E_all,5,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_A_price_h30,lgbm,A_price,30,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_C_plus_flow_h30,lgbm,C_plus_flow,30,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_E_all_h30,lgbm,E_all,30,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_A_price_h60,lgbm,A_price,60,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_C_plus_flow_h60,lgbm,C_plus_flow,60,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm_E_all_h60,lgbm,E_all,60,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbm3_E_all_h15,lgbm,E_all,15,cls3,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
+lgbmreg_E_all_h15,lgbm,E_all,15,reg,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
