@@ -150,6 +150,7 @@ The experiment log `reports/tables/experiment_log.csv` has **44 rows**: 6 valida
 
 * Logistic-regression numbers: the code exists in the notebook, but the outputs are not saved → **REPORTED (original PDF); code present; not re-run in this repository.**
 * LightGBM credit numbers: → **REPORTED BUT NOT CURRENTLY REPRODUCIBLE FROM THE REPOSITORY** (there is no LightGBM code in the notebook).
+* Nuance: the notebook's own text says the headline results come from "the original full-sample run", while its first model cell fits on a 300,000-loan stratified sample. Even with the data, the exact headline numbers may not be reproduced to the last digit from this notebook. See `reports/teaching/Final_Interview_Readiness_Audit.md`.
 
 ## 3.1 Dataset
 
@@ -772,7 +773,7 @@ The pre-registration explicitly says "No robust signal" is a valid and expected 
 
 **Deviation log (pre-registration §12).** Six entries: two clarifications before data; one data issue (phase-shifted candles, no rule change); two audit-diagnostic bug fixes (no effect on treatments); implementing the H1/H3 criteria as written; the selection freeze. None changed the model, features, signal or test.
 
-**Small inconsistency to know about.** The pre-registration text says the AUC gain must be "≥ 0.005"; the code (`src/pipeline.py`) uses "> 0.005". The actual gain was +0.0064, so the difference did not matter.
+**Small inconsistency to know about.** The pre-registration text says the AUC gain must be "≥ 0.005"; the code (`src/pipeline.py`) uses "> 0.005". The actual gain was +0.0064, so the difference did not matter. Both wordings were written before any data was downloaded, and the clarification is now recorded in the deviation log (entry dated 2026-10-07) without editing the original §5 sentence.
 
 **One pre-registered check that was not run.** Pre-registration §8 lists a "spot alternative: 0.10% fee per side, long/flat only" as a robustness check. `FEE_SPOT_TAKER` is defined in `config.py` but **never used**, and no output contains this scenario. Because the strategy already loses at 7 bp, a 10 bp fee could only make it worse, but you should disclose it if asked: **pre-registered, not run.**
 
@@ -1086,7 +1087,7 @@ Pipeline([("scale", StandardScaler()),
 * **Training data:** each walk-forward fold's training rows (all usable rows before the block, purged).
 * **Predictions:** `predict_proba(...)[:, 1]` = P(up) for each evaluation hour.
 
-**Result (VERIFIED, `validation_models.csv`):** pooled validation AUC **0.557 for all three C values**; mean fold AUC 0.5598 (C = 0.01), 0.5596 (C = 0.1, 1.0); log-loss better than the base rate in 9 of 10 folds; log-loss gain p ≈ 0. The best LR by pooled log-loss was C = 0.01 (INFERRED: it is the only C whose mean fold AUC, 0.5598, reproduces the logged AUC gain of +0.0064).
+**Result (VERIFIED, `validation_models.csv`):** pooled validation AUC **0.557 for all three C values**; mean fold AUC 0.5598 (C = 0.01), 0.5596 (C = 0.1, 1.0); log-loss better than the base rate in 9 of 10 folds; log-loss gain p ≈ 0. The best LR by pooled log-loss was C = 0.01 (VERIFIED from `validation_models.csv`: pooled log-loss 0.688283 vs 0.688298 and 0.688302; the exact gain is 0.566154 − 0.559772 = +0.006383).
 
 **Interpretation.** Regularisation strength made almost no difference → the signal is simple and the model is not overfitting.
 
@@ -2562,7 +2563,7 @@ for m in config.COST_MULTIPLIERS:            # 0, 1, 2, 3
 * The 6-month block structure and threshold grid were fixed choices; other reasonable choices exist.
 * Kupiec tests only the exception count, not clustering.
 * Monte Carlo can only replay observed regimes.
-* Small wording inconsistency: pre-registration says AUC gain "≥ 0.005", code uses "> 0.005" (no effect: gain was 0.0064).
+* Small wording inconsistency: pre-registration says AUC gain "≥ 0.005", code uses "> 0.005" (no effect: gain was 0.0064); clarified in the deviation log on 2026-10-07.
 
 ## Things you must NOT claim in an interview
 

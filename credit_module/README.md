@@ -25,6 +25,20 @@ LendingClub `accepted_2007_to_2018Q4.csv.gz`, publicly distributed through Kaggl
 | Monte Carlo, ρ = 0.15 (10,000 loans × 2,000 scenarios) | VaR99 $68.54M, ES99 $74.61M; stressed (PD odds ×1.5, LGD +5 pp): VaR99 $83.01M, ES99 $90.33M |
 | Dependence sensitivity | VaR99 rises from $30.46M at ρ = 0 to $108.36M at ρ = 0.5 |
 
+| LightGBM challenger (2017) | AUC 0.7080, KS 0.3012, Gini 0.4159, Brier 0.1615: **reported in the PDF only; no code, model or output exists, so not currently reproducible** |
+
+## Evidence status (audit of 7 October 2026)
+
+| Item | Status | Evidence |
+|---|---|---|
+| Notebook and PDF are your unchanged originals | **VERIFIED** | SHA-256 identical to the files you uploaded; added in commit `9f5aa93` and never modified |
+| Method (target, leakage exclusions, features, preprocessing, 2016/2017/2018 time split, KS/Gini/Brier formulas, calibration, LGD, ECL, one-factor Monte Carlo, stress, PSI) | **VERIFIED as code** | Notebook cells 2–27 |
+| Logistic-regression numbers in the table above | **REPORTED** (code present, not re-run) | LendingClub file absent; notebook has 0 saved outputs |
+| LightGBM challenger numbers | **REPORTED BUT NOT CURRENTLY REPRODUCIBLE** | No LightGBM code in the notebook; no model file, predictions or output anywhere in the repository |
+| Dataset size (≈1.345M resolved loans) | **NOT VERIFIED** (reported in the PDF) | Data file absent |
+
+Nothing in this module was re-run, re-estimated or recreated. One nuance: the notebook's own text says the headline results come from "the original full-sample run", while its first model cell fits on a 300,000-loan stratified sample of the ≤ 2016 training period. Even with the data, the exact headline numbers (AUC 0.6999 etc.) may therefore not be reproduced to the last digit from this notebook; the extended cell corresponds to the "extended OOT run" (AUC 0.6992).
+
 ## Reproducibility gaps found while integrating (please fix before an interview)
 
 1. **The LightGBM challenger is not in the notebook.** The report and CV cite LightGBM (AUC 0.7080, KS 0.3012), but `01_credit_risk.ipynb` only contains the logistic-regression model. Add the LightGBM code you used, or stop citing those numbers as reproducible.
