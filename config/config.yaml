@@ -47,3 +47,45 @@ aggregation:
   # Absolute trade-size thresholds (ETH) for bucketed buy/sell volume. Fixed a priori; they let
   # Stage 3 build large-trade features with *trailing* thresholds without re-reading raw trades.
   size_buckets_eth: [1, 5, 10, 25, 50, 100, 250]
+
+# ---------------------------------------------------------------------------------------------------
+# Research design (Stage 3+). Fixed BEFORE any model or return-based result was computed.
+research:
+  primary_horizon: 15                 # minutes
+  horizons: [5, 15, 30, 60]
+  # 3-class neutral band = base round-trip cost (2 x ~5.5 bps per side), so NEUTRAL = "too small to trade"
+  neutral_band: 0.0011
+  walk_forward:
+    start: "2023-03-01"
+    first_validation: "2024-03-01"    # first 12 months = initial training window
+    end_exclusive: "2025-10-01"       # = holdout start
+    block_months: 3
+    embargo_days: 1
+    train_stride: 5                   # train on every 5th minute (overlapping labels are near-duplicates)
+  holdout:
+    start: "2025-10-01"
+    end_exclusive: "2026-10-01"
+  models:
+    logit_C: 0.1
+    rf: {n_estimators: 200, min_samples_leaf: 500, max_depth: 10, train_stride: 15}
+    # restrained LightGBM grid, selected by mean validation log loss over walk-forward folds (set E, h = 15)
+    lgbm_grid:
+      num_leaves: [15, 63]
+      min_child_samples: [500, 5000]
+      n_estimators: [200, 600]
+  signal:
+    prob_deltas: [0.005, 0.01, 0.02, 0.03, 0.05]   # |P(up) - 0.5| > delta; delta chosen on development OOF only
+    flow_rule_z: 1.0                  # simple order-flow rule: long if ofi_15_z_1440 > 1, short if < -1 (fixed a priori)
+  costs:                              # per side, in bps of traded notional
+    # Binance USD-M VIP0: maker 2.0 bps, taker 5.0 bps; 10% discount when fees are paid in BNB.
+    # Orders execute at the next bar's VWAP as taker orders.
+    low:  {fee_bps: 2.0, slippage_bps: 0.5}       # maker-level / high-VIP fees
+    base: {fee_bps: 4.5, slippage_bps: 1.0}       # VIP0 taker with BNB discount
+    high: {fee_bps: 5.0, slippage_bps: 2.0}       # VIP0 taker, no discount, extra slippage
+    # half spread added to every scenario: measured from Binance bookTicker on 2023-06-14, 2023-11-15, 2024-03-13
+    # (scripts/measure_spread.py -> reports/tables/spread_measurement.csv): spread = 1 tick 99.5% of seconds,
+    # mean 0.046 bps -> half spread 0.023 bps
+    half_spread_bps: 0.023
+  regimes:
+    vol_feature: vol_1440             # trailing 1-day realised volatility (known at t)
+    cutoff_window_end: "2024-03-01"   # tercile cut-offs estimated on the initial training window only
