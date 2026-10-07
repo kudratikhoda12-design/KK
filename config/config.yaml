@@ -1,0 +1,49 @@
+# Central configuration for the ETH order-flow research pipeline.
+# Paths are relative to the repository root unless absolute.
+# ETHOF_DATA_DIR (environment variable) overrides data_dir.
+
+data_dir: data                      # raw/ processed/ reports/ logs/ are created inside (git-ignored)
+
+source:
+  base_url: https://data.binance.vision/data/futures/um
+  symbol: ETHUSDT
+  market: USD-M perpetual futures
+
+period:
+  start: "2023-03-01"               # inclusive (UTC); chosen from bookDepth coverage, see docs/stage1
+  end: "2026-09-30"                 # inclusive (UTC)
+
+# Pre-registered split (Stage 1). Stage 2 does not use it, but it is recorded here so it cannot drift.
+split:
+  development_end: "2025-09-30"
+  holdout_start: "2025-10-01"
+
+datasets:
+  # aggTrades: daily files (1,310 days, 25.3 GB zipped). Monthly files are also published, but a
+  # single month (~33-50M rows) needs >13 GB RAM to process; daily files keep memory ~1 GB.
+  aggTrades:   {granularity: daily,   enabled: true}
+  fundingRate: {granularity: monthly, enabled: true}
+  bookDepth:   {granularity: daily,   enabled: true}   # no monthly files are published
+  metrics:     {granularity: daily,   enabled: true}   # open interest etc.; no monthly files
+
+download:
+  max_workers_small: 16             # parallel downloads for small daily files
+  trade_workers: 4                  # parallel processes for daily trade files (download+clean+aggregate)
+  retries: 4
+  timeout_s: 300
+  keep_raw_aggtrades: false         # ~25 GB zipped; deleted after verified processing (checksums kept in manifest)
+
+quality:
+  bad_tick_rel_dev: 0.02            # flag trades deviating >2% from their minute's median price (flag, never delete)
+  extreme_bar_abs_logret: 0.03      # list 1-minute bars with |log return| > 3% for manual classification
+  trade_gap_minutes: 2              # report runs of >= this many consecutive minutes without trades
+  book_expected_snapshots_per_day: 2880
+  book_short_day_ratio: 0.90        # day flagged "book_short_day" if snapshots < 90% of expected
+  book_gap_seconds: 90              # report gaps between consecutive book snapshots longer than this
+  book_stale_seconds: 120           # 1-min bar flagged if its as-of book snapshot is older than this
+
+aggregation:
+  bar: 1m
+  # Absolute trade-size thresholds (ETH) for bucketed buy/sell volume. Fixed a priori; they let
+  # Stage 3 build large-trade features with *trailing* thresholds without re-reading raw trades.
+  size_buckets_eth: [1, 5, 10, 25, 50, 100, 250]
