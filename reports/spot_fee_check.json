@@ -1,7 +1,7 @@
 {
   "label": "Pre-registered robustness check (pre-registration section 8), executed after the test",
-  "executed_utc": "2026-10-07T11:42:17+00:00",
-  "code_commit": "481cf56",
+  "executed_utc": "2026-10-07T12:05:28+00:00",
+  "code_commit": "e2f30fe",
   "definition": "frozen test positions re-priced at FEE_SPOT_TAKER + HALF_SPREAD + SLIPPAGE per side, no funding",
   "selection_unchanged": true,
   "test_result_unchanged": true,
