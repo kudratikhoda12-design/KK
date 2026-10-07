@@ -43,6 +43,9 @@ class Numbers:
         sh = f.shap
         self.roll = {H: 100 * sh[(sh.H == H) & sh.feature.isin(["rolling_mean_7", "rolling_mean_14", "rolling_mean_28"])].share_of_total.sum() for H in (7, 28)}
         s7 = sh[sh.H == 7].set_index("feature")
+        nd = sh[(sh.H == 7) & ~sh.feature.str.startswith(("rolling_", "lag_"))].sort_values("share_of_total", ascending=False).head(2)
+        label = {"snap_days_window": "SNAP-day counts", "price": "price"}
+        self.top_nondemand = " and ".join(f"{label.get(r.feature, r.feature)} ({100 * r.share_of_total:.1f}%)" for r in nd.itertuples())
         self.snap = 100 * float(s7.loc["snap_days_window", "share_of_total"])
         self.price = 100 * float(s7.loc["price", "share_of_total"])
         self.cnt = f.dm_counts("XGBoost")
@@ -459,6 +462,8 @@ def build_project_story(f: Facts) -> None:
     sn_w28 = f.wape("SeasonalNaive", 28)
     p7 = f.pair[(f.pair.scenario == "MEDIUM") & (f.pair.L == 7) & (f.pair.SL == 0.95)].iloc[0]
     n_checks = int(f.audit.status.eq("PASS").sum())
+    cnt_sar = f.dm_counts("SARIMA")
+    indist_14_28 = not any(N.cnt[H]["better"] or cnt_sar[H]["better"] for H in (14, 28))
     sigma_share = 100 * N.ma_gain7 / N.g[7] if N.g[7] != 0 else float("nan")
     sigma_main = N.same_pf7 and np.isfinite(sigma_share) and sigma_share > 50
     ri = f.rob_i.set_index("group")
@@ -514,9 +519,10 @@ def build_project_story(f: Facts) -> None:
          "## Resume bullets (numbers from the result tables)", "",
          f"* Forecasted 7/14/28-day retail demand for 18 M5 (Walmart) item-store series with nine models (naive/seasonal-naive/moving-average/Croston baselines, SES/Holt/Holt-Winters, SARIMA, XGBoost) in a chronological rolling-origin framework; "
          f"best test WAPE {best[7]['test_WAPE']:.1f}% / {best[14]['test_WAPE']:.1f}% / {best[28]['test_WAPE']:.1f}% ({best[7]['best_by_test_WAPE']} / {best[14]['best_by_test_WAPE']} / {best[28]['best_by_test_WAPE']}) vs {f.wape('SeasonalNaive', 7):.1f}% / {f.wape('SeasonalNaive', 14):.1f}% / {sn_w28:.1f}% for seasonal naive; "
-         f"Diebold-Mariano tests showed the leading models statistically indistinguishable at 14-28 days.",
+         + ("Diebold-Mariano tests showed the leading models statistically indistinguishable at 14-28 days." if indist_14_28
+            else "Diebold-Mariano tests found some significant differences between the leading models at 14-28 days (see the final report)."),
          f"* Built leakage-safe lag/rolling/calendar/SNAP/price features validated by {n_checks} automated audit checks (perturbation tests plus a negative control) and used SHAP to show that 7/14/28-day rolling demand levels drive {N.roll[7]:.0f}% of XGBoost's 7-day attributions, "
-         f"with SNAP-day counts ({N.snap:.1f}%) and price ({N.price:.1f}%) next.",
+         f"with {N.top_nondemand} the largest non-demand features.",
          f"* Converted forecasts into reorder-point/EOQ policies and simulated 292 days x 18 series: the forecast-driven policy {N.lw(N.g[7]).replace('simulated total cost', 'pooled total cost')} (L=7, 95% target, hypothetical medium penalty; 95% bootstrap CI {100 * p7.boot_ci_low:+.0f}% to {100 * p7.boot_ci_high:+.0f}%, {'i.e. suggestive, not statistically significant' if p7.boot_ci_low < 0 < p7.boot_ci_high else 'excluding zero'}) and lifted realised cycle service from "
          f"{100 * N.a95.Cycle_Service_Level:.0f}% to {100 * N.b95.Cycle_Service_Level:.0f}% versus a historical baseline, and showed that forecast-accuracy rank did not predict cost rank (Spearman {N.rho['MEDIUM']:+.2f} for the medium penalty).", ""]
     (C.REPORTS / "project_story_and_resume.md").write_text("\n".join(L) + "\n")
