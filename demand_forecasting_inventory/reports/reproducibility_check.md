@@ -4,13 +4,13 @@
 
 ## Procedure
 
-On 2026-10-07 the code (`src/`, `tests/`, `notebooks/`, `run_project.py`, `requirements.txt`) and the four raw M5 files were copied into an **empty directory** (no `data/processed`, `outputs` or `reports`) and `python run_project.py` was run end to end (all 13 stages, 3.2 minutes on 4 cores, same seeds: `config.SEED = 42`). Every file under `outputs/tables`, `outputs/figures`, `outputs/models`, `reports` and `data/processed` was then compared with the corresponding file of the main run (forecast arrays bit-wise, the parquet panel by content, everything else byte-wise; CSV files that differ are compared column by column). The raw files were copied from the main run, so the acquisition stage re-verified their SHA-256 hashes against both mirrors' published values but did not download them again (the download path itself was exercised for `calendar.csv` in an earlier clean-copy rerun). The README and the executed notebook are not part of the comparison.
+On 2026-10-07 the code (`src/`, `tests/`, `notebooks/`, `run_project.py`, `requirements.txt`) and the four raw M5 files were copied into an **empty directory** (no `data/processed`, `outputs` or `reports`) and `python run_project.py` was run end to end (all 13 stages, 3.2 minutes on 4 cores, same seeds: `config.SEED = 42`). Every file under `outputs/tables`, `outputs/figures`, `outputs/models`, `reports` and `data/processed` was then compared with the corresponding file of the main run (forecast arrays bit-wise, the parquet panel by content, everything else byte-wise; CSV files that differ are compared column by column). The raw files were copied from the main run, so the acquisition stage re-verified their SHA-256 hashes against both mirrors' published values but did not download them again (the download path itself was exercised for `calendar.csv` in an earlier clean-copy rerun). The README and the executed notebook are not part of the comparison. After the full rerun, only the text of the report generators was edited; re-running just the `reports` stage in the clean copy with the final generators reproduced the committed reports exactly (the table below is that final comparison).
 
 Environment: Python 3.13.16, numpy 2.5.3, pandas 3.0.5, scipy 1.18.1, statsmodels 0.15.0, scikit-learn 1.9.1, xgboost 3.4.1, shap 0.52.0, matplotlib 3.11.2.
 
 ## Result
 
-**138 files compared: 132 identical, 6 different** (files present in only one run: 0 in the main run, 0 in the rerun).
+**138 files compared: 132 identical, 6 different** (files present in only one run: 1 in the main run (`reports/reproducibility_check.md`, this record itself), 0 in the rerun).
 
 | file | kind of difference | detail |
 |---|---|---|
