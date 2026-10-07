@@ -60,6 +60,8 @@ def build_book(cfg: dict, paths: Paths, symbol: str) -> tuple[pl.DataFrame, pl.D
     book = pl.concat(frames).sort("ts")
     n0 = book.height
     book = book.unique(subset=["ts"], keep="first", maintain_order=True)  # cross-file overlap guard
+    for q_ in qcs:   # list-valued field -> string for the CSV
+        q_["extra_band_values"] = ",".join(str(v) for v in q_.get("extra_band_values", []))
     qc_df = pl.DataFrame(qcs, infer_schema_length=None)
     q = cfg["quality"]
     qc_df = qc_df.with_columns(

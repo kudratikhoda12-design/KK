@@ -70,9 +70,15 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
     q = cfg["quality"]
     start, end = cfg["period"]["start"], cfg["period"]["end"]
     full_run = (start, end) == ("2023-03-01", "2026-09-30")
-    md_path = md_path or (REPO_ROOT / "docs" / "stage2_data_quality_report.md" if full_run
-                          else R / "stage2_data_quality_report.md")
-    csv_out = (REPO_ROOT / "docs" / "stage2") if full_run else R
+    primary = symbol == "ETHUSDT"
+    if md_path is None:
+        if full_run and primary:
+            md_path = REPO_ROOT / "docs" / "data_quality_report.md"
+        elif full_run:
+            md_path = REPO_ROOT / "docs" / "replication" / f"data_quality_report_{symbol}.md"
+        else:
+            md_path = R / "stage2_data_quality_report.md"
+    csv_out = (REPO_ROOT / "docs" / "stage2") if (full_run and primary) else R
     csv_out.mkdir(parents=True, exist_ok=True)
     S: list[str] = []
     add = S.append
@@ -129,6 +135,7 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
                            | (pl.col("close") > pl.col("high")) | (pl.col("close") < pl.col("low")))).height
     bt_bars = allb.filter(pl.col("n_bad_tick_flags") > 0).select("ts", "n_bad_tick_flags", "low", "high", "close")
     bt_bars.write_csv(csv_out / "bad_tick_flag_bars.csv")
+    bt_in_ext = bt_bars.join(ext.select("ts"), on="ts", how="semi").height
 
     # ------------------------------------------------------------------ book
     bq = pl.read_csv(R / "book_daily_qc.csv", try_parse_dates=True)
@@ -141,8 +148,10 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
                .filter(pl.col("gap_s") > q["book_gap_seconds"]).sort("gap_s", descending=True)
     bgap.write_csv(csv_out / "book_snapshot_gaps.csv")
     n_bad_book = {c: int(bq[c].fill_null(0).sum()) for c in [
-        "n_raw_rows", "n_invalid_rows_removed", "n_exact_duplicates_removed",
+        "n_raw_rows", "n_invalid_rows_removed", "n_extra_band_rows_not_used", "n_exact_duplicates_removed",
         "n_conflicting_duplicates_removed", "n_incomplete_snapshots", "n_snapshots_non_monotone_depth"]}
+    ex = bq.filter(pl.col("n_extra_band_rows_not_used").fill_null(0) > 0)
+    first_extra = str(ex["date"].min()) if ex.height else "n/a"
     n_stale = int(allb["book_stale"].sum())
     n_no_book = int(allb["book_ts"].is_null().sum())
     stale_by_day = allb.filter(pl.col("book_stale")).group_by(pl.col("ts").dt.date().alias("date")) \
@@ -190,9 +199,11 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
     add(f"- Underlying trade-id gaps (first_trade_id ≠ previous last_trade_id + 1): {sums['n_trade_id_gaps']:,} gaps, "
         f"{sums['n_trade_ids_missing']:,} ids missing = "
         f"{sums['n_trade_ids_missing'] / max(1, sums['n_trade_ids_missing'] + int(ok['n_raw'].sum())):.4%} relative to agg-trade count; "
-        f"overlaps {sums['n_trade_id_overlaps']:,}. Flagged, not repaired (see §7).")
+        f"overlaps {sums['n_trade_id_overlaps']:,}. Flagged, not repaired: the archive omits these fills from `aggTrades` (see §8).")
     add(f"- Bad-tick candidates (> {q['bad_tick_rel_dev']:.0%} from the minute's median price): "
-        f"**{sums['n_bad_tick_flags']:,}** trades in {bt_bars.height:,} bars (flagged, kept)\n")
+        f"**{sums['n_bad_tick_flags']:,}** trades in {bt_bars.height:,} bars (flagged, kept). {bt_in_ext} of these "
+        f"{bt_bars.height} bars are also in the extreme-move list (§3): the flags come from crash/squeeze minutes "
+        f"whose intra-minute range exceeds 2 %, not from isolated bad prints, so nothing is removed.\n")
     add("## 3. One-minute bars\n")
     add(f"- Bars written: **{n_bars:,}**; expected minutes in period: {exp_bars:,}; duplicate timestamps: {n_dup_ts}; "
         f"sorted: {ts_sorted}")
@@ -213,7 +224,8 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
         f"{book.height / (bq.height * exp_snaps):.3%})")
     add(f"- Raw rows {n_bad_book['n_raw_rows']:,}; invalid removed {n_bad_book['n_invalid_rows_removed']:,}; "
         f"exact dups {n_bad_book['n_exact_duplicates_removed']:,}; conflicting dups "
-        f"{n_bad_book['n_conflicting_duplicates_removed']:,}; incomplete snapshots (≠10 bands) "
+        f"{n_bad_book['n_conflicting_duplicates_removed']:,}; rows of extra bands not used (Binance added "
+        f"+-0.2 % bands from {first_extra}; schema extension, not errors) {n_bad_book['n_extra_band_rows_not_used']:,}; incomplete snapshots (≠10 bands) "
         f"{n_bad_book['n_incomplete_snapshots']:,}; non-monotone cumulative depth {n_bad_book['n_snapshots_non_monotone_depth']:,}")
     add(f"- Gaps between consecutive snapshots > {q['book_gap_seconds']} s: **{bgap.height:,}**")
     add(f"- Short/missing days (< {q['book_short_day_ratio']:.0%} of {exp_snaps} snapshots), flagged "
@@ -237,6 +249,23 @@ def build_report(cfg: dict, paths: Paths, symbol: str, md_path: Path | None = No
     add(_md_table(schema_df, 100))
     add("Preview (last 3 traded minutes of the final month):\n")
     add(_md_table(preview))
+    add("## 8. Data-quality issues relevant to the research\n")
+    n_err_cand = ext.filter(pl.col("classification").str.starts_with("error")).height
+    add(f"1. **Order book is coarse.** Percentage bands only; no best bid/ask, no spread, no queue information. "
+        f"Book features are null on {n_stale:,} stale minutes ({n_stale / n_bars:.3%}) and on the {short.height} short days "
+        f"listed in §4; nothing is interpolated.")
+    add(f"2. **Schema change inside the holdout:** extra ±0.2 % band rows appear from {first_extra}. Not used, "
+        f"because they are unavailable in the development period.")
+    add(f"3. **Extreme moves are real.** {ext.height} one-minute bars move > {q['extreme_bar_abs_logret']:.0%}; "
+        f"{n_err_cand} meet the error-candidate rule (full reversal on < 20 trades). All are kept: they are "
+        f"liquidation cascades with tens of thousands of trades, i.e. exactly the events a strategy must survive.")
+    add(f"4. **Trading halts / no-trade minutes:** {n_empty} minutes in {runs.height} runs. Prices are forward-filled "
+        f"for features (backward-looking only); positions cannot be traded there, so execution uses the last price "
+        f"and the minute is flagged.")
+    add(f"5. **Fill-id gaps:** {sums['n_trade_ids_missing']:,} underlying fill ids ({sums['n_trade_ids_missing'] / max(1, sums['n_raw']):.3%} "
+        f"of the agg-trade count) are absent from `aggTrades`, so volumes may be slightly understated. Whether the "
+        f"omitted fills are side-neutral cannot be verified from this archive.")
+    add("6. **Single venue.** Binance perp flow only; cross-venue flow (Coinbase, Bybit, OKX, spot) is unobserved.\n")
     md_path.parent.mkdir(parents=True, exist_ok=True)
     md_path.write_text("\n".join(S))
     log.info("report written: %s", md_path)

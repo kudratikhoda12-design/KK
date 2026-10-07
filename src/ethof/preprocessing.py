@@ -289,10 +289,16 @@ def clean_bookdepth(raw: pl.DataFrame, period: str) -> tuple[pl.DataFrame, dict]
     start, end = period_bounds(period)
     df = raw.with_columns(ts=pl.col("timestamp").str.to_datetime("%Y-%m-%d %H:%M:%S", time_unit="us",
                                                                    time_zone=UTC, strict=False))
+    # Bands outside +-1..5 % (Binance added +-0.2 % rows on 2026-01-15) are a schema extension, not errors.
+    # They are counted separately and not used: they do not exist for most of the sample.
+    extra = pl.col("percentage").is_not_null() & ~pl.col("percentage").is_in([float(p) for p in BOOK_PCTS])
+    qc["n_extra_band_rows_not_used"] = int(df.select(extra.sum()).item())
+    qc["extra_band_values"] = sorted(set(df.filter(extra)["percentage"].to_list()))
+    df = df.filter(~extra)
     bad = (pl.col("ts").is_null() | pl.any_horizontal(pl.all().is_null())
            | ~pl.col("depth").is_finite() | ~pl.col("notional").is_finite()
            | (pl.col("depth") <= 0) | (pl.col("notional") <= 0)
-           | ~pl.col("percentage").is_in([float(p) for p in BOOK_PCTS]) | (pl.col("ts") < start) | (pl.col("ts") >= end))
+           | (pl.col("ts") < start) | (pl.col("ts") >= end))
     qc["n_invalid_rows_removed"] = int(df.select(bad.fill_null(True).sum()).item())
     df = df.filter(~bad.fill_null(True))
     n0 = df.height

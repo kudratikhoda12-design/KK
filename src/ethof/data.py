@@ -144,17 +144,25 @@ def download(rf: RemoteFile, raw_dir: Path, timeout: float = 300, retries: int =
             rec.status, rec.bytes, rec.sha256_actual = "cached", dest.stat().st_size, rec.sha256_expected
             return rec
 
-        r = _get(rf.url, timeout, retries, stream=True)
-        if r is None:
-            rec.status, rec.message = "missing_remote", "checksum present but zip 404"
-            return rec
-        h, n = hashlib.sha256(), 0
         tmp = dest.with_suffix(".part")
-        with open(tmp, "wb") as f:
-            for chunk in r.iter_content(1 << 22):
-                f.write(chunk)
-                h.update(chunk)
-                n += len(chunk)
+        for attempt in range(retries + 1):   # retry the whole transfer: connections can drop mid-body
+            r = _get(rf.url, timeout, retries, stream=True)
+            if r is None:
+                rec.status, rec.message = "missing_remote", "checksum present but zip 404"
+                return rec
+            h, n = hashlib.sha256(), 0
+            try:
+                with open(tmp, "wb") as f:
+                    for chunk in r.iter_content(1 << 22):
+                        f.write(chunk)
+                        h.update(chunk)
+                        n += len(chunk)
+                break
+            except (requests.ConnectionError, requests.exceptions.ChunkedEncodingError) as exc:
+                if attempt == retries:
+                    raise
+                log.warning("transfer of %s broken (%s); retry %d", rf.filename, exc, attempt + 1)
+                time.sleep(2 ** (attempt + 1))
         rec.bytes, rec.sha256_actual = n, h.hexdigest()
         rec.downloaded_at_utc = datetime.now(timezone.utc).isoformat(timespec="seconds")
         if rec.sha256_actual != rec.sha256_expected:
