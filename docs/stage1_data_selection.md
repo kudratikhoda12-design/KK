@@ -60,6 +60,9 @@ Replication asset (same schema): **SOLUSDT** perpetual. I confirmed that `bookDe
      30-day run starts on 2023-02-10, **which is why the study starts on 2023-03-01**.
    - After that, only one short day was found (in 2024-06). It will be flagged, not imputed.
    - 2025-04/05 files are smaller on disk, but they hold complete days (2,881 snapshots). They just compress better.
+     **Correction (Stage 2/3):** this was wrong. The files are small because the archive *repeats one snapshot* from
+     2025-04-16 10:31 to 2025-05-19 10:26 (94,730 identical snapshots). The feed is frozen, not complete. The pipeline now
+     detects unchanged snapshots and treats those minutes as stale. See `docs/data_quality_report.md`.
 4. **Timestamp unit changes.** Spot archives switch from milliseconds to **microseconds on
    2025-01-01**. The futures files I checked are in ms. The parser will detect the unit per file and
    check it.

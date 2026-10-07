@@ -33,14 +33,15 @@ One row per UTC minute. The grid is complete: minutes without trades are kept, n
 | `has_trades` | `n_trades > 0` |
 | `book_ts` | timestamp of the book snapshot attached as-of: last snapshot stamped **strictly before** `ts + 1min` |
 | `bid_depth_k, ask_depth_k, bid_notional_k, ask_notional_k` (k = 1…5) | that snapshot's band values |
-| `book_age_s` | (`ts` + 60 s) − `book_ts` |
+| `book_age_s` | (`ts` + 60 s) − `last_change_ts` (the last snapshot whose values changed), so a frozen feed ages and becomes stale |
 | `book_stale` | no snapshot, or `book_age_s > 120` |
 | `book_short_day` | the bar's UTC day has < 90 % of the 2,880 expected snapshots (e.g. 2024-06-12, which has only 2). **Flag only; nothing is interpolated** |
 | `book_day_snapshots` | number of snapshots on that day |
 
 ### Other outputs
 
-- `book_snapshots/ETHUSDT-book_snapshots.parquet`: cleaned snapshots in wide format (`ts` + the 20 band columns above).
+- `book_snapshots/ETHUSDT-book_snapshots.parquet`: cleaned snapshots in wide format (`ts` + the 20 band columns above, `book_frozen` = all 20 values equal the previous snapshot, `last_change_ts`).
+- `research/ETHUSDT-research.parquet` (Stage 3): the bars above plus 47 features (`ethof.features.GROUPS`), `px` / `exec_px`, and the targets `fwd_ret_h`, `up_h`, `cls3_h`, `label_end_h` for h ∈ {5, 15, 30, 60}.
 - `funding/ETHUSDT-funding.parquet`: `calc_time, funding_interval_hours, last_funding_rate, ts`.
 - `metrics/ETHUSDT-metrics.parquet`: the metrics columns + `ts`.
 
@@ -51,6 +52,8 @@ One row per UTC minute. The grid is complete: minutes without trades are kept, n
 | null / non-finite values, price ≤ 0, qty ≤ 0, `first_trade_id > last_trade_id`, timestamp outside the file's UTC day, unparseable side flag | **removed** (counted) |
 | exact duplicate rows | one copy kept (counted) |
 | same `agg_trade_id` with different content | first kept (counted) |
+| open interest ≤ 0, ±inf feature ratios | set to missing (counted) |
+| frozen (repeated) book snapshots | kept, but treated as stale: book features are missing |
 | trades far from the minute median, extreme 1-min moves, trade-id sequence gaps, empty minutes, missing/short book days, stale snapshots | **flagged, kept** |
 
 Large price moves are never removed just because they are large. The Stage 2 report lists every 1-minute bar with |log return| or log(high/low) > 3 % for review. A move is classed as an error candidate only if it fully reverts in the next bar on thin activity.

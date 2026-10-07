@@ -208,7 +208,7 @@ def main() -> None:
 
     # ---------------------------------------------------------------- summary
     fold_files = sorted((TAB / "folds").glob("*.csv"))
-    allm = pl.concat([pl.read_csv(f) for f in fold_files], how="diagonal_relaxed")
+    allm = pl.concat([pl.read_csv(f, infer_schema_length=None) for f in fold_files], how="diagonal_relaxed")
     allm.write_csv(TAB / "model_folds_all.csv")
     binm = allm.filter(pl.col("task") == "binary")
     summ = binm.group_by("config", "model", "fset", "h").agg(
