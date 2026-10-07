@@ -8,3 +8,5 @@ logit_A_price_h5,logit,A_price,5,binary,{"C": 0.1}
 logit_C_plus_flow_h5,logit,C_plus_flow,5,binary,{"C": 0.1}
 logit_E_all_h5,logit,E_all,5,binary,{"C": 0.1}
 logit_A_price_h30,logit,A_price,30,binary,{"C": 0.1}
+logit_C_plus_flow_h30,logit,C_plus_flow,30,binary,{"C": 0.1}
+tune_lgbm_E_h15_g0,lgbm,E_all,15,binary,{"num_leaves": 15; "min_child_samples": 500; "n_estimators": 200}
