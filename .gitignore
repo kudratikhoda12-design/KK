@@ -1,0 +1,6 @@
+# raw data is downloaded by `python -m credit_risk.data` (CC BY 4.0, UCI) - not committed
+data/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
