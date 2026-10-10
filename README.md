@@ -16,7 +16,7 @@ Every modelling choice is decided by a statistical test on data that comes befor
 run_all.sh                 one-command pipeline (tests first)
 src/crm/                   library: data, woe, models, metrics, calibration, lgd_ead, portfolio
 scripts/01..07_*.py        pipeline steps (outputs -> reports/tables, reports/figures)
-tests/                     18 unit tests of the statistical machinery
+tests/                     19 unit tests of the statistical machinery
 ```
 Data: Kaggle `wordsforthewise/lending-club`, `accepted_2007_to_2018Q4.csv.gz`. The data snapshot is 2019-03.
 
