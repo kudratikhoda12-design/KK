@@ -1,0 +1,11 @@
+model,seed,test_c,secs
+CoxPH,42,0.614,0.7011
+DeepSurv,42,0.6195,106.9468
+DeepSurv,7,0.6185,82.0208
+DeepSurv,2024,0.6194,71.651
+"CoxKAN [d,1] (additive)",42,0.6153,46.8948
+"CoxKAN [d,1] (additive)",7,0.6154,46.1044
+"CoxKAN [d,1] (additive)",2024,0.6152,44.8502
+"CoxKAN [d,4,1]",42,0.6172,43.007
+"CoxKAN [d,4,1]",7,0.6167,39.2576
+"CoxKAN [d,4,1]",2024,0.616,41.8792

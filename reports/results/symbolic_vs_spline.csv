@@ -1,0 +1,3 @@
+model,test_C
+CoxKAN additive (B-splines),0.6153
+CoxKAN symbolic formula,0.6147

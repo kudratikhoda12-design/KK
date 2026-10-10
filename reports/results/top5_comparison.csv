@@ -1,0 +1,6 @@
+rank,"CoxPH (|log HR| per SD, p<0.05)",CoxKAN (contribution std),CoxKAN (P90/P10 HR),Permutation (CoxKAN),Permutation (DeepSurv)
+1,term_months,term_months,term_months,term_months,term_months
+2,open_acc_ratio,int_rate,int_rate,open_acc_ratio,open_acc_ratio
+3,int_rate,open_acc_ratio,open_acc_ratio,int_rate,int_rate
+4,revol_util,revol_util,home_ownership=OTHER,revol_util,revol_util
+5,credit_history_months,acc_open_past_24mths,revol_util,acc_open_past_24mths,dti

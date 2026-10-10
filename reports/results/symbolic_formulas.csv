@@ -1,0 +1,35 @@
+feature,function,r2,formula,importance
+term_months,x,0.9855,-0.324*z_term_months + 0.068,0.2788
+int_rate,x^2,0.9855,-0.039*(z_int_rate - 3.0)^2 + 0.495,0.201
+open_acc_ratio,tanh,0.9979,0.362*tanh(-0.639*z_open_acc_ratio) - 0.012,0.1788
+revol_util,x^2,0.9949,0.034*(z_revol_util - 2.25)^2 - 0.325,0.1553
+acc_open_past_24mths,log,0.9687,0.248*log|-0.469*z_acc_open_past_24mths - 1.0| + 0.075,0.1188
+dti,x^2,0.9926,-0.018*(z_dti + 3.0)^2 + 0.134,0.1123
+credit_history_months,tanh,0.9855,0.468*tanh(-0.253*z_credit_history_months - 0.25) + 0.089,0.1035
+tot_cur_bal,sigmoid,0.9894,-0.354*sigmoid(-1.616*z_tot_cur_bal - 0.75) + 0.123,0.096
+fico,x^3,0.9093,0.017*(z_fico - 1.0)^3 + 0.072,0.0764
+loan_amnt,x^3,0.8913,-0.018*(z_loan_amnt + 0.25)^3 - 0.022,0.0637
+annual_inc,sin,0.9348,-0.152*sin(-0.871*z_annual_inc - 1.5) - 0.072,0.0556
+delinq_2yrs,sin,0.982,0.099*sin(-1.187*z_delinq_2yrs + 1.5) - 0.094,0.0547
+mort_acc,sigmoid,0.9906,-0.167*sigmoid(-2.202*z_mort_acc + 1.75) + 0.087,0.0507
+num_tl_op_past_12m,sigmoid,0.9423,0.298*sigmoid(-1.187*z_num_tl_op_past_12m + 2.25) - 0.27,0.0506
+revol_bal,sin,0.8612,0.127*sin(-0.639*z_revol_bal - 2.75) + 0.069,0.05
+percent_bc_gt_75,sin,0.9505,-0.069*sin(-1.187*z_percent_bc_gt_75 - 2.25) - 0.027,0.0464
+pub_rec,sin,0.9393,0.116*sin(-1.187*z_pub_rec + 3.0) - 0.003,0.0446
+purpose=other,indicator,1.0,-0.125*[purpose=other=1],0.0445
+payment_to_income,tanh,0.9357,0.046*tanh(-2.202*z_payment_to_income - 0.25) - 0.006,0.0397
+revol_to_income,sin,0.7847,0.045*sin(-2.202*z_revol_to_income + 1.25) - 0.006,0.0315
+purpose=debt_consolidation,indicator,1.0,0.054*[purpose=debt_consolidation=1],0.0266
+ever_delinquent,indicator,1.0,-0.050*[ever_delinquent=1],0.0252
+rate_spread,tanh,0.7813,-0.056*tanh(-2.202*z_rate_spread + 3.0) + 0.048,0.0245
+home_ownership=RENT,indicator,1.0,-0.045*[home_ownership=RENT=1],0.022
+emp_years,sin,0.7688,0.018*sin(-3.0*z_emp_years - 2.5) - 0.005,0.0167
+purpose=home_improvement,indicator,1.0,-0.058*[purpose=home_improvement=1],0.015
+whole_loan,indicator,1.0,0.035*[whole_loan=1],0.0147
+open_acc,x^2,0.7644,0.009*(z_open_acc - 0.5)^2 + 0.013,0.0132
+inq_last_6mths,log,0.715,0.011*log|-1.187*z_inq_last_6mths + 2.75| - 0.017,0.0091
+home_ownership=OTHER,indicator,1.0,0.446*[home_ownership=OTHER=1],0.0063
+home_ownership=OWN,indicator,1.0,-0.014*[home_ownership=OWN=1],0.0044
+verification_status=Verified,indicator,1.0,0.009*[verification_status=Verified=1],0.004
+verification_status=Source Verified,indicator,1.0,0.005*[verification_status=Source Verified=1],0.0023
+joint_app,indicator,1.0,0.015*[joint_app=1],0.0021

@@ -1,0 +1,6 @@
+comparison,delta_C,ci_low,ci_high,p_one_sided
+CoxKAN - CoxPH,0.0014,-0.002,0.0043,0.2333
+CoxKAN_deep - CoxPH,0.0032,-0.0001,0.0061,0.0267
+DeepSurv - CoxPH,0.0055,0.0032,0.0076,0.0
+DeepSurv - CoxKAN,0.0041,0.0012,0.0072,0.0033
+DeepSurv - CoxKAN_deep,0.0023,-0.0004,0.0051,0.05

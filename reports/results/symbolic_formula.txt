@@ -1,0 +1,1 @@
+log h(t|x) = log h0(t) + -0.324*z_term_months + -0.039*(z_int_rate - 3.0)^2 + 0.362*tanh(-0.639*z_open_acc_ratio) + 0.034*(z_revol_util - 2.25)^2 + 0.248*log|-0.469*z_acc_open_past_24mths - 1.0| + -0.018*(z_dti + 3.0)^2 + 0.468*tanh(-0.253*z_credit_history_months - 0.25) + -0.354*sigmoid(-1.616*z_tot_cur_bal - 0.75) + ... (remaining terms in symbolic_formulas.csv)

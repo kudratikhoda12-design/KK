@@ -1,0 +1,47 @@
+{
+  "n": 50000,
+  "exit_reason": {
+    "prepaid (churn)": 22765,
+    "active at snapshot": 16213,
+    "charged off": 7788,
+    "matured on schedule": 3234
+  },
+  "event_rate": 0.4553,
+  "censoring_rate": 0.5447,
+  "duration": {
+    "count": 50000.0,
+    "mean": 22.57,
+    "std": 10.56,
+    "min": 1.0,
+    "25%": 14.0,
+    "50%": 25.0,
+    "75%": 31.0,
+    "max": 38.0
+  },
+  "duration_by_exit": {
+    "active at snapshot": 31.0,
+    "charged off": 14.0,
+    "matured on schedule": 36.0,
+    "prepaid (churn)": 17.0
+  },
+  "km_survival": {
+    "6": 0.9298153747964509,
+    "12": 0.8404270778631936,
+    "18": 0.735415024572648,
+    "24": 0.6233545268005083,
+    "30": 0.5176540632385381,
+    "36": 0.4539254220092243
+  },
+  "km_median": 32.0,
+  "mean_smm": 0.021660020367347113,
+  "missing": {
+    "emp_years": 6.74,
+    "bc_util": 1.14,
+    "percent_bc_gt_75": 1.09,
+    "revol_util": 0.07,
+    "dti": 0.02,
+    "revol_to_income": 0.01,
+    "payment_to_income": 0.01,
+    "loan_to_income": 0.01
+  }
+}

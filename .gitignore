@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+data/raw/
+*.csv.gz
+.DS_Store
+data/model_table.parquet
