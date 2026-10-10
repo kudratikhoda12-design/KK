@@ -54,7 +54,7 @@ res["bias"] = {
     # Early-event enrichment: 12m default rate in the terminal subset vs the whole cohort.
     "dr12m_terminal_subset_2017": float(va.default_12m.mean()),
     "dr12m_all_2017": float(all17.default_12m.mean()),
-    "prepaid_within_12m_share_of_terminal_good": float(
+    "fully_repaid_share_of_terminal": float(
         ((va[Y] == 0) & (va.total_rec_prncp >= va.funded_amnt - 1)).mean()),
 }
 ct = np.array([[va.default_12m.sum(), len(va) - va.default_12m.sum()],

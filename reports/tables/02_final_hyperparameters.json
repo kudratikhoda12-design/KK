@@ -1,0 +1,32 @@
+{
+  "lgb": {
+    "num_leaves": 63,
+    "min_child_samples": 200,
+    "learning_rate": 0.03,
+    "feature_fraction": 0.5,
+    "bagging_fraction": 0.7,
+    "lambda_l2": 50.0,
+    "min_split_gain": 0.0,
+    "n_iter": 1200
+  },
+  "xgb": {
+    "max_depth": 8,
+    "min_child_weight": 50.0,
+    "learning_rate": 0.03,
+    "subsample": 0.9,
+    "colsample_bytree": 0.5,
+    "reg_lambda": 1.0,
+    "n_iter": 849
+  },
+  "rf": {
+    "min_samples_leaf": 200,
+    "max_features": 0.2
+  },
+  "lr_vars": [
+    "sub_grade_n",
+    "acc_open_past_24mths",
+    "home_ownership",
+    "dti",
+    "mths_since_recent_inq"
+  ]
+}

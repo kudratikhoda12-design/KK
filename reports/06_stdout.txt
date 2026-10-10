@@ -1,0 +1,35 @@
+{
+  "model_adjusted_mle": 0.0037203980821117707,
+  "level_shift_logit": -0.1847716500966318,
+  "wald_lo": 0.002008187318348348,
+  "wald_hi": 0.005432608845875193,
+  "block_boot_lo": 0.0016093816858956656,
+  "block_boot_hi": 0.004824429304261038,
+  "n_quarters": 36,
+  "grade_pooled_unconditional": 0.016373234541088546,
+  "grade_pooled_lo": 0.012956961543305069,
+  "grade_pooled_hi": 0.0206713886846964,
+  "basel_retail_at_mean_pd": 0.046480359567266205,
+  "worst_quarter": "2016Q2",
+  "worst_z": 1.7576489516501828
+}
+Base                                   EL=  320.5M VaR99=  723.7M ES99=  820.6M VaR99.9=  939.8M (196s)
+{'realised_loss': 326088349.9378772, 'predicted_EL': 321502209.6879473, 'percentile_in_mc': 0.5893, 'two_sided_p': 0.8213999999999999, 'implied_z_2017': 1.29841360146999}
+PD odds x1.5                           EL=  455.4M VaR99=  966.7M ES99= 1082.5M VaR99.9= 1226.4M (200s)
+PD odds x2.0                           EL=  578.2M VaR99= 1174.4M ES99= 1303.1M VaR99.9= 1462.3M (190s)
+Historical worst quarter 2016Q2 (PD odds x1.25) EL=  389.4M VaR99=  850.9M ES99=  957.3M VaR99.9= 1090.7M (205s)
+Downturn LGD (0.936)                   EL=  335.2M VaR99=  756.8M ES99=  858.1M VaR99.9=  982.8M (215s)
+LGD +5pp                               EL=  338.4M VaR99=  764.1M ES99=  866.4M VaR99.9=  992.3M (212s)
+Correlation x1.5                       EL=  320.4M VaR99=  850.8M ES99=  988.7M VaR99.9= 1160.4M (195s)
+Data-estimated rho (0.0037, benign 2009-17) EL=  321.2M VaR99=  411.2M ES99=  426.2M VaR99.9=  446.3M (196s)
+Combined adverse: PD x1.5 + downturn LGD + rho x1.5 EL=  476.0M VaR99= 1172.3M ES99= 1343.1M VaR99.9= 1550.8M (188s)
+                                           scenario  EL_mc  VaR99   ES99  VaR99.9  ES99.9
+                                               Base  320.5  723.7  820.6    939.8  1020.0
+                                       PD odds x1.5  455.4  966.7 1082.5   1226.4  1317.0
+                                       PD odds x2.0  578.2 1174.4 1303.1   1462.3  1560.8
+    Historical worst quarter 2016Q2 (PD odds x1.25)  389.4  850.9  957.3   1090.7  1175.5
+                               Downturn LGD (0.936)  335.2  756.8  858.1    982.8  1066.6
+                                           LGD +5pp  338.4  764.1  866.4    992.3  1076.9
+                                   Correlation x1.5  320.4  850.8  988.7   1160.4  1276.2
+        Data-estimated rho (0.0037, benign 2009-17)  321.2  411.2  426.2    446.3   456.2
+Combined adverse: PD x1.5 + downturn LGD + rho x1.5  476.0 1172.3 1343.1   1550.8  1687.6

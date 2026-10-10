@@ -26,7 +26,7 @@ def test_rho_mle_ci_coverage():
     cover = []
     for _ in range(200):
         dr = pf.cond_pd(0.05, 0.06, rng.standard_normal(150))
-        fit = pf.fit_rho_mle(dr, np.full(150, 0.05))
+        fit = pf.fit_rho_mle(dr, np.full(150, 0.05), free_level=False)
         cover.append(fit["lo"] < 0.06 < fit["hi"])
     assert 0.90 <= np.mean(cover) <= 0.99
 
@@ -49,3 +49,27 @@ def test_var_es_ordering():
     L = np.random.default_rng(0).lognormal(size=10_000)
     r = pf.var_es(L, 0.99)
     assert r["VaR_lo"] <= r["VaR"] <= r["VaR_hi"] and r["ES"] >= r["VaR"]
+
+
+def test_rho_mle_free_level_handles_biased_pds():
+    """PDs biased upward by 30%: fixed-level MLE is distorted, free-level is not."""
+    rng = np.random.default_rng(5)
+    z = rng.standard_normal(300)
+    dr = pf.cond_pd(0.05, 0.03, z)
+    biased = np.full(300, 0.065)
+    free = pf.fit_rho_mle(dr, biased, free_level=True)
+    fixed = pf.fit_rho_mle(dr, biased, free_level=False)
+    assert free["lo"] < 0.03 < free["hi"]
+    assert abs(np.mean(free["z_t"])) < 0.05
+    assert abs(fixed["rho"] - 0.03) > abs(free["rho"] - 0.03)
+
+
+def test_per_loan_rho_matches_asrf():
+    rng = np.random.default_rng(4)
+    n = 20_000
+    pd_ = rng.uniform(0.01, 0.15, n)
+    rho = pf.basel_retail_rho(pd_)
+    ead = rng.uniform(5e3, 3e4, n)
+    L = pf.simulate_losses(pd_, np.full(n, 0.9), ead, rho, n_scen=4000, seed=1)
+    assert np.quantile(L, 0.99) == pytest.approx(
+        pf.asrf_quantile_loss(pd_, 0.9, ead, rho, 0.99), rel=0.05)

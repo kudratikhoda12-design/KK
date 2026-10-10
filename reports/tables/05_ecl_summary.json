@@ -1,0 +1,22 @@
+{
+  "n_loans": 443579,
+  "funded_exposure": 6584957075.0,
+  "lgd_used": 0.8953779161543416,
+  "mean_pd_12m": 0.05901043165171984,
+  "observed_dr_12m": 0.057982907216076504,
+  "ead_12m_total": 5718959559.688355,
+  "ecl_12m": 321502209.6879473,
+  "ecl_12m_pct": 0.048823736590256704,
+  "ecl_lifetime": 800380612.8264179,
+  "ecl_lifetime_pct": 0.12154682311675022,
+  "mean_pd_lifetime": 0.19977878100048296,
+  "backtest": {
+    "predicted_ecl_12m": 321502209.6879473,
+    "realised_12m_ead_of_defaults": 364190744.54999995,
+    "predicted_ead_of_defaults": 359068728.2849268,
+    "realised_12m_loss_at_mean_lgd": 326088349.9378771,
+    "ratio_realised_to_predicted": 1.0142647238859763,
+    "z_independence": 2.0798776674564974,
+    "p_independence": 0.03753675490173547
+  }
+}

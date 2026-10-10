@@ -6,7 +6,7 @@ OOT split by default date: train defaults <= 2015-06, test 2015-07..2017-09.
 EAD (conditional on 12m default) = outstanding principal at default / funded;
 train issue years 2007-2015, test 2016.
 """
-import json, pickle, sys
+import json, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import numpy as np
@@ -82,11 +82,8 @@ print(ead_tab.round(4).T.to_string())
 ead_tab.to_csv(config.TAB_DIR / "04_ead_model_comparison.csv")
 eglm.summary2().tables[1].to_csv(config.TAB_DIR / "04_ead_glm_coefficients.csv")
 
-# Refit chosen specifications on all available data for production use.
-glm_all = le.fit_fractional_logit(lg, le.LGD_FORMULA)
-eglm_all = le.fit_fractional_logit(ed[ed.issue_year <= 2016], le.EAD_FORMULA)
-with open(config.MODEL_DIR / "lgd_ead.pkl", "wb") as f:
-    pickle.dump({"lgd_glm": glm_all, "ead_glm": eglm_all, "lgd_mean": float(lg.y.mean()),
-                 "ead_mean": float(ed.y.mean())}, f)
+# Production choices: LGD = pooled long-run mean (no model beat it OOT);
+# EAD = fractional-logit GLM refit on all labelled data (le.fit_ead_production).
+res["ead_production_mean"] = float(le.ead_production_sample(df).y.mean())
 json.dump(res, open(config.TAB_DIR / "04_lgd_summary.json", "w"), indent=2, default=float)
 print(res)

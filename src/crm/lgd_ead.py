@@ -57,3 +57,16 @@ def paired_loss_test(y, p_model, p_bench) -> dict:
     t = stats.ttest_1samp(d, 0)
     return {"mse_reduction": float(d.mean()), "t": float(t.statistic),
             "p_value_one_sided": float(t.pvalue / 2 if t.statistic > 0 else 1 - t.pvalue / 2)}
+
+
+def ead_production_sample(loans: pd.DataFrame) -> pd.DataFrame:
+    """Loans defaulting within 12 months, issue years <= 2016 (all labelled data
+    before the 2017 cohort)."""
+    ed = prep(loans[(loans["default_12m"] == 1) & (loans["obs_12m"] == 1) & (loans["issue_year"] <= 2016)])
+    ed["y"] = ed["ead_ratio"]
+    return ed
+
+
+def fit_ead_production(loans: pd.DataFrame):
+    """Deterministic refit (statsmodels formula results do not unpickle on py3.13)."""
+    return fit_fractional_logit(ead_production_sample(loans), EAD_FORMULA)

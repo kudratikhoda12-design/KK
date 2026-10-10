@@ -25,25 +25,40 @@ def vasicek_logpdf(x, pd_, rho):
             - (np.sqrt(1 - rho) * a - b) ** 2 / (2 * rho))
 
 
-def fit_rho_mle(dr: np.ndarray, pd_: np.ndarray) -> dict:
-    """MLE of asset correlation given cohort default rates and their PDs.
+def fit_rho_mle(dr: np.ndarray, pd_: np.ndarray, free_level: bool = True) -> dict:
+    """MLE of asset correlation from cohort default rates and cohort PDs.
 
-    pd_ is the expected (model / long-run) PD of each cohort; deviations of the
-    observed default rate around it are attributed to the systematic factor.
-    Returns the estimate, a Wald CI from the observed information and the
-    implied factor realisations Z_t.
+    pd_ carries each cohort's risk mix (e.g. the mean model PD). With
+    free_level=True a common through-the-cycle shift c is estimated jointly,
+    logit(PD_t) = logit(pd_t) + c, so that a level bias in the PDs is not
+    mistaken for systematic risk (the implied Z_t are then centred).
+    Returns rho with a Wald CI (profile curvature), c and the implied Z_t.
     """
     dr = np.clip(np.asarray(dr, float), 1e-6, 1 - 1e-6)
-    pd_ = np.asarray(pd_, float)
-    nll = lambda r: -np.sum(vasicek_logpdf(dr, pd_, r))
-    opt = optimize.minimize_scalar(nll, bounds=(1e-4, 0.5), method="bounded")
+    lpd = np.log(np.asarray(pd_, float) / (1 - np.asarray(pd_, float)))
+
+    def nll(r, c):
+        p = 1 / (1 + np.exp(-(lpd + c)))
+        return -np.sum(vasicek_logpdf(dr, p, r))
+
+    def profile(r):
+        if not free_level:
+            return nll(r, 0.0), 0.0
+        o = optimize.minimize_scalar(lambda c: nll(r, c), bounds=(-3, 3), method="bounded",
+                                     options={"xatol": 1e-8})
+        return o.fun, o.x
+
+    opt = optimize.minimize_scalar(lambda r: profile(r)[0], bounds=(1e-4, 0.5), method="bounded",
+                                   options={"xatol": 1e-8})
     r = opt.x
-    h = 1e-5
-    info = (nll(r + h) - 2 * nll(r) + nll(r - h)) / h ** 2
+    c = profile(r)[1]
+    h = max(1e-5, r * 1e-2)
+    info = (profile(r + h)[0] - 2 * profile(r)[0] + profile(r - h)[0]) / h ** 2
     se = 1 / np.sqrt(info) if info > 0 else np.nan
-    z = (np.sqrt(1 - r) * norm.ppf(dr) - norm.ppf(pd_)) / np.sqrt(r)
+    p_adj = 1 / (1 + np.exp(-(lpd + c)))
+    z = (np.sqrt(1 - r) * norm.ppf(dr) - norm.ppf(p_adj)) / np.sqrt(r)
     return {"rho": r, "se": se, "lo": max(r - 1.96 * se, 0), "hi": r + 1.96 * se,
-            "n_obs": len(dr), "z_t": z}
+            "level_shift": c, "n_obs": len(dr), "z_t": z}
 
 
 def fit_rho_pooled(dr_by_group: dict[str, np.ndarray]) -> dict:
@@ -82,7 +97,8 @@ def asrf_quantile_loss(pd_, lgd, ead, rho, q):
 
 def simulate_losses(pd_, lgd, ead, rho, n_scen=10_000, seed=0, chunk=250,
                     z=None, return_z=False):
-    """Loan-level Monte Carlo: systematic Z ~ N(0,1), idiosyncratic Bernoulli."""
+    """Loan-level Monte Carlo: systematic Z ~ N(0,1), idiosyncratic Bernoulli.
+    rho may be a scalar or a per-loan array (e.g. the Basel retail curve)."""
     rng = np.random.default_rng(seed)
     pd_ = np.asarray(pd_, float)
     exposure = (np.asarray(lgd, float) * np.asarray(ead, float)).astype(np.float32)
@@ -90,10 +106,11 @@ def simulate_losses(pd_, lgd, ead, rho, n_scen=10_000, seed=0, chunk=250,
     if z is None:
         z = rng.standard_normal(n_scen)
     losses = np.empty(len(z))
-    sr, s1r = np.sqrt(rho), np.sqrt(1 - rho)
+    rho = np.broadcast_to(np.asarray(rho, np.float32), pd_.shape)   # scalar or per-loan
+    sr, s1r = np.sqrt(rho)[None, :], np.sqrt(1 - rho)[None, :]
     for i in range(0, len(z), chunk):
         zc = z[i:i + chunk]
-        p = special.ndtr((thr[None, :] + sr * zc[:, None]) / s1r).astype(np.float32)
+        p = special.ndtr((thr[None, :] + sr * zc[:, None].astype(np.float32)) / s1r).astype(np.float32)
         u = rng.random(p.shape, dtype=np.float32)
         losses[i:i + chunk] = ((u < p) * exposure[None, :]).sum(axis=1)
     return (losses, z) if return_z else losses

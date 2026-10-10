@@ -8,7 +8,6 @@ Lifetime PD: PD_L = 1 - (1 - PD_12)^k, with k = ln(1-CDR_life)/ln(1-CDR_12)
 estimated per grade x term on fully matured vintages (cumulative-hazard scaling).
 """
 import json
-import pickle
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -20,17 +19,15 @@ from scipy import stats
 from crm import config, lgd_ead as le
 
 T = config.TAB_DIR
-with open(config.MODEL_DIR / "lgd_ead.pkl", "rb") as f:
-    LE = pickle.load(f)
-LGD = LE["lgd_mean"]
-
+LGD = json.load(open(T / "04_lgd_summary.json"))["lgd_long_run_mean"]
 loans = pd.read_parquet(config.DATA_DIR / "loans.parquet")
+ead_glm = le.fit_ead_production(loans)
 pdf = pd.read_parquet(config.DATA_DIR / "pd_final_2017.parquet")[["id", "pd_final"]]
 v = loans[loans.issue_year == 2017].merge(pdf, on="id", how="inner")
 assert len(v) == (loans.issue_year == 2017).sum()
 
 v_le = le.prep(v)
-v["ead_ratio_hat"] = LE["ead_glm"].predict(v_le).to_numpy()
+v["ead_ratio_hat"] = ead_glm.predict(v_le).to_numpy()
 v["ead_12m"] = v.funded_amnt * v.ead_ratio_hat
 v["lgd"] = LGD
 v["ecl_12m"] = v.pd_final * v.lgd * v.ead_12m

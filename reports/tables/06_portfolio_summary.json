@@ -1,0 +1,67 @@
+{
+  "rho": {
+    "model_adjusted_mle": 0.0037203980821117707,
+    "level_shift_logit": -0.1847716500966318,
+    "wald_lo": 0.002008187318348348,
+    "wald_hi": 0.005432608845875193,
+    "block_boot_lo": 0.0016093816858956656,
+    "block_boot_hi": 0.004824429304261038,
+    "n_quarters": 36,
+    "grade_pooled_unconditional": 0.016373234541088546,
+    "grade_pooled_lo": 0.012956961543305069,
+    "grade_pooled_hi": 0.0206713886846964,
+    "basel_retail_at_mean_pd": 0.046480359567266205,
+    "worst_quarter": "2016Q2",
+    "worst_z": 1.7576489516501828,
+    "base_choice": "Basel IRB other-retail rho(PD), per loan",
+    "base_mean_rho": 0.06504327608056983
+  },
+  "checks": {
+    "EL_z": -0.765880090189962,
+    "EL_p": 0.4437476535481222,
+    "VaR99_mc_vs_asrf_pct": 0.009585189102046865,
+    "VaR99.9_mc_vs_asrf_pct": 0.006868887785662858
+  },
+  "original_setup_10k_loans_2k_scen": {
+    "VaR99": 15805763.5,
+    "VaR99_lo": 15156092.0,
+    "VaR99_hi": 17754816.0,
+    "ES99": 18281620.25,
+    "EAD": 129382469.91269967,
+    "VaR99_ci_width_pct": 0.1644162270300957
+  },
+  "backtest_2017": {
+    "realised_loss": 326088349.9378772,
+    "predicted_EL": 321502209.6879473,
+    "percentile_in_mc": 0.5893,
+    "two_sided_p": 0.8213999999999999,
+    "implied_z_2017": 1.29841360146999
+  },
+  "historical_worst_quarter": {
+    "quarter": "2016Q2",
+    "odds_multiplier": 1.2491266454158956
+  },
+  "reverse_stress_pd_odds_multiplier_EL_eq_base_VaR99.9": 3.7437060476751465,
+  "base": {
+    "scenario": "Base",
+    "EL_analytic": 321502209.6879473,
+    "EL_mc": 320522021.944,
+    "EL_mc_se": 1279818.8078033868,
+    "sd": 127981880.78033867,
+    "VaR99": 723669498.8800005,
+    "VaR99_lo": 703267520.0,
+    "VaR99_hi": 747342208.0,
+    "ES99": 820569751.68,
+    "ES99_lo": 802595477.8873692,
+    "ES99_hi": 838544025.4726307,
+    "ASRF_VaR99": 716798846.3892306,
+    "VaR99.9": 939812525.2480032,
+    "VaR99.9_lo": 915990528.0,
+    "VaR99.9_hi": 994040896.0,
+    "ES99.9": 1019962272.0,
+    "ES99.9_lo": 964323384.3148608,
+    "ES99.9_hi": 1075601159.6851392,
+    "ASRF_VaR99.9": 933401097.8478718,
+    "UL_capital_99.9": 618310315.560056
+  }
+}

@@ -120,7 +120,8 @@ def calibration_slope_intercept(y, p) -> dict:
     Calibration-in-the-large is the intercept with slope fixed to 1 (offset).
     Ideal: intercept 0, slope 1. Wald CIs from statsmodels.
     """
-    lp = np.log(np.clip(p, EPS, 1 - EPS) / (1 - np.clip(p, EPS, 1 - EPS)))
+    p = np.clip(np.asarray(p, float), EPS, 1 - EPS)
+    lp = np.log(p / (1 - p))
     y = np.asarray(y)
     m1 = sm.GLM(y, sm.add_constant(lp), family=sm.families.Binomial()).fit()
     m0 = sm.GLM(y, np.ones_like(lp), family=sm.families.Binomial(), offset=lp).fit()

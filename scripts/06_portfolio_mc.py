@@ -2,7 +2,10 @@
 stress testing for the full 2017 cohort.
 
 1. Asset correlation rho estimated by MLE from quarterly cohort 12m default
-   rates vs model PDs (2009Q1-2017Q4), CI by moving-block bootstrap.
+   rates vs model PDs (2009Q1-2017Q4), with a free through-the-cycle level,
+   CI by moving-block bootstrap. The window has no recession, so the estimate
+   is a benign-period lower bound: the base case uses the Basel IRB "other
+   retail" correlation per loan (prudent), the data estimate is a sensitivity.
 2. Loan-level MC (all 2017 loans), common random numbers across scenarios.
 3. Checks: MC EL vs analytic EL, MC vs ASRF analytic quantiles, MC error.
 4. Backtest: percentile of the realised 2017 12m loss in the predicted distribution.
@@ -39,10 +42,13 @@ with open(config.MODEL_DIR / "recalibrators.pkl", "rb") as f:
 score = {"LightGBM": lambda X: M["lgb"].predict(X),
          "XGBoost": lambda X: models.predict_xgb(M["xgb"], X),
          "LogReg_WOE": lambda X: M["lr"].predict(X)}
+if "lr_v2" in M:
+    score["LogReg_WOE_v2"] = lambda X: M["lr_v2"].predict(X)
 loans = pd.read_parquet(config.DATA_DIR / "loans.parquet")
 obs = loans[(loans.obs_12m == 1) & (loans.issue_year >= 2009)].copy()
 champ = R["champion"] if R["champion"] in score else "LightGBM"
-obs["pd"] = R["recal"].predict(score[champ](obs[models.FEATURES]))
+raw = score[champ](obs[models.FEATURES])
+obs["pd"] = R["recal"].predict(raw, obs["grade"]) if R.get("by_grade") else R["recal"].predict(raw)
 q = obs.groupby("issue_q").agg(n=("id", "size"), dr=("default_12m", "mean"), pd=("pd", "mean"))
 q = q[q.n >= 500]
 fit = pf.fit_rho_mle(q.dr.to_numpy(), q.pd.to_numpy())
@@ -55,15 +61,14 @@ for _ in range(1000):
     boots.append(pf.fit_rho_mle(q.dr.to_numpy()[idx], q.pd.to_numpy()[idx])["rho"])
 q["z_t"] = fit["z_t"]
 q.to_csv(T / "06_quarterly_cohorts_rho.csv")
-rho = float(fit["rho"])
-rho_hi = float(np.quantile(boots, 0.975))
+rho_data = float(fit["rho"])
 # Unconditional (grade-level, PD fixed per grade) estimate for comparison.
 gq = obs.groupby(["grade", "issue_q"], observed=True).agg(n=("id", "size"), dr=("default_12m", "mean"))
 gq = gq[gq.n >= 300].reset_index()
 pooled = pf.fit_rho_pooled({g: d.dr.to_numpy() for g, d in gq.groupby("grade", observed=True)})
 port = pd.read_parquet(config.DATA_DIR / "portfolio_2017.parquet")
-res["rho"] = {"model_adjusted_mle": rho, "wald_lo": fit["lo"], "wald_hi": fit["hi"],
-              "block_boot_lo": float(np.quantile(boots, 0.025)), "block_boot_hi": rho_hi,
+res["rho"] = {"model_adjusted_mle": rho_data, "level_shift_logit": float(fit["level_shift"]), "wald_lo": fit["lo"], "wald_hi": fit["hi"],
+              "block_boot_lo": float(np.quantile(boots, 0.025)), "block_boot_hi": float(np.quantile(boots, 0.975)),
               "n_quarters": int(nq), "grade_pooled_unconditional": pooled["rho"],
               "grade_pooled_lo": pooled["lo"], "grade_pooled_hi": pooled["hi"],
               "basel_retail_at_mean_pd": float(pf.basel_retail_rho(port.pd_final.mean())),
@@ -74,6 +79,9 @@ print(json.dumps(res["rho"], indent=2, default=float))
 # 2) Base Monte Carlo on the full 2017 portfolio
 # ---------------------------------------------------------------------------
 PD, LGD, EAD = port.pd_final.to_numpy(), port.lgd.to_numpy(), port.ead_12m.to_numpy()
+rho = pf.basel_retail_rho(PD)                      # base: per-loan supervisory correlation
+res["rho"]["base_choice"] = "Basel IRB other-retail rho(PD), per loan"
+res["rho"]["base_mean_rho"] = float(rho.mean())
 EL = float(np.sum(PD * LGD * EAD))
 Z = np.random.default_rng(SEED).standard_normal(N_SCEN)   # common random numbers
 
@@ -112,7 +120,7 @@ pd.DataFrame(conv).to_csv(T / "06_mc_convergence.csv", index=False)
 # Original project set-up (10,000 loans x 2,000 scenarios) for comparison.
 rs = np.random.default_rng(1)
 idx = rs.choice(len(PD), 10_000, replace=False)
-L_small = pf.simulate_losses(PD[idx], LGD[idx], EAD[idx], rho, n_scen=2000, seed=2)
+L_small = pf.simulate_losses(PD[idx], LGD[idx], EAD[idx], rho[idx], n_scen=2000, seed=2)
 vs = pf.var_es(L_small, 0.99)
 res["original_setup_10k_loans_2k_scen"] = {"VaR99": vs["VaR"], "VaR99_lo": vs["VaR_lo"], "VaR99_hi": vs["VaR_hi"],
                                           "ES99": vs["ES"], "EAD": float(EAD[idx].sum()),
@@ -133,23 +141,26 @@ print(res["backtest_2017"])
 # ---------------------------------------------------------------------------
 lgd_dt = json.load(open(T / "04_lgd_summary.json"))["lgd_downturn"]
 odds = lambda p, m: expit(logit(p) + np.log(m))
+# Historical scenario: worst observed quarterly odds ratio DR / expected PD
+# (expected PD = model PD at the estimated through-the-cycle level).
+pd_adj = expit(logit(q.pd.to_numpy()) + fit["level_shift"])
+hist_or = np.exp(logit(q.dr.to_numpy()) - logit(pd_adj))
+hist_m, hist_q = float(hist_or.max()), q.index[int(hist_or.argmax())]
+res["historical_worst_quarter"] = {"quarter": hist_q, "odds_multiplier": hist_m}
 rows = [base]
 scen = {
     "PD odds x1.5": (odds(PD, 1.5), LGD, rho),
     "PD odds x2.0": (odds(PD, 2.0), LGD, rho),
+    f"Historical worst quarter {hist_q} (PD odds x{hist_m:.2f})": (odds(PD, hist_m), LGD, rho),
     f"Downturn LGD ({lgd_dt:.3f})": (PD, np.full_like(LGD, lgd_dt), rho),
     "LGD +5pp": (PD, np.minimum(LGD + 0.05, 1), rho),
-    f"Correlation stress (rho={rho_hi:.3f}, 97.5% boot)": (PD, LGD, rho_hi),
-    "Combined: PD x1.5 + downturn LGD + rho stress": (odds(PD, 1.5), np.full_like(LGD, lgd_dt), rho_hi),
+    "Correlation x1.5": (PD, LGD, np.minimum(1.5 * rho, 0.99)),
+    f"Data-estimated rho ({rho_data:.4f}, benign 2009-17)": (PD, LGD, np.full_like(PD, rho_data)),
+    "Combined adverse: PD x1.5 + downturn LGD + rho x1.5": (odds(PD, 1.5), np.full_like(LGD, lgd_dt),
+                                                           np.minimum(1.5 * rho, 0.99)),
 }
 for lab, (p_, l_, r_) in scen.items():
     rows.append(run(p_, l_, r_, lab)[0])
-# Historical scenario: re-run the worst observed systematic factor (deterministic Z).
-zw = res["rho"]["worst_z"]
-Lh = pf.simulate_losses(PD, LGD, EAD, rho, z=np.full(2000, zw), seed=7)
-rows.append({"scenario": f"Historical worst quarter {res['rho']['worst_quarter']} (Z={zw:.2f})",
-             "EL_analytic": float(np.sum(pf.cond_pd(PD, rho, zw) * LGD * EAD)), "EL_mc": float(Lh.mean()),
-             "VaR99": float(np.quantile(Lh, 0.99))})
 st = pd.DataFrame(rows)
 st.to_csv(T / "06_stress_results.csv", index=False)
 print(st[["scenario", "EL_mc", "VaR99", "ES99", "VaR99.9", "ES99.9"]].assign(
@@ -160,16 +171,16 @@ mult = optimize.brentq(lambda m: np.sum(odds(PD, m) * LGD * EAD) - base["VaR99.9
 res["reverse_stress_pd_odds_multiplier_EL_eq_base_VaR99.9"] = float(mult)
 res["base"] = base
 
+comb = scen["Combined adverse: PD x1.5 + downturn LGD + rho x1.5"]
+L_c = pf.simulate_losses(comb[0], comb[1], EAD, comb[2], z=Z, seed=SEED)
 fig, ax = plt.subplots(figsize=(7.5, 4.2))
-L_c = pf.simulate_losses(*scen["Combined: PD x1.5 + downturn LGD + rho stress"][:2], EAD,
-                         scen["Combined: PD x1.5 + downturn LGD + rho stress"][2], z=Z, seed=SEED)
-bins = np.linspace(min(L_base.min(), L_c.min()), max(L_base.max(), L_c.max()), 120) / 1e6
+bins = np.linspace(min(L_base.min(), L_c.min()), np.quantile(L_c, 0.9995), 120) / 1e6
 ax.hist(L_base / 1e6, bins=bins, color=SERIES[0], alpha=0.75, label="Base")
 ax.hist(L_c / 1e6, bins=bins, color=SERIES[1], alpha=0.6, label="Combined adverse")
-for v_, c_ in [(base["VaR99"], SERIES[0]), (rows[6]["VaR99"], SERIES[1])]:
+for v_, c_ in [(base["VaR99"], SERIES[0]), (rows[-1]["VaR99"], SERIES[1])]:
     ax.axvline(v_ / 1e6, color=c_, lw=1.2, ls="--")
 ax.axvline(realised / 1e6, color="#0b0b0b", lw=1.4)
-ax.annotate("Realised 2017", (realised / 1e6, ax.get_ylim()[1] * 0.9), fontsize=8, ha="right")
+ax.annotate(" Realised 2017", (realised / 1e6, ax.get_ylim()[1] * 0.92), fontsize=8)
 ax.set(xlabel="12-month portfolio loss ($M)", ylabel="Scenarios",
        title="2017 cohort 12m loss distribution (dashed = 99% VaR)")
 ax.legend()
@@ -179,7 +190,7 @@ fig, ax = plt.subplots(figsize=(7.5, 3.8))
 ax.plot(range(len(q)), q.z_t, color=SERIES[0], marker="o", ms=3)
 ax.axhline(0, color="#b5b3ad", lw=1)
 ax.set_xticks(range(0, len(q), 4), q.index[::4], rotation=45, fontsize=8)
-ax.set(ylabel="Implied systematic factor Z", title=f"Implied credit-cycle factor by issue quarter (rho={rho:.3f})")
+ax.set(ylabel="Implied systematic factor Z", title=f"Implied credit-cycle factor by issue quarter (data rho={rho_data:.4f})")
 save(fig, F / "06_systematic_factor.png")
 
 json.dump(res, open(T / "06_portfolio_summary.json", "w"), indent=2, default=float)

@@ -26,7 +26,9 @@ out = {}
 
 # 1) Choose champion on 2016 AUC; stack on 2016 --------------------------------
 auc16 = {n: metrics.auc_ci(te[Y], te[f"p_{n}"])[0] for n in names}
-stack_in = ["LogReg_WOE", "LightGBM", "XGBoost"]
+lr_name = max([n for n in names if n.startswith("LogReg")], key=auc16.get)
+out["lr_selected"] = lr_name
+stack_in = [lr_name, "LightGBM", "XGBoost"]
 stk = cal.Stack().fit(te[[f"p_{n}" for n in stack_in]].to_numpy(), te[Y].to_numpy())
 out["stack_coefficients"] = dict(zip(["const"] + stack_in, map(float, stk.m.params)))
 out["stack_pvalues"] = dict(zip(["const"] + stack_in, map(float, stk.m.pvalues)))
@@ -96,9 +98,19 @@ out["recalibration_method"] = method
 out["champion_2016_calibration"] = s16c
 p17_final = recal[champion][method].predict(va[f"p_{champion}"].to_numpy())
 p16_final = recal[champion][method].predict(te[f"p_{champion}"].to_numpy())
+# Segment check (2016 only): is miscalibration left by grade after Platt?
+seg = cal.PlattSegment().fit(te[f"p_{champion}"].to_numpy(), te[Y].to_numpy(), te["grade"])
+out["grade_recalibration_lr_test_2016"] = seg.lr_test
+if seg.lr_test["p"] < 0.01:
+    method = method + "+grade"
+    out["recalibration_method"] = method
+    p17_final = seg.predict(va[f"p_{champion}"].to_numpy(), va["grade"])
+    p16_final = seg.predict(te[f"p_{champion}"].to_numpy(), te["grade"])
+    recal[champion][method] = seg
+    out["final_2017_platt_only"] = metrics.summary(va[Y], recal[champion]["platt"].predict(va[f"p_{champion}"].to_numpy()))
 va["pd_final"], te["pd_final"] = p17_final, p16_final
-lr_m = "platt" if metrics.calibration_slope_intercept(te[Y], te["p_LogReg_WOE"])["slope_p_vs1"] < 0.01 else "intercept_shift"
-va["pd_lr_final"] = recal["LogReg_WOE"][lr_m].predict(va["p_LogReg_WOE"].to_numpy())
+lr_m = "platt" if metrics.calibration_slope_intercept(te[Y], te[f"p_{lr_name}"])["slope_p_vs1"] < 0.01 else "intercept_shift"
+va["pd_lr_final"] = recal[lr_name][lr_m].predict(va[f"p_{lr_name}"].to_numpy())
 out["final_2017"] = metrics.summary(va[Y], p17_final)
 out["final_2017_logreg"] = metrics.summary(va[Y], va["pd_lr_final"])
 out["final_2017_logreg"]["method"] = lr_m
@@ -138,6 +150,8 @@ df = df[df.obs_12m == 1]
 dev = df[df.issue_year.isin(config.TRAIN_YEARS)]
 score_fn = {"LightGBM": lambda X: M["lgb"].predict(X), "XGBoost": lambda X: models.predict_xgb(M["xgb"], X),
             "LogReg_WOE": lambda X: M["lr"].predict(X)}
+if "lr_v2" in M:
+    score_fn["LogReg_WOE_v2"] = lambda X: M["lr_v2"].predict(X)
 psi_model = champion if champion in score_fn else "LightGBM"
 dev_score = score_fn[psi_model](dev[models.FEATURES])
 psi_rows = []
@@ -150,8 +164,14 @@ psi_t.to_csv(T / "03_psi_score_by_year.csv", index=False)
 print(psi_t.round(4).to_string(index=False))
 imp = pd.read_csv(T / "02_lgb_gain_importance.csv", index_col=0).iloc[:, 0]
 top = [c for c in imp.index[:20] if c in models.NUMERIC]
-csi = pd.DataFrame({yr: {c: metrics.psi(dev[c], df.loc[df.issue_year == yr, c]) for c in top}
-                    for yr in (2016, 2017)})
+# Bureau fields are structurally missing before 2012, so CSI vs the full dev
+# window mostly measures the missing bin; the 2013-2015 reference avoids that.
+ref = df[df.issue_year.between(2013, 2015)]
+csi = pd.DataFrame({**{f"vs_dev_{yr}": {c: metrics.psi(dev[c], df.loc[df.issue_year == yr, c]) for c in top}
+                       for yr in (2016, 2017)},
+                    **{f"vs_2013_15_{yr}": {c: metrics.psi(ref[c], df.loc[df.issue_year == yr, c]) for c in top}
+                       for yr in (2016, 2017)}})
+csi["dev_missing_share"] = dev[top].isna().mean()
 csi.to_csv(T / "03_csi_top_features.csv")
 print(csi.round(3).to_string())
 out["psi_2017"] = float(psi_t.set_index("year").loc[2017, "psi_score"])
@@ -181,6 +201,7 @@ save(fig, F / "03_vintage_36m.png")
 va[["id", "issue_q", "grade", "term_m", "funded_amnt", Y, "pd_final", "pd_lr_final"]].to_parquet(
     config.DATA_DIR / "pd_final_2017.parquet")
 with open(config.MODEL_DIR / "recalibrators.pkl", "wb") as f:
-    pickle.dump({"champion": champion, "method": method, "recal": recal[champion][method], "stack": stk}, f)
+    pickle.dump({"champion": champion, "method": method, "recal": recal[champion][method],
+                 "by_grade": method.endswith("+grade"), "stack": stk}, f)
 json.dump(out, open(T / "03_validation_summary.json", "w"), indent=2, default=float)
 print(json.dumps({k: out[k] for k in ("champion", "recalibration_method", "psi_2017")}, default=float))

@@ -1,0 +1,44 @@
+{
+  "v1_vars": [
+    "sub_grade_n",
+    "acc_open_past_24mths",
+    "home_ownership",
+    "dti",
+    "mths_since_recent_inq"
+  ],
+  "v2_vars": [
+    "sub_grade_n",
+    "acc_open_past_24mths",
+    "home_ownership",
+    "dti",
+    "mths_since_recent_inq",
+    "mort_acc",
+    "mo_sin_old_il_acct",
+    "verification_status",
+    "mo_sin_old_rev_tl_op",
+    "inq_last_6mths",
+    "mo_sin_rcnt_tl",
+    "total_rev_hi_lim"
+  ],
+  "nested": true,
+  "lr_test": {
+    "chi2": 792.7835394363501,
+    "df": 7,
+    "p": 6.6944956327816494e-167
+  },
+  "aic": {
+    "v1": 333497.93708479486,
+    "v2": 332719.1535453585
+  },
+  "bic": {
+    "v1": 333568.0950470577,
+    "v2": 332871.16246359475
+  },
+  "delong_2016_v2_vs_v1": {
+    "auc1": 0.7118786045742609,
+    "auc2": 0.7107953168776558,
+    "diff": 0.0010832876966050398,
+    "z": 3.399652572363603,
+    "p_value": 0.000674715251225235
+  }
+}

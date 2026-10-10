@@ -1,0 +1,65 @@
+  sign = np.sign(stats.spearmanr(x[nn], y[nn]).statistic) or 1.0
+IV>=0.02: 28 vars; after |r|<=0.7: 20
+step 1: + sub_grade_n holdout AUC=0.7078
+step 2: + avg_cur_bal holdout AUC=0.7127
+step 3: + loan_amnt holdout AUC=0.7170
+step 4: + acc_open_past_24mths holdout AUC=0.7202
+step 5: + dti holdout AUC=0.7219
+step 6: + mort_acc holdout AUC=0.7227
+step 7: + total_rev_hi_lim holdout AUC=0.7232
+            share_terminal  dr_terminal  dr_all_loans_incl_open
+issue_year                                                     
+2007                1.0000       0.1793                  0.1793
+2008                1.0000       0.1581                  0.1581
+2009                1.0000       0.1260                  0.1260
+2010                1.0000       0.0995                  0.0995
+2011                1.0000       0.1063                  0.1063
+2012                1.0000       0.1358                  0.1358
+2013                1.0000       0.1233                  0.1233
+2014                1.0000       0.1373                  0.1373
+2015                0.9995       0.1489                  0.1490
+2016                0.7183       0.1985                  0.1513
+2017                0.4012       0.2002                  0.0962
+2018                0.1197       0.1325                  0.0289
+{
+  "n_terminal": 1345350,
+  "n_valid_2017": 169321,
+  "funded_valid_2017": 2421502475.0,
+  "dr_valid_2017": 0.23132984095298278,
+  "LogReg_WOE": {
+    "auc": 0.6934027111509795,
+    "auc_lo": 0.6905368818159068,
+    "auc_hi": 0.6962685404860522,
+    "gini": 0.386805422301959,
+    "ks": 0.27970546349221853,
+    "pd_mean": 0.19077701477498826,
+    "dr": 0.23132984095298278,
+    "citl": 0.26668839055361254
+  },
+  "LightGBM": {
+    "auc": 0.7214525314801064,
+    "auc_lo": 0.7186866715591381,
+    "auc_hi": 0.7242183914010746,
+    "gini": 0.4429050629602127,
+    "ks": 0.32082654333369454,
+    "pd_mean": 0.18360058791449038,
+    "dr": 0.23132984095298278,
+    "citl": 0.3325603510814006
+  },
+  "delong_lgb_vs_lr": {
+    "auc1": 0.7214525314801064,
+    "auc2": 0.6934027111509795,
+    "diff": 0.02804982032912684,
+    "z": 31.754794477012826,
+    "p_value": 2.7264355141079473e-221
+  },
+  "ecl_replication_lr": 454168253.928737,
+  "bias": {
+    "share_of_2017_loans_terminal": 0.3817155455961621,
+    "share_of_2017_funded_terminal": 0.3677324616425081,
+    "dr12m_terminal_subset_2017": 0.15079641627441367,
+    "dr12m_all_2017": 0.057982907216076504,
+    "prepaid_within_12m_share_of_terminal_good": 0.7686701590470172,
+    "chi2_terminal_vs_nonterminal_12m_dr_p": 0.0
+  }
+}
