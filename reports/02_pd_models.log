@@ -1,0 +1,7 @@
+train 884691 dr=0.0509 | test 434407 dr=0.0628 | valid 443579 dr=0.0580
+IV>=0.02: 29 vars; after |r|<=0.7: 21
+step 1: + sub_grade_n holdout AUC=0.7042
+step 2: + acc_open_past_24mths holdout AUC=0.7130
+step 3: + home_ownership holdout AUC=0.7174
+step 4: + dti holdout AUC=0.7184
+step 5: + mths_since_recent_inq holdout AUC=0.7196
