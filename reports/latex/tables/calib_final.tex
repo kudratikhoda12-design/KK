@@ -1,0 +1,9 @@
+\begin{tabular}{lrccrcr}
+\toprule
+Model (2017, DR 5.80\%) & Mean PD & CITL [95\% CI] & Slope [95\% CI] & HL $\chi^2_8$ & Spiegelhalter $z$ ($p$) & ECE pp \\
+\midrule
+LightGBM + Platt & 5.91\% & -0.0215 [-0.034, -0.009] & 0.9677 [0.952, 0.983] & 69.4 & -1.97 (0.049) & 0.20 \\
+LightGBM + Platt + grade (final) & 5.90\% & -0.0196 [-0.033, -0.007] & 0.9692 [0.954, 0.985] & 81.8 & -1.77 (0.076) & 0.24 \\
+LogReg v2 + Platt & 5.88\% & -0.0148 [-0.028, -0.002] & 0.9804 [0.962, 0.999] & 26.4 & -2.04 (0.041) & 0.15 \\
+\bottomrule
+\end{tabular}

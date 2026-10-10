@@ -13,6 +13,7 @@ This is an end-to-end, reproducible credit-risk pipeline built on 2.26M LendingC
 Every modelling choice is decided by a statistical test on data that comes before the 2017 validation cohort. 2017 is scored only once, at the end.
 
 ```
+reports/latex/credit_risk_report.pdf   full technical report (maths, tests, results, interview Q&A)
 run_all.sh                 one-command pipeline (tests first)
 src/crm/                   library: data, woe, models, metrics, calibration, lgd_ead, portfolio
 scripts/01..07_*.py        pipeline steps (outputs -> reports/tables, reports/figures)

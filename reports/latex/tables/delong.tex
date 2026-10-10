@@ -1,0 +1,21 @@
+\begin{tabular}{lrrrr}
+\toprule
+Comparison (A vs B) & $\Delta$AUC & $z$ & $p$ & $p$ (Holm) \\
+\midrule
+LogReg\_WOE vs LightGBM & -0.0231 & -24.03 & $<10^{-126}$ & $<10^{-125}$ \\
+LogReg\_WOE vs XGBoost & -0.0217 & -22.44 & $<10^{-110}$ & $<10^{-109}$ \\
+LogReg\_WOE vs RandomForest & -0.0123 & -20.47 & $<10^{-92}$ & $<10^{-91}$ \\
+LogReg\_WOE vs LogReg\_WOE\_v2 & -0.0014 & -4.14 & $<10^{-4}$ & $<10^{-4}$ \\
+LogReg\_WOE vs Stacked & -0.0239 & -27.90 & $<10^{-170}$ & $<10^{-169}$ \\
+LightGBM vs XGBoost & +0.0013 & 3.65 & 0.0003 & 0.0003 \\
+LightGBM vs RandomForest & +0.0108 & 14.69 & $<10^{-48}$ & $<10^{-47}$ \\
+LightGBM vs LogReg\_WOE\_v2 & +0.0216 & 23.34 & $<10^{-119}$ & $<10^{-118}$ \\
+LightGBM vs Stacked & -0.0009 & -5.23 & $<10^{-6}$ & $<10^{-6}$ \\
+XGBoost vs RandomForest & +0.0095 & 12.71 & $<10^{-36}$ & $<10^{-35}$ \\
+XGBoost vs LogReg\_WOE\_v2 & +0.0203 & 21.77 & $<10^{-104}$ & $<10^{-103}$ \\
+XGBoost vs Stacked & -0.0022 & -8.54 & $<10^{-16}$ & $<10^{-16}$ \\
+RandomForest vs LogReg\_WOE\_v2 & +0.0108 & 19.52 & $<10^{-84}$ & $<10^{-83}$ \\
+RandomForest vs Stacked & -0.0117 & -18.16 & $<10^{-72}$ & $<10^{-72}$ \\
+LogReg\_WOE\_v2 vs Stacked & -0.0225 & -27.62 & $<10^{-167}$ & $<10^{-165}$ \\
+\bottomrule
+\end{tabular}

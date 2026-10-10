@@ -1,0 +1,9 @@
+\begin{tabular}{lp{12cm}}
+\toprule
+Model & Selected hyper-parameters (refit on 2007--2015) \\
+\midrule
+LightGBM & num\_leaves=63, min\_child\_samples=200, learning\_rate=0.03, feature\_fraction=0.5, bagging\_fraction=0.7, lambda\_l2=50.0, min\_split\_gain=0.0, n\_iter=1200 \\
+XGBoost & max\_depth=8, min\_child\_weight=50.0, learning\_rate=0.03, subsample=0.9, colsample\_bytree=0.5, reg\_lambda=1.0, n\_iter=849 \\
+Random Forest & min\_samples\_leaf=200, max\_features=0.2, n\_estimators=500, max\_samples=0.3 \\
+\bottomrule
+\end{tabular}

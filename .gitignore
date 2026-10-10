@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 models/
+reports/latex/*.aux
+reports/latex/*.log
+reports/latex/*.toc
+reports/latex/*.out

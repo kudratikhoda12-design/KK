@@ -13,3 +13,7 @@ python3 scripts/04_lgd_ead.py               # LGD / EAD models (OOT)
 python3 scripts/05_ecl.py                   # 12m & lifetime ECL + backtest
 python3 scripts/06_portfolio_mc.py          # rho MLE, Monte Carlo VaR/ES, stress tests
 python3 scripts/07_replication_original.py  # original design + bias diagnostics
+python3 scripts/08_report_figures.py        # extra figures for the LaTeX report
+python3 scripts/09_latex_tables.py          # LaTeX tables from reports/tables
+(cd reports/latex && pdflatex -interaction=nonstopmode credit_risk_report.tex >/dev/null \
+                  && pdflatex -interaction=nonstopmode credit_risk_report.tex >/dev/null)
