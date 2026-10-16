@@ -25,3 +25,12 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - Repair 2: A2 integrate in w = (u - eta)/sigma over [-60, 60] with breakpoints; A7 `ftol=1e-12` for SLSQP only.
 - Attempt 3: **45 passed, 0 failed** (log `reports/logs/stageA_tests_attempt3.log`). No threshold changed.
   The likelihood implementation (`src/kanfae/survival/aft.py`) was not modified by either repair.
+
+## Stage B — Synthetic data: PASSED (attempt 1)
+- `src/kanfae/data/schema.py` (Observed/Oracle, `to_training_arrays` rejects Oracle), `src/kanfae/data/synthetic.py`.
+- `tests/test_synthetic.py`: **40 passed, 0 failed** (log `reports/logs/stageB_tests_attempt1.log`).
+  STAT outcomes at pre-specified seeds: G3 realised censoring 0.0000 / 0.3027 / 0.5935 (targets 0/0.3/0.6);
+  G8 KS p = 0.583 (Weibull), 0.788 (log-normal), 0.583 (log-logistic); G9 corr = -0.0034; G10 max dev 0.00175;
+  G12 masked fraction 0.2002.
+- Note: identical KS p-values for Weibull and log-logistic are expected: numpy draws both by inverse CDF from the
+  same uniform stream (common random numbers) and the KS statistic is invariant under U -> 1-U reflection.

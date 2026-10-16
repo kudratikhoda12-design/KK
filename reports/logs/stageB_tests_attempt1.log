@@ -1,0 +1,102 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 40 items
+
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.6] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.6] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G3_censoring_fraction[0.0] target 0.0: realised 0.0000
+PASSED
+tests/test_synthetic.py::test_G3_censoring_fraction[0.3] target 0.3: realised 0.3027
+PASSED
+tests/test_synthetic.py::test_G3_censoring_fraction[0.6] target 0.6: realised 0.5935
+PASSED
+tests/test_synthetic.py::test_G4_reproducibility PASSED
+tests/test_synthetic.py::test_G5_oracle_isolation PASSED
+tests/test_synthetic.py::test_G6_hidden_event_times_do_not_affect_observed_or_loss PASSED
+tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.0] PASSED
+tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[sparse-0.1] PASSED
+tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.3] PASSED
+tests/test_synthetic.py::test_G8_event_noise_distribution[weibull] weibull: KS p = 0.5833
+PASSED
+tests/test_synthetic.py::test_G8_event_noise_distribution[lognormal] lognormal: KS p = 0.7881
+PASSED
+tests/test_synthetic.py::test_G8_event_noise_distribution[loglogistic] loglogistic: KS p = 0.5833
+PASSED
+tests/test_synthetic.py::test_G9_censoring_independent_of_risk corr(log E, eta) = -0.0034
+PASSED
+tests/test_synthetic.py::test_G10_oracle_survival_curve_consistent max |mean S_true - empirical| = 0.0017520992111271783
+PASSED
+tests/test_synthetic.py::test_G11_common_random_numbers PASSED
+tests/test_synthetic.py::test_G12_missingness_mask masked fraction of real entries = 0.2002
+PASSED
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.6]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.6]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G3_censoring_fraction[0.0]
+PASSED tests/test_synthetic.py::test_G3_censoring_fraction[0.3]
+PASSED tests/test_synthetic.py::test_G3_censoring_fraction[0.6]
+PASSED tests/test_synthetic.py::test_G4_reproducibility
+PASSED tests/test_synthetic.py::test_G5_oracle_isolation
+PASSED tests/test_synthetic.py::test_G6_hidden_event_times_do_not_affect_observed_or_loss
+PASSED tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.0]
+PASSED tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[sparse-0.1]
+PASSED tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.3]
+PASSED tests/test_synthetic.py::test_G8_event_noise_distribution[weibull]
+PASSED tests/test_synthetic.py::test_G8_event_noise_distribution[lognormal]
+PASSED tests/test_synthetic.py::test_G8_event_noise_distribution[loglogistic]
+PASSED tests/test_synthetic.py::test_G9_censoring_independent_of_risk
+PASSED tests/test_synthetic.py::test_G10_oracle_survival_curve_consistent
+PASSED tests/test_synthetic.py::test_G11_common_random_numbers
+PASSED tests/test_synthetic.py::test_G12_missingness_mask
+============================= 40 passed in 12.38s ==============================
