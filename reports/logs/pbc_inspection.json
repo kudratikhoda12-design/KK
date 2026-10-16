@@ -1,0 +1,51 @@
+{
+ "n_rows": 1945,
+ "n_patients": 312,
+ "columns": [
+  "id",
+  "futime",
+  "status",
+  "trt",
+  "age",
+  "sex",
+  "day",
+  "ascites",
+  "hepato",
+  "spiders",
+  "edema",
+  "bili",
+  "chol",
+  "albumin",
+  "alk.phos",
+  "ast",
+  "platelet",
+  "protime",
+  "stage"
+ ],
+ "visits": {
+  "min": 1,
+  "median": 5.0,
+  "max": 16
+ },
+ "status_counts": {
+  "0": 143,
+  "1": 29,
+  "2": 140
+ },
+ "futime": {
+  "min": 41.0,
+  "median": 2299.5,
+  "max": 5225.0
+ },
+ "futime_status_constant_within_patient": true,
+ "visits_after_followup": 0,
+ "missing_fraction": {
+  "bili": 0.0,
+  "albumin": 0.0,
+  "alk.phos": 0.030848329048843187,
+  "ast": 0.0,
+  "platelet": 0.037532133676092545,
+  "protime": 0.0,
+  "chol": 0.4221079691516709
+ }
+}

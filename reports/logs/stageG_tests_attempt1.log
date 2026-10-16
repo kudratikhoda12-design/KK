@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 4 items
+
+tests/test_pbc.py::test_provenance_and_structure PASSED                  [ 25%]
+tests/test_pbc.py::test_endpoint_coding PASSED                           [ 50%]
+tests/test_pbc.py::test_K4_inputs_before_landmark PASSED                 [ 75%]
+tests/test_pbc.py::test_K1_patient_level_split PASSED                    [100%]
+
+=============================== warnings summary ===============================
+tests/test_pbc.py::test_provenance_and_structure
+tests/test_pbc.py::test_provenance_and_structure
+  /home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+    warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_pbc.py::test_provenance_and_structure
+PASSED tests/test_pbc.py::test_endpoint_coding
+PASSED tests/test_pbc.py::test_K4_inputs_before_landmark
+PASSED tests/test_pbc.py::test_K1_patient_level_split
+======================== 4 passed, 2 warnings in 1.54s =========================

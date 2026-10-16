@@ -1,0 +1,28 @@
+{
+  "analysis": "pbc_E2",
+  "endpoint": "E2",
+  "landmark_days": 730,
+  "channels": [
+    "log bili",
+    "albumin",
+    "log alk.phos",
+    "log ast",
+    "platelet",
+    "log protime"
+  ],
+  "baseline_covariates": [
+    "age",
+    "sex(f=1)"
+  ],
+  "split_seeds": [
+    0
+  ],
+  "models": [
+    "fpca_aft",
+    "fpca_cox",
+    "sum_aft",
+    "sum_cox",
+    "sum_rsf",
+    "km_null"
+  ]
+}
