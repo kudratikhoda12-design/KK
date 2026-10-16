@@ -1,0 +1,390 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 45 items
+
+tests/test_env.py::test_E1_global_environment_unchanged_and_venv_used PASSED [  2%]
+tests/test_env.py::test_E2_torch_cpu_build PASSED                        [  4%]
+tests/test_env.py::test_E3_pandas_below_3 PASSED                         [  6%]
+tests/test_env.py::test_E4_full_dependency_set_imports[numpy] PASSED     [  8%]
+tests/test_env.py::test_E4_full_dependency_set_imports[scipy] PASSED     [ 11%]
+tests/test_env.py::test_E4_full_dependency_set_imports[pandas] PASSED    [ 13%]
+tests/test_env.py::test_E4_full_dependency_set_imports[sklearn] PASSED   [ 15%]
+tests/test_env.py::test_E4_full_dependency_set_imports[torch] PASSED     [ 17%]
+tests/test_env.py::test_E4_full_dependency_set_imports[lifelines] PASSED [ 20%]
+tests/test_env.py::test_E4_full_dependency_set_imports[sksurv] PASSED    [ 22%]
+tests/test_env.py::test_E4_full_dependency_set_imports[yaml] PASSED      [ 24%]
+tests/test_env.py::test_E4_full_dependency_set_imports[matplotlib] PASSED [ 26%]
+tests/test_env.py::test_E4_full_dependency_set_imports[pytest] PASSED    [ 28%]
+tests/test_env.py::test_E4_full_dependency_set_imports[hypothesis] PASSED [ 31%]
+tests/test_env.py::test_E4_full_dependency_set_imports[rdata] PASSED     [ 33%]
+tests/test_env.py::test_E5_lockfile_reproduces_exactly PASSED            [ 35%]
+tests/test_env.py::test_E6_pip_check_clean PASSED                        [ 37%]
+tests/test_env.py::test_E7_pytest_collects_and_runs PASSED               [ 40%]
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[weibull] PASSED  [ 42%]
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[lognormal] PASSED [ 44%]
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[loglogistic] PASSED [ 46%]
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[weibull] FAILED [ 48%]
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[lognormal] FAILED [ 51%]
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[loglogistic] PASSED [ 53%]
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[weibull] PASSED [ 55%]
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[lognormal] PASSED [ 57%]
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[loglogistic] PASSED [ 60%]
+tests/test_aft_likelihood.py::test_A4_gradcheck[weibull] PASSED          [ 62%]
+tests/test_aft_likelihood.py::test_A4_gradcheck[lognormal] PASSED        [ 64%]
+tests/test_aft_likelihood.py::test_A4_gradcheck[loglogistic] PASSED      [ 66%]
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-weibull] PASSED [ 68%]
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-lognormal] PASSED [ 71%]
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-loglogistic] PASSED [ 73%]
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-weibull] PASSED [ 75%]
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-lognormal] PASSED [ 77%]
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-loglogistic] PASSED [ 80%]
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[weibull] PASSED [ 82%]
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[lognormal] PASSED [ 84%]
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[loglogistic] PASSED [ 86%]
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[weibull] PASSED  [ 88%]
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[lognormal] FAILED [ 91%]
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[loglogistic] FAILED [ 93%]
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[weibull] PASSED [ 95%]
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[lognormal] PASSED [ 97%]
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[loglogistic] PASSED [100%]
+
+=================================== FAILURES ===================================
+______________ test_A2_numerical_integration_and_hazard[weibull] _______________
+
+family = 'weibull'
+
+    @pytest.mark.criterion("A2")
+    @pytest.mark.kind("DET")
+    @pytest.mark.parametrize("family", FAMILIES)
+    def test_A2_numerical_integration_and_hazard(family):
+        for eta in [-1.0, 0.0, 2.0]:
+            for sigma in [0.2, 1.0, 3.0]:
+                def dens_logt(u):  # density of log T at u = f_T(e^u) e^u, from our event term
+                    y = torch.tensor([np.exp(u)])
+                    return float(torch.exp(aft_log_likelihood(y, torch.ones(1), torch.tensor([eta]), sigma, family))) * np.exp(u)
+    
+                # Repair 1 (2026-10-16): integrate over the representable log-time range; exp(u) overflows
+                # for u > ~709, which produced NaN in attempt 1. Density mass outside [-700, 700] is < 1e-100 here.
+                total, _ = integrate.quad(dens_logt, -700.0, 700.0, points=[eta], epsabs=1e-13, epsrel=1e-12, limit=1000)
+>               assert abs(total - 1.0) < 1e-8, (family, eta, sigma, total)
+E               AssertionError: ('weibull', -1.0, 0.2, 0.6321205588285577)
+E               assert 0.36787944117144233 < 1e-08
+E                +  where 0.36787944117144233 = abs((0.6321205588285577 - 1.0))
+
+tests/test_aft_likelihood.py:69: AssertionError
+_____________ test_A2_numerical_integration_and_hazard[lognormal] ______________
+
+family = 'lognormal'
+
+    @pytest.mark.criterion("A2")
+    @pytest.mark.kind("DET")
+    @pytest.mark.parametrize("family", FAMILIES)
+    def test_A2_numerical_integration_and_hazard(family):
+        for eta in [-1.0, 0.0, 2.0]:
+            for sigma in [0.2, 1.0, 3.0]:
+                def dens_logt(u):  # density of log T at u = f_T(e^u) e^u, from our event term
+                    y = torch.tensor([np.exp(u)])
+                    return float(torch.exp(aft_log_likelihood(y, torch.ones(1), torch.tensor([eta]), sigma, family))) * np.exp(u)
+    
+                # Repair 1 (2026-10-16): integrate over the representable log-time range; exp(u) overflows
+                # for u > ~709, which produced NaN in attempt 1. Density mass outside [-700, 700] is < 1e-100 here.
+                total, _ = integrate.quad(dens_logt, -700.0, 700.0, points=[eta], epsabs=1e-13, epsrel=1e-12, limit=1000)
+                assert abs(total - 1.0) < 1e-8, (family, eta, sigma, total)
+                for q in [0.05, 0.5, 0.95]:
+                    y = float(np.exp(eta + sigma * get_family(family).quantile(q)))
+                    cdf, _ = integrate.quad(dens_logt, -700.0, np.log(y), points=[min(eta, np.log(y) - 1e-9)],
+                                            epsabs=1e-13, epsrel=1e-12, limit=1000)
+                    S = float(aft_survival(torch.tensor([y]), torch.tensor([eta]), sigma, family)[0, 0])
+>                   assert abs(cdf - (1.0 - S)) < 1e-8, (family, eta, sigma, q, cdf, 1 - S)
+E                   AssertionError: ('lognormal', -1.0, 0.2, 0.05, 5.15678244994977e-10, 0.050000000000000044)
+E                   assert 0.0499999994843218 < 1e-08
+E                    +  where 0.0499999994843218 = abs((5.15678244994977e-10 - (1.0 - 0.95)))
+
+tests/test_aft_likelihood.py:75: AssertionError
+_____________________ test_A7_matches_lifelines[lognormal] _____________________
+
+family = 'lognormal'
+
+    @pytest.mark.criterion("A7")
+    @pytest.mark.kind("DET")
+    @pytest.mark.parametrize("family", FAMILIES)
+    def test_A7_matches_lifelines(family):
+        import lifelines
+        X, y, d = simulate_linear(family, 3000, seed=7)
+        print(f"{family}: censored fraction {1 - d.mean():.3f}")
+        ours = fit_linear_aft(X, y, d, family, compute_se=False)
+        assert ours.converged
+        cls, loc_name, shape_name, sign = LIFELINES[family]
+        df = pd.DataFrame({"x1": X[:, 0], "x2": X[:, 1], "T": y, "E": d.astype(int)})
+        # Repair 1 (2026-10-16): attempt 1 showed lifelines' default BFGS stopping ~8e-4 short of the maximum
+        # for the log-logistic model (our log-likelihood was higher). Tighten the reference optimiser's gradient
+        # tolerance; the 1e-4 criterion is unchanged.
+>       ll_fit = getattr(lifelines, cls)().fit(df, "T", "E", fit_options={"gtol": 1e-10, "maxiter": 10000})
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_aft_likelihood.py:195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:56: in f
+    return function(model, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/lifelines/fitters/__init__.py:2876: in fit
+    super(ParametericAFTRegressionFitter, self)._fit(
+.venv/lib/python3.13/site-packages/lifelines/fitters/__init__.py:1841: in _fit
+    _params, self.log_likelihood_, self._hessian_ = self._fit_model(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <lifelines.LogNormalAFTFitter: fitted with 3000 total observations, 1065 right-censored observations>
+likelihood = <bound method ParametricRegressionFitter._log_likelihood_right_censoring of <lifelines.LogNormalAFTFitter: fitted with 3000 total observations, 1065 right-censored observations>>
+Ts = (array([ 0.50655596,  3.14122523, 13.14181186, ...,  0.51347327,
+        1.05713969,  4.5762104 ], shape=(3000,)), None)
+Xs = param           mu_                        sigma_
+covariate        x1        x2 Intercept Intercept
+0          0.00124...     -0.887902  0.192063       1.0       1.0
+2999       1.255723 -0.128379       1.0       1.0
+
+[3000 rows x 4 columns]
+E = array([False, False, False, ..., False,  True,  True], shape=(3000,))
+weights = array([1., 1., 1., ..., 1., 1., 1.], shape=(3000,))
+entries = array([0., 0., 0., ..., 0., 0., 0.], shape=(3000,))
+fit_options = {'gtol': 1e-10, 'maxiter': 10000}, show_progress = False
+user_supplied_initial_point = None
+
+    def _fit_model(
+        self, likelihood, Ts, Xs, E, weights, entries, fit_options, show_progress=False, user_supplied_initial_point=None
+    ):
+        initial_points_as_arrays, unflatten_array_to_dict = self._prepare_initial_points(
+            user_supplied_initial_point, Ts, E, entries, weights, Xs
+        )
+    
+        # optimizing this function
+        self._neg_likelihood_with_penalty_function = partial(
+            self._create_neg_likelihood_with_penalty_function, likelihood=likelihood, penalty=self._add_penalty
+        )
+    
+        # scoring this function in `score`
+        self._neg_likelihood = partial(self._create_neg_likelihood_with_penalty_function, likelihood=likelihood)
+    
+        minimum_ll = np.inf
+        minimum_results = None
+        for _initial_point in initial_points_as_arrays:
+    
+            if _initial_point.shape[0] != Xs.columns.size:
+                raise ValueError("initial_point is not the correct shape.")
+    
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                results = minimize(
+                    # using value_and_grad is much faster (takes advantage of shared computations) than splitting.
+                    value_and_grad(self._neg_likelihood_with_penalty_function),
+                    _initial_point,
+                    method=self._scipy_fit_method,
+                    jac=True,
+                    args=(Ts, E, weights, entries, utils.DataframeSlicer(Xs)),
+                    options={**{"disp": show_progress}, **self._scipy_fit_options, **fit_options},
+                    callback=self._scipy_fit_callback,
+                )
+    
+            if results.fun < minimum_ll:
+                minimum_ll, minimum_results = results.fun, results
+    
+        if show_progress:
+            print(minimum_results)
+    
+        if minimum_results is not None and minimum_results.success:
+            sum_weights = weights.sum()
+            hessian_ = hessian(self._neg_likelihood_with_penalty_function)(
+                minimum_results.x, Ts, E, weights, entries, utils.DataframeSlicer(Xs)
+            )
+            # See issue https://github.com/CamDavidsonPilon/lifelines/issues/801
+            hessian_ = (hessian_ + hessian_.T) / 2
+            return (unflatten_array_to_dict(minimum_results.x), -sum_weights * minimum_results.fun, sum_weights * hessian_)
+        else:
+            self._check_values_post_fitting(Xs, utils.coalesce(Ts[1], Ts[0]), E, weights, entries)
+>           raise exceptions.ConvergenceError(
+                dedent(
+                    f"""\
+    
+                Fitting did not converge. Try the following:
+    
+                0. Are there any lifelines warnings outputted during the `fit`?
+                1. Inspect your DataFrame: does everything look as expected?
+                2. Try scaling your duration vector down, i.e. `df[duration_col] = df[duration_col]/100`
+                3. Is there high-collinearity in the dataset? Try using the variance inflation factor (VIF) to find redundant variables.
+                4. Try using an alternate minimizer: ``fitter._scipy_fit_method = "SLSQP"``.
+                5. Trying adding a small penalizer (or changing it, if already present). Example: `{self._class_name}(penalizer=0.01).fit(...)`.
+                6. Are there any extreme outliers? Try modeling them or dropping them to see if it helps convergence.
+    
+                minimum_results={minimum_results}
+            """
+                )
+            )
+E           lifelines.exceptions.ConvergenceError: 
+E                          Fitting did not converge. Try the following:
+E           
+E                          0. Are there any lifelines warnings outputted during the `fit`?
+E                          1. Inspect your DataFrame: does everything look as expected?
+E                          2. Try scaling your duration vector down, i.e. `df[duration_col] = df[duration_col]/100`
+E                          3. Is there high-collinearity in the dataset? Try using the variance inflation factor (VIF) to find redundant variables.
+E                          4. Try using an alternate minimizer: ``fitter._scipy_fit_method = "SLSQP"``.
+E                          5. Trying adding a small penalizer (or changing it, if already present). Example: `LogNormalAFTFitter(penalizer=0.01).fit(...)`.
+E                          6. Are there any extreme outliers? Try modeling them or dropping them to see if it helps convergence.
+E           
+E                          minimum_results=  message: Desired error not necessarily achieved due to precision loss.
+E            success: False
+E             status: 2
+E                fun: 1.0747871034655778
+E                  x: [ 4.673e-01 -7.003e-01  9.658e-01 -5.593e-01]
+E                nit: 16
+E                jac: [ 5.094e-11  1.982e-10  5.164e-10  5.660e-10]
+E           hess_inv: [[ 4.676e-01 -5.076e-02  5.787e-02  2.728e-02]
+E                      [-5.076e-02  4.771e-01 -7.603e-02 -5.474e-02]
+E                      [ 5.787e-02 -7.603e-02  4.639e-01  9.739e-02]
+E                      [ 2.728e-02 -5.474e-02  9.739e-02  7.643e-01]]
+E               nfev: 19
+E               njev: 19
+
+.venv/lib/python3.13/site-packages/lifelines/fitters/__init__.py:1980: ConvergenceError
+----------------------------- Captured stdout call -----------------------------
+lognormal: censored fraction 0.355
+____________________ test_A7_matches_lifelines[loglogistic] ____________________
+
+family = 'loglogistic'
+
+    @pytest.mark.criterion("A7")
+    @pytest.mark.kind("DET")
+    @pytest.mark.parametrize("family", FAMILIES)
+    def test_A7_matches_lifelines(family):
+        import lifelines
+        X, y, d = simulate_linear(family, 3000, seed=7)
+        print(f"{family}: censored fraction {1 - d.mean():.3f}")
+        ours = fit_linear_aft(X, y, d, family, compute_se=False)
+        assert ours.converged
+        cls, loc_name, shape_name, sign = LIFELINES[family]
+        df = pd.DataFrame({"x1": X[:, 0], "x2": X[:, 1], "T": y, "E": d.astype(int)})
+        # Repair 1 (2026-10-16): attempt 1 showed lifelines' default BFGS stopping ~8e-4 short of the maximum
+        # for the log-logistic model (our log-likelihood was higher). Tighten the reference optimiser's gradient
+        # tolerance; the 1e-4 criterion is unchanged.
+        ll_fit = getattr(lifelines, cls)().fit(df, "T", "E", fit_options={"gtol": 1e-10, "maxiter": 10000})
+        # Diagnostic: our likelihood evaluated at lifelines' own estimate must reproduce lifelines' value.
+        from kanfae.survival.aft import aft_log_likelihood as _ll
+        p0 = ll_fit.params_
+        eta0 = p0[(loc_name, "Intercept")] + X @ np.array([p0[(loc_name, "x1")], p0[(loc_name, "x2")]])
+        sig0 = np.exp(sign * p0[(shape_name, "Intercept")])
+        ours_at_ref = float(_ll(torch.tensor(y), torch.tensor(d), torch.tensor(eta0), sig0, family).sum())
+        print(f"{family}: our loglik at lifelines params {ours_at_ref:.8f}")
+        assert abs(ours_at_ref - ll_fit.log_likelihood_) < 1e-8
+        print(f"{family}: ours {ours.loglik:.8f}  lifelines {ll_fit.log_likelihood_:.8f}")
+>       assert abs(ours.loglik - ll_fit.log_likelihood_) < 1e-4
+E       AssertionError: assert np.float64(0.0007764309830236016) < 0.0001
+E        +  where np.float64(0.0007764309830236016) = abs((-4282.037270821773 - np.float64(-4282.038047252756)))
+E        +    where -4282.037270821773 = LinearAFTFit(beta=array([ 1.03557673,  0.47309068, -0.65959353]), log_sigma=-0.4790437621323956, loglik=-4282.037270821773, se=None, family='loglogistic', converged=True).loglik
+E        +    and   np.float64(-4282.038047252756) = <lifelines.LogLogisticAFTFitter: fitted with 3000 total observations, 1126 right-censored observations>.log_likelihood_
+
+tests/test_aft_likelihood.py:205: AssertionError
+----------------------------- Captured stdout call -----------------------------
+loglogistic: censored fraction 0.375
+loglogistic: our loglik at lifelines params -4282.03804725
+loglogistic: ours -4282.03727082  lifelines -4282.03804725
+==================================== PASSES ====================================
+__________________ test_E4_full_dependency_set_imports[numpy] __________________
+----------------------------- Captured stdout call -----------------------------
+numpy 2.5.4
+__________________ test_E4_full_dependency_set_imports[scipy] __________________
+----------------------------- Captured stdout call -----------------------------
+scipy 1.18.1
+_________________ test_E4_full_dependency_set_imports[pandas] __________________
+----------------------------- Captured stdout call -----------------------------
+pandas 2.3.3
+_________________ test_E4_full_dependency_set_imports[sklearn] _________________
+----------------------------- Captured stdout call -----------------------------
+sklearn 1.9.1
+__________________ test_E4_full_dependency_set_imports[torch] __________________
+----------------------------- Captured stdout call -----------------------------
+torch 2.14.1+cpu
+________________ test_E4_full_dependency_set_imports[lifelines] ________________
+----------------------------- Captured stdout call -----------------------------
+lifelines 0.30.3
+_________________ test_E4_full_dependency_set_imports[sksurv] __________________
+----------------------------- Captured stdout call -----------------------------
+sksurv 0.28.0
+__________________ test_E4_full_dependency_set_imports[yaml] ___________________
+----------------------------- Captured stdout call -----------------------------
+yaml 6.0.3
+_______________ test_E4_full_dependency_set_imports[matplotlib] ________________
+----------------------------- Captured stdout call -----------------------------
+matplotlib 3.11.2
+_________________ test_E4_full_dependency_set_imports[pytest] __________________
+----------------------------- Captured stdout call -----------------------------
+pytest 9.1.1
+_______________ test_E4_full_dependency_set_imports[hypothesis] ________________
+----------------------------- Captured stdout call -----------------------------
+hypothesis 6.170.0
+__________________ test_E4_full_dependency_set_imports[rdata] __________________
+----------------------------- Captured stdout call -----------------------------
+rdata 1.1.0
+______________________ test_A7_matches_lifelines[weibull] ______________________
+----------------------------- Captured stdout call -----------------------------
+weibull: censored fraction 0.350
+weibull: our loglik at lifelines params -3277.89262425
+weibull: ours -3277.89262418  lifelines -3277.89262425
+__________________ test_A8_recovers_truth_within_3se[weibull] __________________
+----------------------------- Captured stdout call -----------------------------
+weibull: z-scores [-0.152 -0.039 -1.105  0.55 ]
+_________________ test_A8_recovers_truth_within_3se[lognormal] _________________
+----------------------------- Captured stdout call -----------------------------
+lognormal: z-scores [-1.002 -0.448 -0.356 -1.665]
+________________ test_A8_recovers_truth_within_3se[loglogistic] ________________
+----------------------------- Captured stdout call -----------------------------
+loglogistic: z-scores [ 0.279  0.988 -1.94   0.351]
+=========================== short test summary info ============================
+PASSED tests/test_env.py::test_E1_global_environment_unchanged_and_venv_used
+PASSED tests/test_env.py::test_E2_torch_cpu_build
+PASSED tests/test_env.py::test_E3_pandas_below_3
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[numpy]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[scipy]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[pandas]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[sklearn]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[torch]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[lifelines]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[sksurv]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[yaml]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[matplotlib]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[pytest]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[hypothesis]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[rdata]
+PASSED tests/test_env.py::test_E5_lockfile_reproduces_exactly
+PASSED tests/test_env.py::test_E6_pip_check_clean
+PASSED tests/test_env.py::test_E7_pytest_collects_and_runs
+PASSED tests/test_aft_likelihood.py::test_A1_terms_match_scipy[weibull]
+PASSED tests/test_aft_likelihood.py::test_A1_terms_match_scipy[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A1_terms_match_scipy[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[weibull]
+PASSED tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A4_gradcheck[weibull]
+PASSED tests/test_aft_likelihood.py::test_A4_gradcheck[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A4_gradcheck[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-weibull]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-lognormal]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-weibull]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-lognormal]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A6_survival_function_valid[weibull]
+PASSED tests/test_aft_likelihood.py::test_A6_survival_function_valid[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A6_survival_function_valid[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A7_matches_lifelines[weibull]
+PASSED tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[weibull]
+PASSED tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[loglogistic]
+FAILED tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[weibull]
+FAILED tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[lognormal]
+FAILED tests/test_aft_likelihood.py::test_A7_matches_lifelines[lognormal] - l...
+FAILED tests/test_aft_likelihood.py::test_A7_matches_lifelines[loglogistic]
+========================= 4 failed, 41 passed in 5.62s =========================

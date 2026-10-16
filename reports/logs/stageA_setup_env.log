@@ -1,0 +1,203 @@
+pip 26.2.1 from /home/user/KK/.venv/lib/python3.13/site-packages/pip (python 3.13)
+Looking in indexes: https://download.pytorch.org/whl/cpu
+Collecting torch==2.14.1+cpu
+  Using cached torch-2.14.1%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl.metadata (37 kB)
+Collecting filelock (from torch==2.14.1+cpu)
+  Using cached filelock-3.32.3-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions>=4.10.0 (from torch==2.14.1+cpu)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting setuptools>=77.0.3 (from torch==2.14.1+cpu)
+  Using cached setuptools-78.1.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting sympy>=1.13.3 (from torch==2.14.1+cpu)
+  Using cached sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx>=2.5.1 (from torch==2.14.1+cpu)
+  Using cached networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch==2.14.1+cpu)
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec>=0.8.5 (from torch==2.14.1+cpu)
+  Using cached fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch==2.14.1+cpu)
+  Using cached mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch==2.14.1+cpu)
+  Using cached markupsafe-3.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Using cached torch-2.14.1%2Bcpu-cp313-cp313-manylinux_2_28_x86_64.whl (196.3 MB)
+Using cached fsspec-2026.7.0-py3-none-any.whl (206 kB)
+Using cached networkx-3.6.1-py3-none-any.whl (2.1 MB)
+Using cached setuptools-78.1.0-py3-none-any.whl (1.3 MB)
+Using cached sympy-1.14.0-py3-none-any.whl (6.3 MB)
+Using cached mpmath-1.3.0-py3-none-any.whl (536 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached filelock-3.32.3-py3-none-any.whl (98 kB)
+Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+Using cached markupsafe-3.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Installing collected packages: mpmath, typing-extensions, sympy, setuptools, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+
+Successfully installed MarkupSafe-3.0.3 filelock-3.32.3 fsspec-2026.7.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 setuptools-78.1.0 sympy-1.14.0 torch-2.14.1+cpu typing-extensions-4.16.0
+Obtaining file:///home/user/KK
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting numpy<3,>=2.0 (from kanfae==0.1.0)
+  Using cached numpy-2.5.4-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting scipy>=1.13 (from kanfae==0.1.0)
+  Using cached scipy-1.18.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting pandas<3,>=2.2 (from kanfae==0.1.0)
+  Using cached pandas-2.3.3-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+Collecting scikit-learn<1.10,>=1.9 (from kanfae==0.1.0)
+  Using cached scikit_learn-1.9.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.3 kB)
+Requirement already satisfied: torch==2.14.1 in ./.venv/lib/python3.13/site-packages (from kanfae==0.1.0) (2.14.1+cpu)
+Collecting lifelines==0.30.3 (from kanfae==0.1.0)
+  Using cached lifelines-0.30.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting scikit-survival==0.28.0 (from kanfae==0.1.0)
+  Using cached scikit_survival-0.28.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (7.0 kB)
+Collecting pyyaml>=6 (from kanfae==0.1.0)
+  Using cached pyyaml-6.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting matplotlib>=3.8 (from kanfae==0.1.0)
+  Using cached matplotlib-3.11.2-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (80 kB)
+Collecting rdata>=0.11 (from kanfae==0.1.0)
+  Using cached rdata-1.1.0-py3-none-any.whl.metadata (11 kB)
+Collecting pytest>=8 (from kanfae==0.1.0)
+  Using cached pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting hypothesis>=6 (from kanfae==0.1.0)
+  Using cached hypothesis-6.170.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.6 kB)
+Collecting autograd>=1.5 (from lifelines==0.30.3->kanfae==0.1.0)
+  Using cached autograd-1.9.1-py3-none-any.whl.metadata (6.1 kB)
+Collecting autograd-gamma>=0.3 (from lifelines==0.30.3->kanfae==0.1.0)
+  Using cached autograd-gamma-0.5.0.tar.gz (4.0 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting formulaic>=0.2.2 (from lifelines==0.30.3->kanfae==0.1.0)
+  Using cached formulaic-1.2.2-py3-none-any.whl.metadata (7.0 kB)
+Collecting ecos (from scikit-survival==0.28.0->kanfae==0.1.0)
+  Using cached ecos-2.0.14.tar.gz (142 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting joblib (from scikit-survival==0.28.0->kanfae==0.1.0)
+  Using cached joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting narwhals>=2.0.1 (from scikit-survival==0.28.0->kanfae==0.1.0)
+  Using cached narwhals-2.27.1-py3-none-any.whl.metadata (15 kB)
+Collecting numexpr (from scikit-survival==0.28.0->kanfae==0.1.0)
+  Using cached numexpr-2.14.2-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+Collecting osqp>=1.0.2 (from scikit-survival==0.28.0->kanfae==0.1.0)
+  Using cached osqp-1.1.3-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.2 kB)
+Requirement already satisfied: filelock in ./.venv/lib/python3.13/site-packages (from torch==2.14.1->kanfae==0.1.0) (3.32.3)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./.venv/lib/python3.13/site-packages (from torch==2.14.1->kanfae==0.1.0) (4.16.0)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.13/site-packages (from torch==2.14.1->kanfae==0.1.0) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.13/site-packages (from torch==2.14.1->kanfae==0.1.0) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.13/site-packages (from torch==2.14.1->kanfae==0.1.0) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.13/site-packages (from torch==2.14.1->kanfae==0.1.0) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in ./.venv/lib/python3.13/site-packages (from torch==2.14.1->kanfae==0.1.0) (2026.7.0)
+Collecting python-dateutil>=2.8.2 (from pandas<3,>=2.2->kanfae==0.1.0)
+  Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting pytz>=2020.1 (from pandas<3,>=2.2->kanfae==0.1.0)
+  Using cached pytz-2026.5-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas<3,>=2.2->kanfae==0.1.0)
+  Using cached tzdata-2026.5-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting threadpoolctl>=3.5.0 (from scikit-learn<1.10,>=1.9->kanfae==0.1.0)
+  Using cached threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+Collecting interface-meta>=1.2.0 (from formulaic>=0.2.2->lifelines==0.30.3->kanfae==0.1.0)
+  Using cached interface_meta-2.0.1-py3-none-any.whl.metadata (6.4 kB)
+Collecting wrapt>=1.17.0rc1 (from formulaic>=0.2.2->lifelines==0.30.3->kanfae==0.1.0)
+  Using cached wrapt-2.5.1-cp313-cp313-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (7.6 kB)
+Collecting sortedcontainers<3.0.0,>=2.1.0 (from hypothesis>=6->kanfae==0.1.0)
+  Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Collecting cloudpickle>=3.0 (from joblib->scikit-survival==0.28.0->kanfae==0.1.0)
+  Using cached cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting contourpy>=1.0.1 (from matplotlib>=3.8->kanfae==0.1.0)
+  Using cached contourpy-1.4.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+Collecting cycler>=0.10 (from matplotlib>=3.8->kanfae==0.1.0)
+  Using cached cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.28.2 (from matplotlib>=3.8->kanfae==0.1.0)
+  Using cached fonttools-4.67.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (137 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib>=3.8->kanfae==0.1.0)
+  Using cached kiwisolver-1.5.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.2 kB)
+Collecting packaging>=20.0 (from matplotlib>=3.8->kanfae==0.1.0)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pillow>=9 (from matplotlib>=3.8->kanfae==0.1.0)
+  Using cached pillow-12.3.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+Collecting pyparsing>=3 (from matplotlib>=3.8->kanfae==0.1.0)
+  Using cached pyparsing-3.3.3-py3-none-any.whl.metadata (5.9 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=8->kanfae==0.1.0)
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=8->kanfae==0.1.0)
+  Using cached pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+Collecting pygments>=2.7.2 (from pytest>=8->kanfae==0.1.0)
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas<3,>=2.2->kanfae==0.1.0)
+  Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting xarray (from rdata>=0.11->kanfae==0.1.0)
+  Using cached xarray-2026.9.0-py3-none-any.whl.metadata (12 kB)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.13/site-packages (from sympy>=1.13.3->torch==2.14.1->kanfae==0.1.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.13/site-packages (from jinja2->torch==2.14.1->kanfae==0.1.0) (3.0.3)
+Downloading lifelines-0.30.3-py3-none-any.whl (409 kB)
+Downloading scikit_survival-0.28.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (4.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.0/4.0 MB 3.4 MB/s  0:00:01
+Using cached numpy-2.5.4-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+Downloading pandas-2.3.3-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.3/12.3 MB 2.7 MB/s  0:00:04
+Using cached scikit_learn-1.9.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (9.1 MB)
+Downloading autograd-1.9.1-py3-none-any.whl (54 kB)
+Downloading formulaic-1.2.2-py3-none-any.whl (118 kB)
+Downloading hypothesis-6.170.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 3.4 MB/s  0:00:00
+Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Downloading interface_meta-2.0.1-py3-none-any.whl (15 kB)
+Using cached joblib-1.6.0-py3-none-any.whl (306 kB)
+Using cached cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Using cached matplotlib-3.11.2-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.9 MB)
+Using cached contourpy-1.4.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (384 kB)
+Using cached cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Using cached fonttools-4.67.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.4 MB)
+Using cached kiwisolver-1.5.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.5 MB)
+Using cached narwhals-2.27.1-py3-none-any.whl (483 kB)
+Downloading osqp-1.1.3-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (354 kB)
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Using cached pillow-12.3.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+Using cached pyparsing-3.3.3-py3-none-any.whl (126 kB)
+Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 2.7 MB/s  0:00:00
+Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading pytz-2026.5-py2.py3-none-any.whl (506 kB)
+Using cached pyyaml-6.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
+Using cached rdata-1.1.0-py3-none-any.whl (287 kB)
+Using cached scipy-1.18.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+Using cached threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+Downloading tzdata-2026.5-py2.py3-none-any.whl (347 kB)
+Downloading wrapt-2.5.1-cp313-cp313-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (248 kB)
+Downloading numexpr-2.14.2-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (448 kB)
+Using cached xarray-2026.9.0-py3-none-any.whl (1.4 MB)
+Building wheels for collected packages: kanfae, autograd-gamma, ecos
+  Building editable for kanfae (pyproject.toml): started
+  Building editable for kanfae (pyproject.toml): finished with status 'done'
+  Created wheel for kanfae: filename=kanfae-0.1.0-0.editable-py3-none-any.whl size=1394 sha256=9a41ab7b227e927727d0e4175fe1aaa3c00fbe994d317ce4ee3f787870dc118b
+  Stored in directory: /tmp/pip-ephem-wheel-cache-ku5pq5qn/wheels/9e/eb/63/da5631359f96f4f4522f24b542eb3318a4af8bf057daad7fb0
+  Building wheel for autograd-gamma (pyproject.toml): started
+  Building wheel for autograd-gamma (pyproject.toml): finished with status 'done'
+  Created wheel for autograd-gamma: filename=autograd_gamma-0.5.0-py3-none-any.whl size=4118 sha256=e25ba0c0e2a74f69200e3bcc3bb48f54f8f687b75db93db0169ad1007040e154
+  Stored in directory: /root/.cache/pip/wheels/7e/16/46/9477f188924292d3bf1fb8fb42844201591abfc19b7ba6d868
+  Building wheel for ecos (pyproject.toml): started
+  Building wheel for ecos (pyproject.toml): finished with status 'done'
+  Created wheel for ecos: filename=ecos-2.0.14-cp313-cp313-linux_x86_64.whl size=204007 sha256=55ca07a1f27d0285589954c4c79aad501a70cf7a8be52255efc439202f58d57c
+  Stored in directory: /root/.cache/pip/wheels/6b/82/0b/4bb5aa6c4618f367601a45db8710205d56858808423974e92a
+Successfully built kanfae autograd-gamma ecos
+Installing collected packages: sortedcontainers, pytz, wrapt, tzdata, threadpoolctl, six, pyyaml, pyparsing, pygments, pluggy, pillow, packaging, numpy, narwhals, kiwisolver, interface-meta, iniconfig, hypothesis, fonttools, cycler, cloudpickle, scipy, python-dateutil, pytest, numexpr, joblib, contourpy, autograd, scikit-learn, pandas, osqp, matplotlib, ecos, autograd-gamma, xarray, scikit-survival, formulaic, rdata, lifelines, kanfae
+
+Successfully installed autograd-1.9.1 autograd-gamma-0.5.0 cloudpickle-3.1.2 contourpy-1.4.0 cycler-0.12.1 ecos-2.0.14 fonttools-4.67.0 formulaic-1.2.2 hypothesis-6.170.0 iniconfig-2.3.1 interface-meta-2.0.1 joblib-1.6.0 kanfae-0.1.0 kiwisolver-1.5.1 lifelines-0.30.3 matplotlib-3.11.2 narwhals-2.27.1 numexpr-2.14.2 numpy-2.5.4 osqp-1.1.3 packaging-26.3 pandas-2.3.3 pillow-12.3.0 pluggy-1.7.0 pygments-2.21.0 pyparsing-3.3.3 pytest-9.1.1 python-dateutil-2.9.0.post0 pytz-2026.5 pyyaml-6.0.3 rdata-1.1.0 scikit-learn-1.9.1 scikit-survival-0.28.0 scipy-1.18.1 six-1.17.0 sortedcontainers-2.4.0 threadpoolctl-3.7.0 tzdata-2026.5 wrapt-2.5.1 xarray-2026.9.0
+No broken requirements found.
