@@ -34,3 +34,9 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   G12 masked fraction 0.2002.
 - Note: identical KS p-values for Weibull and log-logistic are expected: numpy draws both by inverse CDF from the
   same uniform stream (common random numbers) and the KS statistic is invariant under U -> 1-U reflection.
+
+## Stage C — Functional representation and KAN layer: PASSED (attempt 1)
+- `src/kanfae/functional/{basis,smoothing,fpca,layers}.py`, `src/kanfae/models/kan.py`.
+- `tests/test_functional.py` + `tests/test_kan.py`: **19 passed, 0 failed** (log `reports/logs/stageC_tests_attempt1.log`).
+- F3 relative changes (n = 25→50→…→800): h 6.3e-4, 1.5e-4, 3.9e-5, 9.6e-6, 2.4e-6; FPCA 4.4e-4 … 1.7e-6 (≈O(1/n²)).
+- The in-house KAN layer has now passed its own tests F-KAN-1..4 (and only from this point is it described as tested).
