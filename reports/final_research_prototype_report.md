@@ -1,5 +1,5 @@
 <p class="small">Research prototype report · generated 2026-10-16 from saved results by <code>scripts/build_report.py</code> ·
-git <code>bc4cf7b</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
+git <code>cd44f69</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
 <b>research prototype, not publication-ready</b> · no novelty claim is made.</p>
 
 ## 1. Executive summary (plain English)
@@ -210,7 +210,7 @@ Log-logistic: log f = w − 2 softplus(w),  log S = −softplus(w)
 ### 7.1 Status of every acceptance criterion
 
 All tests were run through `scripts/run_logged.sh`. Every attempt, including failed attempts, is in
-`reports/test_results.csv` (542 test records over 16 pytest runs). The latest
+`reports/test_results.csv` (561 test records over 16 pytest runs). The latest
 outcome of each test is in `reports/test_results_latest.csv`: 150 test cases, of which
 148 passed, 1 failed and 1 skipped.
 
@@ -297,7 +297,7 @@ Test types:
 | stageF_attempt1 | 2 | 0 | 0 |
 | regress_after_penalty_fix | 73 | 0 | 1 |
 | stageG_attempt1 | 4 | 0 | 0 |
-| final_full_suite | 129 | 1 | 1 |
+| final_full_suite | 148 | 1 | 1 |
 
 ### 8.2 Actual errors and how each was handled
 
@@ -712,7 +712,7 @@ targets are uncensored. These numbers **test the censoring code path, not real c
   17.9 (FPCA + Cox) and 18.2
   (Summary + Cox) cycles, against 47.5 for the null reference.
 - **Option A, official test.** Only engines whose observed length reaches `s0` can be evaluated (mean
-  54.800 of 100). FPCA + AFT had the lowest RMSE,
+  54.8 of 100). FPCA + AFT had the lowest RMSE,
   23.0.
 - **Option B, official test (all 100 engines at their last cycle).** Summary + RSF had the lowest RMSE,
   18.9. The parametric/Cox baselines were at
@@ -729,7 +729,7 @@ targets are uncensored. These numbers **test the censoring code path, not real c
   - The parametric AFT predictions stayed close to their uncensored values: FPCA + AFT internal RMSE
     20.7 vs 18.4.
   - For the Cox models, some predicted survival curves never fell to 0.5 within the training follow-up, so
-    their medians are undefined. On average 1.000
+    their medians are undefined. On average 1.0
     test engines per split were affected for Summary + Cox; these are flagged in the records and set to the
     grid end. This inflates Cox RMSE (38.6 ±
     41.2).

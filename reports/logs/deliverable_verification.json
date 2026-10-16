@@ -1,0 +1,27 @@
+{
+ "pdf_exists": true,
+ "pdf_opens": true,
+ "pdf_pages": 27,
+ "pdf_text_chars": 86943,
+ "pdf_no_placeholders": true,
+ "pdf_has_all_17_sections": true,
+ "page_renders": 27,
+ "blank_pages": [],
+ "md_3dp_numbers": 267,
+ "md_numbers_missing_in_pdf": [],
+ "report_values_used": 31,
+ "report_values_missing_in_pdf": [],
+ "P0_summary_values_in_pdf": "21/21",
+ "tests_reported": 150,
+ "tests_without_log_evidence": [],
+ "final_suite_counts": {
+  "passed": 148,
+  "failed": 1,
+  "skipped": 1
+ },
+ "commands_logged": 30,
+ "commands_missing_log_file": [],
+ "experiment_csv_rows_equal_jsonl": true,
+ "experiment_records": 1668,
+ "ALL_CHECKS_PASS": true
+}

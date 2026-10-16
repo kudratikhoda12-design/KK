@@ -29,7 +29,8 @@ res["pdf_opens"] = info.returncode == 0
 res["pdf_pages"] = int(re.search(r"Pages:\s+(\d+)", info.stdout).group(1))
 text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True).stdout
 res["pdf_text_chars"] = len(text)
-T = norm(text)
+raw = subprocess.run(["pdftotext", "-raw", str(pdf), "-"], capture_output=True, text=True).stdout
+T = norm(text) + " || " + norm(raw)          # layout and raw extraction (raw keeps wrapped table cells contiguous)
 res["pdf_no_placeholders"] = "{{" not in text
 res["pdf_has_all_17_sections"] = all(re.search(rf"\b{k}\.\s", T) for k in range(1, 18))
 
@@ -48,7 +49,9 @@ missing = sorted(n for n in nums_md if n not in T)
 res["md_3dp_numbers"] = len(nums_md)
 res["md_numbers_missing_in_pdf"] = missing[:50]
 vals = json.loads((REP / "report_values.json").read_text())
-res["report_values_missing_in_pdf"] = [k for k, v in vals.items() if str(v) not in T and k not in ("git_head",)]
+used = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / "report_template.md").read_text()))
+res["report_values_used"] = len(used)
+res["report_values_missing_in_pdf"] = [k for k in sorted(used) if norm(str(vals[k])) not in T]
 
 S = pd.read_csv(REP / "tables/summary_by_model.csv")
 p0 = S[(S.setting == "P0")]

@@ -16,7 +16,7 @@ KAN-FAE research prototype: final report
  15. Reproducibility
  16. Unfinished work and reasons
  17. References
-Research prototype report · generated 2026-10-16 from saved results by scripts/build_report.py · git bc4cf7b (local branch
+Research prototype report · generated 2026-10-16 from saved results by scripts/build_report.py · git cd44f69 (local branch
 claude/blissful-faraday-2unozw, not pushed) · status: research prototype, not publication-ready · no novelty claim is
 made.
 
@@ -322,7 +322,7 @@ PBC.
 7.1 Status of every acceptance criterion
 
 All tests were run through scripts/run_logged.sh. Every attempt, including failed attempts, is in
-reports/test_results.csv (542 test records over 16 pytest runs). The latest outcome of each test is in
+reports/test_results.csv (561 test records over 16 pytest runs). The latest outcome of each test is in
 reports/test_results_latest.csv: 150 test cases, of which 148 passed, 1 failed and 1 skipped.
 
 Test types:
@@ -483,7 +483,7 @@ regress_after_penalty_fix                                               73      
 
 stageG_attempt1                                                         4                      0                    0
 
-final_full_suite                                                        129                    1                    1
+final_full_suite                                                        148                    1                    1
 
 
 8.2 Actual errors and how each was handled
@@ -1279,7 +1279,7 @@ Observations (descriptive; no significance claims).
       Option A, internal test. RUL RMSE was 18.4 (FPCA + AFT), 17.9 (FPCA + Cox) and 18.2 (Summary
       + Cox) cycles, against 47.5 for the null reference.
       Option A, official test. Only engines whose observed length reaches s0 can be evaluated (mean
-      54.800 of 100). FPCA + AFT had the lowest RMSE, 23.0.
+      54.8 of 100). FPCA + AFT had the lowest RMSE, 23.0.
       Option B, official test (all 100 engines at their last cycle). Summary + RSF had the lowest
       RMSE, 18.9. The parametric/Cox baselines were at 27.2–29.4, and the null reference at 44.2.
       Option B, internal test pooled over all landmarks. RMSE was ≈34.2–37.2. Per band it falls from
@@ -1291,7 +1291,7 @@ Observations (descriptive; no significance claims).
              The parametric AFT predictions stayed close to their uncensored values: FPCA + AFT internal
              RMSE 20.7 vs 18.4.
              For the Cox models, some predicted survival curves never fell to 0.5 within the training follow-
-             up, so their medians are undefined. On average 1.000 test engines per split were affected for
+             up, so their medians are undefined. On average 1.0 test engines per split were affected for
              Summary + Cox; these are flagged in the records and set to the grid end. This inflates Cox
              RMSE (38.6 ± 41.2).
              For Summary + AFT, all four configurations diverged in one split, so only 4 of 5 splits

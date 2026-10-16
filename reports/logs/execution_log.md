@@ -90,3 +90,4 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 ## Report
 - Built from saved results by `scripts/{compile_test_results,aggregate_results,make_figures,build_report}.py`,
   PDF by `scripts/build_pdf.sh` (pandoc → Chromium), verified by `scripts/verify_deliverables.py`.
+- Final status written to `reports/FINAL_STATUS.md`; deliverable verification ALL_CHECKS_PASS=true.
