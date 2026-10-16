@@ -1,0 +1,46 @@
+{
+ "A_environment_likelihood": {
+  "status": "PASSED",
+  "attempts": 3,
+  "note": "2 repairs to test harness / reference optimiser; implementation unchanged"
+ },
+ "B_synthetic_data": {
+  "status": "PASSED",
+  "attempts": 1
+ },
+ "C_functional_representation_and_KAN_layer": {
+  "status": "PASSED",
+  "attempts": 1,
+  "note": "re-run after D30 BatchNorm change: passed"
+ },
+ "D_models_unit_criteria": {
+  "status": "PASSED",
+  "note": "M1-M5, K1-K2; M2 linear AE skipped as not applicable (D32)"
+ },
+ "D_learnability_gate": {
+  "status": "FAILED",
+  "attempts": 3,
+  "note": "R1 PASS, R3 PASS, R2 FAIL after 2 repairs (D33)"
+ },
+ "E_evaluation_module": {
+  "status": "PASSED",
+  "attempts": 3,
+  "note": "Q1 needed 2 fixture/support repairs"
+ },
+ "E_neural_experiments": {
+  "status": "BLOCKED",
+  "reason": "learnability gate R2 failed; pre-registered rule (protocol 1.4, D33)"
+ },
+ "E_baseline_synthetic_experiments": {
+  "status": "PENDING"
+ },
+ "F_cmapss": {
+  "status": "PENDING"
+ },
+ "G_pbc": {
+  "status": "PENDING"
+ },
+ "report": {
+  "status": "PENDING"
+ }
+}

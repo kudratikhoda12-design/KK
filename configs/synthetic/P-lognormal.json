@@ -1,0 +1,24 @@
+{
+  "setting": "P-lognormal",
+  "risk": "V1",
+  "sampling": "dense",
+  "censoring": 0.3,
+  "family": "lognormal",
+  "n": 1000,
+  "replicate_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004
+  ],
+  "models": [
+    "fpca_aft",
+    "fpca_cox",
+    "sum_aft",
+    "sum_cox",
+    "sum_rsf",
+    "km_null",
+    "oracle_true"
+  ]
+}

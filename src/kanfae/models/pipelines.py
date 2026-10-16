@@ -226,6 +226,12 @@ class SummaryAFT(_LinearAFTOnFeatures):
         return P.summary
 
 
+def _keep_mask(X):
+    """Columns with non-zero training variance (fix 2026-10-16: a training-constant summary column made lifelines'
+    internal standardisation divide 0/0 -> NaN on C-MAPSS Option A splits 1-4)."""
+    return np.asarray(X).std(axis=0) > 1e-12
+
+
 class _CoxOnFeatures(BaseModel):
     def fit(self, train, val=None, seed=0):
         from lifelines import CoxPHFitter
@@ -233,6 +239,9 @@ class _CoxOnFeatures(BaseModel):
         self._prep_fit(train, seed)
         P = self.prepare(train)
         X = self._fit_features(P)
+        self.keep = _keep_mask(X)
+        X = X[:, self.keep]
+        self.info = {"dropped_constant_columns": int((~self.keep).sum())}
         self.cols = [f"f{j}" for j in range(X.shape[1])]
         df = pd.DataFrame(X, columns=self.cols)
         df["T"], df["E"] = P.y, P.delta.astype(int)
@@ -242,12 +251,12 @@ class _CoxOnFeatures(BaseModel):
         return self
 
     def predict_survival(self, obs, times, P=None):
-        X = self._features(P or self.prepare(obs))
+        X = self._features(P or self.prepare(obs))[:, self.keep]
         sf = self.cph.predict_survival_function(pd.DataFrame(X, columns=self.cols), times=np.asarray(times, float))
         return sf.to_numpy().T
 
     def predict_risk(self, obs, P=None):
-        X = self._features(P or self.prepare(obs))
+        X = self._features(P or self.prepare(obs))[:, self.keep]
         return self.cph.predict_log_partial_hazard(pd.DataFrame(X, columns=self.cols)).to_numpy()
 
 

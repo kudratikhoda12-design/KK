@@ -1,0 +1,106 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 150 items
+
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[weibull] PASSED
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[weibull] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[weibull] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A4_gradcheck[weibull] PASSED
+tests/test_aft_likelihood.py::test_A4_gradcheck[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A4_gradcheck[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-weibull] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-lognormal] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-weibull] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-lognormal] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[weibull] PASSED
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[weibull] weibull: censored fraction 0.350
+weibull: our loglik at lifelines params -3277.89262418
+weibull: ours -3277.89262418  lifelines -3277.89262418
+PASSED
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[lognormal] lognormal: censored fraction 0.355
+lognormal: our loglik at lifelines params -3224.36131041
+lognormal: ours -3224.36131040  lifelines -3224.36131041
+PASSED
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[loglogistic] loglogistic: censored fraction 0.375
+loglogistic: our loglik at lifelines params -4282.03727082
+loglogistic: ours -4282.03727082  lifelines -4282.03727082
+PASSED
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[weibull] weibull: z-scores [-0.152 -0.039 -1.105  0.55 ]
+PASSED
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[lognormal] lognormal: z-scores [-1.002 -0.448 -0.356 -1.665]
+PASSED
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[loglogistic] loglogistic: z-scores [ 0.279  0.988 -1.94   0.351]
+PASSED
+tests/test_cmapss.py::test_K3_windows_of_an_engine_in_one_split PASSED
+tests/test_cmapss.py::test_K4_no_input_after_landmark PASSED
+tests/test_env.py::test_E1_global_environment_unchanged_and_venv_used PASSED
+tests/test_env.py::test_E2_torch_cpu_build PASSED
+tests/test_env.py::test_E3_pandas_below_3 PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[numpy] numpy 2.5.4
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[scipy] scipy 1.18.1
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[pandas] pandas 2.3.3
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[sklearn] sklearn 1.9.1
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[torch] torch 2.14.1+cpu
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[lifelines] lifelines 0.30.3
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[sksurv] sksurv 0.28.0
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[yaml] yaml 6.0.3
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[matplotlib] matplotlib 3.11.2
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[pytest] pytest 9.1.1
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[hypothesis] hypothesis 6.170.0
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[rdata] rdata 1.1.0
+PASSED
+tests/test_env.py::test_E5_lockfile_reproduces_exactly PASSED
+tests/test_env.py::test_E6_pip_check_clean PASSED
+tests/test_env.py::test_E7_pytest_collects_and_runs PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[4] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[8] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[12] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[16] PASSED
+tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[8] PASSED
+tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[12] PASSED
+tests/test_functional.py::test_F2_smoother_exact_recovery_and_sparse_stability PASSED
+tests/test_functional.py::test_F3_discretisation_consistency h relative changes [6.288e-04 1.548e-04 3.856e-05 9.630e-06 2.407e-06]
+fpca relative changes [4.449e-04 1.101e-04 2.744e-05 6.855e-06 1.714e-06]
+PASSED
+tests/test_functional.py::test_F4_fpca_properties PASSED
+tests/test_functional.py::test_F5_functional_linear_matches_dense_quadrature PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[3-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[10-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-2] PASSED
+tests/test_kan.py::test_FKAN2_shapes_and_gradcheck PASSED
+tests/test_kan.py::test_FKAN3_outside_grid_spline_is_zero PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[16-8-5-3] PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[4-12-3-3] PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[8-4-10-2] PASSED
+tests/test_learnability.py::test_R1_oracle_features_head R1: C = 0.8910, oracle C = 0.8936, sigma = 0.4816 (truth 0.5)
+PASSED
+tests/test_learnability.py::test_R2_fae_mlp_end_to_end R2: C = 0.8361, oracle C = 0.8936; probe R2 (a,b,A,omega) = [0.799 0.468 0.449 0.166], mean 0.471; epochs [2645]
+FAILED
+tests/test_learnability.py::test_R3_censoring_awareness 

@@ -1,0 +1,55 @@
+analysis,setting,model,config
+cmapss_A,cmapss_A,fpca_aft,"{'{""n_components"": 4}': np.int64(3), '{""n_components"": 8}': np.int64(2)}"
+cmapss_A,cmapss_A,fpca_cox,"{'{""n_components"": 4, ""penalizer"": 0.01}': np.int64(4), '{""n_components"": 8, ""penalizer"": 0.01}': np.int64(1)}"
+cmapss_A,cmapss_A,km_null,{'{}': np.int64(5)}
+cmapss_A,cmapss_A,sum_aft,"{'{""l2"": 1.0}': np.int64(5)}"
+cmapss_A,cmapss_A,sum_cox,"{'{""penalizer"": 0.1}': np.int64(1)}"
+cmapss_A,cmapss_A,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(5)}"
+cmapss_B,cmapss_B,fpca_aft,"{'{""n_components"": 4}': np.int64(2)}"
+cmapss_B,cmapss_B,fpca_cox,"{'{""n_components"": 4, ""penalizer"": 0.01}': np.int64(2)}"
+cmapss_B,cmapss_B,km_null,{'{}': np.int64(1)}
+cmapss_B,cmapss_B,sum_aft,"{'{""l2"": 1.0}': np.int64(2)}"
+cmapss_B,cmapss_B,sum_cox,"{'{""penalizer"": 0.1}': np.int64(2)}"
+cmapss_B,cmapss_B,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(1)}"
+synthetic_baselines,P-V2,fpca_aft,"{'{""n_components"": 2}': np.int64(3), '{""n_components"": 12}': np.int64(1), '{""n_components"": 8}': np.int64(1)}"
+synthetic_baselines,P-V2,fpca_cox,"{'{""n_components"": 2, ""penalizer"": 0.01}': np.int64(3), '{""n_components"": 12, ""penalizer"": 0.01}': np.int64(1), '{""n_components"": 8, ""penalizer"": 0.01}': np.int64(1)}"
+synthetic_baselines,P-V2,km_null,{'{}': np.int64(5)}
+synthetic_baselines,P-V2,oracle_true,{'{}': np.int64(5)}
+synthetic_baselines,P-V2,sum_aft,"{'{""l2"": 0.1}': np.int64(2), '{""l2"": 0.001}': np.int64(2), '{""l2"": 1.0}': np.int64(1)}"
+synthetic_baselines,P-V2,sum_cox,"{'{""penalizer"": 0.01}': np.int64(3), '{""penalizer"": 0.1}': np.int64(2)}"
+synthetic_baselines,P-V2,sum_rsf,"{'{""min_samples_leaf"": 20}': np.int64(3), '{""min_samples_leaf"": 10}': np.int64(2)}"
+synthetic_baselines,P-c0,fpca_aft,"{'{""n_components"": 12}': np.int64(3), '{""n_components"": 8}': np.int64(2)}"
+synthetic_baselines,P-c0,fpca_cox,"{'{""n_components"": 8, ""penalizer"": 0.01}': np.int64(3), '{""n_components"": 12, ""penalizer"": 0.01}': np.int64(2)}"
+synthetic_baselines,P-c0,km_null,{'{}': np.int64(5)}
+synthetic_baselines,P-c0,oracle_true,{'{}': np.int64(5)}
+synthetic_baselines,P-c0,sum_aft,"{'{""l2"": 0.001}': np.int64(3), '{""l2"": 0.1}': np.int64(1), '{""l2"": 0.01}': np.int64(1)}"
+synthetic_baselines,P-c0,sum_cox,"{'{""penalizer"": 0.01}': np.int64(4), '{""penalizer"": 0.1}': np.int64(1)}"
+synthetic_baselines,P-c0,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(4), '{""min_samples_leaf"": 10}': np.int64(1)}"
+synthetic_baselines,P-c60,fpca_aft,"{'{""n_components"": 8}': np.int64(3), '{""n_components"": 12}': np.int64(2)}"
+synthetic_baselines,P-c60,fpca_cox,"{'{""n_components"": 12, ""penalizer"": 0.01}': np.int64(3), '{""n_components"": 8, ""penalizer"": 0.01}': np.int64(2)}"
+synthetic_baselines,P-c60,km_null,{'{}': np.int64(5)}
+synthetic_baselines,P-c60,oracle_true,{'{}': np.int64(5)}
+synthetic_baselines,P-c60,sum_aft,"{'{""l2"": 0.01}': np.int64(3), '{""l2"": 0.001}': np.int64(2)}"
+synthetic_baselines,P-c60,sum_cox,"{'{""penalizer"": 0.01}': np.int64(5)}"
+synthetic_baselines,P-c60,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(4), '{""min_samples_leaf"": 10}': np.int64(1)}"
+synthetic_baselines,P-lognormal,fpca_aft,"{'{""n_components"": 8}': np.int64(3), '{""n_components"": 12}': np.int64(2)}"
+synthetic_baselines,P-lognormal,fpca_cox,"{'{""n_components"": 12, ""penalizer"": 0.01}': np.int64(3), '{""n_components"": 8, ""penalizer"": 0.01}': np.int64(2)}"
+synthetic_baselines,P-lognormal,km_null,{'{}': np.int64(5)}
+synthetic_baselines,P-lognormal,oracle_true,{'{}': np.int64(5)}
+synthetic_baselines,P-lognormal,sum_aft,"{'{""l2"": 0.001}': np.int64(3), '{""l2"": 0.01}': np.int64(2)}"
+synthetic_baselines,P-lognormal,sum_cox,"{'{""penalizer"": 0.01}': np.int64(5)}"
+synthetic_baselines,P-lognormal,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(5)}"
+synthetic_baselines,P-sparse,fpca_aft,"{'{""n_components"": 8}': np.int64(4), '{""n_components"": 12}': np.int64(1)}"
+synthetic_baselines,P-sparse,fpca_cox,"{'{""n_components"": 8, ""penalizer"": 0.01}': np.int64(4), '{""n_components"": 12, ""penalizer"": 0.01}': np.int64(1)}"
+synthetic_baselines,P-sparse,km_null,{'{}': np.int64(5)}
+synthetic_baselines,P-sparse,oracle_true,{'{}': np.int64(5)}
+synthetic_baselines,P-sparse,sum_aft,"{'{""l2"": 0.01}': np.int64(3), '{""l2"": 0.001}': np.int64(1), '{""l2"": 0.1}': np.int64(1)}"
+synthetic_baselines,P-sparse,sum_cox,"{'{""penalizer"": 0.01}': np.int64(4), '{""penalizer"": 0.1}': np.int64(1)}"
+synthetic_baselines,P-sparse,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(5)}"
+synthetic_baselines,P0,fpca_aft,"{'{""n_components"": 12}': np.int64(3), '{""n_components"": 8}': np.int64(2)}"
+synthetic_baselines,P0,fpca_cox,"{'{""n_components"": 12, ""penalizer"": 0.01}': np.int64(3), '{""n_components"": 8, ""penalizer"": 0.01}': np.int64(2)}"
+synthetic_baselines,P0,km_null,{'{}': np.int64(5)}
+synthetic_baselines,P0,oracle_true,{'{}': np.int64(5)}
+synthetic_baselines,P0,sum_aft,"{'{""l2"": 0.001}': np.int64(3), '{""l2"": 0.1}': np.int64(2)}"
+synthetic_baselines,P0,sum_cox,"{'{""penalizer"": 0.01}': np.int64(3), '{""penalizer"": 0.1}': np.int64(2)}"
+synthetic_baselines,P0,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(5)}"

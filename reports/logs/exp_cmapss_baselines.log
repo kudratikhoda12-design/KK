@@ -1,0 +1,167 @@
+[cmapss_A split 0] done in 28.7s {'s0': 134, 'excluded_val': 0, 'excluded_test': 1, 'excluded_official': 50}
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+[cmapss_A split 1] done in 26.5s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+[cmapss_A split 2] done in 28.0s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+[cmapss_A split 3] done in 27.8s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f12'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:797: RuntimeWarning: invalid value encountered in divide
+  return (X - mean) / std
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1530: LinAlgWarning: An ill-conditioned matrix detected: slice 0 has rcond = 0.0.
+  inv_h_dot_g_T = spsolve(-h, g, assume_a="pos", check_finite=False)
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:990: ConvergenceWarning: Your dataset has more variables than samples. Even with a penalizer (which you must use), convergence is not guaranteed.
+
+  warnings.warn(warning_text, ConvergenceWarning)
+[cmapss_A split 4] done in 26.2s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+[cmapss_B split 0] done in 161.2s {'n_windows_train': 1111, 'n_windows_test': 333}
+[cmapss_B split 1] done in 161.5s {'n_windows_train': 1088, 'n_windows_test': 373}

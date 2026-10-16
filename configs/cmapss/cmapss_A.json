@@ -2,7 +2,11 @@
   "analysis": "cmapss_A",
   "subset": "FD001",
   "split_seeds": [
-    0
+    0,
+    1,
+    2,
+    3,
+    4
   ],
   "models": [
     "fpca_aft",

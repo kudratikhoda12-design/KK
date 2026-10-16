@@ -60,6 +60,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--splits", type=int, default=5)
     ap.add_argument("--analyses", default="cmapss_A,cmapss_B,cmapss_A_artificial")
+    ap.add_argument("--models", default=",".join(MODELS))
+    ap.add_argument("--code-version", default="v1", help="recorded in every record; distinguishes re-runs after fixes")
     args = ap.parse_args()
     torch.set_default_dtype(torch.float64)
     tr_df, te_df, rul = read_fd(ROOT / "data" / "raw" / "cmapss", "FD001")
@@ -100,7 +102,7 @@ def main():
                         n_train=len(o_tr), n_val=len(o_va), n_test=len(o_te), n_sensors=len(sens),
                         data_kind="REAL (simulated turbofan; RUL benchmark)" + (" + ARTIFICIAL CENSORING"
                                                                                 if "artificial" in analysis else ""),
-                        censored_frac_test=float(1 - o_te.delta.mean()), **extra_info)
+                        censored_frac_test=float(1 - o_te.delta.mean()), code_version=args.code_version, **extra_info)
 
             def extra(m, seed, o_te=o_te, o_off=o_off, grid=grid):
                 out = rul_metrics(m, o_te, grid, "rul_test")
@@ -108,7 +110,7 @@ def main():
                     out.update(rul_metrics(m, o_off, grid, "rul_official"))
                 return out
 
-            for name in MODELS:
+            for name in args.models.split(","):
                 tune_fit_evaluate(name, o_tr, o_va, o_te, base, grid=[{}] if name == "km_null" else None,
                                   extra_eval=extra)
             print(f"[{analysis} split {sp}] done in {time.time() - t0:.1f}s {extra_info}", flush=True)
