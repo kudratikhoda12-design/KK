@@ -188,6 +188,7 @@ class _LinearAFTOnFeatures(BaseModel):
         P = self.prepare(train)
         X = self._fit_features(P)
         self.fit_ = fit_linear_aft(X, P.y, P.delta, self.cfg["family"], l2=self.cfg.get("l2", 1e-3), compute_se=False)
+        self.info = {"converged": self.fit_.converged, "sigma": float(np.exp(self.fit_.log_sigma))}
         self.n_params = X.shape[1] + 2
         self.fit_seconds = time.time() - t0
         return self

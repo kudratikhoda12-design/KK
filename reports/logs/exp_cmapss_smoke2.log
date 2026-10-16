@@ -1,0 +1,2 @@
+[cmapss_A split 0] done in 27.2s {'s0': 134, 'excluded_val': 0, 'excluded_test': 1, 'excluded_official': 50}
+[cmapss_A_artificial split 0] done in 24.8s {'s0': 134, 'excluded_val': 0, 'excluded_test': 1, 'excluded_official': 50, 'artificial_censored_frac_train': 0.2666666666666667}

@@ -63,9 +63,11 @@ def heldout_split(n_obs, mask, frac=0.15, min_points=4, seed=0):
 def individual_weighted_mse(err2, mask):
     """Mean over individuals of the mean over observed channels of the per-channel mean squared error (D19)."""
     n_id = mask.sum(axis=1)                                  # (N, D)
-    per_ch = np.where(n_id > 0, (err2 * mask).sum(axis=1) / np.maximum(n_id, 1), np.nan)
-    per_ind = np.nanmean(np.where(n_id > 0, per_ch, np.nan), axis=1)
-    return float(np.nanmean(per_ind))
+    per_ch = (err2 * mask).sum(axis=1) / np.maximum(n_id, 1)
+    n_ch = (n_id > 0).sum(axis=1)
+    keep = n_ch > 0                                          # individuals with at least one evaluated point
+    per_ind = (per_ch * (n_id > 0)).sum(axis=1)[keep] / n_ch[keep]
+    return float(per_ind.mean()) if keep.any() else float("nan")
 
 
 def observation_weighted_mse(err2, mask):

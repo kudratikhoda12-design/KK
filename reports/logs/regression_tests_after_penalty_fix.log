@@ -1,0 +1,10 @@
+.................................................s...................... [ 97%]
+..                                                                       [100%]
+=============================== warnings summary ===============================
+tests/test_models.py::test_M2_memorise_one_batch[fae_mlp]
+  /home/user/KK/tests/test_models.py:69: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    init = float(rec())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+73 passed, 1 skipped, 1 warning in 39.49s

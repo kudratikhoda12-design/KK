@@ -91,8 +91,15 @@ def harrell_c(y, d, risk):
 
 
 def uno_c(y_train, d_train, y, d, risk, tau):
+    """Uno's C truncated at tau (scikit-survival). Test times above tau are clipped to a value between tau and the
+    largest training time: this changes no comparable pair (index events need Y_i < tau) and avoids evaluating the
+    training censoring KM beyond its support."""
     from sksurv.metrics import concordance_index_ipcw
-    return float(concordance_index_ipcw(_surv_struct(y_train, d_train), _surv_struct(y, d),
+    y = np.asarray(y, float)
+    ymax_tr = float(np.max(y_train))
+    tau = min(float(tau), ymax_tr * (1 - 1e-6))
+    y_clip = np.where(y > tau, 0.5 * (tau + ymax_tr), y)
+    return float(concordance_index_ipcw(_surv_struct(y_train, d_train), _surv_struct(y_clip, d),
                                         np.asarray(risk, float), tau=tau)[0])
 
 

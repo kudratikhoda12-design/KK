@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 2 items
+
+tests/test_cmapss.py::test_K3_windows_of_an_engine_in_one_split PASSED   [ 50%]
+tests/test_cmapss.py::test_K4_no_input_after_landmark PASSED             [100%]
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_cmapss.py::test_K3_windows_of_an_engine_in_one_split
+PASSED tests/test_cmapss.py::test_K4_no_input_after_landmark
+============================== 2 passed in 3.14s ===============================

@@ -1,0 +1,20 @@
+{
+  "analysis": "cmapss_A_artificial",
+  "subset": "FD001",
+  "split_seeds": [
+    0
+  ],
+  "models": [
+    "fpca_aft",
+    "fpca_cox",
+    "sum_aft",
+    "sum_cox",
+    "sum_rsf",
+    "km_null"
+  ],
+  "option_B": {
+    "w": 30,
+    "step": 10
+  },
+  "artificial_censoring": "C ~ U(0, max training residual)"
+}

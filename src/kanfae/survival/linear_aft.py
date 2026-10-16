@@ -25,7 +25,10 @@ def _design(X):
 
 
 def fit_linear_aft(X, y, delta, family="weibull", l2=0.0, max_iter=500, compute_se=True):
-    """Maximise sum_i l_i - 0.5 * l2 * ||beta[1:]||^2 over (beta, log sigma)."""
+    """Maximise sum_i l_i - 0.5 * n * l2 * ||beta[1:]||^2 over (beta, log sigma).
+
+    The penalty is scaled by n (per-observation penalty, as in glmnet). Fix 2026-10-16: an unscaled penalty was
+    negligible for the l2 grid {1e-3..1} and let the p ~ n C-MAPSS Option A fits degenerate (sigma -> 0)."""
     fam = get_family(family)
     Z = torch.tensor(_design(X))
     yt = torch.tensor(np.asarray(y, dtype=np.float64))
@@ -41,7 +44,7 @@ def fit_linear_aft(X, y, delta, family="weibull", l2=0.0, max_iter=500, compute_
     def objective(th):
         eta = Z @ th[:p]
         ll = aft_log_likelihood(yt, dt, eta, torch.exp(th[-1]), fam).sum()
-        return -(ll - 0.5 * l2 * (th[1:p] ** 2).sum())
+        return -(ll - 0.5 * l2 * len(yt) * (th[1:p] ** 2).sum())
 
     opt = torch.optim.LBFGS([theta], lr=1.0, max_iter=max_iter, tolerance_grad=1e-12,
                             tolerance_change=1e-15, history_size=50, line_search_fn="strong_wolfe")
