@@ -2,7 +2,7 @@
 # Markdown -> standalone HTML (pandoc) -> PDF (headless Chromium). Then text extraction and page renders for checks.
 set -euo pipefail
 cd "$(dirname "$0")/../reports"
-pandoc final_research_prototype_report.md -f markdown+pipe_tables -t html5 --standalone --toc --toc-depth=2 \
+pandoc final_research_prototype_report.md -f markdown+pipe_tables+lists_without_preceding_blankline -t html5 --standalone --toc --toc-depth=2 \
   --metadata title="KAN-FAE research prototype: final report" --css report.css --embed-resources \
   -o final_research_prototype_report.html
 CHROME=/opt/pw-browsers/chromium-1194/chrome-linux/chrome

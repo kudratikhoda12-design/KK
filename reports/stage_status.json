@@ -32,15 +32,24 @@
   "reason": "learnability gate R2 failed; pre-registered rule (protocol 1.4, D33)"
  },
  "E_baseline_synthetic_experiments": {
-  "status": "PENDING"
+  "status": "COMPLETED",
+  "note": "6 settings x 5 replicates; log reports/logs/exp_synthetic_baselines_v2.log (exit 0)"
  },
  "F_cmapss": {
-  "status": "PENDING"
+  "status": "COMPLETED (baselines only; neural models BLOCKED)",
+  "note": "FD001; Options A and B and A+artificial censoring, 5 splits; sum_cox re-run after D37; landmark decision D3b unresolved"
  },
  "G_pbc": {
-  "status": "PENDING"
+  "status": "COMPLETED (baselines only; neural models BLOCKED)",
+  "note": "landmark 730 d; E1 and E2 sensitivity analyses, 5 splits; endpoint decision D9 unresolved; E3 not implemented"
  },
  "report": {
-  "status": "PENDING"
+  "status": "COMPLETED",
+  "note": "see reports/FINAL_STATUS.md for verification"
+ },
+ "final_full_test_suite": {
+  "status": "RUN",
+  "result": "148 passed, 1 failed (R2), 1 skipped (M2 linear, D32)",
+  "log": "reports/logs/final_full_test_suite.log"
  }
 }

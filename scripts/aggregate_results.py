@@ -16,8 +16,6 @@ recs = [json.loads(l) for l in (ROOT / "reports/experiment_results.jsonl").read_
 df = pd.DataFrame(recs)
 df.drop(columns=[c for c in ("traceback",) if c in df], errors="ignore").to_csv(ROOT / "reports/experiment_results.csv", index=False)
 
-status = df.groupby(["analysis", "model", "phase", "status"]).size().rename("n").reset_index()
-status.to_csv(OUT / "run_status_counts.csv", index=False)
 
 # Superseded records (D37): for re-run (analysis, model) pairs only the re-run's records enter the summaries;
 # all records remain in experiment_results.csv as history.
@@ -30,10 +28,13 @@ for (an, mo), ver in SUPERSEDED.items():
     if (sel & (df.code_version == ver)).any():
         df.loc[sel & (df.code_version != ver), "used_in_summary"] = False
 df.drop(columns=[c for c in ("traceback",) if c in df], errors="ignore").to_csv(ROOT / "reports/experiment_results.csv", index=False)
+df["record_set"] = np.where(df.used_in_summary, "current", "superseded (D37)")
+status = df.groupby(["analysis", "model", "record_set", "phase", "status"]).size().rename("n").reset_index()
+status.to_csv(OUT / "run_status_counts.csv", index=False)
 fin = df[(df.phase == "final") & df.used_in_summary].copy()
 metric_cols = [c for c in fin.columns if c not in ("run_id", "dataset", "analysis", "setting", "replicate", "model",
                                                      "config", "seed", "phase", "status", "error", "data_kind",
-                                                     "fit_info", "split_seed", "data_seed", "used_in_summary", "code_version")
+                                                     "fit_info", "split_seed", "data_seed", "used_in_summary", "code_version", "record_set")
                and pd.api.types.is_numeric_dtype(fin[c])]
 ok = fin[fin.status == "ok"]
 per_rep = ok.groupby(["dataset", "analysis", "setting", "model", "replicate"])[metric_cols].mean().reset_index()

@@ -15,7 +15,11 @@
     "sex(f=1)"
   ],
   "split_seeds": [
-    0
+    0,
+    1,
+    2,
+    3,
+    4
   ],
   "models": [
     "fpca_aft",

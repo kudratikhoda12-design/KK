@@ -1,0 +1,10 @@
+[cmapss_A split 0] done in 3.1s {'s0': 134, 'excluded_val': 0, 'excluded_test': 1, 'excluded_official': 50}
+[cmapss_A split 1] done in 2.9s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+[cmapss_A split 2] done in 2.7s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+[cmapss_A split 3] done in 3.2s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+[cmapss_A split 4] done in 3.2s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44}
+[cmapss_A_artificial split 0] done in 3.1s {'s0': 134, 'excluded_val': 0, 'excluded_test': 1, 'excluded_official': 50, 'artificial_censored_frac_train': 0.2666666666666667}
+[cmapss_A_artificial split 1] done in 2.9s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44, 'artificial_censored_frac_train': 0.25}
+[cmapss_A_artificial split 2] done in 2.8s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44, 'artificial_censored_frac_train': 0.25}
+[cmapss_A_artificial split 3] done in 2.9s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44, 'artificial_censored_frac_train': 0.4666666666666667}
+[cmapss_A_artificial split 4] done in 3.0s {'s0': 127, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 44, 'artificial_censored_frac_train': 0.31666666666666665}

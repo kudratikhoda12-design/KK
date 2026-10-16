@@ -8,7 +8,7 @@ ran (decision D24):
 
 | ID | Status | Hypothesis | Outcome in this prototype |
 |---|---|---|---|
-| H1 (primary) | pre-registered | On synthetic setting P0, the KAN functional autoencoder + AFT has lower survival-curve error than the parameter-matched functional MLP autoencoder + AFT (paired over 5 replicates). | **Not tested.** Blocked by the failed learnability gate (§7.3, D33). |
+| H1 (primary) | pre-registered | On synthetic setting P0, the KAN functional autoencoder + AFT has lower survival-curve error than the parameter-matched functional MLP autoencoder + AFT (paired over 5 replicates). | **Not tested.** Blocked by the failed learnability gate (§10.1, D33). |
 | H2 (secondary) | pre-registered | A reconstruction term (α > 0) reduces survival-curve error vs survival-only training (α = 0). | **Not tested** (blocked, D33). |
 | H3 (secondary) | pre-registered | Functional encoders outperform the flattened autoencoder under sparse sampling. | **Not tested** (blocked, D33). |
 | Gate R1–R3 | pre-specified engineering checks | The pipeline can learn a known relationship under controlled conditions. | R1 PASS, **R2 FAIL**, R3 PASS. |
@@ -153,11 +153,13 @@ Test types:
 
 {{T:criteria}}
 
-### 7.2 Test-run counts (chronological)
+## 8. Test counts and the actual errors
+
+### 8.1 Test-run counts (chronological)
 
 {{T:run_counts}}
 
-### 7.3 Actual errors and how each was handled
+### 8.2 Actual errors and how each was handled
 
 {{T:failures}}
 
@@ -178,7 +180,7 @@ Test types:
   - The scikit-survival reference cannot evaluate the training censoring KM beyond the largest training time.
   - Our IBS now evaluates G at `min(Y_i, t_last)`, which is exact.
   - The fixture uses test times inside the support.
-- **Stage D, learnability gate: R2 FAILED after both permitted repairs** (§11.1).
+- **Stage D, learnability gate: R2 FAILED after both permitted repairs** (§10.1).
 
 ## 9. Baselines, splits, seeds, tuning rules and metrics
 

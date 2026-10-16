@@ -83,9 +83,11 @@ def run_counts_table():
 
 
 def status_table():
-    p = STATUS.pivot_table(index=["analysis", "model"], columns="status", values="n", aggfunc="sum", fill_value=0)
-    rows = [[a, LABEL.get(m, m)] + [int(r.get(c, 0)) for c in ("ok", "diverged", "failed")] for (a, m), r in p.iterrows()]
-    return md_table(["Analysis", "Model", "ok", "diverged", "failed"], rows)
+    p = STATUS.pivot_table(index=["analysis", "model", "record_set"], columns="status", values="n", aggfunc="sum",
+                           fill_value=0)
+    rows = [[a, LABEL.get(m, m), rs] + [int(r.get(c, 0)) for c in ("ok", "diverged", "failed")]
+            for (a, m, rs), r in p.iterrows()]
+    return md_table(["Analysis", "Model", "Record set", "ok", "diverged", "failed"], rows)
 
 
 def runtime_table():
@@ -143,7 +145,12 @@ def recon_table():
 
 def selected_table():
     sel = pd.read_csv(REP / "tables/selected_configs.csv")
-    rows = [[r.analysis, LABEL.get(r.model, r.model), r.config] for r in sel.itertuples() if r.model in ORDER[:5]]
+    def clean(c):
+        c = re.sub(r"np\.int64\((\d+)\)", r"\1", str(c))
+        items = re.findall(r"'(\{[^']*\})': (\d+)", c)
+        return "; ".join(f"{cfg} ×{n}" for cfg, n in items) if items else c
+    rows = [[r.setting if r.analysis == "synthetic_baselines" else r.analysis, LABEL.get(r.model, r.model), clean(r.config)]
+            for r in sel.itertuples() if r.model in ORDER[:5]]
     return md_table(["Analysis/setting", "Model", "Selected configuration: count over replicates/splits"], rows)
 
 
@@ -221,12 +228,22 @@ def main():
 
     def rep_v(m):
         k = m.group(1)
+        if k.startswith("S|"):                      # S|setting|model|metric[|stat]  -> value from summary table
+            parts = k.split("|")
+            _, st, mo, me = parts[:4]
+            stat = parts[4] if len(parts) > 4 else "mean"
+            r = S[(S.setting == st) & (S.model == mo)]
+            if r.empty or f"{me}__{stat}" not in r:
+                raise KeyError(f"no summary value for {k}")
+            v = float(r.iloc[0][f"{me}__{stat}"])
+            d = 1 if ("rmse" in me or "mae" in me or me.endswith("_n") or "not_reached" in me) else (0 if stat == "count" else 3)
+            return f"{v:.{d}f}"
         if k not in vals:
             raise KeyError(f"unknown value {k}")
         return vals[k]
 
     out = re.sub(r"\{\{T:([A-Za-z0-9_\-]+)\}\}", rep_t, tpl)
-    out = re.sub(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", rep_v, out)
+    out = re.sub(r"\{\{V:([A-Za-z0-9_\-|.]+)\}\}", rep_v, out)
     (REP / "final_research_prototype_report.md").write_text(out)
     (REP / "report_values.json").write_text(json.dumps(vals, indent=1))
     print("report written;", len(out.splitlines()), "lines")

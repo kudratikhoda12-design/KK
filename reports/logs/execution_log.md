@@ -64,3 +64,29 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   after it under-fit this mapping at N = 1200. No threshold was changed.
 - Consequence (pre-registered rule, protocol §1.4; D33): the KAN-vs-MLP comparison (H1) and all neural-autoencoder
   experiments are **BLOCKED**. Independent branches continue with validated baselines.
+
+## Stage E (unblocked part) — synthetic baseline experiments: COMPLETED
+- First run stopped after a bug was found (D36, linear-AFT penalty scaling); its 491 records are kept in
+  `reports/logs/superseded_synthetic_results_penalty_scaling_bug.jsonl` and not used.
+- Re-run `exp_synthetic_baselines_v2` (exit 0, 721 s): 6 settings × 5 replicates × 5 baselines + km_null + oracle.
+
+## Stage F — C-MAPSS: COMPLETED for baselines (neural BLOCKED)
+- Source: PHM Society mirror (S3 zip), SHA-256 recorded; inspected before writing the loader
+  (`cmapss_inspection.json`); K3/K4 tests passed.
+- `exp_cmapss_baselines` (exit 0, 1050 s): Options A, B, A+ARTIFICIAL censoring, 5 engine-level splits.
+- D37 bug (constant feature column → lifelines NaN) affected sum_cox on Option A splits 1–4 (16 failed tuning
+  records, kept); fixed and re-run (`exp_cmapss_sumcox_rerun_D37`, exit 0).
+- Summary+AFT on Option A + artificial censoring: all 4 configs diverged in one split (recorded `diverged`);
+  4 of 5 splits contribute.
+
+## Stage G — PBC: COMPLETED for baselines (neural BLOCKED)
+- Source: CRAN survival 3.8-12 (SHA-256 recorded); provenance/outcome/K1/K4 tests passed (4).
+- `exp_pbc_baselines` (exit 0, 105 s): E1 and E2 as separate sensitivity analyses, 5 patient-level splits,
+  marginal and conditional IPCW IBS, visit-process descriptive Cox.
+
+## Final consolidated test suite
+- `final_full_test_suite` (exit 1, 1622 s): 148 passed, 1 failed (R2, reproduced exactly: C 0.8361), 1 skipped.
+
+## Report
+- Built from saved results by `scripts/{compile_test_results,aggregate_results,make_figures,build_report}.py`,
+  PDF by `scripts/build_pdf.sh` (pandoc → Chromium), verified by `scripts/verify_deliverables.py`.
