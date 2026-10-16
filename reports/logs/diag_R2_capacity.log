@@ -1,0 +1,8 @@
+/home/user/KK/src/kanfae/models/pipelines.py:110: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  hist.append((ep, float(loss), vl))
+{'H': 16, 'hidden': 32}: train C=0.7934 test C=0.8050 (oracle 0.8936) params=2430 epochs=[3000] 21.7s
+{'H': 32, 'hidden': 64}: train C=0.8441 test C=0.8361 (oracle 0.8936) params=5838 epochs=[2645] 19.6s
+{'H': 64, 'hidden': 128}: train C=0.8420 test C=0.8296 (oracle 0.8936) params=15726 epochs=[2619] 22.5s
+{'H': 32, 'hidden': 64, 'r': 8}: train C=0.8453 test C=0.8362 (oracle 0.8936) params=6358 epochs=[3000] 23.7s
+{'H': 32, 'hidden': 64, 'alpha': 0.1}: train C=0.8390 test C=0.8320 (oracle 0.8936) params=5838 epochs=[2347] 17.3s

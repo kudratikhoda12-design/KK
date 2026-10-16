@@ -1,0 +1,81 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 3 items
+
+tests/test_learnability.py::test_R1_oracle_features_head R1: C = 0.8910, oracle C = 0.8936, sigma = 0.4816 (truth 0.5)
+PASSED
+tests/test_learnability.py::test_R2_fae_mlp_end_to_end R2: C = 0.7545, oracle C = 0.8936; probe R2 (a,b,A,omega) = [0.861 0.711 0.    0.022], mean 0.398; epochs [400]
+FAILED
+tests/test_learnability.py::test_R3_censoring_awareness R3: survival-curve error aware [0.1511, 0.1198, 0.1243] naive [0.1684, 0.1546, 0.1564] ; C (aware, seed 0) = 0.7857
+R3: |C - C_R2| = 0.0313
+FAILED
+
+=================================== FAILURES ===================================
+__________________________ test_R2_fae_mlp_end_to_end __________________________
+
+    @pytest.mark.criterion("R2")
+    def test_R2_fae_mlp_end_to_end():
+        obs, ora, tr, va, te = _data(0.05, 0.0)
+        m = NeuralAFT("fae_mlp").fit(obs.subset(tr), obs.subset(va), seed=0)
+        risk = m.predict_risk(obs.subset(te))
+        c = harrell_c(obs.y_obs[te], obs.delta[te], risk)
+        c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
+        Ztr, Zte = m.latent(obs.subset(tr)), m.latent(obs.subset(te))
+        A = np.column_stack([np.ones(len(Ztr)), Ztr])
+        r2 = []
+        for j in range(4):
+            tgt = ora.theta[tr, j]
+            coef = np.linalg.solve(A.T @ A + 1e-3 * np.eye(A.shape[1]), A.T @ tgt)
+            pred = np.column_stack([np.ones(len(Zte)), Zte]) @ coef
+            yt = ora.theta[te, j]
+            r2.append(1 - np.sum((yt - pred) ** 2) / np.sum((yt - yt.mean()) ** 2))
+        GATE["R2_C"] = c
+        print(f"R2: C = {c:.4f}, oracle C = {c_or:.4f}; probe R2 (a,b,A,omega) = {np.round(r2, 3)}, mean {np.mean(r2):.3f}; "
+              f"epochs {[r['epochs'] for r in m.info['runs']]}")
+>       assert c >= c_or - 0.03
+E       assert np.float64(0.7544611528822055) >= (np.float64(0.8936215538847118) - 0.03)
+
+tests/test_learnability.py:80: AssertionError
+_________________________ test_R3_censoring_awareness __________________________
+
+    @pytest.mark.criterion("R3")
+    def test_R3_censoring_awareness():
+        obs, ora, tr, va, te = _data(0.1, 0.3)
+        grid = np.linspace(0, ora.t_max, 101)
+        S_true = ora.subset(te).survival(grid)
+        errs = {}
+        cs = []
+        for naive in (False, True):
+            for seed in (0, 1, 2):
+                m = NeuralAFT("fae_mlp", naive=naive).fit(obs.subset(tr), obs.subset(va), seed=seed)
+                errs[(naive, seed)] = survival_curve_error(m.predict_survival(obs.subset(te), grid), S_true, grid)
+                if not naive and seed == 0:
+                    cs.append(harrell_c(obs.y_obs[te], obs.delta[te], m.predict_risk(obs.subset(te))))
+        print("R3: survival-curve error aware", [round(errs[(False, s)], 4) for s in (0, 1, 2)],
+              "naive", [round(errs[(True, s)], 4) for s in (0, 1, 2)], f"; C (aware, seed 0) = {cs[0]:.4f}")
+        r2_c = GATE.get("R2_C")
+        assert r2_c is not None, "R2 must run first in the same session"
+        print(f"R3: |C - C_R2| = {abs(cs[0] - r2_c):.4f}")
+>       assert abs(cs[0] - r2_c) <= 0.02
+E       assert np.float64(0.03128870654425442) <= 0.02
+E        +  where np.float64(0.03128870654425442) = abs((np.float64(0.7857498594264599) - np.float64(0.7544611528822055)))
+
+tests/test_learnability.py:102: AssertionError
+=============================== warnings summary ===============================
+tests/test_learnability.py::test_R1_oracle_features_head
+  /home/user/KK/tests/test_learnability.py:46: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_learnability.py::test_R1_oracle_features_head
+FAILED tests/test_learnability.py::test_R2_fae_mlp_end_to_end - assert np.flo...
+FAILED tests/test_learnability.py::test_R3_censoring_awareness - assert np.fl...
+=================== 2 failed, 1 passed, 1 warning in 35.99s ====================

@@ -48,11 +48,14 @@ class KANLayer(nn.Module):
 
 
 class KANBlock(nn.Module):
-    """LayerNorm (no affine) followed by a stack of KAN layers, e.g. dims = [16, 8, 4]."""
+    """Per-feature BatchNorm (no affine; D30) followed by a stack of KAN layers, e.g. dims = [16, 4].
+
+    A per-sample LayerNorm (the original design) would discard each sample's feature mean and scale,
+    i.e. 2 of r = 4 latent degrees of freedom at the decoder input; BatchNorm keeps that information."""
 
     def __init__(self, dims, grid_size=5, spline_order=3, seed=None):
         super().__init__()
-        self.norm = nn.LayerNorm(dims[0], elementwise_affine=False)
+        self.norm = nn.BatchNorm1d(dims[0], affine=False)
         self.layers = nn.ModuleList([KANLayer(a, b, grid_size, spline_order,
                                               seed=None if seed is None else seed + i)
                                      for i, (a, b) in enumerate(zip(dims[:-1], dims[1:]))])

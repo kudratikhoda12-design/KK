@@ -1,0 +1,8 @@
+/home/user/KK/src/kanfae/models/pipelines.py:110: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  hist.append((ep, float(loss), vl))
+fae_mlp {'max_epochs': 400}: C=0.7545 (oracle 0.8936) probe(a,b,A,w)=[0.861 0.711 0.    0.022] epochs=[400] 5.3s
+fae_mlp {'max_epochs': 3000, 'patience': 100}: C=0.8050 (oracle 0.8936) probe(a,b,A,w)=[0.8   0.525 0.257 0.035] epochs=[3000] 19.7s
+fae_mlp {'max_epochs': 3000, 'patience': 100, 'lr': 0.01}: C=0.7917 (oracle 0.8936) probe(a,b,A,w)=[0.814 0.541 0.174 0.035] epochs=[1929] 13.1s
+fae_mlp {'max_epochs': 3000, 'patience': 100, 'alpha': 0.0}: C=0.8064 (oracle 0.8936) probe(a,b,A,w)=[0.63  0.759 0.255 0.119] epochs=[3000] 17.2s
+fae_kan {'max_epochs': 3000, 'patience': 100}: C=0.8368 (oracle 0.8936) probe(a,b,A,w)=[0.802 0.457 0.499 0.013] epochs=[1547] 22.4s

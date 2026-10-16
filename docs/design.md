@@ -249,8 +249,13 @@ KANLayer(n_in, n_out, G, k):
 
 - `B_g` are degree-`k` B-splines on a uniform grid of `G` intervals on
   `[−2, 2]`, extended by `k` knots on each side.
-- Each KAN block starts with a `LayerNorm` without affine parameters, so inputs
-  mostly fall inside the grid.
+- Each KAN block starts with a per-feature `BatchNorm1d` without affine
+  parameters (D30), so inputs mostly fall inside the grid. (An earlier draft used
+  a per-sample `LayerNorm`, which would discard 2 of the 4 latent degrees of
+  freedom at the decoder input.)
+- Default KAN blocks are a **single KAN layer** (encoder `[H → r]`, decoder
+  `[r → D·K]`). A 2-layer KAN matched to the 2-layer MLP's parameter count would
+  need hidden width 3 (< r), a bottleneck. See D30.
 - Outside the extended grid the spline term is exactly 0 and only the SiLU path
   remains (test M4).
 - Parameters per layer: `n_in·n_out·(G + k + 2)` (spline coefficients plus

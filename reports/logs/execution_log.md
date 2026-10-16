@@ -40,3 +40,27 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - `tests/test_functional.py` + `tests/test_kan.py`: **19 passed, 0 failed** (log `reports/logs/stageC_tests_attempt1.log`).
 - F3 relative changes (n = 25→50→…→800): h 6.3e-4, 1.5e-4, 3.9e-5, 9.6e-6, 2.4e-6; FPCA 4.4e-4 … 1.7e-6 (≈O(1/n²)).
 - The in-house KAN layer has now passed its own tests F-KAN-1..4 (and only from this point is it described as tested).
+
+## Stage D — Models and learnability gate: FAILED at R2 (after 2 repairs); unit criteria PASSED
+- Implemented: `src/kanfae/data/{splits,preprocess}.py`, `src/kanfae/models/{fae,pipelines}.py`,
+  `src/kanfae/evaluation/metrics.py` (needed by the gate; validated first by Q1..Q5).
+- Design corrections before any training: D30 (KAN BatchNorm input normalisation; single-layer KAN blocks),
+  D31 (automatic parameter matching with bottleneck-avoiding tie-breaks), D32 (M2 representable targets).
+- Unit tests (`reports/logs/stageCDE_unit_final.log`): **55 passed, 1 skipped** (M2 linear AE — not applicable, D32).
+  Q1 needed 2 fixture/support repairs (`stageE_metric_tests_attempt{2,3}.log`): the scikit-survival reference cannot
+  evaluate the training censoring KM beyond the largest training time; our IBS now evaluates G(min(Y_i, t_last)),
+  which is mathematically exact.
+- Learnability gate (STAT, seed 21):
+  - attempt 1 (`stageD_gate_attempt1.log`): R1 PASS (C 0.8910 vs oracle 0.8936; sigma 0.4816); R2 FAIL (C 0.7545,
+    probe R2 a/b/A/omega 0.861/0.711/0.000/0.022); R3 FAIL (|dC| 0.0313; aware < naive at all seeds).
+  - diagnostics: `diag_R2_budget.log` (epoch cap always hit; KAN 0.837 vs MLP 0.805 at 3000 epochs, single seed,
+    gate data only — DIAGNOSTIC, not a comparison), `diag_R2_capacity.log` (train C ≈ test C ≈ 0.79–0.84: under-fit;
+    capacity plateau ≈ 0.836).
+  - repair 1 (training budget 400→3000 epochs, patience 30→100): R2 FAIL (C 0.8050), R3 FAIL (|dC| 0.0247).
+  - repair 2 (capacity H 16→32, hidden 32→64; KAN re-matched +1.2%): **R1 PASS, R2 FAIL (C 0.8361 < 0.8636; mean
+    probe R2 0.471 < 0.8), R3 PASS** (|dC| 0.0042; curve error aware 0.0958/0.0976/0.0998 < naive 0.1472/0.1451/0.1487).
+- Root cause (interpretation): the risk depends on the amplitude A of a random-phase sinusoid, a phase-invariant
+  (quadratic) functional; the architecture's first layer computes only linear functionals ∫β x dt, and the networks
+  after it under-fit this mapping at N = 1200. No threshold was changed.
+- Consequence (pre-registered rule, protocol §1.4; D33): the KAN-vs-MLP comparison (H1) and all neural-autoencoder
+  experiments are **BLOCKED**. Independent branches continue with validated baselines.

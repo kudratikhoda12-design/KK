@@ -1,0 +1,217 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 56 items
+
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[4] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[8] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[12] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[16] PASSED
+tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[8] PASSED
+tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[12] PASSED
+tests/test_functional.py::test_F2_smoother_exact_recovery_and_sparse_stability PASSED
+tests/test_functional.py::test_F3_discretisation_consistency h relative changes [6.288e-04 1.548e-04 3.856e-05 9.630e-06 2.407e-06]
+fpca relative changes [4.449e-04 1.101e-04 2.744e-05 6.855e-06 1.714e-06]
+PASSED
+tests/test_functional.py::test_F4_fpca_properties PASSED
+tests/test_functional.py::test_F5_functional_linear_matches_dense_quadrature PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[3-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[10-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-2] PASSED
+tests/test_kan.py::test_FKAN2_shapes_and_gradcheck PASSED
+tests/test_kan.py::test_FKAN3_outside_grid_spline_is_zero PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[16-8-5-3] PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[4-12-3-3] PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[8-4-10-2] PASSED
+tests/test_models.py::test_M1_shapes[fae_mlp] PASSED
+tests/test_models.py::test_M1_shapes[fae_kan] PASSED
+tests/test_models.py::test_M1_shapes[fae_kan2] PASSED
+tests/test_models.py::test_M1_shapes[fae_linear] PASSED
+tests/test_models.py::test_M1_shapes[flat_ae] PASSED
+tests/test_models.py::test_M1_shapes[fpca_aft] PASSED
+tests/test_models.py::test_M1_shapes[fpca_cox] PASSED
+tests/test_models.py::test_M1_shapes[sum_aft] PASSED
+tests/test_models.py::test_M1_shapes[sum_cox] PASSED
+tests/test_models.py::test_M1_shapes[sum_rsf] PASSED
+tests/test_models.py::test_M2_memorise_one_batch[fae_mlp] fae_mlp: initial 1.061 final 1.607e-05 ratio 1.515e-05
+PASSED
+tests/test_models.py::test_M2_memorise_one_batch[fae_kan] fae_kan: initial 1.046 final 0.008279 ratio 0.007917
+PASSED
+tests/test_models.py::test_M2_memorise_one_batch[fae_linear] fae_linear: initial 1.047 final 0.0591 ratio 0.05647
+SKIPPED
+tests/test_models.py::test_M2_memorise_one_batch[flat_ae] flat_ae: initial 1.013 final 9.477e-06 ratio 9.357e-06
+PASSED
+tests/test_models.py::test_M3_parameter_matching[3] 3 None None {'mlp_block_params': 2024, 'kan_block_params': 2120, 'rel_dev': 0.04743083003952569, 'n_bottleneck': 0, 'n_hidden_layers': 0}
+instantiated blocks 2024 2120 1846
+PASSED
+tests/test_models.py::test_M3_parameter_matching[6] 6 None 3 {'mlp_block_params': 3212, 'kan_block_params': 2999, 'rel_dev': -0.06631382316313823, 'n_bottleneck': 1, 'n_hidden_layers': 1}
+PASSED
+tests/test_models.py::test_M3_parameter_matching[14] 14 None 3 {'mlp_block_params': 6380, 'kan_block_params': 5975, 'rel_dev': -0.06347962382445141, 'n_bottleneck': 1, 'n_hidden_layers': 1}
+PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_mlp] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan2] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_linear] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[flat_ae] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fpca_aft] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fpca_cox] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[sum_aft] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[sum_cox] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[sum_rsf] PASSED
+tests/test_models.py::test_K1_split_disjoint_and_complete PASSED
+tests/test_models.py::test_K2_preprocessing_uses_training_only PASSED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[0] FAILED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[1] PASSED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[2] PASSED
+tests/test_metrics.py::test_Q2_oracle_concordance_is_one PASSED
+tests/test_metrics.py::test_Q2_random_score_concordance_near_half random C = 0.5069807085135166
+PASSED
+tests/test_metrics.py::test_Q3_conditional_ipcw_with_marginal_G_equals_marginal PASSED
+tests/test_metrics.py::test_Q4_d_calibration_detects_miscalibration D-cal p (true) = 0.5699; p (sigma doubled) = 5.51e-267
+PASSED
+tests/test_metrics.py::test_Q5_survival_curve_error PASSED
+
+=================================== FAILURES ===================================
+______________ test_Q1_brier_ibs_and_harrell_match_references[0] _______________
+
+seed = 0
+
+    @pytest.mark.criterion("Q1")
+    @pytest.mark.kind("DET")
+    @pytest.mark.parametrize("seed", [0, 1, 2])
+    def test_Q1_brier_ibs_and_harrell_match_references(seed):
+        obs, tr, te, times, S = _fixture(seed)
+        s_tr = Surv.from_arrays(obs.delta[tr], obs.y_obs[tr])
+        s_te = Surv.from_arrays(obs.delta[te], obs.y_obs[te])
+>       _, bs_ref = brier_score(s_tr, s_te, S, times)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_metrics.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.13/site-packages/sksurv/metrics.py:658: in brier_score
+    prob_cens_y = cens.predict_proba(test_time)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = CensoringDistributionEstimator()
+time = array([5.11608458e+00, 4.79005013e-02, 6.08787990e+00, 6.49353277e-01,
+       1.75273129e+00, 1.51604803e-01, 2.633911...281e-01,
+       6.46651129e+00, 3.30814839e+00, 2.34043352e+00, 8.39685960e-02,
+       2.21517435e-01, 2.22357639e+00])
+return_conf_int = False
+
+    def predict_proba(self, time, return_conf_int=False):
+        r"""Return probability of remaining event-free at given time points.
+    
+        :math:`\hat{S}(t) = P(T > t)`
+    
+        Parameters
+        ----------
+        time : array-like, shape = (n_samples,)
+            Time to estimate probability at.
+    
+        return_conf_int : bool, optional, default: False
+            Whether to return the pointwise confidence interval
+            of the survival function.
+            Only available if :meth:`fit()` has been called
+            with the `conf_type` parameter set.
+    
+        Returns
+        -------
+        prob : ndarray, shape = (n_samples,)
+            Probability of remaining event-free at the given time points.
+    
+        conf_int : ndarray, shape = (2, n_samples)
+            Pointwise confidence interval at the passed time points.
+            Only provided if `return_conf_int` is True.
+        """
+        check_is_fitted(self, "unique_time_")
+        if return_conf_int and not hasattr(self, "conf_int_"):
+            raise ValueError(
+                "If return_conf_int is True, SurvivalFunctionEstimator must be fitted with conf_int != None"
+            )
+    
+        time = check_array(time, ensure_2d=False, estimator=self, input_name="time")
+    
+        # K-M is undefined if estimate at last time point is non-zero
+        extends = time > self.unique_time_[-1]
+        if self.prob_[-1] > 0 and extends.any():
+>           raise ValueError(f"time must be smaller than largest observed time point: {self.unique_time_[-1]}")
+E           ValueError: time must be smaller than largest observed time point: 10.192643038715245
+
+.venv/lib/python3.13/site-packages/sksurv/nonparametric.py:584: ValueError
+=============================== warnings summary ===============================
+tests/test_models.py: 10 warnings
+  /home/user/KK/src/kanfae/functional/smoothing.py:67: RuntimeWarning: Mean of empty slice
+    per_ind = np.nanmean(np.where(n_id > 0, per_ch, np.nan), axis=1)
+
+tests/test_models.py::test_M1_shapes[fae_mlp]
+  /home/user/KK/src/kanfae/models/pipelines.py:110: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    hist.append((ep, float(loss), vl))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[4]
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[8]
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[12]
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[16]
+PASSED tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[8]
+PASSED tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[12]
+PASSED tests/test_functional.py::test_F2_smoother_exact_recovery_and_sparse_stability
+PASSED tests/test_functional.py::test_F3_discretisation_consistency
+PASSED tests/test_functional.py::test_F4_fpca_properties
+PASSED tests/test_functional.py::test_F5_functional_linear_matches_dense_quadrature
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[3-3]
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-3]
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[10-3]
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-2]
+PASSED tests/test_kan.py::test_FKAN2_shapes_and_gradcheck
+PASSED tests/test_kan.py::test_FKAN3_outside_grid_spline_is_zero
+PASSED tests/test_kan.py::test_FKAN4_parameter_count[16-8-5-3]
+PASSED tests/test_kan.py::test_FKAN4_parameter_count[4-12-3-3]
+PASSED tests/test_kan.py::test_FKAN4_parameter_count[8-4-10-2]
+PASSED tests/test_models.py::test_M1_shapes[fae_mlp]
+PASSED tests/test_models.py::test_M1_shapes[fae_kan]
+PASSED tests/test_models.py::test_M1_shapes[fae_kan2]
+PASSED tests/test_models.py::test_M1_shapes[fae_linear]
+PASSED tests/test_models.py::test_M1_shapes[flat_ae]
+PASSED tests/test_models.py::test_M1_shapes[fpca_aft]
+PASSED tests/test_models.py::test_M1_shapes[fpca_cox]
+PASSED tests/test_models.py::test_M1_shapes[sum_aft]
+PASSED tests/test_models.py::test_M1_shapes[sum_cox]
+PASSED tests/test_models.py::test_M1_shapes[sum_rsf]
+PASSED tests/test_models.py::test_M2_memorise_one_batch[fae_mlp]
+PASSED tests/test_models.py::test_M2_memorise_one_batch[fae_kan]
+PASSED tests/test_models.py::test_M2_memorise_one_batch[flat_ae]
+PASSED tests/test_models.py::test_M3_parameter_matching[3]
+PASSED tests/test_models.py::test_M3_parameter_matching[6]
+PASSED tests/test_models.py::test_M3_parameter_matching[14]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_mlp]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan2]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_linear]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[flat_ae]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fpca_aft]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fpca_cox]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[sum_aft]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[sum_cox]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[sum_rsf]
+PASSED tests/test_models.py::test_K1_split_disjoint_and_complete
+PASSED tests/test_models.py::test_K2_preprocessing_uses_training_only
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[1]
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[2]
+PASSED tests/test_metrics.py::test_Q2_oracle_concordance_is_one
+PASSED tests/test_metrics.py::test_Q2_random_score_concordance_near_half
+PASSED tests/test_metrics.py::test_Q3_conditional_ipcw_with_marginal_G_equals_marginal
+PASSED tests/test_metrics.py::test_Q4_d_calibration_detects_miscalibration
+PASSED tests/test_metrics.py::test_Q5_survival_curve_error
+SKIPPED [1] tests/test_models.py:78: linear AE rank-limited (r=4 < 16 targets); ratio 0.05647 recorded, not a criterion
+FAILED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[0]
+============ 1 failed, 54 passed, 1 skipped, 11 warnings in 34.26s =============

@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 8 items
+
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[0] PASSED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[1] PASSED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[2] PASSED
+tests/test_metrics.py::test_Q2_oracle_concordance_is_one PASSED
+tests/test_metrics.py::test_Q2_random_score_concordance_near_half random C = 0.5069807085135166
+PASSED
+tests/test_metrics.py::test_Q3_conditional_ipcw_with_marginal_G_equals_marginal PASSED
+tests/test_metrics.py::test_Q4_d_calibration_detects_miscalibration D-cal p (true) = 0.5699; p (sigma doubled) = 5.51e-267
+PASSED
+tests/test_metrics.py::test_Q5_survival_curve_error PASSED
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[0]
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[1]
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[2]
+PASSED tests/test_metrics.py::test_Q2_oracle_concordance_is_one
+PASSED tests/test_metrics.py::test_Q2_random_score_concordance_near_half
+PASSED tests/test_metrics.py::test_Q3_conditional_ipcw_with_marginal_G_equals_marginal
+PASSED tests/test_metrics.py::test_Q4_d_calibration_detects_miscalibration
+PASSED tests/test_metrics.py::test_Q5_survival_curve_error
+============================== 8 passed in 3.24s ===============================
