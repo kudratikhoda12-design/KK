@@ -1,0 +1,16 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 7 items / 6 deselected / 1 selected
+
+tests/test_symbolic.py::test_SYM4_pysr_stage_runs_and_is_held_out_validated pysr x/2.000044 + sin(x + x + x) 0.9999999997136798 0.9999999996882832 
+PASSED
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_symbolic.py::test_SYM4_pysr_stage_runs_and_is_held_out_validated
+======================= 1 passed, 6 deselected in 27.73s =======================

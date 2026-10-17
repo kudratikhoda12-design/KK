@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 5 items
+
+tests/test_censored_ls.py::test_LS1_no_censoring_reduces_to_ols PASSED
+tests/test_censored_ls.py::test_LS2_km_matches_lifelines_and_bj_conditional_mean PASSED
+tests/test_censored_ls.py::test_LS3_transform_integral_and_nonnegativity PASSED
+tests/test_censored_ls.py::test_LS4_slope_recovery_bj_ipcw censored fraction 0.343
+bj [ 0.991  0.803 -0.501] {'iterations': 7, 'converged': True, 'last_change': 0.0005219370577553261}
+ipcw [ 0.991  0.803 -0.5  ] {'weights_max': 74.21813884483389, 'n_weighted': 3284}
+transform [ 0.783  0.652 -0.417] {'alpha': 0.29455436694848464, 'min_Tstar': 0.0010857504568712853}
+PASSED
+tests/test_censored_ls.py::test_LS5_transform_unbiased_on_time_scale mean T* = 1.992894157005827 mean T = 1.99139561890528 alpha = 0.3328484512577267
+PASSED
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_censored_ls.py::test_LS1_no_censoring_reduces_to_ols
+PASSED tests/test_censored_ls.py::test_LS2_km_matches_lifelines_and_bj_conditional_mean
+PASSED tests/test_censored_ls.py::test_LS3_transform_integral_and_nonnegativity
+PASSED tests/test_censored_ls.py::test_LS4_slope_recovery_bj_ipcw
+PASSED tests/test_censored_ls.py::test_LS5_transform_unbiased_on_time_scale
+======================== 5 passed in 156.69s (0:02:36) =========================
