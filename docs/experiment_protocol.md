@@ -321,6 +321,9 @@ the reason.
 | F3 | DET | Discretisation consistency. A fixed smooth test function is sampled on nested regular grids `n ∈ {25, 50, 100, 200, 400, 800}`. For the functional features `h` (fixed random β, seed 0) and the FPCA scores, the relative change between consecutive grids is non-increasing, and below 1e-2 between n = 400 and 800. A jittered grid with n = 800 (seed 0) is also within 1e-2 of the regular n = 800 result. |
 | F4 | DET | FPCA: training scores have mean 0 (1e-10) and a diagonal covariance (off-diagonal below 1e-8 relative to the diagonal). Eigenvalues are non-increasing. Reconstruction with all components is exact (1e-8). |
 | F5 | DET | The functional linear layer (`cᵀ J b`) equals direct dense-grid quadrature of `∫ β x dt` within 1e-8. |
+| F6a | DET | (Revision 3, D40.) With only the identity feature map, the NFL equals `FunctionalLinear` with the same β within 1e-10. |
+| F6b | DET | (D40.) NFL features with fixed random weights (seed 0): relative change non-increasing for n = 25…800 regular grids, and < 1e-2 between n = 400 and 800. |
+| F6c | DET | (D40.) NFL output shapes; float64 gradcheck. |
 | F-KAN-1 | DET | The KAN layer's B-spline basis matches scipy `BSpline` within 1e-10 inside the grid. |
 | F-KAN-2 | DET | Output shapes are correct; `gradcheck` (float64) passes. |
 | F-KAN-3 | DET | For inputs outside the extended grid, the spline contribution is exactly 0 and the output equals the SiLU path. |

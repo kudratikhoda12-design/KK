@@ -205,6 +205,22 @@ h_ij = b_j + Σ_d ∫ β_jd(t) x_id(t) dt = b_j + Σ_d c_idᵀ J b_jd
 "functional" properties come from the smoother, the penalties and the
 continuous decoder. KAN vs MLP changes only the network after `h`.
 
+### 3.2b Nonlinear functional layer (revision 3, D38; default front end from 2026-10-17)
+
+```
+x_d(t) = Σ_k c_dk φ_k(t)                       (smoothed curve, unchanged)
+g_d(x) = [x, MLP_d(x)] ∈ ℝ^M,  M = 5            (MLP_d: 1 → 16 → 4, SiLU; pointwise, shared over time)
+h_j    = b_j + Σ_d Σ_m ∫ β_jdm(t) g_dm(x_d(t)) dt,   β_jdm(t) = Σ_l b_jdml ψ_l(t)
+```
+
+- The integral uses Gauss–Legendre quadrature with 8 nodes per sub-interval of the union of the two bases'
+  break points. It is exact for the identity map (test F6a).
+- Shapes: `b: (H, D, M, K_β)`; pointwise networks: `D·(1·16 + 16 + 16·4 + 4)` parameters.
+- This is the `∫F(x(t),t)dt` family with a separable `F`. It can express phase-invariant functionals such as
+  `∫x²`, which a linear functional cannot.
+- It is shared by the MLP and KAN arms, so the comparison still isolates the encoder/decoder blocks.
+- **[ASSUMPTION]** A generic learned pointwise nonlinearity is not tailored to the synthetic generator (D39).
+
 ### 3.3 Functional PCA baseline (D12)
 
 ```
