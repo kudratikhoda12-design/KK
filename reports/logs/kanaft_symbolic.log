@@ -1,3 +1,93 @@
 /home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
   return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+seed 201 parametric: lam=0.01 test C 0.9028 -> pruned 0.9028 -> symbolic 0.9024; mask [1.0, 1.0, 1.0, 1.0]; symbolic accepted 3/4; z1:library:3.01062*sigmoid(4.4626*x + -0.0114893) + (R2val 0.9992, truth 0.9995); z2:library:-0.0337586*x^2(-5.60504*x + 0.233669) +  (R2val 0.9983, truth 1.0); z3:library:-0.48206*sin(-1.74106*x + 0.019233) + 0. (R2val 0.9916, truth 0.9984); z4:none: (R2val nan, truth None) [1660.9s]
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+seed 201 bj: lam=0.0 test C 0.8999 -> pruned 0.8999 -> symbolic 0.9008; mask [1.0, 1.0, 1.0, 1.0]; symbolic accepted 3/4; z1:library:-1.4803*tanh(-2.34225*x + 0.0281087) + - (R2val 0.9992, truth 0.999); z2:library:-0.0743476*x^2(-3.78134*x + 0.178204) +  (R2val 0.9964, truth 0.9999); z3:library:0.505132*cos(1.74561*x + -1.57938) + -0. (R2val 0.9977, truth 0.9998); z4:none: (R2val nan, truth None) [3094.1s]
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+seed 201 ipcw: lam=0.0 test C 0.8983 -> pruned 0.8983 -> symbolic 0.8990; mask [1.0, 1.0, 1.0, 1.0]; symbolic accepted 3/4; z1:library:-1.43019*tanh(-2.60218*x + -0.0366844) + (R2val 0.9985, truth 0.9986); z2:library:-0.0335201*x^2(-5.59022*x + 0.238179) +  (R2val 0.9984, truth 0.9999); z3:pysr:sin(tanh((cos(x*0.9350239) + 0.2187344)* (R2val 0.9959, truth 0.9815); z4:none: (R2val nan, truth None) [1372.0s]
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/src/kanfae/survival/censored_ls.py:117: RuntimeWarning: divide by zero encountered in log
+  z = np.log(np.asarray(t, float))[None, :] - np.asarray(eta_new, float)[:, None]
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+seed 201 transform: lam=0.01 test C 0.8983 -> pruned 0.8983 -> symbolic 0.8963; mask [1.0, 1.0, 1.0, 1.0]; symbolic accepted 2/4; z1:library:-2.50479*sigmoid(-4.77982*x + -0.139162) (R2val 0.9993, truth 0.9736); z2:pysr:(cos(x*x) - tanh(sin(x - 0.62693715))**4 (R2val 0.9969, truth 0.9581); z3:none: (R2val nan, truth 0.9378); z4:none: (R2val nan, truth None) [265.9s]

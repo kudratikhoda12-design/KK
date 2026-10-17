@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from kanfae.data.splits import split_groups  # noqa: E402
 from kanfae.data.synthetic import SynthConfig, generate  # noqa: E402
 from kanfae.evaluation.metrics import harrell_c  # noqa: E402
-from kanfae.models.pipelines import NeuralAFT  # noqa: E402
+from kanfae.models.pipelines import DEFAULTS, NeuralAFT  # noqa: E402
 
 OUT = ROOT / "reports" / "learnability_search.jsonl"
 FRONT_ID = {"linear": "A0", "nonlinear": "A1", "energy": "A2", "tspline": "A3"}
@@ -35,7 +35,10 @@ def probe(m, obs, ora, fit_idx, eval_idx):
 
 
 def cfg_id(kind, cfg):
-    h = hashlib.sha1(json.dumps([kind, cfg], sort_keys=True).encode()).hexdigest()[:8]
+    """ID from the EFFECTIVE configuration (defaults merged), so equivalent configurations share one ID.
+    (Fix 2026-10-17: partial-dict hashing re-ran an identical model at step S2.)"""
+    eff = {**DEFAULTS, **cfg}
+    h = hashlib.sha1(json.dumps([kind, eff], sort_keys=True).encode()).hexdigest()[:8]
     return f"{FRONT_ID.get(cfg.get('front', 'nonlinear'), 'A?')}-{kind}-{h}"
 
 
@@ -51,7 +54,8 @@ def main():
     if OUT.exists():
         for l in OUT.read_text().splitlines():
             r = json.loads(l)
-            done[(r["config_id"], r["seed"])] = r
+            if r.get("status") == "ok":
+                done[(cfg_id(r["kind"], r["config"]), r["seed"])] = r
 
     def run(step, kind, cfg, seed=0):
         cid = cfg_id(kind, cfg)

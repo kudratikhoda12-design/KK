@@ -1,3 +1,6 @@
 [S1-front] A0-fae_mlp-5a89aae1 {'front': 'linear'} seed=0: val C=0.8389 (oracle 0.8904) probe mean=0.441 train C=0.8441 19.2s
 [S1-front] A1-fae_mlp-19099df0 {'front': 'nonlinear'} seed=0: val C=0.8445 (oracle 0.8904) probe mean=0.476 train C=0.8589 534.4s
 [S1-front] A2-fae_mlp-212f5e15 {'front': 'energy'} seed=0: val C=0.8403 (oracle 0.8904) probe mean=0.427 train C=0.8595 27.1s
+[S1-front] A3-fae_mlp-a37b9381 {'front': 'tspline'} seed=0: val C=0.8484 (oracle 0.8904) probe mean=0.461 train C=0.8592 1432.8s
+== S1-front selected A3-fae_mlp-a37b9381 {'front': 'tspline'}
+[S2-latent] A3-fae_mlp-b30d5348 {'front': 'tspline', 'r': 4} seed=0: val C=0.8484 (oracle 0.8904) probe mean=0.461 train C=0.8592 2961.6s

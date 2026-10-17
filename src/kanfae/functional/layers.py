@@ -140,8 +140,20 @@ class TensorSplineFunctional(nn.Module):
         return B                                                           # (..., nb)
 
     def features(self, c):                                                 # (B, D, nb, Kb)
+        # The features contain no trainable parameters; for a fixed (non-differentiated) input they are computed
+        # once and cached (efficiency fix, 2026-10-17). Inputs that require gradients are never cached.
+        cacheable = not c.requires_grad
+        key = (c.data_ptr(), tuple(c.shape), c._version) if cacheable else None
+        cache = self.__dict__.setdefault("_feat_cache", {})
+        if cacheable and key in cache:
+            return cache[key]
         x = torch.einsum("bdk,qk->bdq", c, self.Phi_q)
-        return torch.einsum("bdqm,ql->bdml", self._xbasis(x), self.Psi_w)
+        out = torch.einsum("bdqm,ql->bdml", self._xbasis(x), self.Psi_w)
+        if cacheable:
+            if len(cache) > 8:
+                cache.clear()
+            cache[key] = out
+        return out
 
     def forward(self, c):
         return self.lin(c) + torch.einsum("bdml,hdml->bh", self.features(c), self.w)

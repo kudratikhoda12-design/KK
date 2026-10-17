@@ -91,3 +91,16 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - Built from saved results by `scripts/{compile_test_results,aggregate_results,make_figures,build_report}.py`,
   PDF by `scripts/build_pdf.sh` (pandoc → Chromium), verified by `scripts/verify_deliverables.py`.
 - Final status written to `reports/FINAL_STATUS.md`; deliverable verification ALL_CHECKS_PASS=true.
+
+## 2026-10-17: Owner-authorised design revision (D38) and reference-based audit
+- Pre-registered D38–D40 (nonlinear functional front end), then F6a–c and the unit regressions (50 passed, 1 skip).
+- Gate with revision 3 (`rev3_gate_attempt1`, 2385 s): R1 PASS (C 0.8910), **R2 FAIL** (C 0.8461 < 0.8636;
+  probe mean 0.509), R3 PASS (|ΔC| 0.0112; aware 0.089–0.090 < naive 0.136–0.140).
+- The diagnostic `diag_rev3_R2` was stopped after 1 of 5 configurations (train C 0.8589, test C 0.8461:
+  under-fitting); superseded by the controlled search D41.
+- Audit tests AUD-1..6 (9 passed); censoring-adjusted estimators LS-1..5 (5 passed); KREG-1..4 and SYM-1..4
+  (SYM-4: 1 repair, wrong test premise); F7–F8 (passed). PySR 2.7.0 installed (D43).
+- References: KAN-AFT, CoxKAN and Wu et al. downloaded from arXiv (the uploaded PDFs were absent).
+  Literature review in `docs/literature_review.md`.
+- D41 search: S1 fronts (validation C): A0 0.8389, A1 0.8445, A2 0.8403, **A3 0.8484 (selected)**. The first
+  process was killed at the 2-hour limit; resumed after the D44 efficiency fixes.
