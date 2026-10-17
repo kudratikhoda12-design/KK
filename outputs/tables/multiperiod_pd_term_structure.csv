@@ -1,0 +1,29 @@
+matrix,start_rating,horizon_quarters,cum_default_prob
+TTC (unconditional),Good,1,0.0005
+TTC (unconditional),Good,2,0.0012185
+TTC (unconditional),Good,4,0.00322853125775
+TTC (unconditional),Good,8,0.009063859244945467
+TTC (unconditional),Good,12,0.016620645500997448
+TTC (unconditional),Good,16,0.02530057661956379
+TTC (unconditional),Good,20,0.03469945962173641
+TTC (unconditional),Watchlist,1,0.013
+TTC (unconditional),Watchlist,2,0.0250185
+TTC (unconditional),Watchlist,4,0.046465586657749997
+TTC (unconditional),Watchlist,8,0.08105101918180524
+TTC (unconditional),Watchlist,12,0.10756545600821504
+TTC (unconditional),Watchlist,16,0.12858558443517099
+TTC (unconditional),Watchlist,20,0.14585452053086434
+Cohort-estimated (full sample),Good,1,0.000529581569336921
+Cohort-estimated (full sample),Good,2,0.0012849834581049478
+Cohort-estimated (full sample),Good,4,0.0033936707811638746
+Cohort-estimated (full sample),Good,8,0.009535757983171514
+Cohort-estimated (full sample),Good,12,0.01754634434517239
+Cohort-estimated (full sample),Good,16,0.02681257667646584
+Cohort-estimated (full sample),Good,20,0.03690778381759585
+Cohort-estimated (full sample),Watchlist,1,0.014630577907827359
+Cohort-estimated (full sample),Watchlist,2,0.028226322611638644
+Cohort-estimated (full sample),Watchlist,4,0.052659758544009984
+Cohort-estimated (full sample),Watchlist,8,0.0925274987331369
+Cohort-estimated (full sample),Watchlist,12,0.12343721629817975
+Cohort-estimated (full sample),Watchlist,16,0.14806236761178837
+Cohort-estimated (full sample),Watchlist,20,0.16826730711987795
