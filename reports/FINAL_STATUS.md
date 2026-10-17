@@ -1,4 +1,59 @@
-# Final status: KAN-FAE research prototype (2026-10-16)
+# Final status: KAN-FAE research prototype, round 2 (2026-10-17)
+
+Everything is committed locally on branch `claude/blissful-faraday-2unozw`. **Nothing was pushed** (owner
+instruction). The global Python environment is unchanged (E-1, re-verified). The lock file reproduces exactly in a
+fresh venv (E-5, re-verified). Full report: `reports/final_research_prototype_report.pdf` (44 pages; all
+deliverable checks pass, `reports/logs/deliverable_verification.json`).
+
+## Learnability gate (final)
+
+| Item | Result |
+|---|---|
+| Selected configuration (validation-only controlled search, D41 + D46; 17 fits) | `A3-fae_mlp-ab243462` (tensor-spline front, r = 8, α = 1, Adam 3e-3) |
+| Official gate, seed 21 | R1 PASS (C 0.8910); **R2 FAIL** (C 0.8497 < 0.8636; probe mean 0.663 < 0.8; ω probe 0.014); R3 PASS |
+| Fresh replications | D41 seeds 101–105: **0/5**; D46 seeds 106–110: **0/5** |
+| Verdict | **R2 FAILED (pre-registered; no further extension).** H1–H3, controls, ablations and neural real-data runs remain BLOCKED |
+
+## Completed in round 2
+
+| Item | Status | Evidence |
+|---|---|---|
+| Audit (equations → code → tests; findings) | COMPLETED | `docs/audit_report.md` |
+| Targeted literature review; reference use | COMPLETED; no novelty claim | `docs/literature_review.md` |
+| BJ / IPCW / transform estimators (separate variants) | COMPLETED; LS-1..5 PASSED | `src/kanfae/survival/censored_ls.py` |
+| Censoring-assumption / misspecification study (L16) | COMPLETED | `reports/censoring_variants.jsonl` |
+| KAN regularisation and pruning | COMPLETED (KAN-AFT); pruning removed an edge in 1/22 fits (the true null); D54 diagnostic | `reports/pruning_threshold_diag.jsonl` |
+| Symbolic extraction (linear → library → PySR; R² > 0.99) | COMPLETED for KAN-AFT (synthetic: 34/47 edges accepted, true shapes recovered; PBC: 41/80) | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl` |
+| KAN-AFT vs linear AFT on PBC | COMPLETED; no consistent difference | `reports/kanaft_pbc.jsonl` |
+| Interval likelihood (L14) | COMPLETED; INT-1..3 PASSED (after a test-reference repair, D48) | `tests/test_interval_likelihood.py` |
+| C-MAPSS FD003 baselines (L15) | COMPLETED | `reports/experiment_results.jsonl` |
+| Feature-cache defect (D53) | FOUND, FIXED, regression test F8b; affected results recomputed | `reports/superseded_D53/` |
+| Stale unit tests after D45 (D56) | FIXED | `reports/logs/models_tests_D56.log` |
+| Final full test suite | 185 passed, 1 failed (R2), 1 skipped (documented N/A) | `reports/logs/final_full_suite_round2_v3.log` |
+
+## Failed
+
+- Learnability gate R2 (above).
+
+## Blocked (by R2)
+
+- H1 (KAN vs MLP), H2 (α), H3 (functional vs flat), training controls, ablations AB1–AB8, neural models on
+  C-MAPSS/PBC, pruning and symbolic extraction for KAN-FAE.
+
+## Not run
+
+- C-MAPSS FD002/FD004: they need operating-condition normalisation (new preprocessing design).
+- Interval likelihood in an experiment: implemented and tested only.
+
+## Owner decisions requested
+
+1. How to proceed after the R2 failure (report I.15, options a–d).
+2. PBC endpoint (E1 / E2 / competing risks).
+3. C-MAPSS landmark design (A / B).
+
+---
+
+# Round 1 status (2026-10-16), historical
 
 Everything is committed locally on branch `claude/blissful-faraday-2unozw`. Nothing was pushed to any remote
 (owner instruction, D21). The global Python environment is unchanged (E-1).

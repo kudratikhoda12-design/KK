@@ -39,7 +39,7 @@ def test_M1_shapes(small, name):
     assert S.shape == (len(te), 7) and r.shape == (len(te),)
     assert np.all(np.isfinite(S)) and np.all(np.isfinite(r))
     if isinstance(model, NeuralAFT):
-        assert model.latent(obs.subset(te)).shape == (len(te), 4)
+        assert model.latent(obs.subset(te)).shape == (len(te), DEFAULTS["r"])   # D56: was hard-coded 4 (pre-D45 r)
         xhat, P = model.reconstruct(obs.subset(te))
         assert xhat.shape == obs.subset(te).values.shape
 
@@ -82,9 +82,10 @@ def test_M2_memorise_one_batch(name):
 @pytest.mark.criterion("M3")
 @pytest.mark.parametrize("D", [3, 6, 14])
 def test_M3_parameter_matching(D):
-    H, hid = DEFAULTS["H"], DEFAULTS["hidden"]          # matching uses the current model defaults
-    he, hd, info = kan_match(D, 12, H=H, hidden=hid)
-    w2, info2 = kan2_match(D, 12, H=H, hidden=hid)
+    H, hid, r, G = DEFAULTS["H"], DEFAULTS["hidden"], DEFAULTS["r"], DEFAULTS["kan_grid"]   # current model defaults
+    # D56: r and the grid are now passed too (the test omitted them; it broke when D45 set r = 8)
+    he, hd, info = kan_match(D, 12, H=H, r=r, hidden=hid, G=G)
+    w2, info2 = kan2_match(D, 12, H=H, r=r, hidden=hid, G=G)
     print(D, he, hd, info, "kan2", w2, info2)
     assert abs(info["rel_dev"]) <= 0.10 and abs(info2["rel_dev"]) <= 0.10
     obs, _ = generate(SynthConfig(n=60, seed=42))

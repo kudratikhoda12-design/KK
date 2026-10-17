@@ -90,7 +90,9 @@ def main():
         print(f"== {step} selected {r['config_id']} {c}", flush=True)
         return c
 
-    base = {}
+    # D53 recomputation: pin r = 4, the DEFAULTS value when the D41 search was run (D45 later set r = 8), so step S1
+    # is identical to the registered search. S2 then compares r in {4, 8} explicitly, as before.
+    base = {"r": 4}
     c = best("S1-front", "fae_mlp", [dict(base, front=f) for f in ("linear", "nonlinear", "energy", "tspline")])
     c = best("S2-latent", "fae_mlp", [dict(c, r=r) for r in (4, 8)])
     c = best("S3-alpha", "fae_mlp", [dict(c, alpha=a) for a in (1.0, 0.1, 0.0)])

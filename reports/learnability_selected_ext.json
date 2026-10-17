@@ -1,8 +1,8 @@
 {
  "kind": "fae_mlp",
  "config": {
-  "front": "tspline",
   "r": 8,
+  "front": "tspline",
   "alpha": 1.0,
   "optimizer": "adam",
   "lr": 0.003,

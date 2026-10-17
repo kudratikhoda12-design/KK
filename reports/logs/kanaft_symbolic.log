@@ -187,3 +187,8 @@ seed 202 transform: lam=0.0 test C 0.9026 -> pruned 0.9026 -> symbolic 0.9042; m
   return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
 /home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
   return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+/home/user/KK/scripts/run_kanaft_symbolic.py:48: RuntimeWarning: divide by zero encountered in log
+  return np.exp(-np.exp((np.log(np.asarray(t))[None, :] - eta[:, None]) / SIGMA))
+seed 203 parametric: lam=0.0 test C 0.8922 -> pruned 0.8922 -> symbolic 0.8914; mask [1.0, 1.0, 1.0, 1.0]; symbolic accepted 3/4; z1:library:1.49768*tanh(2.26891*x + -0.0288745) + - (R2val 0.9981, truth 0.9999); z2:library:-0.0791688*x^2(-3.66141*x + -0.136855) + (R2val 0.9996, truth 0.9993); z3:library:0.46342*cos(-1.65753*x + 1.63873) + -0.1 (R2val 0.9955, truth 0.9917); z4:none: (R2val nan, truth None) [45.2s]

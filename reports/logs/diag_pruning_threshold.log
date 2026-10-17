@@ -1,0 +1,15 @@
+/home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+seed 201 lam 0: edge L1 [1.2622 0.8851 0.3387 0.4783]; null/min-true ratio 1.412
+seed 201 lam 0.001: edge L1 [1.2589 0.8889 0.3308 0.3856]; null/min-true ratio 1.166
+seed 201 lam 0.01: edge L1 [1.2547 0.863  0.3152 0.0109]; null/min-true ratio 0.035
+seed 201 lam 0.1: edge L1 [1.2357e+00 7.3990e-01 2.4550e-01 1.0000e-03]; null/min-true ratio 0.004
+seed 202 lam 0: edge L1 [1.2525 0.8952 0.341  0.5077]; null/min-true ratio 1.489
+seed 202 lam 0.001: edge L1 [1.251  0.8963 0.3337 0.4537]; null/min-true ratio 1.360
+seed 202 lam 0.01: edge L1 [1.2414 0.8968 0.3055 0.1033]; null/min-true ratio 0.338
+seed 202 lam 0.1: edge L1 [1.2029 0.7815 0.2337 0.0014]; null/min-true ratio 0.006
+seed 203 lam 0: edge L1 [1.2338 0.8556 0.327  0.5053]; null/min-true ratio 1.545
+seed 203 lam 0.001: edge L1 [1.2321 0.8579 0.321  0.4429]; null/min-true ratio 1.380
+seed 203 lam 0.01: edge L1 [1.2182 0.849  0.2992 0.013 ]; null/min-true ratio 0.044
+seed 203 lam 0.1: edge L1 [1.1836 0.7378 0.2132 0.0015]; null/min-true ratio 0.007

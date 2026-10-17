@@ -1,0 +1,6 @@
+seed 106: C=0.8465 (oracle 0.8837, threshold 0.8537) probe=[0.919 0.827 0.812 0.004] mean=0.640 pass=False [30.8s]
+seed 107: C=0.8344 (oracle 0.8879, threshold 0.8579) probe=[ 0.943  0.859  0.749 -0.004] mean=0.637 pass=False [30.6s]
+seed 108: C=0.8469 (oracle 0.8936, threshold 0.8636) probe=[0.933 0.841 0.857 0.032] mean=0.666 pass=False [27.3s]
+seed 109: C=0.8423 (oracle 0.8960, threshold 0.8660) probe=[ 0.924  0.859  0.814 -0.037] mean=0.640 pass=False [21.9s]
+seed 110: C=0.8413 (oracle 0.8861, threshold 0.8561) probe=[0.842 0.682 0.749 0.083] mean=0.589 pass=False [24.5s]
+CONFIRMATION (fae_mlp): 0/5 replications pass -> NOT CONFIRMED

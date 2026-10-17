@@ -1,0 +1,30 @@
+F
+=================================== FAILURES ===================================
+________ test_F8b_feature_cache_never_returns_another_tensors_features _________
+
+    @pytest.mark.criterion("F8b")
+    def test_F8b_feature_cache_never_returns_another_tensors_features():
+        """D53 regression: a new input that reuses a freed input's address must not receive the cached features."""
+        from kanfae.functional.layers import TensorSplineFunctional
+        b, bb = BSplineBasis(12), BSplineBasis(8)
+        t = TensorSplineFunctional(2, 4, b, bb, seed=0)
+        reused = 0
+        for k in range(20):
+            c1 = torch.randn(64, 2, 12)
+            t.features(c1)
+            ptr = c1.data_ptr()
+            del c1
+            c2 = torch.randn(64, 2, 12)
+            reused += c2.data_ptr() == ptr
+            direct = torch.einsum("bdqm,ql->bdml", t._xbasis(torch.einsum("bdk,qk->bdq", c2, t.Phi_q)), t.Psi_w)
+>           torch.testing.assert_close(t.features(c2), direct, rtol=0, atol=0)
+E           AssertionError: Tensor-likes are not equal!
+E           
+E           Mismatched elements: 6079 / 8192 (74.2%)
+E           Greatest absolute difference: 0.10708880364166941 at index (22, 0, 4, 4)
+E           Greatest relative difference: inf at index (0, 1, 6, 5)
+
+tests/test_nonlinear_functional.py:127: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_nonlinear_functional.py::test_F8b_feature_cache_never_returns_another_tensors_features
+1 failed, 6 deselected in 3.72s

@@ -1,0 +1,15 @@
+[cmapss_A split 0] done in 33.3s {'s0': 144, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 46}
+[cmapss_A split 1] done in 29.4s {'s0': 144, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 46}
+[cmapss_A split 2] done in 32.9s {'s0': 146, 'excluded_val': 0, 'excluded_test': 1, 'excluded_official': 47}
+[cmapss_A split 3] done in 31.5s {'s0': 144, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 46}
+[cmapss_A split 4] done in 30.4s {'s0': 151, 'excluded_val': 1, 'excluded_test': 1, 'excluded_official': 51}
+[cmapss_B split 0] done in 200.1s {'n_windows_train': 1348, 'n_windows_test': 452}
+[cmapss_B split 1] done in 216.1s {'n_windows_train': 1385, 'n_windows_test': 431}
+[cmapss_B split 2] done in 231.1s {'n_windows_train': 1362, 'n_windows_test': 404}
+[cmapss_B split 3] done in 207.8s {'n_windows_train': 1276, 'n_windows_test': 562}
+[cmapss_B split 4] done in 206.7s {'n_windows_train': 1264, 'n_windows_test': 492}
+[cmapss_A_artificial split 0] done in 30.9s {'s0': 144, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 46, 'artificial_censored_frac_train': 0.25}
+[cmapss_A_artificial split 1] done in 28.3s {'s0': 144, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 46, 'artificial_censored_frac_train': 0.2666666666666667}
+[cmapss_A_artificial split 2] done in 31.6s {'s0': 146, 'excluded_val': 0, 'excluded_test': 1, 'excluded_official': 47, 'artificial_censored_frac_train': 0.23333333333333328}
+[cmapss_A_artificial split 3] done in 29.2s {'s0': 144, 'excluded_val': 0, 'excluded_test': 0, 'excluded_official': 46, 'artificial_censored_frac_train': 0.41666666666666663}
+[cmapss_A_artificial split 4] done in 30.9s {'s0': 151, 'excluded_val': 1, 'excluded_test': 1, 'excluded_official': 51, 'artificial_censored_frac_train': 0.23333333333333328}

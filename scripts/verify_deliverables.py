@@ -32,7 +32,10 @@ res["pdf_text_chars"] = len(text)
 raw = subprocess.run(["pdftotext", "-raw", str(pdf), "-"], capture_output=True, text=True).stdout
 T = norm(text) + " || " + norm(raw)          # layout and raw extraction (raw keeps wrapped table cells contiguous)
 res["pdf_no_placeholders"] = "{{" not in text
-res["pdf_has_all_17_sections"] = all(re.search(rf"\b{k}\.\s", T) for k in range(1, 18))
+# round 2 (2026-10-17): Part I sections 0.1-0.4 and I.1-I.15; round-1 sections renumbered II.1-II.17
+res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 5)) and all(
+    re.search(rf"\bI\.{k}\s", T) for k in range(1, 16))
+res["pdf_has_all_17_sections"] = all(re.search(rf"\bII\.{k}\s", T) for k in range(1, 18))
 
 pages = sorted((REP / "logs/pdf_pages").glob("page-*.png"))
 blank = []
@@ -52,6 +55,10 @@ vals = json.loads((REP / "report_values.json").read_text())
 used = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / "report_template.md").read_text()))
 res["report_values_used"] = len(used)
 res["report_values_missing_in_pdf"] = [k for k in sorted(used) if norm(str(vals[k])) not in T]
+vals2 = json.loads((REP / "report_values_round2.json").read_text())
+used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / "report_template_round2.md").read_text()))
+res["round2_values_used"] = len(used2)
+res["round2_values_missing_in_pdf"] = [k for k in sorted(used2) if norm(str(vals2[k])) not in T]
 
 S = pd.read_csv(REP / "tables/summary_by_model.csv")
 p0 = S[(S.setting == "P0")]
@@ -69,7 +76,11 @@ res["tests_reported"] = len(TL)
 res["tests_without_log_evidence"] = not_run
 recs = [json.loads(l) for l in (REP / "logs/test_records.jsonl").read_text().splitlines() if l.strip()]
 final = [r for r in recs if r["run_id"] == "final_full_suite"]
-res["final_suite_counts"] = {o: sum(r["outcome"] == o for r in final) for o in ("passed", "failed", "skipped")}
+res["final_suite_counts_round1"] = {o: sum(r["outcome"] == o for r in final) for o in ("passed", "failed", "skipped")}
+final2 = [r for r in recs if r["run_id"] == "final_full_suite_round2_v3"]
+res["final_suite_counts"] = {o: sum(r["outcome"] == o for r in final2) for o in ("passed", "failed", "skipped")}
+res["final_suite_only_failure_is_R2"] = [r["nodeid"] for r in final2 if r["outcome"] == "failed"] == [
+    "tests/test_learnability.py::test_R2_fae_mlp_end_to_end"]
 
 cmds = [json.loads(l) for l in (REP / "logs/commands.jsonl").read_text().splitlines() if l.strip()]
 res["commands_logged"] = len(cmds)
@@ -80,7 +91,8 @@ res["experiment_csv_rows_equal_jsonl"] = len(csv) == jl
 res["experiment_records"] = jl
 
 ok = (res["pdf_exists"] and res["pdf_opens"] and res["pdf_text_chars"] > 20000 and res["pdf_no_placeholders"]
-      and res["pdf_has_all_17_sections"] and not blank and not missing and not res["report_values_missing_in_pdf"]
+      and res["pdf_has_all_17_sections"] and res["pdf_has_part1_sections"] and not res["round2_values_missing_in_pdf"]
+      and res["final_suite_only_failure_is_R2"] and not blank and not missing and not res["report_values_missing_in_pdf"]
       and all(chk) and not not_run and not res["commands_missing_log_file"] and res["experiment_csv_rows_equal_jsonl"])
 res["ALL_CHECKS_PASS"] = bool(ok)
 (REP / "logs/deliverable_verification.json").write_text(json.dumps(res, indent=1))

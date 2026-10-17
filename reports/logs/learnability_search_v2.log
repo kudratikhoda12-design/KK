@@ -1,0 +1,20 @@
+[S1-front] A0-fae_mlp-b6ee18b9 {'r': 4, 'front': 'linear'} seed=0: val C=0.8386 (oracle 0.8904) probe mean=0.441 train C=0.8443 23.0s
+[S1-front] A1-fae_mlp-00b326ef {'r': 4, 'front': 'nonlinear'} seed=0: val C=0.8448 (oracle 0.8904) probe mean=0.477 train C=0.8588 271.6s
+[S1-front] A2-fae_mlp-7873a128 {'r': 4, 'front': 'energy'} seed=0: val C=0.8417 (oracle 0.8904) probe mean=0.430 train C=0.8583 23.7s
+[S1-front] A3-fae_mlp-6dc9ecf0 {'r': 4, 'front': 'tspline'} seed=0: val C=0.8485 (oracle 0.8904) probe mean=0.461 train C=0.8590 26.9s
+== S1-front selected A3-fae_mlp-6dc9ecf0 {'r': 4, 'front': 'tspline'}
+[S2-latent] A3-fae_mlp-ab243462 {'r': 8, 'front': 'tspline'} seed=0: val C=0.8441 (oracle 0.8904) probe mean=0.660 train C=0.8547 29.2s
+== S2-latent selected A3-fae_mlp-ab243462 {'r': 8, 'front': 'tspline'}
+[S3-alpha] A3-fae_mlp-2ca77221 {'r': 8, 'front': 'tspline', 'alpha': 0.1} seed=0: val C=0.8463 (oracle 0.8904) probe mean=0.628 train C=0.8563 23.1s
+[S3-alpha] A3-fae_mlp-93f0ed9c {'r': 8, 'front': 'tspline', 'alpha': 0.0} seed=0: val C=0.8479 (oracle 0.8904) probe mean=0.602 train C=0.8578 21.7s
+== S3-alpha selected A3-fae_mlp-ab243462 {'r': 8, 'front': 'tspline', 'alpha': 1.0}
+[S4-optim] A3-fae_mlp-000bb682 {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.001} seed=0: val C=0.8386 (oracle 0.8904) probe mean=0.661 train C=0.8408 29.4s
+[S4-optim] A3-fae_mlp-b0d4e98c {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adamw', 'lr': 0.003} seed=0: val C=0.8427 (oracle 0.8904) probe mean=0.653 train C=0.8530 31.3s
+== S4-optim selected A3-fae_mlp-ab243462 {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003}
+[S5-es] A3-fae_mlp-57c3cf4f {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'nll'} seed=0: val C=0.8395 (oracle 0.8904) probe mean=0.488 train C=0.8356 8.7s
+== S5-es selected A3-fae_mlp-ab243462 {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'}
+[S6-encoder-info] A3-fae_linear-1f275709 {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=0: val C=0.8408 (oracle 0.8904) probe mean=0.682 train C=0.8382 26.0s
+[S6-encoder-info] A3-fae_kan-105b570a {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=0: val C=0.8291 (oracle 0.8904) probe mean=0.619 train C=0.8620 32.2s
+[S7-stability] A3-fae_mlp-ab243462 {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=1: val C=0.8517 (oracle 0.8904) probe mean=0.659 train C=0.8577 25.4s
+[S7-stability] A3-fae_mlp-ab243462 {'r': 8, 'front': 'tspline', 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=2: val C=0.8509 (oracle 0.8904) probe mean=0.650 train C=0.8577 26.5s
+SELECTED {"r": 8, "front": "tspline", "alpha": 1.0, "optimizer": "adam", "lr": 0.003, "es_target": "objective"}

@@ -142,17 +142,23 @@ class TensorSplineFunctional(nn.Module):
     def features(self, c):                                                 # (B, D, nb, Kb)
         # The features contain no trainable parameters; for a fixed (non-differentiated) input they are computed
         # once and cached (efficiency fix, 2026-10-17). Inputs that require gradients are never cached.
+        # Fix 2026-10-17 (D53): the cache now holds a reference to the input and a hit requires the SAME tensor
+        # object at the same version. The first version keyed on (data_ptr, shape, version) without keeping the input
+        # alive, so a freed validation tensor's address could be reused by a same-shape test tensor and return the
+        # validation features (replication seed 110: test C 0.49).
         cacheable = not c.requires_grad
-        key = (c.data_ptr(), tuple(c.shape), c._version) if cacheable else None
         cache = self.__dict__.setdefault("_feat_cache", {})
+        key = id(c)
         if cacheable and key in cache:
-            return cache[key]
+            src, ver, out = cache[key]
+            if src is c and ver == c._version:
+                return out
         x = torch.einsum("bdk,qk->bdq", c, self.Phi_q)
         out = torch.einsum("bdqm,ql->bdml", self._xbasis(x), self.Psi_w)
         if cacheable:
             if len(cache) > 8:
                 cache.clear()
-            cache[key] = out
+            cache[key] = (c, c._version, out)
         return out
 
     def forward(self, c):

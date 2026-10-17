@@ -1,0 +1,5 @@
+runs [{'epochs': 2594, 'best_val': 1.4097166357673492, 'diverged': False}]
+train C 0.8562 risk sd 1.5063 |Z| max 5.61 Z sd [1.47 0.61 0.72 0.79 0.43 0.63 0.97 0.91]
+val C 0.8381 risk sd 1.4961 |Z| max 5.78 Z sd [1.41 0.63 0.73 0.83 0.44 0.64 0.96 0.96]
+test C 0.8413 risk sd 1.466 |Z| max 4.24 Z sd [1.39 0.59 0.66 0.69 0.42 0.62 0.94 0.88]
+max |value| train 5.3 test 4.31 n test > train max 0

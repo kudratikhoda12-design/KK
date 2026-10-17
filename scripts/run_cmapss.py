@@ -61,17 +61,20 @@ def main():
     ap.add_argument("--splits", type=int, default=5)
     ap.add_argument("--analyses", default="cmapss_A,cmapss_B,cmapss_A_artificial")
     ap.add_argument("--models", default=",".join(MODELS))
+    ap.add_argument("--subset", default="FD001", choices=["FD001", "FD003"],
+                    help="single-operating-condition subsets only; FD002/FD004 need condition normalisation (D51)")
     ap.add_argument("--code-version", default="v1", help="recorded in every record; distinguishes re-runs after fixes")
     args = ap.parse_args()
     torch.set_default_dtype(torch.float64)
-    tr_df, te_df, rul = read_fd(ROOT / "data" / "raw" / "cmapss", "FD001")
+    tr_df, te_df, rul = read_fd(ROOT / "data" / "raw" / "cmapss", args.subset)
     units = np.array(sorted(tr_df.unit.unique()))
     life_test = official_test_life(te_df, rul)
     life_tr = tr_df.groupby("unit").cycle.max().to_dict()
     (ROOT / "configs" / "cmapss").mkdir(parents=True, exist_ok=True)
     for analysis in args.analyses.split(","):
-        (ROOT / "configs" / "cmapss" / f"{analysis}.json").write_text(json.dumps(
-            {"analysis": analysis, "subset": "FD001", "split_seeds": list(range(args.splits)), "models": MODELS,
+        (ROOT / "configs" / "cmapss" / (f"{analysis}.json" if args.subset == "FD001"
+                                         else f"{analysis}_{args.subset}.json")).write_text(json.dumps(
+            {"analysis": analysis, "subset": args.subset, "split_seeds": list(range(args.splits)), "models": MODELS,
              "option_B": {"w": 30, "step": 10}, "artificial_censoring": "C ~ U(0, max training residual)"
              if "artificial" in analysis else None}, indent=2))
         for sp in range(args.splits):
@@ -98,7 +101,7 @@ def main():
                 o_off = option_b(te_df, sorted(te_df.unit.unique()), sens, life=life_test, last_only=True)
                 extra_info = dict(n_windows_train=len(o_tr), n_windows_test=len(o_te))
             grid = np.linspace(0, 2.0 * float(np.max(o_tr.y_obs)), 2001)
-            base = dict(dataset="cmapss_FD001", analysis=analysis, setting=analysis, replicate=sp, split_seed=sp,
+            base = dict(dataset=f"cmapss_{args.subset}", analysis=analysis, setting=analysis, replicate=sp, split_seed=sp,
                         n_train=len(o_tr), n_val=len(o_va), n_test=len(o_te), n_sensors=len(sens),
                         data_kind="REAL (simulated turbofan; RUL benchmark)" + (" + ARTIFICIAL CENSORING"
                                                                                 if "artificial" in analysis else ""),

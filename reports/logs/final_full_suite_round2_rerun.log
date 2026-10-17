@@ -1,0 +1,695 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 187 items
+
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[weibull] PASSED
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[weibull] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[weibull] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A4_gradcheck[weibull] PASSED
+tests/test_aft_likelihood.py::test_A4_gradcheck[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A4_gradcheck[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-weibull] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-lognormal] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-weibull] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-lognormal] PASSED
+tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[weibull] PASSED
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A6_survival_function_valid[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[weibull] weibull: censored fraction 0.350
+weibull: our loglik at lifelines params -3277.89262418
+weibull: ours -3277.89262418  lifelines -3277.89262418
+PASSED
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[lognormal] lognormal: censored fraction 0.355
+lognormal: our loglik at lifelines params -3224.36131041
+lognormal: ours -3224.36131040  lifelines -3224.36131041
+PASSED
+tests/test_aft_likelihood.py::test_A7_matches_lifelines[loglogistic] loglogistic: censored fraction 0.375
+loglogistic: our loglik at lifelines params -4282.03727082
+loglogistic: ours -4282.03727082  lifelines -4282.03727082
+PASSED
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[weibull] weibull: z-scores [-0.152 -0.039 -1.105  0.55 ]
+PASSED
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[lognormal] lognormal: z-scores [-1.002 -0.448 -0.356 -1.665]
+PASSED
+tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[loglogistic] loglogistic: z-scores [ 0.279  0.988 -1.94   0.351]
+PASSED
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-linear] PASSED
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-nonlinear] PASSED
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_kan-nonlinear] PASSED
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[flat_ae-linear] PASSED
+tests/test_audit.py::test_AUD2_reconstruction_weighting_matches_numpy PASSED
+tests/test_audit.py::test_AUD3_S1_freezes_autoencoder_in_head_phase PASSED
+tests/test_audit.py::test_AUD4_survival_only_gives_no_decoder_gradient PASSED
+tests/test_audit.py::test_AUD5_time_scaling_consistent PASSED
+tests/test_audit.py::test_AUD6_front_end_shared_between_arms PASSED
+tests/test_censored_ls.py::test_LS1_no_censoring_reduces_to_ols PASSED
+tests/test_censored_ls.py::test_LS2_km_matches_lifelines_and_bj_conditional_mean PASSED
+tests/test_censored_ls.py::test_LS3_transform_integral_and_nonnegativity PASSED
+tests/test_censored_ls.py::test_LS4_slope_recovery_bj_ipcw censored fraction 0.343
+bj [ 0.991  0.803 -0.501] {'iterations': 7, 'converged': True, 'last_change': 0.0005219370577553261}
+ipcw [ 0.991  0.803 -0.5  ] {'weights_max': 74.21813884483389, 'n_weighted': 3284}
+transform [ 0.783  0.652 -0.417] {'alpha': 0.29455436694848464, 'min_Tstar': 0.0010857504568712853}
+PASSED
+tests/test_censored_ls.py::test_LS5_transform_unbiased_on_time_scale mean T* = 1.992894157005827 mean T = 1.99139561890528 alpha = 0.3328484512577267
+PASSED
+tests/test_cmapss.py::test_K3_windows_of_an_engine_in_one_split PASSED
+tests/test_cmapss.py::test_K4_no_input_after_landmark PASSED
+tests/test_env.py::test_E1_global_environment_unchanged_and_venv_used PASSED
+tests/test_env.py::test_E2_torch_cpu_build PASSED
+tests/test_env.py::test_E3_pandas_below_3 PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[numpy] numpy 2.5.4
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[scipy] scipy 1.18.1
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[pandas] pandas 2.3.3
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[sklearn] sklearn 1.9.1
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[torch] torch 2.14.1+cpu
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[lifelines] lifelines 0.30.3
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[sksurv] sksurv 0.28.0
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[yaml] yaml 6.0.3
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[matplotlib] matplotlib 3.11.2
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[pytest] pytest 9.1.1
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[hypothesis] hypothesis 6.170.0
+PASSED
+tests/test_env.py::test_E4_full_dependency_set_imports[rdata] rdata 1.1.0
+PASSED
+tests/test_env.py::test_E5_lockfile_reproduces_exactly FAILED
+tests/test_env.py::test_E6_pip_check_clean PASSED
+tests/test_env.py::test_E7_pytest_collects_and_runs PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[4] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[8] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[12] PASSED
+tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[16] PASSED
+tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[8] PASSED
+tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[12] PASSED
+tests/test_functional.py::test_F2_smoother_exact_recovery_and_sparse_stability PASSED
+tests/test_functional.py::test_F3_discretisation_consistency h relative changes [6.288e-04 1.548e-04 3.856e-05 9.630e-06 2.407e-06]
+fpca relative changes [4.449e-04 1.101e-04 2.744e-05 6.855e-06 1.714e-06]
+PASSED
+tests/test_functional.py::test_F4_fpca_properties PASSED
+tests/test_functional.py::test_F5_functional_linear_matches_dense_quadrature PASSED
+tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[weibull] PASSED
+tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[lognormal] PASSED
+tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[loglogistic] PASSED
+tests/test_interval_likelihood.py::test_INT2_approaches_density_for_narrow_intervals PASSED
+tests/test_interval_likelihood.py::test_INT3_gradients_and_stability PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[3-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[10-3] PASSED
+tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-2] PASSED
+tests/test_kan.py::test_FKAN2_shapes_and_gradcheck PASSED
+tests/test_kan.py::test_FKAN3_outside_grid_spline_is_zero PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[16-8-5-3] PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[4-12-3-3] PASSED
+tests/test_kan.py::test_FKAN4_parameter_count[8-4-10-2] PASSED
+tests/test_kan_regularization.py::test_KREG1_regularization_matches_definition_and_has_gradients PASSED
+tests/test_kan_regularization.py::test_KREG2_edge_sum_equals_forward PASSED
+tests/test_kan_regularization.py::test_KREG3_edge_and_node_pruning PASSED
+tests/test_kan_regularization.py::test_KREG4_exact_symbolic_substitution_leaves_output_unchanged PASSED
+tests/test_learnability.py::test_R1_oracle_features_head R1: C = 0.8910, oracle C = 0.8936, sigma = 0.4816 (truth 0.5)
+PASSED
+tests/test_learnability.py::test_R2_fae_mlp_end_to_end R2: C = 0.8498, oracle C = 0.8936; probe R2 (a,b,A,omega) = [0.928 0.865 0.847 0.014], mean 0.663; epochs [3000]
+FAILED
+tests/test_learnability.py::test_R3_censoring_awareness R3: survival-curve error aware [0.0873, 0.0848, 0.0892] naive [0.1288, 0.1346, 0.1354] ; C (aware, seed 0) = 0.8563
+R3: |C - C_R2| = 0.0065
+PASSED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[0] PASSED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[1] PASSED
+tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[2] PASSED
+tests/test_metrics.py::test_Q2_oracle_concordance_is_one PASSED
+tests/test_metrics.py::test_Q2_random_score_concordance_near_half random C = 0.5069807085135166
+PASSED
+tests/test_metrics.py::test_Q3_conditional_ipcw_with_marginal_G_equals_marginal PASSED
+tests/test_metrics.py::test_Q4_d_calibration_detects_miscalibration D-cal p (true) = 0.5699; p (sigma doubled) = 5.51e-267
+PASSED
+tests/test_metrics.py::test_Q5_survival_curve_error PASSED
+tests/test_models.py::test_M1_shapes[fae_mlp] FAILED
+tests/test_models.py::test_M1_shapes[fae_kan] FAILED
+tests/test_models.py::test_M1_shapes[fae_kan2] FAILED
+tests/test_models.py::test_M1_shapes[fae_linear] FAILED
+tests/test_models.py::test_M1_shapes[flat_ae] FAILED
+tests/test_models.py::test_M1_shapes[fpca_aft] PASSED
+tests/test_models.py::test_M1_shapes[fpca_cox] PASSED
+tests/test_models.py::test_M1_shapes[sum_aft] PASSED
+tests/test_models.py::test_M1_shapes[sum_cox] PASSED
+tests/test_models.py::test_M1_shapes[sum_rsf] PASSED
+tests/test_models.py::test_M2_memorise_one_batch[fae_mlp] fae_mlp: initial 1.037 final 0.000386 ratio 0.0003721
+PASSED
+tests/test_models.py::test_M2_memorise_one_batch[fae_kan] fae_kan: initial 1.182 final 0.003387 ratio 0.002864
+PASSED
+tests/test_models.py::test_M2_memorise_one_batch[fae_linear] fae_linear: initial 1.045 final 0.001973 ratio 0.001887
+SKIPPED
+tests/test_models.py::test_M2_memorise_one_batch[flat_ae] flat_ae: initial 1.004 final 1.002e-06 ratio 9.985e-07
+PASSED
+tests/test_models.py::test_M3_parameter_matching[3] 3 10 None {'mlp_block_params': 5032, 'kan_block_params': 5090, 'rel_dev': 0.011526232114467409, 'n_bottleneck': 0, 'n_hidden_layers': 1} kan2 7 {'mlp_block_params': 5032, 'kan_block_params': 5374, 'rel_dev': 0.0679650238473768}
+instantiated blocks 5548 5484 5938
+FAILED
+tests/test_models.py::test_M3_parameter_matching[6] 6 None 8 {'mlp_block_params': 7372, 'kan_block_params': 7444, 'rel_dev': 0.009766684753119913, 'n_bottleneck': 0, 'n_hidden_layers': 1} kan2 7 {'mlp_block_params': 7372, 'kan_block_params': 7930, 'rel_dev': 0.07569180683667932}
+PASSED
+tests/test_models.py::test_M3_parameter_matching[14] 14 None 7 {'mlp_block_params': 13612, 'kan_block_params': 13499, 'rel_dev': -0.00830149867763738, 'n_bottleneck': 0, 'n_hidden_layers': 1} kan2 6 {'mlp_block_params': 13612, 'kan_block_params': 12664, 'rel_dev': -0.06964443138407288}
+PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_mlp] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan2] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fae_linear] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[flat_ae] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fpca_aft] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[fpca_cox] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[sum_aft] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[sum_cox] PASSED
+tests/test_models.py::test_M5_fit_rejects_oracle[sum_rsf] PASSED
+tests/test_models.py::test_K1_split_disjoint_and_complete PASSED
+tests/test_models.py::test_K2_preprocessing_uses_training_only PASSED
+tests/test_nonlinear_functional.py::test_F6a_identity_map_equals_functional_linear max |NFL(identity) - FunctionalLinear| = 4.440892098500626e-16
+PASSED
+tests/test_nonlinear_functional.py::test_F6b_discretisation_consistency NFL relative changes [2.818e-04 6.929e-05 1.725e-05 4.308e-06 1.077e-06]
+PASSED
+tests/test_nonlinear_functional.py::test_F6c_shapes_and_gradcheck PASSED
+tests/test_nonlinear_functional.py::test_F7_energy_front_exact PASSED
+tests/test_nonlinear_functional.py::test_F8_tensor_spline_front PASSED
+tests/test_nonlinear_functional.py::test_F9_derivative_energy_exact PASSED
+tests/test_nonlinear_functional.py::test_F8b_feature_cache_never_returns_another_tensors_features address reused in 0 of 20 trials (the collision path was exercised when > 0)
+PASSED
+tests/test_pbc.py::test_provenance_and_structure PASSED
+tests/test_pbc.py::test_endpoint_coding PASSED
+tests/test_pbc.py::test_K4_inputs_before_landmark PASSED
+tests/test_pbc.py::test_K1_patient_level_split PASSED
+tests/test_symbolic.py::test_SYM1_linear_accepted_at_stage1 PASSED
+tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[tanh-<lambda>] tanh 1.5*tanh(2*x + 7.53285e-17) + -8.66578e-17 1.0 1.0
+PASSED
+tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[x^2-<lambda>] x^2 -0.0314768*x^2(-5.04139*x + -2.4512e-16) + 0.3 1.0 1.0
+PASSED
+tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[sin-<lambda>] sin 1*sin(-1.5*x + -3.14159) + 0.3 1.0 1.0
+PASSED
+tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[exp-<lambda>] exp 0.0283238*exp(0.7*x + 2.8709) + -1.0152e-17 1.0 1.0
+PASSED
+tests/test_symbolic.py::test_SYM3_rejects_unrepresentable_function PASSED
+tests/test_symbolic.py::test_SYM4_pysr_stage_runs_and_is_held_out_validated pysr x/2.000044 + sin(x + x + x) 0.9999999997136798 0.9999999996882832 
+PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.6] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.6] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.6] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.0] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.3] PASSED
+tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.6] PASSED
+tests/test_synthetic.py::test_G3_censoring_fraction[0.0] target 0.0: realised 0.0000
+PASSED
+tests/test_synthetic.py::test_G3_censoring_fraction[0.3] target 0.3: realised 0.3027
+PASSED
+tests/test_synthetic.py::test_G3_censoring_fraction[0.6] target 0.6: realised 0.5935
+PASSED
+tests/test_synthetic.py::test_G4_reproducibility PASSED
+tests/test_synthetic.py::test_G5_oracle_isolation PASSED
+tests/test_synthetic.py::test_G6_hidden_event_times_do_not_affect_observed_or_loss PASSED
+tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.0] PASSED
+tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[sparse-0.1] PASSED
+tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.3] PASSED
+tests/test_synthetic.py::test_G8_event_noise_distribution[weibull] weibull: KS p = 0.5833
+PASSED
+tests/test_synthetic.py::test_G8_event_noise_distribution[lognormal] lognormal: KS p = 0.7881
+PASSED
+tests/test_synthetic.py::test_G8_event_noise_distribution[loglogistic] loglogistic: KS p = 0.5833
+PASSED
+tests/test_synthetic.py::test_G9_censoring_independent_of_risk corr(log E, eta) = -0.0034
+PASSED
+tests/test_synthetic.py::test_G10_oracle_survival_curve_consistent max |mean S_true - empirical| = 0.0017520992111271783
+PASSED
+tests/test_synthetic.py::test_G11_common_random_numbers PASSED
+tests/test_synthetic.py::test_G12_missingness_mask masked fraction of real entries = 0.2002
+PASSED
+
+=================================== FAILURES ===================================
+_____________________ test_E5_lockfile_reproduces_exactly ______________________
+
+    @pytest.mark.criterion("E-5")
+    def test_E5_lockfile_reproduces_exactly():
+        assert (EVID / "E5_status.txt").read_text().strip() == "PASS"
+        assert (EVID / "lockcheck_diff.txt").read_text() == ""
+>       assert (ROOT / "requirements-lock.txt").read_text() == (EVID / "lockcheck_freeze.txt").read_text()
+E       AssertionError: assert 'autograd==1....y==2026.9.0\n' == 'autograd==1....y==2026.9.0\n'
+E         
+E           autograd==1.9.1
+E           autograd-gamma==0.5.0
+E         + click==8.5.0
+E           cloudpickle==3.1.2
+E           contourpy==1.4.0
+E           cycler==0.12.1...
+E         
+E         ...Full output truncated (50 lines hidden), use '-vv' to show
+
+tests/test_env.py:46: AssertionError
+__________________________ test_R2_fae_mlp_end_to_end __________________________
+
+    @pytest.mark.criterion("R2")
+    def test_R2_fae_mlp_end_to_end():
+        obs, ora, tr, va, te = _data(0.05, 0.0)
+        m = NeuralAFT("fae_mlp").fit(obs.subset(tr), obs.subset(va), seed=0)
+        risk = m.predict_risk(obs.subset(te))
+        c = harrell_c(obs.y_obs[te], obs.delta[te], risk)
+        c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
+        Ztr, Zte = m.latent(obs.subset(tr)), m.latent(obs.subset(te))
+        A = np.column_stack([np.ones(len(Ztr)), Ztr])
+        r2 = []
+        for j in range(4):
+            tgt = ora.theta[tr, j]
+            coef = np.linalg.solve(A.T @ A + 1e-3 * np.eye(A.shape[1]), A.T @ tgt)
+            pred = np.column_stack([np.ones(len(Zte)), Zte]) @ coef
+            yt = ora.theta[te, j]
+            r2.append(1 - np.sum((yt - pred) ** 2) / np.sum((yt - yt.mean()) ** 2))
+        GATE["R2_C"] = c
+        print(f"R2: C = {c:.4f}, oracle C = {c_or:.4f}; probe R2 (a,b,A,omega) = {np.round(r2, 3)}, mean {np.mean(r2):.3f}; "
+              f"epochs {[r['epochs'] for r in m.info['runs']]}")
+>       assert c >= c_or - 0.03
+E       assert np.float64(0.8498245614035088) >= (np.float64(0.8936215538847118) - 0.03)
+
+tests/test_learnability.py:80: AssertionError
+___________________________ test_M1_shapes[fae_mlp] ____________________________
+
+small = (Observed(ids=array([  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,
+        13,  14,  15,  16,  17, ... 158, 159, 162, 163, 164, 170, 177, 180, 181, 183, 188, 190, 197,
+       200, 201, 202, 209, 211, 212, 221, 223, 233]))
+name = 'fae_mlp'
+
+    @pytest.mark.criterion("M1")
+    @pytest.mark.parametrize("name", ALL)
+    def test_M1_shapes(small, name):
+        obs, _, tr, va, te = small
+        kw = {"n_components": 4} if name.startswith("fpca") else {}
+        model = make_model(name, max_epochs=3, **kw).fit(obs.subset(tr), obs.subset(va), seed=0)
+        times = np.linspace(0.1, 10, 7)
+        S = model.predict_survival(obs.subset(te), times)
+        r = model.predict_risk(obs.subset(te))
+        assert S.shape == (len(te), 7) and r.shape == (len(te),)
+        assert np.all(np.isfinite(S)) and np.all(np.isfinite(r))
+        if isinstance(model, NeuralAFT):
+>           assert model.latent(obs.subset(te)).shape == (len(te), 4)
+E           AssertionError: assert (48, 8) == (48, 4)
+E             
+E             At index 1 diff: 8 != 4
+E             
+E             Full diff:
+E               (
+E                   48,
+E             -     4,...
+E             
+E             ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_models.py:42: AssertionError
+___________________________ test_M1_shapes[fae_kan] ____________________________
+
+small = (Observed(ids=array([  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,
+        13,  14,  15,  16,  17, ... 158, 159, 162, 163, 164, 170, 177, 180, 181, 183, 188, 190, 197,
+       200, 201, 202, 209, 211, 212, 221, 223, 233]))
+name = 'fae_kan'
+
+    @pytest.mark.criterion("M1")
+    @pytest.mark.parametrize("name", ALL)
+    def test_M1_shapes(small, name):
+        obs, _, tr, va, te = small
+        kw = {"n_components": 4} if name.startswith("fpca") else {}
+        model = make_model(name, max_epochs=3, **kw).fit(obs.subset(tr), obs.subset(va), seed=0)
+        times = np.linspace(0.1, 10, 7)
+        S = model.predict_survival(obs.subset(te), times)
+        r = model.predict_risk(obs.subset(te))
+        assert S.shape == (len(te), 7) and r.shape == (len(te),)
+        assert np.all(np.isfinite(S)) and np.all(np.isfinite(r))
+        if isinstance(model, NeuralAFT):
+>           assert model.latent(obs.subset(te)).shape == (len(te), 4)
+E           AssertionError: assert (48, 8) == (48, 4)
+E             
+E             At index 1 diff: 8 != 4
+E             
+E             Full diff:
+E               (
+E                   48,
+E             -     4,...
+E             
+E             ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_models.py:42: AssertionError
+___________________________ test_M1_shapes[fae_kan2] ___________________________
+
+small = (Observed(ids=array([  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,
+        13,  14,  15,  16,  17, ... 158, 159, 162, 163, 164, 170, 177, 180, 181, 183, 188, 190, 197,
+       200, 201, 202, 209, 211, 212, 221, 223, 233]))
+name = 'fae_kan2'
+
+    @pytest.mark.criterion("M1")
+    @pytest.mark.parametrize("name", ALL)
+    def test_M1_shapes(small, name):
+        obs, _, tr, va, te = small
+        kw = {"n_components": 4} if name.startswith("fpca") else {}
+        model = make_model(name, max_epochs=3, **kw).fit(obs.subset(tr), obs.subset(va), seed=0)
+        times = np.linspace(0.1, 10, 7)
+        S = model.predict_survival(obs.subset(te), times)
+        r = model.predict_risk(obs.subset(te))
+        assert S.shape == (len(te), 7) and r.shape == (len(te),)
+        assert np.all(np.isfinite(S)) and np.all(np.isfinite(r))
+        if isinstance(model, NeuralAFT):
+>           assert model.latent(obs.subset(te)).shape == (len(te), 4)
+E           AssertionError: assert (48, 8) == (48, 4)
+E             
+E             At index 1 diff: 8 != 4
+E             
+E             Full diff:
+E               (
+E                   48,
+E             -     4,...
+E             
+E             ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_models.py:42: AssertionError
+__________________________ test_M1_shapes[fae_linear] __________________________
+
+small = (Observed(ids=array([  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,
+        13,  14,  15,  16,  17, ... 158, 159, 162, 163, 164, 170, 177, 180, 181, 183, 188, 190, 197,
+       200, 201, 202, 209, 211, 212, 221, 223, 233]))
+name = 'fae_linear'
+
+    @pytest.mark.criterion("M1")
+    @pytest.mark.parametrize("name", ALL)
+    def test_M1_shapes(small, name):
+        obs, _, tr, va, te = small
+        kw = {"n_components": 4} if name.startswith("fpca") else {}
+        model = make_model(name, max_epochs=3, **kw).fit(obs.subset(tr), obs.subset(va), seed=0)
+        times = np.linspace(0.1, 10, 7)
+        S = model.predict_survival(obs.subset(te), times)
+        r = model.predict_risk(obs.subset(te))
+        assert S.shape == (len(te), 7) and r.shape == (len(te),)
+        assert np.all(np.isfinite(S)) and np.all(np.isfinite(r))
+        if isinstance(model, NeuralAFT):
+>           assert model.latent(obs.subset(te)).shape == (len(te), 4)
+E           AssertionError: assert (48, 8) == (48, 4)
+E             
+E             At index 1 diff: 8 != 4
+E             
+E             Full diff:
+E               (
+E                   48,
+E             -     4,...
+E             
+E             ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_models.py:42: AssertionError
+___________________________ test_M1_shapes[flat_ae] ____________________________
+
+small = (Observed(ids=array([  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,
+        13,  14,  15,  16,  17, ... 158, 159, 162, 163, 164, 170, 177, 180, 181, 183, 188, 190, 197,
+       200, 201, 202, 209, 211, 212, 221, 223, 233]))
+name = 'flat_ae'
+
+    @pytest.mark.criterion("M1")
+    @pytest.mark.parametrize("name", ALL)
+    def test_M1_shapes(small, name):
+        obs, _, tr, va, te = small
+        kw = {"n_components": 4} if name.startswith("fpca") else {}
+        model = make_model(name, max_epochs=3, **kw).fit(obs.subset(tr), obs.subset(va), seed=0)
+        times = np.linspace(0.1, 10, 7)
+        S = model.predict_survival(obs.subset(te), times)
+        r = model.predict_risk(obs.subset(te))
+        assert S.shape == (len(te), 7) and r.shape == (len(te),)
+        assert np.all(np.isfinite(S)) and np.all(np.isfinite(r))
+        if isinstance(model, NeuralAFT):
+>           assert model.latent(obs.subset(te)).shape == (len(te), 4)
+E           AssertionError: assert (48, 8) == (48, 4)
+E             
+E             At index 1 diff: 8 != 4
+E             
+E             Full diff:
+E               (
+E                   48,
+E             -     4,...
+E             
+E             ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_models.py:42: AssertionError
+________________________ test_M3_parameter_matching[3] _________________________
+
+D = 3
+
+    @pytest.mark.criterion("M3")
+    @pytest.mark.parametrize("D", [3, 6, 14])
+    def test_M3_parameter_matching(D):
+        H, hid = DEFAULTS["H"], DEFAULTS["hidden"]          # matching uses the current model defaults
+        he, hd, info = kan_match(D, 12, H=H, hidden=hid)
+        w2, info2 = kan2_match(D, 12, H=H, hidden=hid)
+        print(D, he, hd, info, "kan2", w2, info2)
+        assert abs(info["rel_dev"]) <= 0.10 and abs(info2["rel_dev"]) <= 0.10
+        obs, _ = generate(SynthConfig(n=60, seed=42))
+        if D == 3:
+            a = NeuralAFT("fae_mlp", max_epochs=1).fit(obs, obs)
+            b = NeuralAFT("fae_kan", max_epochs=1).fit(obs, obs)
+            c = NeuralAFT("fae_kan2", max_epochs=1).fit(obs, obs)
+            dev = (b.info["block_params"] - a.info["block_params"]) / a.info["block_params"]
+            dev2 = (c.info["block_params"] - a.info["block_params"]) / a.info["block_params"]
+            print("instantiated blocks", a.info["block_params"], b.info["block_params"], c.info["block_params"])
+            assert abs(dev) <= 0.10 and abs(dev2) <= 0.10
+>           assert b.info["block_params"] == info["kan_block_params"]
+E           assert 5484 == 5090
+
+tests/test_models.py:99: AssertionError
+=============================== warnings summary ===============================
+tests/test_kan_regularization.py::test_KREG1_regularization_matches_definition_and_has_gradients
+  /home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+
+tests/test_pbc.py::test_provenance_and_structure
+tests/test_pbc.py::test_provenance_and_structure
+  /home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+    warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+
+tests/test_symbolic.py::test_SYM4_pysr_stage_runs_and_is_held_out_validated
+  /home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_aft_likelihood.py::test_A1_terms_match_scipy[weibull]
+PASSED tests/test_aft_likelihood.py::test_A1_terms_match_scipy[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A1_terms_match_scipy[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[weibull]
+PASSED tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[weibull]
+PASSED tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A4_gradcheck[weibull]
+PASSED tests/test_aft_likelihood.py::test_A4_gradcheck[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A4_gradcheck[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-weibull]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-lognormal]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype0-loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-weibull]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-lognormal]
+PASSED tests/test_aft_likelihood.py::test_A5_stability_extreme_w[dtype1-loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A6_survival_function_valid[weibull]
+PASSED tests/test_aft_likelihood.py::test_A6_survival_function_valid[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A6_survival_function_valid[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A7_matches_lifelines[weibull]
+PASSED tests/test_aft_likelihood.py::test_A7_matches_lifelines[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A7_matches_lifelines[loglogistic]
+PASSED tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[weibull]
+PASSED tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[lognormal]
+PASSED tests/test_aft_likelihood.py::test_A8_recovers_truth_within_3se[loglogistic]
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-linear]
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-nonlinear]
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_kan-nonlinear]
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[flat_ae-linear]
+PASSED tests/test_audit.py::test_AUD2_reconstruction_weighting_matches_numpy
+PASSED tests/test_audit.py::test_AUD3_S1_freezes_autoencoder_in_head_phase
+PASSED tests/test_audit.py::test_AUD4_survival_only_gives_no_decoder_gradient
+PASSED tests/test_audit.py::test_AUD5_time_scaling_consistent
+PASSED tests/test_audit.py::test_AUD6_front_end_shared_between_arms
+PASSED tests/test_censored_ls.py::test_LS1_no_censoring_reduces_to_ols
+PASSED tests/test_censored_ls.py::test_LS2_km_matches_lifelines_and_bj_conditional_mean
+PASSED tests/test_censored_ls.py::test_LS3_transform_integral_and_nonnegativity
+PASSED tests/test_censored_ls.py::test_LS4_slope_recovery_bj_ipcw
+PASSED tests/test_censored_ls.py::test_LS5_transform_unbiased_on_time_scale
+PASSED tests/test_cmapss.py::test_K3_windows_of_an_engine_in_one_split
+PASSED tests/test_cmapss.py::test_K4_no_input_after_landmark
+PASSED tests/test_env.py::test_E1_global_environment_unchanged_and_venv_used
+PASSED tests/test_env.py::test_E2_torch_cpu_build
+PASSED tests/test_env.py::test_E3_pandas_below_3
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[numpy]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[scipy]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[pandas]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[sklearn]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[torch]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[lifelines]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[sksurv]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[yaml]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[matplotlib]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[pytest]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[hypothesis]
+PASSED tests/test_env.py::test_E4_full_dependency_set_imports[rdata]
+PASSED tests/test_env.py::test_E6_pip_check_clean
+PASSED tests/test_env.py::test_E7_pytest_collects_and_runs
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[4]
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[8]
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[12]
+PASSED tests/test_functional.py::test_F1_basis_matches_scipy_and_partition_of_unity[16]
+PASSED tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[8]
+PASSED tests/test_functional.py::test_F1b_roughness_and_gram_vs_simpson[12]
+PASSED tests/test_functional.py::test_F2_smoother_exact_recovery_and_sparse_stability
+PASSED tests/test_functional.py::test_F3_discretisation_consistency
+PASSED tests/test_functional.py::test_F4_fpca_properties
+PASSED tests/test_functional.py::test_F5_functional_linear_matches_dense_quadrature
+PASSED tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[weibull]
+PASSED tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[lognormal]
+PASSED tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[loglogistic]
+PASSED tests/test_interval_likelihood.py::test_INT2_approaches_density_for_narrow_intervals
+PASSED tests/test_interval_likelihood.py::test_INT3_gradients_and_stability
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[3-3]
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-3]
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[10-3]
+PASSED tests/test_kan.py::test_FKAN1_basis_matches_scipy[5-2]
+PASSED tests/test_kan.py::test_FKAN2_shapes_and_gradcheck
+PASSED tests/test_kan.py::test_FKAN3_outside_grid_spline_is_zero
+PASSED tests/test_kan.py::test_FKAN4_parameter_count[16-8-5-3]
+PASSED tests/test_kan.py::test_FKAN4_parameter_count[4-12-3-3]
+PASSED tests/test_kan.py::test_FKAN4_parameter_count[8-4-10-2]
+PASSED tests/test_kan_regularization.py::test_KREG1_regularization_matches_definition_and_has_gradients
+PASSED tests/test_kan_regularization.py::test_KREG2_edge_sum_equals_forward
+PASSED tests/test_kan_regularization.py::test_KREG3_edge_and_node_pruning
+PASSED tests/test_kan_regularization.py::test_KREG4_exact_symbolic_substitution_leaves_output_unchanged
+PASSED tests/test_learnability.py::test_R1_oracle_features_head
+PASSED tests/test_learnability.py::test_R3_censoring_awareness
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[0]
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[1]
+PASSED tests/test_metrics.py::test_Q1_brier_ibs_and_harrell_match_references[2]
+PASSED tests/test_metrics.py::test_Q2_oracle_concordance_is_one
+PASSED tests/test_metrics.py::test_Q2_random_score_concordance_near_half
+PASSED tests/test_metrics.py::test_Q3_conditional_ipcw_with_marginal_G_equals_marginal
+PASSED tests/test_metrics.py::test_Q4_d_calibration_detects_miscalibration
+PASSED tests/test_metrics.py::test_Q5_survival_curve_error
+PASSED tests/test_models.py::test_M1_shapes[fpca_aft]
+PASSED tests/test_models.py::test_M1_shapes[fpca_cox]
+PASSED tests/test_models.py::test_M1_shapes[sum_aft]
+PASSED tests/test_models.py::test_M1_shapes[sum_cox]
+PASSED tests/test_models.py::test_M1_shapes[sum_rsf]
+PASSED tests/test_models.py::test_M2_memorise_one_batch[fae_mlp]
+PASSED tests/test_models.py::test_M2_memorise_one_batch[fae_kan]
+PASSED tests/test_models.py::test_M2_memorise_one_batch[flat_ae]
+PASSED tests/test_models.py::test_M3_parameter_matching[6]
+PASSED tests/test_models.py::test_M3_parameter_matching[14]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_mlp]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_kan2]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fae_linear]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[flat_ae]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fpca_aft]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[fpca_cox]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[sum_aft]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[sum_cox]
+PASSED tests/test_models.py::test_M5_fit_rejects_oracle[sum_rsf]
+PASSED tests/test_models.py::test_K1_split_disjoint_and_complete
+PASSED tests/test_models.py::test_K2_preprocessing_uses_training_only
+PASSED tests/test_nonlinear_functional.py::test_F6a_identity_map_equals_functional_linear
+PASSED tests/test_nonlinear_functional.py::test_F6b_discretisation_consistency
+PASSED tests/test_nonlinear_functional.py::test_F6c_shapes_and_gradcheck
+PASSED tests/test_nonlinear_functional.py::test_F7_energy_front_exact
+PASSED tests/test_nonlinear_functional.py::test_F8_tensor_spline_front
+PASSED tests/test_nonlinear_functional.py::test_F9_derivative_energy_exact
+PASSED tests/test_nonlinear_functional.py::test_F8b_feature_cache_never_returns_another_tensors_features
+PASSED tests/test_pbc.py::test_provenance_and_structure
+PASSED tests/test_pbc.py::test_endpoint_coding
+PASSED tests/test_pbc.py::test_K4_inputs_before_landmark
+PASSED tests/test_pbc.py::test_K1_patient_level_split
+PASSED tests/test_symbolic.py::test_SYM1_linear_accepted_at_stage1
+PASSED tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[tanh-<lambda>]
+PASSED tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[x^2-<lambda>]
+PASSED tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[sin-<lambda>]
+PASSED tests/test_symbolic.py::test_SYM2_library_recovers_known_forms[exp-<lambda>]
+PASSED tests/test_symbolic.py::test_SYM3_rejects_unrepresentable_function
+PASSED tests/test_symbolic.py::test_SYM4_pysr_stage_runs_and_is_held_out_validated
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-dense-0.6]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V1-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-dense-0.6]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G1_observed_time_is_min[V2-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-dense-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V1-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-dense-0.6]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.0]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.3]
+PASSED tests/test_synthetic.py::test_G2_event_indicator[V2-sparse-0.6]
+PASSED tests/test_synthetic.py::test_G3_censoring_fraction[0.0]
+PASSED tests/test_synthetic.py::test_G3_censoring_fraction[0.3]
+PASSED tests/test_synthetic.py::test_G3_censoring_fraction[0.6]
+PASSED tests/test_synthetic.py::test_G4_reproducibility
+PASSED tests/test_synthetic.py::test_G5_oracle_isolation
+PASSED tests/test_synthetic.py::test_G6_hidden_event_times_do_not_affect_observed_or_loss
+PASSED tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.0]
+PASSED tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[sparse-0.1]
+PASSED tests/test_synthetic.py::test_G7_time_ordering_padding_shapes[dense-0.3]
+PASSED tests/test_synthetic.py::test_G8_event_noise_distribution[weibull]
+PASSED tests/test_synthetic.py::test_G8_event_noise_distribution[lognormal]
+PASSED tests/test_synthetic.py::test_G8_event_noise_distribution[loglogistic]
+PASSED tests/test_synthetic.py::test_G9_censoring_independent_of_risk
+PASSED tests/test_synthetic.py::test_G10_oracle_survival_curve_consistent
+PASSED tests/test_synthetic.py::test_G11_common_random_numbers
+PASSED tests/test_synthetic.py::test_G12_missingness_mask
+SKIPPED [1] tests/test_models.py:78: linear AE rank-limited (r=4 < 16 targets); ratio 0.001887 recorded, not a criterion
+FAILED tests/test_env.py::test_E5_lockfile_reproduces_exactly - AssertionErro...
+FAILED tests/test_learnability.py::test_R2_fae_mlp_end_to_end - assert np.flo...
+FAILED tests/test_models.py::test_M1_shapes[fae_mlp] - AssertionError: assert...
+FAILED tests/test_models.py::test_M1_shapes[fae_kan] - AssertionError: assert...
+FAILED tests/test_models.py::test_M1_shapes[fae_kan2] - AssertionError: asser...
+FAILED tests/test_models.py::test_M1_shapes[fae_linear] - AssertionError: ass...
+FAILED tests/test_models.py::test_M1_shapes[flat_ae] - AssertionError: assert...
+FAILED tests/test_models.py::test_M3_parameter_matching[3] - assert 5484 == 5090
+======= 8 failed, 178 passed, 1 skipped, 4 warnings in 453.42s (0:07:33) =======

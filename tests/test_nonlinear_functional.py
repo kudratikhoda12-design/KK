@@ -107,3 +107,25 @@ def test_F9_derivative_energy_exact():
         m.qd.zero_()
     from kanfae.functional.layers import TensorSplineFunctional
     torch.testing.assert_close(m(c), TensorSplineFunctional.forward(m, c), rtol=0, atol=0)
+
+
+@pytest.mark.criterion("F8b")
+def test_F8b_feature_cache_never_returns_another_tensors_features():
+    """D53 regression: a new input that reuses a freed input's address must not receive the cached features."""
+    from kanfae.functional.layers import TensorSplineFunctional
+    b, bb = BSplineBasis(12), BSplineBasis(8)
+    t = TensorSplineFunctional(2, 4, b, bb, seed=0)
+    reused = 0
+    for k in range(20):
+        c1 = torch.randn(64, 2, 12)
+        t.features(c1)
+        ptr = c1.data_ptr()
+        del c1
+        c2 = torch.randn(64, 2, 12)
+        reused += c2.data_ptr() == ptr
+        direct = torch.einsum("bdqm,ql->bdml", t._xbasis(torch.einsum("bdk,qk->bdq", c2, t.Phi_q)), t.Psi_w)
+        torch.testing.assert_close(t.features(c2), direct, rtol=0, atol=0)
+        c2.mul_(2.0)                                                     # in-place change must invalidate the entry
+        direct = torch.einsum("bdqm,ql->bdml", t._xbasis(torch.einsum("bdk,qk->bdq", c2, t.Phi_q)), t.Psi_w)
+        torch.testing.assert_close(t.features(c2), direct, rtol=0, atol=0)
+    print(f"address reused in {reused} of 20 trials (the collision path was exercised when > 0)")

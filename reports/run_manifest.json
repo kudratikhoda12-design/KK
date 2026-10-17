@@ -3,7 +3,7 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "cd44f69e26ff60d33cd8aad90d56a40641a64c5d",
+  "head": "46d241e6776ff025b5ed1a695fae68d45fc8338a",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
@@ -12,7 +12,7 @@
   "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
   "venv": ".venv (project-local)",
   "lock_file": "requirements-lock.txt",
-  "lock_sha256": "08ae1bb5e2dda43c226ee3cc79cab349d3382c3a171322a08c16f961efee773a",
+  "lock_sha256": "c84359511c49bd2bd91948916ed5eb70d7c79ea188f764fe12484edae9172632",
   "key_packages": {
    "torch": "2.14.1+cpu",
    "numpy": "2.5.4",
@@ -68,8 +68,11 @@
  },
  "configs": [
   "configs/cmapss/cmapss_A.json",
+  "configs/cmapss/cmapss_A_FD003.json",
   "configs/cmapss/cmapss_A_artificial.json",
+  "configs/cmapss/cmapss_A_artificial_FD003.json",
   "configs/cmapss/cmapss_B.json",
+  "configs/cmapss/cmapss_B_FD003.json",
   "configs/pbc/pbc_E1.json",
   "configs/pbc/pbc_E2.json",
   "configs/synthetic/P-V2.json",
@@ -443,6 +446,366 @@
    "elapsed_s": 1622.135,
    "git_head": "bc4cf7b",
    "log": "reports/logs/final_full_test_suite.log"
+  },
+  {
+   "name": "rev3_unit_tests_attempt1",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/test_nonlinear_functional.py tests/test_functional.py tests/test_kan.py tests/test_models.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T12:50:47Z",
+   "end_utc": "2026-10-17T12:52:19Z",
+   "elapsed_s": 92.223,
+   "git_head": "57250de",
+   "log": "reports/logs/rev3_unit_tests_attempt1.log"
+  },
+  {
+   "name": "audit_tests_attempt1",
+   "command": ".venv/bin/python -m pytest -v -rA tests/test_audit.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T13:31:14Z",
+   "end_utc": "2026-10-17T13:31:26Z",
+   "elapsed_s": 12.577,
+   "git_head": "61ade6f",
+   "log": "reports/logs/audit_tests_attempt1.log"
+  },
+  {
+   "name": "rev3_gate_attempt1",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/test_learnability.py",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T12:52:28Z",
+   "end_utc": "2026-10-17T13:32:14Z",
+   "elapsed_s": 2386.118,
+   "git_head": "61ade6f",
+   "log": "reports/logs/rev3_gate_attempt1.log"
+  },
+  {
+   "name": "censored_ls_tests_attempt1",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/test_censored_ls.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T13:34:36Z",
+   "end_utc": "2026-10-17T13:37:13Z",
+   "elapsed_s": 157.209,
+   "git_head": "029d9ef",
+   "log": "reports/logs/censored_ls_tests_attempt1.log"
+  },
+  {
+   "name": "install_pysr",
+   "command": "bash -c .venv/bin/pip install -q pysr==2.7.0 && .venv/bin/python -I -c 'import pysr; print(\"pysr\", pysr.__version__)' && .venv/bin/pip check",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T13:42:59Z",
+   "end_utc": "2026-10-17T13:43:51Z",
+   "elapsed_s": 51.679,
+   "git_head": "029d9ef",
+   "log": "reports/logs/install_pysr.log"
+  },
+  {
+   "name": "kan_tests_after_pruning",
+   "command": ".venv/bin/python -m pytest -q tests/test_kan.py tests/test_nonlinear_functional.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T13:44:11Z",
+   "end_utc": "2026-10-17T13:44:19Z",
+   "elapsed_s": 7.839,
+   "git_head": "029d9ef",
+   "log": "reports/logs/kan_tests_after_pruning.log"
+  },
+  {
+   "name": "kreg_sym_tests_attempt1",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/test_kan_regularization.py tests/test_symbolic.py",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T13:45:22Z",
+   "end_utc": "2026-10-17T13:45:35Z",
+   "elapsed_s": 13.345,
+   "git_head": "029d9ef",
+   "log": "reports/logs/kreg_sym_tests_attempt1.log"
+  },
+  {
+   "name": "kreg_sym_tests_attempt2",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/test_symbolic.py -k SYM4",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T13:45:48Z",
+   "end_utc": "2026-10-17T13:46:16Z",
+   "elapsed_s": 28.351,
+   "git_head": "029d9ef",
+   "log": "reports/logs/kreg_sym_tests_attempt2.log"
+  },
+  {
+   "name": "f7f8_tests_attempt1",
+   "command": ".venv/bin/python -m pytest -q tests/test_nonlinear_functional.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T13:50:10Z",
+   "end_utc": "2026-10-17T13:50:25Z",
+   "elapsed_s": 14.992,
+   "git_head": "a295ba4",
+   "log": "reports/logs/f7f8_tests_attempt1.log"
+  },
+  {
+   "name": "f8_after_cache",
+   "command": ".venv/bin/python -m pytest -q tests/test_nonlinear_functional.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:34:34Z",
+   "end_utc": "2026-10-17T15:34:44Z",
+   "elapsed_s": 9.666,
+   "git_head": "43ee54c",
+   "log": "reports/logs/f8_after_cache.log"
+  },
+  {
+   "name": "learnability_search_resume",
+   "command": ".venv/bin/python scripts/learnability_search.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:34:51Z",
+   "end_utc": "2026-10-17T15:39:10Z",
+   "elapsed_s": 259.425,
+   "git_head": "39479bb",
+   "log": "reports/logs/learnability_search_resume.log"
+  },
+  {
+   "name": "d41_gate_selected",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/test_learnability.py",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T15:39:40Z",
+   "end_utc": "2026-10-17T15:42:42Z",
+   "elapsed_s": 181.335,
+   "git_head": "eeb9fd1",
+   "log": "reports/logs/d41_gate_selected.log"
+  },
+  {
+   "name": "d41_confirmation_fae_mlp",
+   "command": ".venv/bin/python scripts/confirm_learnability.py fae_mlp",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:42:57Z",
+   "end_utc": "2026-10-17T15:45:01Z",
+   "elapsed_s": 123.944,
+   "git_head": "eeb9fd1",
+   "log": "reports/logs/d41_confirmation_fae_mlp.log"
+  },
+  {
+   "name": "f9_tests_attempt1",
+   "command": ".venv/bin/python -m pytest -q tests/test_nonlinear_functional.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:45:44Z",
+   "end_utc": "2026-10-17T15:45:54Z",
+   "elapsed_s": 9.574,
+   "git_head": "eeb9fd1",
+   "log": "reports/logs/f9_tests_attempt1.log"
+  },
+  {
+   "name": "interval_tests_attempt1",
+   "command": ".venv/bin/python -m pytest -v -rA tests/test_interval_likelihood.py",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T15:47:01Z",
+   "end_utc": "2026-10-17T15:47:06Z",
+   "elapsed_s": 4.345,
+   "git_head": "af0d70c",
+   "log": "reports/logs/interval_tests_attempt1.log"
+  },
+  {
+   "name": "learnability_search_ext",
+   "command": ".venv/bin/python scripts/learnability_search_ext.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:46:16Z",
+   "end_utc": "2026-10-17T15:47:45Z",
+   "elapsed_s": 88.672,
+   "git_head": "af0d70c",
+   "log": "reports/logs/learnability_search_ext.log"
+  },
+  {
+   "name": "interval_tests_attempt2",
+   "command": ".venv/bin/python -m pytest tests/test_interval_likelihood.py -q",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:49:29Z",
+   "end_utc": "2026-10-17T15:49:32Z",
+   "elapsed_s": 3.577,
+   "git_head": "af0d70c",
+   "log": "reports/logs/interval_tests_attempt2.log"
+  },
+  {
+   "name": "censoring_variants",
+   "command": ".venv/bin/python scripts/run_censoring_variants.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:50:56Z",
+   "end_utc": "2026-10-17T15:51:16Z",
+   "elapsed_s": 20.124,
+   "git_head": "c458d0f",
+   "log": "reports/logs/censoring_variants.log"
+  },
+  {
+   "name": "kanaft_symbolic_resume",
+   "command": ".venv/bin/python scripts/run_kanaft_symbolic.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:49:59Z",
+   "end_utc": "2026-10-17T15:51:43Z",
+   "elapsed_s": 104.326,
+   "git_head": "46d241e",
+   "log": "reports/logs/kanaft_symbolic_resume.log"
+  },
+  {
+   "name": "stageD_gate_ext",
+   "command": ".venv/bin/python -m pytest tests/test_learnability.py -v -s",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T15:49:59Z",
+   "end_utc": "2026-10-17T15:53:16Z",
+   "elapsed_s": 197.161,
+   "git_head": "46d241e",
+   "log": "reports/logs/stageD_gate_ext.log"
+  },
+  {
+   "name": "kanaft_pbc",
+   "command": ".venv/bin/python scripts/run_kanaft_pbc.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:53:05Z",
+   "end_utc": "2026-10-17T15:55:47Z",
+   "elapsed_s": 161.56,
+   "git_head": "46d241e",
+   "log": "reports/logs/kanaft_pbc.log"
+  },
+  {
+   "name": "confirmation_ext",
+   "command": ".venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_ext.json --seeds 106,107,108,109,110 --tag _ext",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:53:16Z",
+   "end_utc": "2026-10-17T15:55:51Z",
+   "elapsed_s": 154.36,
+   "git_head": "46d241e",
+   "log": "reports/logs/confirmation_ext.log"
+  },
+  {
+   "name": "cache_test_old_code",
+   "command": ".venv/bin/python -m pytest tests/test_nonlinear_functional.py -k F8b -q -s",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T15:58:44Z",
+   "end_utc": "2026-10-17T15:58:49Z",
+   "elapsed_s": 4.535,
+   "git_head": "46d241e",
+   "log": "reports/logs/cache_test_old_code.log"
+  },
+  {
+   "name": "cache_test_fixed",
+   "command": ".venv/bin/python -m pytest tests/test_nonlinear_functional.py -q -s",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:58:49Z",
+   "end_utc": "2026-10-17T15:59:20Z",
+   "elapsed_s": 31.812,
+   "git_head": "46d241e",
+   "log": "reports/logs/cache_test_fixed.log"
+  },
+  {
+   "name": "diag_pruning_threshold",
+   "command": ".venv/bin/python scripts/diag_pruning_threshold.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T16:01:39Z",
+   "end_utc": "2026-10-17T16:03:30Z",
+   "elapsed_s": 110.657,
+   "git_head": "46d241e",
+   "log": "reports/logs/diag_pruning_threshold.log"
+  },
+  {
+   "name": "diag_pruning_threshold_centred",
+   "command": ".venv/bin/python scripts/diag_pruning_threshold.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T16:03:44Z",
+   "end_utc": "2026-10-17T16:05:31Z",
+   "elapsed_s": 107.059,
+   "git_head": "46d241e",
+   "log": "reports/logs/diag_pruning_threshold_centred.log"
+  },
+  {
+   "name": "learnability_search_v2",
+   "command": ".venv/bin/python scripts/learnability_search.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T16:00:06Z",
+   "end_utc": "2026-10-17T16:10:08Z",
+   "elapsed_s": 602.133,
+   "git_head": "46d241e",
+   "log": "reports/logs/learnability_search_v2.log"
+  },
+  {
+   "name": "learnability_search_ext_v2",
+   "command": ".venv/bin/python scripts/learnability_search_ext.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T16:10:08Z",
+   "end_utc": "2026-10-17T16:11:36Z",
+   "elapsed_s": 87.259,
+   "git_head": "46d241e",
+   "log": "reports/logs/learnability_search_ext_v2.log"
+  },
+  {
+   "name": "exp_cmapss_fd003",
+   "command": ".venv/bin/python scripts/run_cmapss.py --subset FD003 --code-version v2",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T15:51:52Z",
+   "end_utc": "2026-10-17T16:14:47Z",
+   "elapsed_s": 1374.239,
+   "git_head": "46d241e",
+   "log": "reports/logs/exp_cmapss_fd003.log"
+  },
+  {
+   "name": "confirmation_d41_D53",
+   "command": ".venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected.json --seeds 101,102,103,104,105",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T16:11:52Z",
+   "end_utc": "2026-10-17T16:15:26Z",
+   "elapsed_s": 214.032,
+   "git_head": "46d241e",
+   "log": "reports/logs/confirmation_d41_D53.log"
+  },
+  {
+   "name": "stageD_gate_D53",
+   "command": ".venv/bin/python -m pytest tests/test_learnability.py -v -s",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T16:11:52Z",
+   "end_utc": "2026-10-17T16:16:33Z",
+   "elapsed_s": 280.532,
+   "git_head": "46d241e",
+   "log": "reports/logs/stageD_gate_D53.log"
+  },
+  {
+   "name": "confirmation_d46_D53",
+   "command": ".venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_ext.json --seeds 106,107,108,109,110 --tag _ext",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T16:15:27Z",
+   "end_utc": "2026-10-17T16:17:45Z",
+   "elapsed_s": 138.265,
+   "git_head": "46d241e",
+   "log": "reports/logs/confirmation_d46_D53.log"
+  },
+  {
+   "name": "final_full_suite_round2_rerun",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T17:41:59Z",
+   "end_utc": "2026-10-17T17:49:36Z",
+   "elapsed_s": 456.754,
+   "git_head": "46d241e",
+   "log": "reports/logs/final_full_suite_round2_rerun.log"
+  },
+  {
+   "name": "models_tests_D56",
+   "command": ".venv/bin/python -m pytest tests/test_models.py -q",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T17:50:21Z",
+   "end_utc": "2026-10-17T17:51:21Z",
+   "elapsed_s": 59.972,
+   "git_head": "46d241e",
+   "log": "reports/logs/models_tests_D56.log"
+  },
+  {
+   "name": "verify_env_round2",
+   "command": "bash scripts/verify_env.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T17:50:21Z",
+   "end_utc": "2026-10-17T17:51:55Z",
+   "elapsed_s": 94.724,
+   "git_head": "46d241e",
+   "log": "reports/logs/verify_env_round2.log"
+  },
+  {
+   "name": "final_full_suite_round2_v3",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T17:52:37Z",
+   "end_utc": "2026-10-17T17:59:26Z",
+   "elapsed_s": 409.557,
+   "git_head": "46d241e",
+   "log": "reports/logs/final_full_suite_round2_v3.log"
   }
  ],
  "deliverables": {

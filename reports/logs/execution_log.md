@@ -104,3 +104,17 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   Literature review in `docs/literature_review.md`.
 - D41 search: S1 fronts (validation C): A0 0.8389, A1 0.8445, A2 0.8403, **A3 0.8484 (selected)**. The first
   process was killed at the 2-hour limit; resumed after the D44 efficiency fixes.
+- D41 selection A3-fae_mlp-ab243462; D45 set it as DEFAULTS. Gate R2 FAIL (C 0.8497); replications 101–105: 0/5.
+- D46 extension (budget, derivative-energy front A4, capacity): selection unchanged (D47). Gate R2 FAIL again;
+  replications 106–110: 0/5, with seed 110 at test C 0.4913.
+- Seed 110 investigated: feature-cache defect (D53). Fixed; regression test F8b; superseded records moved to
+  `reports/superseded_D53/`. The search (S1 pinned to r = 4 as originally run), the gate and seeds 101–110 were
+  recomputed: same selection; gate identical; seeds 101–109 identical; seed 110 test C 0.8413 (FAIL). Final:
+  R2 FAILED.
+- L14 interval likelihood (INT-1 test-reference repair, D48); L16 censoring variants (D50); FD003 baselines (D51);
+  KAN-AFT on PBC with symbolic extraction (D52); pruning-threshold diagnostic (D54; correction D55).
+- KAN-AFT symbolic validation resumed after the 2-hour limit (D49): 12/12 records.
+- Worker restart interrupted a full-suite run (partial record kept). The rerun found stale M1/M3 tests after D45
+  and stale E-5 evidence (D56): tests fixed, environment re-verified (E-1 and E-5 YES). Final full suite:
+  185 passed, 1 failed (R2), 1 skipped.
+- Report regenerated (Part I round 2 + Part II round 1): 44-page PDF; deliverable verification ALL_CHECKS_PASS.
