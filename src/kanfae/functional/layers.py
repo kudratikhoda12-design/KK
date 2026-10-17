@@ -160,3 +160,26 @@ class TensorSplineFunctional(nn.Module):
 
     def roughness_penalty(self):
         return self.lin.roughness_penalty() + torch.einsum("hdml,lk,hdmk->", self.w, self.lin.R_beta, self.w)
+
+
+class DerivEnergySpline(TensorSplineFunctional):
+    """Tensor-spline front + derivative energy (D46 "tsd"): adds sum_d int gamma'_jd(t) x_d'(t)^2 dt, computed exactly
+    as sum_l q_jdl c_d^T T'_l c_d with T'_l = int psi_l phi' phi'^T (Gauss-Legendre, exact for these polynomials)."""
+
+    def __init__(self, n_channels, n_features, basis_x, basis_beta, grid=5, x_range=(-3.0, 3.0), seed=None):
+        super().__init__(n_channels, n_features, basis_x, basis_beta, grid, x_range, seed)
+        tq, wq = _union_gauss_legendre(basis_x, basis_beta)
+        dPhi, Psi = basis_x(tq, deriv=1), basis_beta(tq)
+        self.register_buffer("Td", torch.tensor(np.einsum("q,ql,qk,qm->lkm", wq, Psi, dPhi, dPhi),
+                                                dtype=torch.get_default_dtype()))
+        gen = torch.Generator().manual_seed(seed + 13) if seed is not None else None
+        self.qd = nn.Parameter(torch.randn(n_features, n_channels, basis_beta.K, generator=gen) / np.sqrt(n_channels) * 0.1)
+
+    def deriv_energies(self, c):                                           # (B, D, Kb)
+        return torch.einsum("bdk,lkm,bdm->bdl", c, self.Td, c)
+
+    def forward(self, c):
+        return super().forward(c) + torch.einsum("bdl,hdl->bh", self.deriv_energies(c), self.qd)
+
+    def roughness_penalty(self):
+        return super().roughness_penalty() + torch.einsum("hdl,lm,hdm->", self.qd, self.lin.R_beta, self.qd)

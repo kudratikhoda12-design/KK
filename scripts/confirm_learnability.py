@@ -26,11 +26,18 @@ from learnability_search import probe  # noqa: E402
 
 def main():
     torch.set_default_dtype(torch.float64)
-    sel = json.loads((ROOT / "reports/learnability_selected.json").read_text())
-    kind = sys.argv[1] if len(sys.argv) > 1 else sel["kind"]
-    out = ROOT / "reports" / f"learnability_confirmation_{kind}.jsonl"
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("kind", nargs="?", default=None)
+    ap.add_argument("--selected", default="reports/learnability_selected.json")
+    ap.add_argument("--seeds", default="101,102,103,104,105")
+    ap.add_argument("--tag", default="")
+    a = ap.parse_args()
+    sel = json.loads((ROOT / a.selected).read_text())
+    kind = a.kind or sel["kind"]
+    out = ROOT / "reports" / f"learnability_confirmation_{kind}{a.tag}.jsonl"
     recs = []
-    for seed in (101, 102, 103, 104, 105):
+    for seed in [int(x) for x in a.seeds.split(",")]:
         t0 = time.time()
         obs, ora = generate(SynthConfig(n=2000, censoring=0.0, sigma_y=0.05, seed=seed))
         tr, va, te = split_groups(obs.ids, seed, strata=obs.delta)

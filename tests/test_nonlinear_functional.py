@@ -90,3 +90,20 @@ def test_F8_tensor_spline_front():
     with torch.no_grad():
         t.w.zero_()
     torch.testing.assert_close(t(c), t.lin(c), rtol=0, atol=0)
+
+
+@pytest.mark.criterion("F9")
+def test_F9_derivative_energy_exact():
+    from scipy import integrate
+    from kanfae.functional.layers import DerivEnergySpline
+    b, bb = BSplineBasis(12), BSplineBasis(8)
+    m = DerivEnergySpline(2, 4, b, bb, seed=0)
+    c = torch.tensor(np.random.default_rng(2).normal(size=(1, 2, 12)))
+    x = np.linspace(0, 1, 9 * 5 * 400 + 1)
+    dX = np.einsum("dk,lk->ld", c[0].numpy(), b(x, deriv=1))
+    ref = integrate.simpson(bb(x)[:, :, None] * dX[:, None, :] ** 2, x=x, axis=0).T
+    assert np.abs(m.deriv_energies(c)[0].detach().numpy() - ref).max() < 1e-8
+    with torch.no_grad():
+        m.qd.zero_()
+    from kanfae.functional.layers import TensorSplineFunctional
+    torch.testing.assert_close(m(c), TensorSplineFunctional.forward(m, c), rtol=0, atol=0)

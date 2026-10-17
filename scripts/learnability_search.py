@@ -20,7 +20,7 @@ from kanfae.evaluation.metrics import harrell_c  # noqa: E402
 from kanfae.models.pipelines import DEFAULTS, NeuralAFT  # noqa: E402
 
 OUT = ROOT / "reports" / "learnability_search.jsonl"
-FRONT_ID = {"linear": "A0", "nonlinear": "A1", "energy": "A2", "tspline": "A3"}
+FRONT_ID = {"linear": "A0", "nonlinear": "A1", "energy": "A2", "tspline": "A3", "tsd": "A4"}
 
 
 def probe(m, obs, ora, fit_idx, eval_idx):
