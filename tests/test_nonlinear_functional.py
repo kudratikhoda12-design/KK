@@ -60,3 +60,33 @@ def test_F6c_shapes_and_gradcheck():
     cc = smooth(obs.times, obs.values, obs.mask, b, lam=1e-4)
     out = NonlinearFunctional(3, 32, b, bb, seed=0)(torch.tensor(cc))
     assert out.shape == (50, 32) and torch.isfinite(out).all()
+
+
+@pytest.mark.criterion("F7")
+def test_F7_energy_front_exact():
+    from scipy import integrate
+    from kanfae.functional.layers import EnergyFunctional
+    b, bb = BSplineBasis(12), BSplineBasis(8)
+    e = EnergyFunctional(3, 5, b, bb, seed=0)
+    c = torch.tensor(np.random.default_rng(1).normal(size=(2, 3, 12)))
+    x = np.linspace(0, 1, 9 * 5 * 400 + 1)
+    for i in range(2):
+        X = np.einsum("dk,lk->ld", c[i].numpy(), b(x))
+        ref = integrate.simpson(bb(x)[:, :, None] * X[:, None, :] ** 2, x=x, axis=0).T
+        assert np.abs(e.energies(c[i:i + 1])[0].detach().numpy() - ref).max() < 1e-10
+    with torch.no_grad():
+        e.q.zero_()
+    torch.testing.assert_close(e(c), e.lin(c), rtol=0, atol=0)
+
+
+@pytest.mark.criterion("F8")
+def test_F8_tensor_spline_front():
+    from kanfae.functional.layers import TensorSplineFunctional
+    b, bb = BSplineBasis(12), BSplineBasis(8)
+    t = TensorSplineFunctional(2, 4, b, bb, seed=0)
+    c = torch.randn(5, 2, 12, requires_grad=True)
+    assert t(c).shape == (5, 4)
+    assert torch.autograd.gradcheck(lambda cc: t(cc), (c,), eps=1e-6, atol=1e-6)
+    with torch.no_grad():
+        t.w.zero_()
+    torch.testing.assert_close(t(c), t.lin(c), rtol=0, atol=0)
