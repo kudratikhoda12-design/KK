@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch import nn
 
 from ..functional.basis import BSplineBasis
-from ..functional.layers import FunctionalLinear, NonlinearFunctional
+from ..functional.layers import EnergyFunctional, FunctionalLinear, NonlinearFunctional, TensorSplineFunctional
 from .kan import KANBlock
 
 
@@ -96,6 +96,10 @@ class FunctionalAE(nn.Module):
         self.D, self.K = D, basis.K
         if front == "nonlinear":       # revision 3 (D38)
             self.flin = NonlinearFunctional(D, H, basis, BSplineBasis(n_beta), n_maps, pw_width, seed=seed)
+        elif front == "energy":        # candidate A2 (D41)
+            self.flin = EnergyFunctional(D, H, basis, BSplineBasis(n_beta), seed=seed)
+        elif front == "tspline":       # candidate A3 (D41)
+            self.flin = TensorSplineFunctional(D, H, basis, BSplineBasis(n_beta), seed=seed)
         else:
             self.flin = FunctionalLinear(D, H, basis, BSplineBasis(n_beta), seed=seed)
         self.encoder = make_block(block, H, r, hidden, kan_grid, kan_hidden[0], seed=seed)

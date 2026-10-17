@@ -73,3 +73,78 @@ class NonlinearFunctional(nn.Module):
 
     def roughness_penalty(self):
         return torch.einsum("hdml,lk,hdmk->", self.weight, self.R_beta, self.weight)
+
+
+def _union_gauss_legendre(basis_x: BSplineBasis, basis_beta: BSplineBasis, n_nodes=8):
+    brk = np.union1d(basis_x.breaks, basis_beta.breaks)
+    z, w = np.polynomial.legendre.leggauss(n_nodes)
+    tq = np.concatenate([0.5 * (b - a) * z + 0.5 * (a + b) for a, b in zip(brk[:-1], brk[1:])])
+    wq = np.concatenate([0.5 * (b - a) * w for a, b in zip(brk[:-1], brk[1:])])
+    return tq, wq
+
+
+class EnergyFunctional(nn.Module):
+    """Linear + functional-energy front end (2026-10-17, candidate A2 / D41):
+
+        h_j = b_j + sum_d int beta_jd(t) x_d(t) dt + sum_d int gamma_jd(t) x_d(t)^2 dt,
+        int gamma(t) x(t)^2 dt = sum_l q_l c^T T_l c,   T_l[k,k'] = int psi_l phi_k phi_k'  (exact Gauss-Legendre).
+    The energy term can express phase-invariant amplitude functionals that linear functionals cannot."""
+
+    def __init__(self, n_channels, n_features, basis_x, basis_beta, seed=None):
+        super().__init__()
+        self.lin = FunctionalLinear(n_channels, n_features, basis_x, basis_beta, seed=seed)
+        gen = torch.Generator().manual_seed(None if seed is None else seed + 7) if seed is not None else None
+        tq, wq = _union_gauss_legendre(basis_x, basis_beta)
+        Phi, Psi = basis_x(tq), basis_beta(tq)
+        T = np.einsum("q,ql,qk,qm->lkm", wq, Psi, Phi, Phi)               # (Kb, K, K)
+        self.register_buffer("T", torch.tensor(T, dtype=torch.get_default_dtype()))
+        self.q = nn.Parameter(torch.randn(n_features, n_channels, basis_beta.K, generator=gen) / np.sqrt(n_channels))
+
+    def energies(self, c):                                              # (B, D, Kb)
+        return torch.einsum("bdk,lkm,bdm->bdl", c, self.T, c)
+
+    def forward(self, c):
+        return self.lin(c) + torch.einsum("bdl,hdl->bh", self.energies(c), self.q)
+
+    def roughness_penalty(self):
+        return self.lin.roughness_penalty() + torch.einsum("hdl,lm,hdm->", self.q, self.lin.R_beta, self.q)
+
+
+class TensorSplineFunctional(nn.Module):
+    """Functional tensor-spline front end (2026-10-17, candidate A3 / D41), the deferred int F(x(t), t) dt variant:
+
+        h_j = b_j + sum_d int beta_jd(t) x_d(t) dt + sum_d sum_m int beta_jdm(t) B_m(x_d(t)) dt,
+    B_m: cubic B-splines on a uniform grid of G intervals over [x_lo, x_hi] (standardised scale), i.e. a
+    tensor-product spline surface F_jd(x, t). The feature integrals contain no trainable parameters."""
+
+    def __init__(self, n_channels, n_features, basis_x, basis_beta, grid=5, x_range=(-3.0, 3.0), seed=None):
+        super().__init__()
+        self.lin = FunctionalLinear(n_channels, n_features, basis_x, basis_beta, seed=seed)
+        tq, wq = _union_gauss_legendre(basis_x, basis_beta)
+        dt = torch.get_default_dtype()
+        self.register_buffer("Phi_q", torch.tensor(basis_x(tq), dtype=dt))
+        self.register_buffer("Psi_w", torch.tensor(basis_beta(tq) * wq[:, None], dtype=dt))
+        h = (x_range[1] - x_range[0]) / grid
+        self.register_buffer("knots", torch.arange(-3, grid + 4, dtype=dt) * h + x_range[0])
+        nb = grid + 3
+        gen = torch.Generator().manual_seed(seed + 11) if seed is not None else None
+        self.w = nn.Parameter(torch.randn(n_features, n_channels, nb, basis_beta.K, generator=gen)
+                              / np.sqrt(n_channels * nb))
+
+    def _xbasis(self, x):
+        t, xe = self.knots, x.unsqueeze(-1)
+        B = ((xe >= t[:-1]) & (xe < t[1:])).to(x.dtype)
+        for p in range(1, 4):
+            B = (xe - t[:-(p + 1)]) / (t[p:-1] - t[:-(p + 1)]) * B[..., :-1] + \
+                (t[p + 1:] - xe) / (t[p + 1:] - t[1:-p]) * B[..., 1:]
+        return B                                                           # (..., nb)
+
+    def features(self, c):                                                 # (B, D, nb, Kb)
+        x = torch.einsum("bdk,qk->bdq", c, self.Phi_q)
+        return torch.einsum("bdqm,ql->bdml", self._xbasis(x), self.Psi_w)
+
+    def forward(self, c):
+        return self.lin(c) + torch.einsum("bdml,hdml->bh", self.features(c), self.w)
+
+    def roughness_penalty(self):
+        return self.lin.roughness_penalty() + torch.einsum("hdml,lk,hdmk->", self.w, self.lin.R_beta, self.w)

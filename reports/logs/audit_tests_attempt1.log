@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 9 items
+
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-linear] PASSED [ 11%]
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-nonlinear] PASSED [ 22%]
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_kan-nonlinear] PASSED [ 33%]
+tests/test_audit.py::test_AUD1_joint_objective_decomposition[flat_ae-linear] PASSED [ 44%]
+tests/test_audit.py::test_AUD2_reconstruction_weighting_matches_numpy PASSED [ 55%]
+tests/test_audit.py::test_AUD3_S1_freezes_autoencoder_in_head_phase PASSED [ 66%]
+tests/test_audit.py::test_AUD4_survival_only_gives_no_decoder_gradient PASSED [ 77%]
+tests/test_audit.py::test_AUD5_time_scaling_consistent PASSED            [ 88%]
+tests/test_audit.py::test_AUD6_front_end_shared_between_arms PASSED      [100%]
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-linear]
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_mlp-nonlinear]
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[fae_kan-nonlinear]
+PASSED tests/test_audit.py::test_AUD1_joint_objective_decomposition[flat_ae-linear]
+PASSED tests/test_audit.py::test_AUD2_reconstruction_weighting_matches_numpy
+PASSED tests/test_audit.py::test_AUD3_S1_freezes_autoencoder_in_head_phase
+PASSED tests/test_audit.py::test_AUD4_survival_only_gives_no_decoder_gradient
+PASSED tests/test_audit.py::test_AUD5_time_scaling_consistent
+PASSED tests/test_audit.py::test_AUD6_front_end_shared_between_arms
+============================== 9 passed in 11.48s ==============================

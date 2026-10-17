@@ -29,7 +29,10 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=4, H=32, hidden=64
                 max_epochs=3000, patience=100, naive=False, holdout_frac=0.15,
                 # Revision 3 (D38, 2026-10-17): nonlinear functional front end shared by MLP and KAN arms.
                 # front="linear" reproduces the original design used in gate attempts 1-3.
-                front="nonlinear", n_maps=5, pw_width=16)
+                front="nonlinear", n_maps=5, pw_width=16,
+                # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
+                # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
+                optimizer="adam", es_target="objective")
 
 
 def _check(obs):
@@ -103,7 +106,8 @@ class NeuralAFT(BaseModel):
         return {"nll": nll + pen, "rec": rec + pen, "joint": nll + a * rec + pen}[parts], (nll, rec)
 
     def _run(self, Ttr, Tva, parts, params):
-        opt = torch.optim.Adam(params, lr=self.cfg["lr"], weight_decay=self.cfg["wd"])
+        Opt = torch.optim.AdamW if self.cfg["optimizer"] == "adamw" else torch.optim.Adam
+        opt = Opt(params, lr=self.cfg["lr"], weight_decay=self.cfg["wd"])
         best, best_state, bad, hist = np.inf, None, 0, []
         for ep in range(self.cfg["max_epochs"]):
             self.model.train()
@@ -114,7 +118,7 @@ class NeuralAFT(BaseModel):
             self.model.eval()
             with torch.no_grad():
                 vl, (vn, vr) = self._objective(Tva, parts)
-            vl = float(vl)
+            vl = float(vn) if (self.cfg["es_target"] == "nll" and parts != "rec") else float(vl)
             hist.append((ep, float(loss.detach()), vl))
             if not np.isfinite(vl):
                 break
