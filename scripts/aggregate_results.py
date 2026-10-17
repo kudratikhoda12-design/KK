@@ -20,15 +20,19 @@ df.drop(columns=[c for c in ("traceback",) if c in df], errors="ignore").to_csv(
 # Superseded records (D37): for re-run (analysis, model) pairs only the re-run's records enter the summaries;
 # all records remain in experiment_results.csv as history.
 SUPERSEDED = {("cmapss_A", "sum_cox"): "D37", ("cmapss_A_artificial", "sum_cox"): "D37"}
+# D62: Option B re-run as code version v3 (adds engine-cluster bootstrap CIs; same models, splits, tuning).
+SUPERSEDED.update({("cmapss_B", m): "v3" for m in ("fpca_aft", "fpca_cox", "sum_aft", "sum_cox", "sum_rsf", "km_null")})
 if "code_version" not in df:
     df["code_version"] = np.nan
 df["used_in_summary"] = True
 for (an, mo), ver in SUPERSEDED.items():
     sel = (df.analysis == an) & (df.model == mo)
-    if (sel & (df.code_version == ver)).any():
-        df.loc[sel & (df.code_version != ver), "used_in_summary"] = False
+    for ds in df.loc[sel, "dataset"].unique():          # per dataset: only once that dataset has the re-run
+        sd = sel & (df.dataset == ds)
+        if (sd & (df.code_version == ver)).any():
+            df.loc[sd & (df.code_version != ver), "used_in_summary"] = False
 df.drop(columns=[c for c in ("traceback",) if c in df], errors="ignore").to_csv(ROOT / "reports/experiment_results.csv", index=False)
-df["record_set"] = np.where(df.used_in_summary, "current", "superseded (D37)")
+df["record_set"] = np.where(df.used_in_summary, "current", "superseded (re-run: D37 / D62)")
 status = df.groupby(["analysis", "model", "record_set", "phase", "status"]).size().rename("n").reset_index()
 status.to_csv(OUT / "run_status_counts.csv", index=False)
 fin = df[(df.phase == "final") & df.used_in_summary].copy()

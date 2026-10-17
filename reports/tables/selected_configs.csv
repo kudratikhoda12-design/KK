@@ -3,13 +3,13 @@ cmapss_A,cmapss_A,fpca_aft,"{'{""n_components"": 12}': np.int64(5), '{""n_compon
 cmapss_A,cmapss_A,fpca_cox,"{'{""n_components"": 12, ""penalizer"": 0.01}': np.int64(5), '{""n_components"": 4, ""penalizer"": 0.01}': np.int64(4), '{""n_components"": 8, ""penalizer"": 0.01}': np.int64(1)}"
 cmapss_A,cmapss_A,km_null,{'{}': np.int64(10)}
 cmapss_A,cmapss_A,sum_aft,"{'{""l2"": 1.0}': np.int64(10)}"
-cmapss_A,cmapss_A,sum_cox,"{'{""penalizer"": 0.1}': np.int64(4), '{""penalizer"": 1.0}': np.int64(1)}"
+cmapss_A,cmapss_A,sum_cox,"{'{""penalizer"": 0.1}': np.int64(9), '{""penalizer"": 1.0}': np.int64(1)}"
 cmapss_A,cmapss_A,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(10)}"
 cmapss_A_artificial,cmapss_A_artificial,fpca_aft,"{'{""n_components"": 8}': np.int64(6), '{""n_components"": 12}': np.int64(3), '{""n_components"": 4}': np.int64(1)}"
 cmapss_A_artificial,cmapss_A_artificial,fpca_cox,"{'{""n_components"": 8, ""penalizer"": 0.01}': np.int64(5), '{""n_components"": 12, ""penalizer"": 0.01}': np.int64(4), '{""n_components"": 4, ""penalizer"": 0.01}': np.int64(1)}"
 cmapss_A_artificial,cmapss_A_artificial,km_null,{'{}': np.int64(10)}
 cmapss_A_artificial,cmapss_A_artificial,sum_aft,"{'{""l2"": 1.0}': np.int64(9)}"
-cmapss_A_artificial,cmapss_A_artificial,sum_cox,"{'{""penalizer"": 0.1}': np.int64(3), '{""penalizer"": 0.01}': np.int64(1), '{""penalizer"": 1.0}': np.int64(1)}"
+cmapss_A_artificial,cmapss_A_artificial,sum_cox,"{'{""penalizer"": 0.1}': np.int64(8), '{""penalizer"": 0.01}': np.int64(1), '{""penalizer"": 1.0}': np.int64(1)}"
 cmapss_A_artificial,cmapss_A_artificial,sum_rsf,"{'{""min_samples_leaf"": 5}': np.int64(10)}"
 cmapss_B,cmapss_B,fpca_aft,"{'{""n_components"": 8}': np.int64(4), '{""n_components"": 12}': np.int64(4), '{""n_components"": 4}': np.int64(2)}"
 cmapss_B,cmapss_B,fpca_cox,"{'{""n_components"": 8, ""penalizer"": 0.01}': np.int64(4), '{""n_components"": 12, ""penalizer"": 0.01}': np.int64(4), '{""n_components"": 4, ""penalizer"": 0.01}': np.int64(2)}"

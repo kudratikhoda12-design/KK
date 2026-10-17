@@ -27,6 +27,20 @@ MODELS = ["fpca_aft", "fpca_cox", "sum_aft", "sum_cox", "sum_rsf", "km_null"]
 BANDS = [(30, 100), (100, 200), (200, 10 ** 6)]
 
 
+def cluster_bootstrap(groups, stat, n_boot=1000, seed=0):
+    """D62: percentile 95% CI of stat(idx) under resampling of whole engines (clusters) with replacement."""
+    rng = np.random.default_rng(seed)
+    ug = np.unique(groups)
+    members = {g: np.nonzero(groups == g)[0] for g in ug}
+    vals = []
+    for _ in range(n_boot):
+        idx = np.concatenate([members[g] for g in rng.choice(ug, len(ug), replace=True)])
+        vals.append(stat(idx))
+    vals = np.asarray(vals, float)
+    vals = vals[np.isfinite(vals)]
+    return (float(np.quantile(vals, 0.025)), float(np.quantile(vals, 0.975))) if len(vals) else (np.nan, np.nan)
+
+
 def rul_metrics(model, obs, grid, prefix):
     S = model.predict_survival(obs, grid)
     med, flag = median_from_curve(S, grid)
@@ -38,8 +52,20 @@ def rul_metrics(model, obs, grid, prefix):
         lm, grp = obs.meta["landmark"], obs.meta["group"]
         w = np.array([1.0 / np.sum(grp == g) for g in grp])
         out["rul_test_rmse_engine_weighted"] = float(np.sqrt(np.sum(w * err ** 2) / w.sum()))
+        risk = model.predict_risk(obs)
+        out["rul_test_n_engines"] = int(len(np.unique(grp)))
+        stats = {"rmse": lambda i: np.sqrt(np.mean(err[i] ** 2)), "mae": lambda i: np.mean(np.abs(err[i])),
+                 "harrell_c": lambda i: M.harrell_c(obs.y_obs[i], obs.delta[i], risk[i])}
+        for k, fn in stats.items():                       # D62: engine-cluster bootstrap (all windows)
+            out[f"rul_test_{k}_cb_lo"], out[f"rul_test_{k}_cb_hi"] = cluster_bootstrap(grp, fn)
         for lo, hi in BANDS:
             sel = (lm >= lo) & (lm < hi)
+            if sel.sum() >= 5:                            # D62: per landmark band, engines resampled within band
+                sb = np.nonzero(sel)[0]
+                for k in ("rmse", "harrell_c"):
+                    out[f"band_{lo}_{min(hi, 999)}_{k}_cb_lo"], out[f"band_{lo}_{min(hi, 999)}_{k}_cb_hi"] = \
+                        cluster_bootstrap(grp[sb], lambda i, sb=sb, k=k: stats[k](sb[i]))
+                out[f"band_{lo}_{min(hi, 999)}_n_engines"] = int(len(np.unique(grp[sb])))
             if sel.sum() >= 5:
                 out[f"band_{lo}_{min(hi, 999)}_rmse"] = float(np.sqrt(np.mean(err[sel] ** 2)))
                 out[f"band_{lo}_{min(hi, 999)}_harrell_c"] = M.harrell_c(obs.y_obs[sel], obs.delta[sel],

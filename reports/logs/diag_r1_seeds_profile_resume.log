@@ -1,0 +1,6 @@
+/home/user/KK/scripts/diag_r1_seeds.py:40: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+seed 508: C 0.8734 (oracle 0.8785) sigma 0.5555 epochs 2013 profile sigma 0.4868 eta-fit R2 0.992 pass C True pass sigma False
+seed 509: C 0.8843 (oracle 0.8859) sigma 0.6574 epochs 1053 profile sigma 0.5231 eta-fit R2 0.996 pass C True pass sigma False
+seed 510: C 0.8847 (oracle 0.8858) sigma 0.5383 epochs 1677 profile sigma 0.4732 eta-fit R2 0.992 pass C True pass sigma True

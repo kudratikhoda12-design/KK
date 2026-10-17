@@ -30,6 +30,21 @@ KANFAE_RUN_ID=gate .venv/bin/python -m pytest -v -s tests/test_learnability.py
 .venv/bin/python scripts/diag_pruning_threshold.py          # D54
 .venv/bin/python scripts/run_kanaft_pbc.py                  # D52
 .venv/bin/python scripts/run_cmapss.py --subset FD003 --code-version v2   # D51
+# round 3 (2026-10-17): revision 4 (frequency-aware front), pre-registered in D61 before these runs
+.venv/bin/python scripts/diag_frequency_information.py     # D60 (seed-21 training split only)
+.venv/bin/python -m pytest -v tests/test_frequency_front.py # FQ-1..FQ-10
+.venv/bin/python scripts/learnability_search_fa.py         # validation-only search -> reports/learnability_selected_fa.json
+KANFAE_RUN_ID=revised_gate_fa .venv/bin/python -m pytest -v -s tests/test_learnability_fa.py   # fresh seed 41
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa.json \
+    --seeds 111,112,113,114,115 --tag _fa
+.venv/bin/python scripts/revised_gate_verdict.py           # -> reports/revised_gate_verdict.json (D61 rule)
+.venv/bin/python scripts/run_neural_synthetic.py           # refuses to run unless the verdict is CONFIRMED (D57)
+.venv/bin/python scripts/diag_fa_overfitting.py            # D65 (validation only)
+.venv/bin/python scripts/diag_r1_seeds.py                  # D66
+.venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3   # D62
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3
+# report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
+.venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/aggregate_results.py
 .venv/bin/python scripts/make_figures.py && .venv/bin/python scripts/make_figures_round2.py

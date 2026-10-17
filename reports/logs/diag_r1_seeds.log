@@ -1,0 +1,15 @@
+/home/user/KK/scripts/diag_r1_seeds.py:40: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+seed 21: C 0.8910 (oracle 0.8936) sigma 0.4816 epochs 2344 eta-fit R2 0.991 pass C True pass sigma True
+seed 41: C 0.8931 (oracle 0.8956) sigma 0.5707 epochs 1571 eta-fit R2 0.992 pass C True pass sigma False
+seed 501: C 0.8802 (oracle 0.8874) sigma 0.5672 epochs 1780 eta-fit R2 0.994 pass C True pass sigma False
+seed 502: C 0.8898 (oracle 0.8940) sigma 0.5485 epochs 1780 eta-fit R2 0.991 pass C True pass sigma True
+seed 503: C 0.8874 (oracle 0.8882) sigma 0.5677 epochs 1679 eta-fit R2 0.995 pass C True pass sigma False
+seed 504: C 0.9003 (oracle 0.9020) sigma 0.5821 epochs 1389 eta-fit R2 0.994 pass C True pass sigma False
+seed 505: C 0.8865 (oracle 0.8907) sigma 0.5285 epochs 1906 eta-fit R2 0.992 pass C True pass sigma True
+seed 506: C 0.8821 (oracle 0.8845) sigma 0.5523 epochs 1840 eta-fit R2 0.995 pass C True pass sigma False
+seed 507: C 0.8920 (oracle 0.8946) sigma 0.5615 epochs 1507 eta-fit R2 0.994 pass C True pass sigma False
+seed 508: C 0.8734 (oracle 0.8785) sigma 0.5555 epochs 2013 eta-fit R2 0.992 pass C True pass sigma False
+seed 509: C 0.8843 (oracle 0.8859) sigma 0.6574 epochs 1053 eta-fit R2 0.996 pass C True pass sigma False
+seed 510: C 0.8847 (oracle 0.8858) sigma 0.5383 epochs 1677 eta-fit R2 0.992 pass C True pass sigma True

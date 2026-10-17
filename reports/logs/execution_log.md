@@ -118,3 +118,15 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   and stale E-5 evidence (D56): tests fixed, environment re-verified (E-1 and E-5 YES). Final full suite:
   185 passed, 1 failed (R2), 1 skipped.
 - Report regenerated (Part I round 2 + Part II round 1): 44-page PDF; deliverable verification ALL_CHECKS_PASS.
+- Round 3 (owner decisions D57–D59). D60 frequency diagnostic (seed-21 training split): ω is recoverable; only the
+  quadrature-pair projection spectrum is phase-free. Frequency-aware front implemented; FQ-1..FQ-10 (repairs
+  disclosed, D63). Pre-registration D61 committed (396100c) before any search fit.
+- Search (11 fits, validation only): fa makes ω decodable but overfits. Revised gate, fresh seed 41: R1 FAIL (σ),
+  R2 FAIL (C 0.8189), R3 PASS. Confirmations 111–115: 0/5. Verdict NOT CONFIRMED; neural analyses blocked
+  (guard verified).
+- D65 overfitting diagnostic (compact summary: probe 0.82 on validation, C still short). D66 R1 diagnostic
+  (12 seeds; σ not converged at early stopping; profile σ fine); the diagnostic run was resumed once after a
+  background time limit.
+- C-MAPSS Option B v3 with engine-cluster bootstrap (FD001, FD003); point estimates reproduce earlier runs.
+- Historical A3 gate pinned and marked strict xfail (D64). Final suite: 198 passed, 2 failed (revised gate),
+  1 xfailed, 1 skipped. Report revision 3 (59 pages); deliverable verification ALL_CHECKS_PASS.

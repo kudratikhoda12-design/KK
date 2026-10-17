@@ -1,0 +1,8 @@
+compact_J17_r8         fae_mlp: train C 0.8767 val C 0.8328 (oracle 0.8904) probe [0.86 0.62 0.7  0.87] mean 0.761 epochs [1214] 36.3s
+compact_J17_r8         fae_kan: train C 0.8943 val C 0.7936 (oracle 0.8904) probe [0.85 0.38 0.72 0.34] mean 0.574 epochs [812] 53.5s
+compact_J17_r12        fae_mlp: train C 0.8827 val C 0.8212 (oracle 0.8904) probe [0.91 0.74 0.74 0.88] mean 0.820 epochs [1162] 31.7s
+compact_J17_r12        fae_kan: train C 0.8809 val C 0.8015 (oracle 0.8904) probe [0.86 0.55 0.73 0.88] mean 0.755 epochs [1071] 71.3s
+compact_J33_r12        fae_mlp: train C 0.8812 val C 0.8253 (oracle 0.8904) probe [0.9  0.7  0.77 0.86] mean 0.807 epochs [1088] 29.7s
+compact_J33_r12        fae_kan: train C 0.8741 val C 0.8154 (oracle 0.8904) probe [0.84 0.55 0.78 0.88] mean 0.764 epochs [916] 63.7s
+full_J17_r12_wd1e-3    fae_mlp: train C 0.8704 val C 0.8179 (oracle 0.8904) probe [0.79 0.46 0.67 0.86] mean 0.694 epochs [1457] 39.1s
+full_J17_r12_wd1e-3    fae_kan: train C 0.8982 val C 0.7699 (oracle 0.8904) probe [0.81 0.44 0.61 0.62] mean 0.620 epochs [521] 38.1s

@@ -1,0 +1,18 @@
+{
+ "verdict": "NOT CONFIRMED",
+ "r4_C": "0.8189",
+ "r4_thr": "0.8656",
+ "r4_probe_mean": "0.716",
+ "r4_omega": "0.865",
+ "r4_conf": "0/5",
+ "n_tests_latest": "202",
+ "latest_passed": "198",
+ "latest_failed": "2",
+ "latest_skipped": "1",
+ "latest_xfailed": "1",
+ "n_test_records": "1443",
+ "n_test_runs": "44",
+ "r4_sel_id": "A5-fae_mlp-b36715d7",
+ "r4_sel": "front=fa, r=12, alpha=1.0, optimizer=adam, lr=0.003, es_target=objective, max_epochs=3000, patience=100, H=32, hidden=64, fa_nfreq=17",
+ "git_head": "396100c"
+}

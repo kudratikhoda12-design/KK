@@ -294,7 +294,9 @@ def values():
     v["n_search_fits"] = str(len(D.search_records()))
     sel = json.loads((REP / "learnability_selected_ext.json").read_text())
     v["selected_id"], v["selected_cfg"] = sel["config_id"], json.dumps(sel["config"])
-    TL = R1.TL
+    # historical accuracy (round 3): the round-2 text quotes the counts of ITS final full-suite run
+    TL = R1.TA[R1.TA.run_id == "final_full_suite_round2_v3"]
+    TL = TL if len(TL) else R1.TL
     v["n_tests_latest"] = str(len(TL))
     for o in ("passed", "failed", "skipped"):
         v[f"latest_{o}"] = str(int((TL.outcome == o).sum()))

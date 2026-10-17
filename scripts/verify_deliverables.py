@@ -18,6 +18,9 @@ REP = ROOT / "reports"
 res = {}
 
 
+FINAL_RUN = "final_full_suite_round3"
+
+
 def norm(s):
     return re.sub(r"\s+", " ", s)
 
@@ -32,10 +35,10 @@ res["pdf_text_chars"] = len(text)
 raw = subprocess.run(["pdftotext", "-raw", str(pdf), "-"], capture_output=True, text=True).stdout
 T = norm(text) + " || " + norm(raw)          # layout and raw extraction (raw keeps wrapped table cells contiguous)
 res["pdf_no_placeholders"] = "{{" not in text
-# round 2 (2026-10-17): Part I sections 0.1-0.4 and I.1-I.15; round-1 sections renumbered II.1-II.17
-res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 5)) and all(
-    re.search(rf"\bI\.{k}\s", T) for k in range(1, 16))
-res["pdf_has_all_17_sections"] = all(re.search(rf"\bII\.{k}\s", T) for k in range(1, 18))
+# round 3 (2026-10-17): Part A sections 0.1-0.3 and R3.1-R3.11; round 2 renumbered R2.1-R2.15; round 1 R1.1-R1.17
+res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 4)) and all(
+    re.search(rf"\bR3\.{k}\s", T) for k in range(1, 12)) and all(re.search(rf"\bR2\.{k}\s", T) for k in range(1, 16))
+res["pdf_has_all_17_sections"] = all(re.search(rf"\bR1\.{k}\s", T) for k in range(1, 18))
 
 pages = sorted((REP / "logs/pdf_pages").glob("page-*.png"))
 blank = []
@@ -55,10 +58,13 @@ vals = json.loads((REP / "report_values.json").read_text())
 used = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / "report_template.md").read_text()))
 res["report_values_used"] = len(used)
 res["report_values_missing_in_pdf"] = [k for k in sorted(used) if norm(str(vals[k])) not in T]
-vals2 = json.loads((REP / "report_values_round2.json").read_text())
-used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / "report_template_round2.md").read_text()))
-res["round2_values_used"] = len(used2)
-res["round2_values_missing_in_pdf"] = [k for k in sorted(used2) if norm(str(vals2[k])) not in T]
+res["round2_values_missing_in_pdf"] = []
+for tpl, vf in (("report_template_round2.md", "report_values_round2.json"),
+                ("report_template_round3.md", "report_values_round3.json")):
+    vals2 = json.loads((REP / vf).read_text())
+    used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / tpl).read_text()))
+    res[f"{tpl}_values_used"] = len(used2)
+    res["round2_values_missing_in_pdf"] += [f"{tpl}:{k}" for k in sorted(used2) if norm(str(vals2[k])) not in T]
 
 S = pd.read_csv(REP / "tables/summary_by_model.csv")
 p0 = S[(S.setting == "P0")]
@@ -77,10 +83,14 @@ res["tests_without_log_evidence"] = not_run
 recs = [json.loads(l) for l in (REP / "logs/test_records.jsonl").read_text().splitlines() if l.strip()]
 final = [r for r in recs if r["run_id"] == "final_full_suite"]
 res["final_suite_counts_round1"] = {o: sum(r["outcome"] == o for r in final) for o in ("passed", "failed", "skipped")}
-final2 = [r for r in recs if r["run_id"] == "final_full_suite_round2_v3"]
-res["final_suite_counts"] = {o: sum(r["outcome"] == o for r in final2) for o in ("passed", "failed", "skipped")}
-res["final_suite_only_failure_is_R2"] = [r["nodeid"] for r in final2 if r["outcome"] == "failed"] == [
-    "tests/test_learnability.py::test_R2_fae_mlp_end_to_end"]
+final2 = [r for r in recs if r["run_id"] == FINAL_RUN]
+res["final_suite_run"] = FINAL_RUN
+res["final_suite_counts"] = {o: sum(r["outcome"] == o for r in final2) for o in ("passed", "failed", "skipped", "xfailed")}
+# round 3: the failures allowed are exactly the revised gate's (reported as R2/R1 FAILED); everything else must pass
+res["final_suite_failures"] = sorted(r["nodeid"] for r in final2 if r["outcome"] == "failed")
+res["final_suite_only_failure_is_R2"] = set(res["final_suite_failures"]) <= {
+    "tests/test_learnability_fa.py::test_R1_oracle_features_head",
+    "tests/test_learnability_fa.py::test_R2_fae_mlp_end_to_end"} and len(final2) > 0
 
 cmds = [json.loads(l) for l in (REP / "logs/commands.jsonl").read_text().splitlines() if l.strip()]
 res["commands_logged"] = len(cmds)

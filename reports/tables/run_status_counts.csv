@@ -7,11 +7,11 @@ cmapss_A,km_null,current,final,ok,10
 cmapss_A,km_null,current,tune,ok,10
 cmapss_A,sum_aft,current,final,ok,10
 cmapss_A,sum_aft,current,tune,ok,40
-cmapss_A,sum_cox,current,final,ok,5
-cmapss_A,sum_cox,current,tune,ok,20
-cmapss_A,sum_cox,superseded (D37),final,ok,6
-cmapss_A,sum_cox,superseded (D37),tune,failed,16
-cmapss_A,sum_cox,superseded (D37),tune,ok,24
+cmapss_A,sum_cox,current,final,ok,10
+cmapss_A,sum_cox,current,tune,ok,40
+cmapss_A,sum_cox,superseded (re-run: D37 / D62),final,ok,1
+cmapss_A,sum_cox,superseded (re-run: D37 / D62),tune,failed,16
+cmapss_A,sum_cox,superseded (re-run: D37 / D62),tune,ok,4
 cmapss_A,sum_rsf,current,final,ok,30
 cmapss_A,sum_rsf,current,tune,ok,40
 cmapss_A_artificial,fpca_aft,current,final,ok,10
@@ -23,25 +23,37 @@ cmapss_A_artificial,km_null,current,tune,ok,10
 cmapss_A_artificial,sum_aft,current,final,ok,9
 cmapss_A_artificial,sum_aft,current,tune,diverged,31
 cmapss_A_artificial,sum_aft,current,tune,ok,9
-cmapss_A_artificial,sum_cox,current,final,ok,5
-cmapss_A_artificial,sum_cox,current,tune,ok,20
-cmapss_A_artificial,sum_cox,superseded (D37),final,ok,6
-cmapss_A_artificial,sum_cox,superseded (D37),tune,failed,16
-cmapss_A_artificial,sum_cox,superseded (D37),tune,ok,24
+cmapss_A_artificial,sum_cox,current,final,ok,10
+cmapss_A_artificial,sum_cox,current,tune,ok,40
+cmapss_A_artificial,sum_cox,superseded (re-run: D37 / D62),final,ok,1
+cmapss_A_artificial,sum_cox,superseded (re-run: D37 / D62),tune,failed,16
+cmapss_A_artificial,sum_cox,superseded (re-run: D37 / D62),tune,ok,4
 cmapss_A_artificial,sum_rsf,current,final,ok,30
 cmapss_A_artificial,sum_rsf,current,tune,ok,40
 cmapss_B,fpca_aft,current,final,ok,10
 cmapss_B,fpca_aft,current,tune,ok,40
+cmapss_B,fpca_aft,superseded (re-run: D37 / D62),final,ok,10
+cmapss_B,fpca_aft,superseded (re-run: D37 / D62),tune,ok,40
 cmapss_B,fpca_cox,current,final,ok,10
 cmapss_B,fpca_cox,current,tune,ok,40
+cmapss_B,fpca_cox,superseded (re-run: D37 / D62),final,ok,10
+cmapss_B,fpca_cox,superseded (re-run: D37 / D62),tune,ok,40
 cmapss_B,km_null,current,final,ok,10
 cmapss_B,km_null,current,tune,ok,10
+cmapss_B,km_null,superseded (re-run: D37 / D62),final,ok,10
+cmapss_B,km_null,superseded (re-run: D37 / D62),tune,ok,10
 cmapss_B,sum_aft,current,final,ok,10
 cmapss_B,sum_aft,current,tune,ok,40
+cmapss_B,sum_aft,superseded (re-run: D37 / D62),final,ok,10
+cmapss_B,sum_aft,superseded (re-run: D37 / D62),tune,ok,40
 cmapss_B,sum_cox,current,final,ok,10
 cmapss_B,sum_cox,current,tune,ok,40
+cmapss_B,sum_cox,superseded (re-run: D37 / D62),final,ok,10
+cmapss_B,sum_cox,superseded (re-run: D37 / D62),tune,ok,40
 cmapss_B,sum_rsf,current,final,ok,30
 cmapss_B,sum_rsf,current,tune,ok,40
+cmapss_B,sum_rsf,superseded (re-run: D37 / D62),final,ok,30
+cmapss_B,sum_rsf,superseded (re-run: D37 / D62),tune,ok,40
 pbc_E1,fpca_aft,current,final,ok,5
 pbc_E1,fpca_aft,current,tune,ok,20
 pbc_E1,fpca_cox,current,final,ok,5

@@ -3,7 +3,7 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "46d241e6776ff025b5ed1a695fae68d45fc8338a",
+  "head": "396100cb400775f68e651f1e3b07601e5679e976",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
@@ -806,6 +806,156 @@
    "elapsed_s": 409.557,
    "git_head": "46d241e",
    "log": "reports/logs/final_full_suite_round2_v3.log"
+  },
+  {
+   "name": "diag_frequency_information",
+   "command": ".venv/bin/python scripts/diag_frequency_information.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T20:46:33Z",
+   "end_utc": "2026-10-17T20:47:06Z",
+   "elapsed_s": 33.083,
+   "git_head": "aa45cc2",
+   "log": "reports/logs/diag_frequency_information.log"
+  },
+  {
+   "name": "fq_tests_attempt1",
+   "command": ".venv/bin/python -m pytest tests/test_frequency_front.py -v -s",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T20:50:36Z",
+   "end_utc": "2026-10-17T20:50:57Z",
+   "elapsed_s": 20.957,
+   "git_head": "aa45cc2",
+   "log": "reports/logs/fq_tests_attempt1.log"
+  },
+  {
+   "name": "fq_tests_attempt2",
+   "command": ".venv/bin/python -m pytest tests/test_frequency_front.py -v -s",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T20:52:22Z",
+   "end_utc": "2026-10-17T20:52:34Z",
+   "elapsed_s": 12.057,
+   "git_head": "aa45cc2",
+   "log": "reports/logs/fq_tests_attempt2.log"
+  },
+  {
+   "name": "fq_tests_attempt3",
+   "command": ".venv/bin/python -m pytest tests/test_frequency_front.py -v -s",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T20:53:09Z",
+   "end_utc": "2026-10-17T20:53:20Z",
+   "elapsed_s": 11.544,
+   "git_head": "aa45cc2",
+   "log": "reports/logs/fq_tests_attempt3.log"
+  },
+  {
+   "name": "fq_tests_attempt4",
+   "command": ".venv/bin/python -m pytest tests/test_frequency_front.py -v -s",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T20:53:38Z",
+   "end_utc": "2026-10-17T20:53:48Z",
+   "elapsed_s": 10.968,
+   "git_head": "aa45cc2",
+   "log": "reports/logs/fq_tests_attempt4.log"
+  },
+  {
+   "name": "learnability_search_fa",
+   "command": ".venv/bin/python scripts/learnability_search_fa.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T20:56:10Z",
+   "end_utc": "2026-10-17T21:02:26Z",
+   "elapsed_s": 376.663,
+   "git_head": "396100c",
+   "log": "reports/logs/learnability_search_fa.log"
+  },
+  {
+   "name": "fq10_test",
+   "command": ".venv/bin/python -m pytest tests/test_frequency_front.py -q -k FQ10 or FQ6 or FQ5",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T21:03:15Z",
+   "end_utc": "2026-10-17T21:03:26Z",
+   "elapsed_s": 11.191,
+   "git_head": "396100c",
+   "log": "reports/logs/fq10_test.log"
+  },
+  {
+   "name": "revised_gate_fa",
+   "command": ".venv/bin/python -m pytest tests/test_learnability_fa.py -v -s",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T21:02:44Z",
+   "end_utc": "2026-10-17T21:05:39Z",
+   "elapsed_s": 174.506,
+   "git_head": "396100c",
+   "log": "reports/logs/revised_gate_fa.log"
+  },
+  {
+   "name": "confirmation_fa",
+   "command": ".venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa.json --seeds 111,112,113,114,115 --tag _fa",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T21:05:39Z",
+   "end_utc": "2026-10-17T21:08:14Z",
+   "elapsed_s": 154.962,
+   "git_head": "396100c",
+   "log": "reports/logs/confirmation_fa.log"
+  },
+  {
+   "name": "diag_r1_seeds",
+   "command": ".venv/bin/python scripts/diag_r1_seeds.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T21:08:44Z",
+   "end_utc": "2026-10-17T21:10:21Z",
+   "elapsed_s": 96.52,
+   "git_head": "396100c",
+   "log": "reports/logs/diag_r1_seeds.log"
+  },
+  {
+   "name": "diag_fa_overfitting",
+   "command": ".venv/bin/python scripts/diag_fa_overfitting.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T21:08:44Z",
+   "end_utc": "2026-10-17T21:14:52Z",
+   "elapsed_s": 368.02,
+   "git_head": "396100c",
+   "log": "reports/logs/diag_fa_overfitting.log"
+  },
+  {
+   "name": "exp_cmapss_B_v3_FD001",
+   "command": ".venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T20:56:50Z",
+   "end_utc": "2026-10-17T21:26:40Z",
+   "elapsed_s": 1790.318,
+   "git_head": "396100c",
+   "log": "reports/logs/exp_cmapss_B_v3_FD001.log"
+  },
+  {
+   "name": "diag_r1_seeds_profile_resume",
+   "command": ".venv/bin/python scripts/diag_r1_seeds.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T21:57:31Z",
+   "end_utc": "2026-10-17T21:57:53Z",
+   "elapsed_s": 22.216,
+   "git_head": "396100c",
+   "log": "reports/logs/diag_r1_seeds_profile_resume.log"
+  },
+  {
+   "name": "exp_cmapss_B_v3_FD003",
+   "command": ".venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3",
+   "exit_code": 0,
+   "start_utc": "2026-10-17T21:26:40Z",
+   "end_utc": "2026-10-17T22:05:45Z",
+   "elapsed_s": 2345.048,
+   "git_head": "396100c",
+   "log": "reports/logs/exp_cmapss_B_v3_FD003.log"
+  },
+  {
+   "name": "final_full_suite_round3",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-17T22:05:53Z",
+   "end_utc": "2026-10-17T22:26:08Z",
+   "elapsed_s": 1214.835,
+   "git_head": "396100c",
+   "log": "reports/logs/final_full_suite_round3.log"
   }
  ],
  "deliverables": {

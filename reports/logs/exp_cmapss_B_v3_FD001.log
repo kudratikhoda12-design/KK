@@ -1,0 +1,5 @@
+[cmapss_B split 0] done in 363.3s {'n_windows_train': 1111, 'n_windows_test': 333}
+[cmapss_B split 1] done in 356.1s {'n_windows_train': 1088, 'n_windows_test': 373}
+[cmapss_B split 2] done in 359.8s {'n_windows_train': 1056, 'n_windows_test': 373}
+[cmapss_B split 3] done in 343.3s {'n_windows_train': 1083, 'n_windows_test': 344}
+[cmapss_B split 4] done in 360.4s {'n_windows_train': 1028, 'n_windows_test': 399}

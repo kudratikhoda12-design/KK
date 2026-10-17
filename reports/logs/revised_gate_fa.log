@@ -1,0 +1,93 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 3 items
+
+tests/test_learnability_fa.py::test_R1_oracle_features_head R1: C = 0.8931, oracle C = 0.8956, sigma = 0.5707 (truth 0.5)
+FAILED
+tests/test_learnability_fa.py::test_R2_fae_mlp_end_to_end R2: C = 0.8189, oracle C = 0.8956; probe R2 (a,b,A,omega) = [0.819 0.459 0.721 0.865], mean 0.716; epochs [823]
+FAILED
+tests/test_learnability_fa.py::test_R3_censoring_awareness R3: survival-curve error aware [0.1144, 0.1235, 0.112] naive [0.14, 0.1409, 0.1525] ; C (aware, seed 0) = 0.8177
+R3: |C - C_R2| = 0.0013
+PASSED
+
+=================================== FAILURES ===================================
+_________________________ test_R1_oracle_features_head _________________________
+
+    @pytest.mark.criterion("R1")
+    def test_R1_oracle_features_head():
+        obs, ora, tr, va, te = _data(0.1, 0.0)
+        X = ora.theta[:, :4]
+        mu, sd = X[tr].mean(0), X[tr].std(0)
+        Xt = torch.tensor((X - mu) / sd)
+        ys = np.median(obs.y_obs[tr])
+        y, d = torch.tensor(obs.y_obs / ys), torch.tensor(obs.delta)
+        torch.manual_seed(0)
+        net = nn.Sequential(nn.Linear(4, 32), nn.SiLU(), nn.Linear(32, 32), nn.SiLU(), nn.Linear(32, 1))
+        rho = nn.Parameter(torch.tensor(0.0))
+        opt = torch.optim.Adam(list(net.parameters()) + [rho], lr=3e-3)
+        best, state, bad = np.inf, None, 0
+        for ep in range(3000):
+            opt.zero_grad()
+            loss = aft_nll(y[tr], d[tr], net(Xt[tr]).squeeze(-1), nn.functional.softplus(rho) + 1e-3)
+            loss.backward(); opt.step()
+            with torch.no_grad():
+                v = float(aft_nll(y[va], d[va], net(Xt[va]).squeeze(-1), nn.functional.softplus(rho) + 1e-3))
+            if v < best - 1e-6:
+                best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+            else:
+                bad += 1
+                if bad > 100:
+                    break
+        net.load_state_dict(state[0])
+        sigma = float(nn.functional.softplus(torch.tensor(state[1])) + 1e-3)
+        with torch.no_grad():
+            eta = net(Xt[te]).squeeze(-1).numpy()
+        c = harrell_c(obs.y_obs[te], obs.delta[te], -eta)
+        c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
+        print(f"R1: C = {c:.4f}, oracle C = {c_or:.4f}, sigma = {sigma:.4f} (truth 0.5)")
+>       assert c >= c_or - 0.02 and abs(sigma - 0.5) <= 0.05
+E       assert (np.float64(0.8931203007518796) >= (np.float64(0.8955639097744361) - 0.02) and 0.07074905689989797 <= 0.05)
+E        +  where 0.07074905689989797 = abs((0.570749056899898 - 0.5))
+
+tests/test_learnability_fa.py:66: AssertionError
+__________________________ test_R2_fae_mlp_end_to_end __________________________
+
+    @pytest.mark.criterion("R2")
+    def test_R2_fae_mlp_end_to_end():
+        obs, ora, tr, va, te = _data(0.05, 0.0)
+        m = NeuralAFT("fae_mlp", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)
+        risk = m.predict_risk(obs.subset(te))
+        c = harrell_c(obs.y_obs[te], obs.delta[te], risk)
+        c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
+        Ztr, Zte = m.latent(obs.subset(tr)), m.latent(obs.subset(te))
+        A = np.column_stack([np.ones(len(Ztr)), Ztr])
+        r2 = []
+        for j in range(4):
+            tgt = ora.theta[tr, j]
+            coef = np.linalg.solve(A.T @ A + 1e-3 * np.eye(A.shape[1]), A.T @ tgt)
+            pred = np.column_stack([np.ones(len(Zte)), Zte]) @ coef
+            yt = ora.theta[te, j]
+            r2.append(1 - np.sum((yt - pred) ** 2) / np.sum((yt - yt.mean()) ** 2))
+        GATE["R2_C"] = c
+        print(f"R2: C = {c:.4f}, oracle C = {c_or:.4f}; probe R2 (a,b,A,omega) = {np.round(r2, 3)}, mean {np.mean(r2):.3f}; "
+              f"epochs {[r['epochs'] for r in m.info['runs']]}")
+>       assert c >= c_or - 0.03
+E       assert np.float64(0.8189473684210526) >= (np.float64(0.8955639097744361) - 0.03)
+
+tests/test_learnability_fa.py:88: AssertionError
+=============================== warnings summary ===============================
+tests/test_learnability_fa.py::test_R1_oracle_features_head
+  /home/user/KK/tests/test_learnability_fa.py:54: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_learnability_fa.py::test_R1_oracle_features_head - assert (...
+FAILED tests/test_learnability_fa.py::test_R2_fae_mlp_end_to_end - assert np....
+============== 2 failed, 1 passed, 1 warning in 172.33s (0:02:52) ==============

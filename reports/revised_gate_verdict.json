@@ -1,0 +1,21 @@
+{
+ "gate_seed": 41,
+ "gate": {
+  "R1": false,
+  "R2": false,
+  "R3": true
+ },
+ "gate_R2_C": 0.8189,
+ "gate_R2_threshold": 0.8655999999999999,
+ "gate_probe": [
+  0.819,
+  0.459,
+  0.721,
+  0.865
+ ],
+ "gate_probe_mean": 0.716,
+ "confirmations_passed": 0,
+ "confirmations_total": 5,
+ "verdict": "NOT CONFIRMED",
+ "rule": "R1, R2, R3 pass on seed 41 and >= 4/5 of seeds 111-115 pass (D61)"
+}

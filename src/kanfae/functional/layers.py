@@ -221,11 +221,11 @@ class FrequencyAwareFunctional(TensorSplineFunctional):
     DELTA = 1e-4
 
     def __init__(self, n_channels, n_features, basis_x, basis_beta, grid=5, x_range=(-3.0, 3.0), seed=None,
-                 n_freq=33, f_range=(0.25, 4.0), fourier=False, windows=False, kappa0=4.0):
+                 n_freq=33, f_range=(0.25, 4.0), fourier=False, windows=False, kappa0=4.0, compact=False):
         super().__init__(n_channels, n_features, basis_x, basis_beta, grid, x_range, seed)
         dt = torch.get_default_dtype()
         self.freqs_np = np.geomspace(f_range[0], f_range[1], n_freq)
-        self.fourier, self.windows = fourier, windows
+        self.fourier, self.windows, self.compact = fourier, windows, compact
         z, wz = np.polynomial.legendre.leggauss(64)
         wins = [(0.0, 1.0)] + ([(0.0, 0.5), (0.5, 1.0)] if windows else [])
         M, M0, N = [], [], []
@@ -254,7 +254,7 @@ class FrequencyAwareFunctional(TensorSplineFunctional):
         self.register_buffer("N", torch.tensor(np.stack(N), dtype=dt))                      # (nw, K, K)
         self.register_buffer("freqs", torch.tensor(self.freqs_np, dtype=dt))
         nw, J = len(wins), n_freq
-        self.n_spec = n_channels * (2 * nw * J + 3 + (J if fourier else 0) + 1)
+        self.n_spec = n_channels * (5 if compact else 2 * nw * J + 3 + (J if fourier else 0) + 1)
         self.rho = nn.Parameter(torch.full((n_channels,), float(np.log(kappa0))))
         self.norm = nn.BatchNorm1d(self.n_spec, affine=False, momentum=None)
         gen = torch.Generator().manual_seed(seed + 17) if seed is not None else None
@@ -297,6 +297,9 @@ class FrequencyAwareFunctional(TensorSplineFunctional):
 
     def spectral_vector(self, c):
         R, en, fp = self.spectrum(c)
+        if self.compact:              # D65 diagnostic variant: f_hat, peak log gap, e0, e1, e2 per channel
+            peak = self.log_gap(R[:, :, 0, :]).max(-1).values
+            return torch.cat([self.soft_frequency(R).unsqueeze(-1), peak.unsqueeze(-1), en], -1).flatten(1)
         parts = [R.flatten(2), self.log_gap(R).flatten(2), en] + ([fp] if fp is not None else []) + \
             [self.soft_frequency(R).unsqueeze(-1)]
         return torch.cat(parts, -1).flatten(1)                        # (B, n_spec)

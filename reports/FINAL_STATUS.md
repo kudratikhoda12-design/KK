@@ -1,4 +1,41 @@
-# Final status: KAN-FAE research prototype, round 2 (2026-10-17)
+# Final status: KAN-FAE research prototype, round 3 (2026-10-17)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction). Report:
+`reports/final_research_prototype_report.pdf` (59 pages; Part A = round 3; Parts B/C = rounds 2/1, historical);
+all deliverable checks pass (`reports/logs/deliverable_verification.json`).
+
+## Revised learnability gate (owner option (c), D57; pre-registered D61)
+
+| Item | Result |
+|---|---|
+| New design | Frequency-aware front "fa" (phase-invariant projection spectrum, log gap, derivative energies, soft frequency); FQ-1..FQ-10 PASS |
+| Selected (validation only, seed 21) | `A5-fae_mlp-b36715d7` (fa, 17 frequencies, r = 12) |
+| Revised gate, fresh seed 41 | R1 FAIL (σ̂ 0.571; C passes); **R2 FAIL** (C 0.8189 < 0.8656; probe mean 0.716; **ω probe 0.865**, was ≈ 0); R3 PASS |
+| Fresh confirmations 111–115 | **0/5** |
+| Verdict | **NOT CONFIRMED**; H1/H2/H3/controls/ablations/KAN-FAE symbolic extraction remain BLOCKED (guard in code) |
+| Diagnosis | D65: the spectral block overfits (train–validation C gap 0.06–0.15); a compact 15-feature summary meets the probe criterion on validation (0.82) but C stays ~0.035 short. D66: R1's σ check fails on 8/12 seeds because σ has not converged at early stopping (profile σ̂ within ±0.05 on 12/12) |
+
+## Owner decisions applied
+
+- PBC (D58): E2 provisional primary, E1 sensitivity; interpretation and censoring assumptions stated; E3 future work.
+- C-MAPSS (D59/D62): Option B primary with engine-cluster bootstrap CIs, engine-weighted RMSE and band metrics
+  (FD001, FD003; v3 reproduces earlier estimates to ≤ 3e-7); Option A secondary.
+
+## Tests
+
+Final full suite (`final_full_suite_round3`): 198 passed, 2 failed (revised gate R1 and R2: the live, reported
+status of the current design), 1 expected failure (historical A3 gate, D64), 1 skipped (documented N/A).
+
+## Decisions requested
+
+1. Revision 4b (compact frequency summary + a fix for the survival-part generalisation gap), with its own
+   pre-registration and fresh seeds, or stop.
+2. Amend R1's σ check (e.g., profile MLE given the trained head) or keep it as registered.
+3. Confirm E2 with the professor.
+
+---
+
+# Round 2 status (2026-10-17), historical
 
 Everything is committed locally on branch `claude/blissful-faraday-2unozw`. **Nothing was pushed** (owner
 instruction). The global Python environment is unchanged (E-1, re-verified). The lock file reproduces exactly in a

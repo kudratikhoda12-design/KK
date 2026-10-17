@@ -193,3 +193,18 @@ def test_FQ9_frequency_information_on_synthetic_curves():
     share = 1 - ((e - Z @ np.linalg.lstsq(Z, e, rcond=None)[0]) ** 2).sum() / ((e - e.mean()) ** 2).sum()
     print(f"corr(f_hat, omega) = {r:.3f}; phase share of error = {share:.3f}")
     assert r >= 0.9 and share < 0.05
+
+
+@pytest.mark.criterion("FQ-10")
+def test_FQ10_compact_summary_is_consistent_with_full_spectrum():
+    """D65: the compact vector = [f_hat, max_j L, e0, e1, e2] per channel, computed from the same spectrum."""
+    b, bb = BSplineBasis(12), BSplineBasis(8)
+    full, comp = FrequencyAwareFunctional(3, 8, b, bb, seed=0), FrequencyAwareFunctional(3, 8, b, bb, seed=0, compact=True)
+    c = torch.randn(5, 3, 12)
+    with torch.no_grad():
+        v = comp.spectral_vector(c).view(5, 3, 5)
+        R, en, _ = full.spectrum(c)
+        torch.testing.assert_close(v[..., 0], full.soft_frequency(R), rtol=0, atol=0)
+        torch.testing.assert_close(v[..., 1], full.log_gap(R[:, :, 0]).max(-1).values, rtol=0, atol=0)
+        torch.testing.assert_close(v[..., 2:], en, rtol=0, atol=0)
+    assert comp.n_spec == 15 and comp(c).shape == (5, 8)

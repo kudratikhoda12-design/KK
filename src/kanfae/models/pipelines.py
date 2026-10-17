@@ -33,7 +33,7 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64
                 # confirmation runs (front "tspline", r = 8). Earlier designs: front "linear" (A0), "nonlinear" (A1, D38).
                 front="tspline", n_maps=5, pw_width=16,
                 # Revision 4 (D61): options of the frequency-aware front "fa" (used only when front == "fa").
-                fa_nfreq=33, fa_fourier=False, fa_windows=False,
+                fa_nfreq=33, fa_fourier=False, fa_windows=False, fa_compact=False,
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
@@ -99,7 +99,7 @@ class NeuralAFT(BaseModel):
             kh = (c["kan_hidden"] or w, c["kan_hidden"] or w)
         return FunctionalAE(D, self.pre.basis, c["n_beta"], c["H"], c["r"], block, c["hidden"], c["kan_grid"],
                             kh, c["head"], p_u, seed, c["front"], c["n_maps"], c["pw_width"], c["fa_nfreq"],
-                            c["fa_fourier"], c["fa_windows"])
+                            c["fa_fourier"], c["fa_windows"], c["fa_compact"])
 
     def _objective(self, T, parts):
         z, out, eta, sigma = self.model(T["inp"], T["u"])

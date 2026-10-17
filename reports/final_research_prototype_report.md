@@ -1,13 +1,668 @@
+<p class="small">Research prototype report, revision 3 · generated from saved records by
+<code>scripts/build_report_round3.py</code> · git <code>396100c</code> (local branch
+<code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
+publication-ready</b> · <b>no novelty claim</b>. Part A is round 3 (owner decisions D57–D59, frequency-aware
+representation, revised gate). Parts B and C are the round-2 and round-1 reports, kept as historical records;
+where they disagree, Part A supersedes them.</p>
+
+## 0. Round-3 summary (plain English)
+
+### 0.1 The revised learnability gate
+
+| | Result |
+|---|---|
+| New design (pre-registered, D61) | Frequency-aware functional front ("fa"): phase-invariant least-squares spectrum + derivative energies + soft frequency, on top of the A3 front |
+| Selected by the validation-only search | `A5-fae_mlp-b36715d7` |
+| Revised gate on **fresh** data (seed 41) | R2: C **0.8189** vs required 0.8656; probe mean 0.716 (ω probe **0.865**). See R3.3 for R1 and R3 |
+| Fresh confirmations (seeds 111–115) | **0/5 pass** |
+| Pre-registered verdict | **NOT CONFIRMED.** The KAN-vs-MLP comparison and everything downstream stay blocked (enforced in code) |
+
+**What we learned.**
+
+1. **The new representation fixed the specific defect it was designed for.** The oscillation frequency ω, never
+   decodable before (probe ≈ 0), is now decodable on every fresh seed (0.83–0.90). Phase explains only 0.2–1% of
+   the frequency estimate's error (tests FQ-2, FQ-9).
+2. **It created a new problem: overfitting.** The spectral block adds 114–408 inputs. Training C rises
+   (0.87–0.91) while validation and test C fall to 0.80–0.83. A3's train–validation gap was 0.011; the new front's
+   is 0.06–0.15.
+3. **The diagnostic (validation only) found a partial fix.**
+   - A compact phase-invariant summary (15 features) is the first configuration in the whole project to meet
+     the probe criterion on validation (0.82, with ω 0.88).
+   - Concordance still stays about 0.035 below what R2 requires.
+   - That variant is a new design (revision 4b). It has **not** been gate-tested, because it needs your approval
+     and its own pre-registration.
+4. **The gate's own R1 check is not robust.**
+   - R1 uses the *true* parameters as features. Its σ criterion fails on 8 of 12 seeds (only 4 pass).
+   - The cause is that σ has not converged when early stopping fires (R3.4).
+   - The original gate's R1 pass on seed 21 was a favourable draw.
+   - No threshold was changed. This needs your decision (R3.9).
+
+### 0.2 Owner decisions applied (D57–D59)
+
+| Decision | Applied as | Section |
+|---|---|---|
+| R2 recovery by option (c): a frequency-aware representation with a fresh gate | Pre-registered design, search, fresh gate (seed 41) and confirmation seeds 111–115; old results kept | R3.1–R3.4 |
+| PBC: E2 provisional primary, E1 sensitivity | E2 reported first and labelled *provisional primary*; E1 as sensitivity; interpretation and censoring assumptions stated; E3 future work | R3.5 |
+| C-MAPSS: Option B primary, Option A secondary | Option B reported first with engine-cluster bootstrap CIs, engine-weighted RMSE and per-landmark-band metrics; RUL kept separate from right-censored evaluation | R3.6 |
+
+### 0.3 Status of round-3 objectives
+
+| Objective | Status |
+|---|---|
+| Frequency-aware representation: mathematical definition and numerical tests | **COMPLETED**; FQ-1..FQ-10 PASS (repairs disclosed, D63) |
+| Pre-registration before the gate | **COMPLETED** (commit before any search fit) |
+| Validation-only search; revised gate on fresh seed; fresh confirmations | **COMPLETED; R2 FAILED** (NOT CONFIRMED) |
+| Diagnosis of the failure | **COMPLETED**: overfitting (D65), R1 seed sensitivity (D66) |
+| Matched MLP/KAN comparison (H1), reconstruction controls (H2), flattened AE (H3), ablations | **BLOCKED**: the conventional MLP has not passed the revised gate (owner rule, D57) |
+| Symbolic extraction for KAN-FAE (R² > 0.99) | **BLOCKED** (it requires a model that passed its gate) |
+| PBC endpoint reorganisation (E2 primary) | **COMPLETED** (reporting); clinical endpoint **provisional** pending the professor's confirmation |
+| C-MAPSS Option B primary with within-engine correlation | **COMPLETED** (FD001, FD003; v3 re-run) |
+| Full test suite after the changes | 202 tests: 198 passed, 2 failed, 1 expected failure (historical A3 gate, D64), 1 skipped |
+
+## R3.1 Motivation and diagnostic (before the design was fixed)
+
+The revision-4 design was **motivated by the earlier failures**. In rounds 1–2, every front end (A0–A4) failed R2,
+and ω was never linearly decodable. A diagnostic on the seed-21 **training split only** (D60) asked whether ω is
+recoverable from the curves the models actually see, and with which features.
+
+| Curves | Feature | Linear probe R² for ω (held out) | corr(estimate, ω) | Share of estimate error explained by phase |
+|---|---|---|---|---|
+| truth | Fixed Fourier power | 0.992 | 0.977 | 0.316 |
+| truth | Derivative-energy ratio (A4-type) | 0.929 | 0.957 | 0.339 |
+| truth | Quadrature-pair projection spectrum (new) | 1.000 | 0.997 | 0.005 |
+| smoothed_K12 | Fixed Fourier power | 0.941 | 0.956 | 0.190 |
+| smoothed_K12 | Derivative-energy ratio (A4-type) | 0.840 | 0.912 | 0.232 |
+| smoothed_K12 | Quadrature-pair projection spectrum (new) | 0.824 | 0.941 | 0.005 |
+
+**Reading.**
+- ω survives the 12-basis smoothing.
+- Fourier power and derivative energy recover ω only partly, because with at most two cycles their values depend
+  on the unknown phase (19–23% of the estimate's error on the smoothed curves).
+- The quadrature-pair projection spectrum is essentially phase-free (0.5%).
+
+## R3.2 The frequency-aware representation (definition and tests)
+
+The full definition is in `docs/design.md` §3.2c. In brief, for each smoothed channel `x_d(t)`:
+
+- **Projection spectrum.** `R_d(f) = (‖P_{1,t,sin 2πft,cos 2πft} x_d‖² − ‖P_{1,t} x_d‖²) / ‖x_d − P_{1,t} x_d‖²` on 17
+  or 33 log-spaced frequencies in [0.25, 4]. It is exact up to quadrature, computed as fixed quadratic forms
+  `cᵀ M_f c` of the spline coefficients.
+- **Log gap.** `L = −log(1 − R + 10⁻⁴)`, which separates the exact peak R = 1 from the low-frequency plateau that a
+  ≤ 2-cycle window produces.
+- **Derivative energies.** log ∫(x − trend)², log ∫x′², log ∫x″².
+- **Soft frequency.** `f̂_d = Σ_j f_j softmax(κ_d L_d(f_j))`.
+
+These are standardised with training statistics, mapped linearly and added to the A3 front. With the spectral
+weights at zero, the front equals A3 exactly (FQ-6).
+
+| Criterion | Test | Kind | Attempts | Failed attempts | Latest |
+|---|---|---|---|---|---|
+| FQ-1 | test_FQ1_quadratic_forms_match_dense_reference | DET | 5 | 0 | PASSED |
+| FQ-2 | test_FQ2_phase_invariance | DET | 5 | 2 | PASSED |
+| FQ-3 | test_FQ3_peak_at_true_frequency[8] | DET | 5 | 0 | PASSED |
+| FQ-3 | test_FQ3_peak_at_true_frequency[16] | DET | 5 | 1 | PASSED |
+| FQ-3 | test_FQ3_peak_at_true_frequency[24] | DET | 5 | 0 | PASSED |
+| FQ-4 | test_FQ4_scale_and_trend_invariance | DET | 5 | 3 | PASSED |
+| FQ-5 | test_FQ5_gradcheck | DET | 6 | 1 | PASSED |
+| FQ-6 | test_FQ6_reduces_to_A3_when_spectral_weights_are_zero | DET | 6 | 0 | PASSED |
+| FQ-7 | test_FQ7_spectral_cache_is_identity_checked | DET | 5 | 0 | PASSED |
+| FQ-8 | test_FQ8_discretisation_consistency | DET | 5 | 0 | PASSED |
+| FQ-9 | test_FQ9_frequency_information_on_synthetic_curves | STAT | 5 | 0 | PASSED |
+| FQ-10 | test_FQ10_compact_summary_is_consistent_with_full_spectrum | DET | 2 | 0 | PASSED |
+
+## R3.3 Pre-registered search, revised gate and confirmation
+
+**Search** (seed-21 train/validation only; the selection was restricted to "fa" variants; A3 was a reference only).
+
+| Step | Model | Configuration (other settings = A3 selection) | Seed | Train C | Val C | Train − val C | Val C − oracle | Val probe a / b / A / ω | Probe mean | Epochs |
+|---|---|---|---|---|---|---|---|---|---|---|
+| F1-front | fae_mlp | front=tspline, r=8, alpha=1.0 | 0 | 0.8547 | 0.8439 | 0.0108 | -0.0465 | 0.94 / 0.85 / 0.85 / -0.01 | 0.660 | 3000 |
+| F1-front | fae_mlp | front=fa, r=8, alpha=1.0 | 0 | 0.8825 | 0.8034 | 0.0791 | -0.0870 | 0.84 / 0.45 / 0.55 / 0.89 | 0.682 | 1047 |
+| F2-options | fae_mlp | front=fa, r=8, alpha=1.0, fa_fourier=True | 0 | 0.8984 | 0.7743 | 0.1241 | -0.1161 | 0.74 / 0.27 / 0.69 / 0.86 | 0.644 | 541 |
+| F2-options | fae_mlp | front=fa, r=8, alpha=1.0, fa_windows=True | 0 | 0.9071 | 0.7529 | 0.1542 | -0.1375 | 0.68 / 0.14 / 0.49 / 0.70 | 0.503 | 576 |
+| F3-nfreq | fae_mlp | front=fa, r=8, alpha=1.0, fa_nfreq=17 | 0 | 0.8793 | 0.8089 | 0.0704 | -0.0815 | 0.82 / 0.32 / 0.63 / 0.83 | 0.649 | 1178 |
+| F4-latent | fae_mlp | front=fa, r=12, alpha=1.0, fa_nfreq=17 | 0 | 0.8724 | 0.8088 | 0.0636 | -0.0816 | 0.81 / 0.36 / 0.68 / 0.84 | 0.673 | 1176 |
+| F5-alpha | fae_mlp | front=fa, r=12, alpha=0.1, fa_nfreq=17 | 0 | 0.8710 | 0.8114 | 0.0596 | -0.0790 | 0.72 / 0.35 / 0.63 / 0.63 | 0.581 | 835 |
+| F6-stability | fae_mlp | front=fa, r=12, alpha=1.0, fa_nfreq=17 | 1 | 0.8746 | 0.8153 | 0.0593 | -0.0751 | 0.87 / 0.62 / 0.72 / 0.83 | 0.760 | 1097 |
+| F6-stability | fae_mlp | front=fa, r=12, alpha=1.0, fa_nfreq=17 | 2 | 0.8680 | 0.8124 | 0.0556 | -0.0780 | 0.85 / 0.50 / 0.68 / 0.86 | 0.723 | 931 |
+| F7-encoder-info | fae_linear | front=fa, r=12, alpha=1.0, fa_nfreq=17 | 0 | 0.8368 | 0.8318 | 0.0049 | -0.0586 | 0.94 / 0.81 / 0.85 / 0.15 | 0.687 | 2266 |
+| F7-encoder-info | fae_kan | front=fa, r=12, alpha=1.0, fa_nfreq=17 | 0 | 0.9254 | 0.7621 | 0.1634 | -0.1283 | 0.77 / 0.29 / 0.60 / 0.79 | 0.613 | 509 |
+
+**Revised gate.** Seed 41 is genuinely fresh: it was never generated before. The test code and thresholds are
+those of the original gate, unchanged.
+
+| Criterion (seed 41, fresh) | Values vs unchanged thresholds | Outcome |
+|---|---|---|
+| R1 (oracle-feature head; representation not involved) | C 0.8931 ≥ 0.8756; |σ̂ − 0.5| = 0.0707 ≤ 0.05 | FAIL |
+| R2 (fae_mlp end to end) | C 0.8189 vs ≥ 0.8656; probe a / b / A / ω = 0.819 / 0.459 / 0.721 / 0.865, mean 0.716 vs ≥ 0.8 | FAIL |
+| R3 (censoring awareness) | aware [0.1144, 0.1235, 0.112] vs naive [0.14, 0.1409, 0.1525]; |C − C_R2| = 0.0013 ≤ 0.02 | PASS |
+
+**Fresh confirmations (seeds 111–115).**
+
+| Fresh seed | Test C | Threshold | C − threshold | Probe a / b / A / ω | Probe mean | Pass |
+|---|---|---|---|---|---|---|
+| 111 | 0.8154 | 0.8628 | -0.0474 | 0.812 / 0.499 / 0.602 / 0.845 | 0.690 | FAIL |
+| 112 | 0.7995 | 0.8584 | -0.0590 | 0.835 / 0.466 / 0.585 / 0.897 | 0.696 | FAIL |
+| 113 | 0.8116 | 0.8602 | -0.0487 | 0.851 / 0.519 / 0.667 / 0.869 | 0.727 | FAIL |
+| 114 | 0.8253 | 0.8667 | -0.0414 | 0.819 / 0.548 / 0.586 / 0.830 | 0.696 | FAIL |
+| 115 | 0.8261 | 0.8688 | -0.0427 | 0.835 / 0.516 / 0.726 / 0.888 | 0.741 | FAIL |
+| **Total** |  |  |  |  |  | **0/5** |
+
+**All gate looks so far.**
+
+| Design | Gate seed | R2 test C | Threshold | Probe mean | ω probe | R2 |
+|---|---|---|---|---|---|---|
+| Original design, attempt 1 | 21 | 0.7545 | 0.8636 | 0.398 | 0.022 | FAIL |
+| Original design, repair 1 (epochs) | 21 | 0.8050 | 0.8636 | 0.404 | 0.035 | FAIL |
+| Original design, repair 2 (capacity) | 21 | 0.8361 | 0.8636 | 0.471 | 0.166 | FAIL |
+| Revision 3: NFL front | 21 | 0.8461 | 0.8636 | 0.509 | 0.200 | FAIL |
+| D41-selected configuration [SUPERSEDED, D53 cache defect] | 21 | 0.8497 | 0.8636 | 0.663 | 0.014 | FAIL |
+| After D46 extension, same config [SUPERSEDED, D53] | 21 | 0.8497 | 0.8636 | 0.663 | 0.014 | FAIL |
+| A3 configuration, recomputed with the fixed cache | 21 | 0.8497 | 0.8636 | 0.663 | 0.014 | FAIL |
+| Revision 4: frequency-aware front (D61) | 41 (fresh) | 0.8189 | 0.8656 | 0.716 | 0.865 | FAIL |
+
+## R3.4 Diagnosis of the failure
+
+**(a) Overfitting of the spectral block (D65; seed-21 train/validation only; not a selection and not a gate).**
+
+![Overfitting](figures/fig_r4_overfitting.png)
+
+| Diagnostic variant | Model | Train C | Val C | Train − val | Val C − oracle | Val probe a / b / A / ω | Probe mean | Epochs |
+|---|---|---|---|---|---|---|---|---|
+| compact_J17_r8 | fae_mlp | 0.8767 | 0.8328 | 0.0440 | -0.0576 | 0.86 / 0.62 / 0.70 / 0.87 | 0.761 | 1214 |
+| compact_J17_r8 | fae_kan | 0.8943 | 0.7936 | 0.1006 | -0.0967 | 0.85 / 0.38 / 0.72 / 0.34 | 0.574 | 812 |
+| compact_J17_r12 | fae_mlp | 0.8827 | 0.8212 | 0.0615 | -0.0692 | 0.91 / 0.74 / 0.74 / 0.88 | 0.820 | 1162 |
+| compact_J17_r12 | fae_kan | 0.8809 | 0.8015 | 0.0795 | -0.0889 | 0.86 / 0.55 / 0.73 / 0.88 | 0.755 | 1071 |
+| compact_J33_r12 | fae_mlp | 0.8812 | 0.8253 | 0.0559 | -0.0651 | 0.90 / 0.70 / 0.77 / 0.86 | 0.807 | 1088 |
+| compact_J33_r12 | fae_kan | 0.8741 | 0.8154 | 0.0587 | -0.0750 | 0.84 / 0.55 / 0.78 / 0.88 | 0.764 | 916 |
+| full_J17_r12_wd1e-3 | fae_mlp | 0.8704 | 0.8179 | 0.0525 | -0.0725 | 0.79 / 0.46 / 0.67 / 0.86 | 0.694 | 1457 |
+| full_J17_r12_wd1e-3 | fae_kan | 0.8982 | 0.7699 | 0.1283 | -0.1205 | 0.81 / 0.44 / 0.61 / 0.62 | 0.620 | 521 |
+
+**Reading.**
+- Every "fa" variant fits the training data better than A3 but validates worse.
+- Shrinking the spectral block to a 15-feature compact summary narrows the gap.
+  - With r = 12 it meets the probe criterion on validation (mean 0.820; ω 0.88).
+  - Its validation C (0.82–0.83) remains about 0.035 below oracle − 0.03.
+- Global weight decay does not help.
+- The KAN encoder overfits more than the MLP in every variant. This is information only; H1 is not tested.
+- **Conclusion: on validation, the remaining obstacle to R2 is concordance (generalisation of the survival part),
+  not the frequency information.**
+
+**(b) R1 seed sensitivity (D66).**
+
+![R1 sigma](figures/fig_r1_sigma.png)
+
+ This is the identical R1 procedure (true parameters as inputs; the representation
+is not involved) run on 12 seeds.
+
+| Data seed | C | Oracle C | σ̂ at early stop (truth 0.5) | Profile σ̂ (η fixed) | Epochs | η fit R² (train) | C criterion | σ criterion (as registered) | Profile σ̂ within ±0.05 (information only) |
+|---|---|---|---|---|---|---|---|---|---|
+| 21 | 0.8910 | 0.8936 | 0.4816 | 0.4592 | 2344 | 0.991 | yes | yes | yes |
+| 41 | 0.8931 | 0.8956 | 0.5707 | 0.4951 | 1571 | 0.992 | yes | no | yes |
+| 501 | 0.8802 | 0.8874 | 0.5672 | 0.4946 | 1780 | 0.994 | yes | no | yes |
+| 502 | 0.8898 | 0.8940 | 0.5485 | 0.4814 | 1780 | 0.991 | yes | yes | yes |
+| 503 | 0.8874 | 0.8882 | 0.5677 | 0.4903 | 1679 | 0.995 | yes | no | yes |
+| 504 | 0.9003 | 0.9020 | 0.5821 | 0.4786 | 1389 | 0.994 | yes | no | yes |
+| 505 | 0.8865 | 0.8907 | 0.5285 | 0.4784 | 1906 | 0.992 | yes | yes | yes |
+| 506 | 0.8821 | 0.8845 | 0.5523 | 0.4901 | 1840 | 0.995 | yes | no | yes |
+| 507 | 0.8920 | 0.8946 | 0.5615 | 0.4878 | 1507 | 0.994 | yes | no | yes |
+| 508 | 0.8734 | 0.8785 | 0.5555 | 0.4868 | 2013 | 0.992 | yes | no | yes |
+| 509 | 0.8843 | 0.8859 | 0.6574 | 0.5231 | 1053 | 0.996 | yes | no | yes |
+| 510 | 0.8847 | 0.8858 | 0.5383 | 0.4732 | 1677 | 0.992 | yes | yes | yes |
+
+**Reading.**
+- The C criterion passes on every seed.
+- The σ criterion fails on most seeds, and σ̂ falls as the stopping epoch rises.
+- The profile MLE of σ, with the learned η held fixed, separates two explanations:
+  - non-convergence at the early-stopping epoch;
+  - a genuine misfit.
+- The σ̂ at early stopping correlates −0.91 with the stopping epoch, while the profile σ̂ lies within ±0.05 of the
+  truth on **12 of 12 seeds** (mean 0.487).
+- **The likelihood and the oracle head are sound. The registered σ check fails because σ, initialised at 0.69, has
+  not converged when early stopping on the validation NLL fires.** The R1 threshold was not changed.
+
+## R3.5 PBC: E2 provisional primary endpoint, E1 sensitivity (D58)
+
+**E2: death or transplantation (transplant-free survival). Provisional primary endpoint.**
+- *Interpretation:* time until the native liver fails (death or need for transplantation).
+- *Censoring:* alive without transplant at last follow-up, assumed non-informative given the landmark covariates
+  (CA-1).
+- Transplantation is part of the event, so no assumption about transplant selection is needed.
+- **Not claimed as a definitive clinical endpoint until confirmed with the owner's professor.**
+
+| Model | IBS (marginal KM) ↓ | IBS (conditional IPCW) ↓ | Uno C ↑ | Harrell C ↑ | D-cal p | n |
+|---|---|---|---|---|---|---|
+| FPCA + AFT | 0.133 ± 0.018 | 0.139 ± 0.024 | 0.800 ± 0.017 | 0.827 ± 0.019 | 0.83 ± 0.18 | 5 |
+| FPCA + Cox | 0.135 ± 0.022 | 0.141 ± 0.029 | 0.797 ± 0.015 | 0.824 ± 0.016 | 0.91 ± 0.07 | 5 |
+| Summary + AFT | 0.138 ± 0.036 | 0.143 ± 0.039 | 0.787 ± 0.022 | 0.832 ± 0.017 | 0.81 ± 0.18 | 5 |
+| Summary + Cox | 0.135 ± 0.029 | 0.140 ± 0.034 | 0.787 ± 0.010 | 0.830 ± 0.011 | 0.82 ± 0.19 | 5 |
+| Summary + RSF | 0.140 ± 0.029 | 0.144 ± 0.035 | 0.811 ± 0.033 | 0.846 ± 0.019 | 0.73 ± 0.25 | 5 |
+| KM null (reference) | 0.222 ± 0.022 | 0.222 ± 0.026 | 0.500 ± 0.000 | 0.500 ± 0.000 | 0.78 ± 0.22 | 5 |
+
+KAN-AFT vs linear AFT on the same 8 inputs, per split:
+
+| Split | Test events | IBS linear AFT | IBS KAN-AFT | IBS KAN formulas | Cond. IBS linear | Cond. IBS KAN | Uno C linear | Uno C KAN |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 27 | 0.1042 | 0.1089 | 0.1059 | 0.1035 | 0.1072 | 0.798 | 0.804 |
+| 1 | 27 | 0.1201 | 0.1152 | 0.1147 | 0.1206 | 0.1144 | 0.817 | 0.841 |
+| 2 | 27 | 0.1239 | 0.1135 | 0.1136 | 0.1264 | 0.1172 | 0.779 | 0.798 |
+| 3 | 27 | 0.1499 | 0.1532 | 0.1521 | 0.1638 | 0.1695 | 0.786 | 0.786 |
+| 4 | 27 | 0.1409 | 0.1455 | 0.1467 | 0.1587 | 0.1608 | 0.814 | 0.784 |
+
+**E1: death with transplant censored (sensitivity analysis).**
+- *Interpretation:* hypothetical survival had transplantation not been available.
+- *Requires:* CA-1 for transplant, i.e. transplant unrelated to prognosis given the covariates. This is clinically
+  doubtful, because patients are selected by severity.
+
+| Model | IBS (marginal KM) ↓ | IBS (conditional IPCW) ↓ | Uno C ↑ | Harrell C ↑ | D-cal p | n |
+|---|---|---|---|---|---|---|
+| FPCA + AFT | 0.118 ± 0.012 | 0.116 ± 0.012 | 0.801 ± 0.057 | 0.836 ± 0.031 | 0.88 ± 0.15 | 5 |
+| FPCA + Cox | 0.116 ± 0.007 | 0.114 ± 0.009 | 0.812 ± 0.051 | 0.845 ± 0.026 | 0.88 ± 0.24 | 5 |
+| Summary + AFT | 0.123 ± 0.013 | 0.121 ± 0.012 | 0.811 ± 0.042 | 0.841 ± 0.024 | 0.68 ± 0.39 | 5 |
+| Summary + Cox | 0.120 ± 0.020 | 0.118 ± 0.019 | 0.810 ± 0.061 | 0.841 ± 0.035 | 0.87 ± 0.16 | 5 |
+| Summary + RSF | 0.129 ± 0.013 | 0.129 ± 0.016 | 0.791 ± 0.047 | 0.831 ± 0.038 | 0.86 ± 0.12 | 5 |
+| KM null (reference) | 0.204 ± 0.011 | 0.202 ± 0.010 | 0.500 ± 0.000 | 0.500 ± 0.000 | 0.85 ± 0.20 | 5 |
+
+| Split | Test events | IBS linear AFT | IBS KAN-AFT | IBS KAN formulas | Cond. IBS linear | Cond. IBS KAN | Uno C linear | Uno C KAN |
+|---|---|---|---|---|---|---|---|---|
+| 0 | 22 | 0.1180 | 0.1258 | 0.1264 | 0.1165 | 0.1224 | 0.739 | 0.757 |
+| 1 | 22 | 0.0888 | 0.0854 | 0.0869 | 0.0917 | 0.0871 | 0.849 | 0.866 |
+| 2 | 22 | 0.1298 | 0.1247 | 0.1247 | 0.1287 | 0.1269 | 0.808 | 0.817 |
+| 3 | 22 | 0.1178 | 0.1181 | 0.1187 | 0.1244 | 0.1233 | 0.816 | 0.814 |
+| 4 | 22 | 0.1054 | 0.1143 | 0.1165 | 0.0959 | 0.1051 | 0.837 | 0.817 |
+
+**Paired KAN-AFT − linear AFT differences (both endpoints).**
+
+| Endpoint | Metric | Linear AFT (mean) | KAN-AFT (mean) | KAN − linear (mean ± sd over splits) | Splits where KAN better |
+|---|---|---|---|---|---|
+| E1 | IBS | 0.1120 | 0.1136 | +0.0017 ± 0.0064 | 2/5 |
+| E1 | Conditional IBS | 0.1114 | 0.1130 | +0.0015 ± 0.0058 | 3/5 |
+| E1 | Uno C | 0.8099 | 0.8144 | +0.0044 ± 0.0157 | 3/5 |
+| E2 | IBS | 0.1278 | 0.1273 | -0.0005 ± 0.0068 | 2/5 |
+| E2 | Conditional IBS | 0.1346 | 0.1338 | -0.0008 ± 0.0065 | 2/5 |
+| E2 | Uno C | 0.7986 | 0.8028 | +0.0041 ± 0.0214 | 4/5 |
+
+**E3 (competing risks: death vs transplant)** remains future work. A properly specified cause-specific or
+Fine–Gray analysis would be needed first.
+
+## R3.6 C-MAPSS: Option B primary RUL benchmark, Option A secondary (D59, D62)
+
+**Option B (trailing 30-cycle windows every 10 cycles; landmark s as a covariate). Primary.**
+- *Evaluation:* the internal test engines, plus the official test set (last window per engine).
+- *Within-engine correlation:* windows from the same engine are correlated, so uncertainty comes from an
+  **engine-cluster bootstrap** (test engines resampled with replacement, 1000 resamples), and the engine-weighted
+  RMSE gives each engine equal weight.
+- *Framing:* C-MAPSS has no genuine right censoring. These are RUL-benchmark metrics, separate from the
+  right-censored evaluation on PBC.
+
+**FD001**
+
+| Model | RUL RMSE ↓ | Engine-weighted RMSE ↓ | RUL MAE ↓ | Harrell C ↑ | Official-test RMSE ↓ | n |
+|---|---|---|---|---|---|---|
+| FPCA + AFT | 37.2 ± 5.8 | 35.3 ± 4.3 | 25.6 ± 3.6 | 0.860 ± 0.015 | 29.4 ± 1.9 | 5 |
+| FPCA + Cox | 37.2 ± 6.5 | 34.9 ± 4.7 | 25.5 ± 4.1 | 0.860 ± 0.015 | 28.0 ± 1.9 | 5 |
+| Summary + AFT | 35.2 ± 6.1 | 33.1 ± 4.1 | 24.1 ± 3.7 | 0.865 ± 0.013 | 27.2 ± 2.0 | 5 |
+| Summary + Cox | 36.3 ± 6.0 | 34.0 ± 4.4 | 24.5 ± 3.8 | 0.864 ± 0.013 | 28.0 ± 1.6 | 5 |
+| Summary + RSF | 34.2 ± 10.2 | 30.9 ± 7.5 | 22.5 ± 5.6 | 0.865 ± 0.021 | 18.9 ± 1.6 | 5 |
+| KM null (reference) | 63.4 ± 8.1 | 59.2 ± 5.8 | 51.6 ± 5.2 | 0.500 ± 0.000 | 44.2 ± 0.8 | 5 |
+
+Per split, with engine-cluster 95% CIs:
+
+| Model | Split | Test engines | RMSE [engine-cluster 95% CI] | MAE [CI] | Harrell C [CI] |
+|---|---|---|---|---|---|
+| FPCA + AFT | 0 | 20 | 35.4 [28.4, 42.1] | 24.6 [19.9, 29.5] | 0.873 [0.855, 0.904] |
+| FPCA + AFT | 1 | 20 | 36.5 [29.3, 43.0] | 25.3 [20.5, 30.7] | 0.868 [0.849, 0.893] |
+| FPCA + AFT | 2 | 20 | 38.8 [32.5, 45.0] | 27.1 [21.8, 32.8] | 0.840 [0.818, 0.868] |
+| FPCA + AFT | 3 | 20 | 29.6 [26.5, 32.4] | 20.6 [18.2, 22.7] | 0.872 [0.857, 0.893] |
+| FPCA + AFT | 4 | 20 | 45.6 [29.4, 56.9] | 30.3 [20.3, 39.2] | 0.848 [0.832, 0.880] |
+| FPCA + Cox | 0 | 20 | 34.9 [26.8, 42.6] | 24.4 [19.2, 30.1] | 0.872 [0.853, 0.905] |
+| FPCA + Cox | 1 | 20 | 36.4 [28.7, 43.3] | 25.1 [19.9, 30.5] | 0.867 [0.850, 0.892] |
+| FPCA + Cox | 2 | 20 | 38.8 [32.2, 45.0] | 26.7 [21.2, 32.3] | 0.842 [0.820, 0.870] |
+| FPCA + Cox | 3 | 20 | 29.2 [25.4, 32.6] | 20.0 [17.6, 22.1] | 0.872 [0.858, 0.892] |
+| FPCA + Cox | 4 | 20 | 46.9 [29.0, 59.3] | 31.2 [20.4, 41.2] | 0.845 [0.830, 0.879] |
+| Summary + AFT | 0 | 20 | 34.2 [26.4, 41.7] | 23.5 [18.2, 29.1] | 0.873 [0.857, 0.901] |
+| Summary + AFT | 1 | 20 | 34.0 [28.0, 40.5] | 23.5 [19.6, 28.2] | 0.872 [0.857, 0.893] |
+| Summary + AFT | 2 | 20 | 35.0 [29.6, 40.1] | 24.7 [20.7, 29.0] | 0.850 [0.832, 0.875] |
+| Summary + AFT | 3 | 20 | 28.0 [24.3, 31.3] | 19.3 [16.7, 21.7] | 0.876 [0.862, 0.893] |
+| Summary + AFT | 4 | 20 | 44.8 [27.4, 56.3] | 29.7 [18.8, 39.3] | 0.852 [0.839, 0.887] |
+| Summary + Cox | 0 | 20 | 34.3 [26.2, 42.2] | 23.4 [17.8, 29.3] | 0.873 [0.856, 0.902] |
+| Summary + Cox | 1 | 20 | 35.1 [28.9, 41.8] | 23.8 [19.7, 28.4] | 0.873 [0.858, 0.894] |
+| Summary + Cox | 2 | 20 | 37.1 [31.4, 42.4] | 25.3 [21.0, 29.9] | 0.852 [0.833, 0.877] |
+| Summary + Cox | 3 | 20 | 29.2 [24.9, 32.9] | 19.8 [17.0, 22.3] | 0.875 [0.861, 0.892] |
+| Summary + Cox | 4 | 20 | 45.7 [28.8, 57.2] | 30.3 [19.8, 39.8] | 0.849 [0.835, 0.882] |
+| Summary + RSF | 0 | 20 | 35.6 [23.3, 48.4] | 23.4 [17.2, 31.4] | 0.869 [0.843, 0.908] |
+| Summary + RSF | 1 | 20 | 31.7 [22.4, 40.1] | 21.3 [16.3, 26.9] | 0.876 [0.855, 0.901] |
+| Summary + RSF | 2 | 20 | 32.3 [24.5, 39.1] | 22.1 [16.8, 27.5] | 0.834 [0.813, 0.869] |
+| Summary + RSF | 3 | 20 | 21.7 [17.0, 25.9] | 15.0 [12.2, 17.8] | 0.889 [0.870, 0.913] |
+| Summary + RSF | 4 | 20 | 49.8 [26.8, 64.5] | 30.8 [17.8, 42.4] | 0.856 [0.834, 0.898] |
+| KM null (reference) | 0 | 20 | 61.3 [49.9, 73.4] | 49.3 [42.2, 57.5] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 1 | 20 | 64.9 [53.3, 76.8] | 52.7 [44.9, 60.7] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 2 | 20 | 59.8 [52.9, 66.4] | 49.9 [45.0, 54.8] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 3 | 20 | 54.7 [50.2, 59.6] | 46.1 [42.8, 49.9] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 4 | 20 | 76.3 [59.1, 90.8] | 59.8 [48.5, 70.5] | 0.500 [0.500, 0.500] |
+
+By landmark band (mean over splits, the range over splits, and the mean engine-cluster CI width):
+
+| Model | RMSE, landmark s ∈ [30, 100) | s ∈ [100, 200) | s ≥ 200 |
+|---|---|---|---|
+| FPCA + AFT | 49.8 (splits 37.6–61.9); CI width 22.1 | 28.9 (splits 24.2–37.2); CI width 16.1 | 12.7 (splits 5.1–22.8); CI width 10.5 |
+| FPCA + Cox | 50.3 (splits 38.1–63.2); CI width 23.8 | 28.3 (splits 22.5–38.7); CI width 17.3 | 13.4 (splits 5.0–24.4); CI width 11.5 |
+| Summary + AFT | 47.2 (splits 35.5–60.6); CI width 22.5 | 27.2 (splits 22.9–36.8); CI width 15.7 | 12.9 (splits 4.6–23.0); CI width 11.1 |
+| Summary + Cox | 49.5 (splits 38.2–62.2); CI width 22.8 | 26.9 (splits 22.4–37.2); CI width 16.2 | 13.1 (splits 4.9–22.9); CI width 11.1 |
+| Summary + RSF | 47.0 (splits 29.5–68.3); CI width 32.5 | 25.3 (splits 14.8–41.1); CI width 18.1 | 10.8 (splits 5.9–19.3); CI width 8.6 |
+| KM null (reference) | 75.8 (splits 60.0–100.6); CI width 41.5 | 52.7 (splits 44.9–62.1); CI width 17.1 | 62.2 (splits 51.5–72.0); CI width 18.7 |
+
+**FD003** (single operating condition, two fault modes)
+
+| Model | RUL RMSE ↓ | Engine-weighted RMSE ↓ | RUL MAE ↓ | Harrell C ↑ | Official-test RMSE ↓ | n |
+|---|---|---|---|---|---|---|
+| FPCA + AFT | 76.1 ± 10.2 | 70.4 ± 14.3 | 45.1 ± 5.2 | 0.861 ± 0.010 | 39.6 ± 5.4 | 5 |
+| FPCA + Cox | 74.5 ± 6.8 | 68.7 ± 9.3 | 44.9 ± 6.5 | 0.859 ± 0.012 | 38.6 ± 5.1 | 5 |
+| Summary + AFT | 69.2 ± 7.9 | 63.4 ± 9.0 | 43.0 ± 5.6 | 0.868 ± 0.015 | 43.4 ± 5.3 | 5 |
+| Summary + Cox | 74.9 ± 7.1 | 68.8 ± 10.2 | 43.8 ± 6.0 | 0.866 ± 0.015 | 42.5 ± 5.4 | 5 |
+| Summary + RSF | 64.3 ± 11.6 | 56.3 ± 7.0 | 38.3 ± 8.0 | 0.879 ± 0.016 | 30.0 ± 3.9 | 5 |
+| KM null (reference) | 104.7 ± 23.9 | 88.4 ± 16.3 | 79.0 ± 15.3 | 0.500 ± 0.000 | 54.4 ± 3.1 | 5 |
+
+| Model | Split | Test engines | RMSE [engine-cluster 95% CI] | MAE [CI] | Harrell C [CI] |
+|---|---|---|---|---|---|
+| FPCA + AFT | 0 | 20 | 67.8 [49.4, 81.2] | 45.6 [32.6, 57.0] | 0.848 [0.820, 0.882] |
+| FPCA + AFT | 1 | 20 | 92.4 [56.1, 123.9] | 48.1 [31.3, 66.7] | 0.861 [0.822, 0.906] |
+| FPCA + AFT | 2 | 20 | 77.1 [34.9, 119.2] | 36.7 [24.1, 53.7] | 0.873 [0.846, 0.901] |
+| FPCA + AFT | 3 | 20 | 67.4 [51.8, 80.5] | 44.8 [35.1, 54.2] | 0.859 [0.828, 0.887] |
+| FPCA + AFT | 4 | 20 | 75.6 [49.0, 92.9] | 50.4 [30.3, 67.3] | 0.867 [0.850, 0.892] |
+| FPCA + Cox | 0 | 20 | 68.5 [48.2, 83.6] | 46.8 [32.4, 59.2] | 0.841 [0.811, 0.879] |
+| FPCA + Cox | 1 | 20 | 83.0 [49.7, 114.7] | 45.5 [30.2, 63.2] | 0.858 [0.818, 0.906] |
+| FPCA + Cox | 2 | 20 | 67.8 [34.2, 104.7] | 34.5 [23.5, 49.6] | 0.874 [0.846, 0.903] |
+| FPCA + Cox | 3 | 20 | 73.3 [52.6, 92.3] | 45.4 [34.5, 55.7] | 0.859 [0.829, 0.889] |
+| FPCA + Cox | 4 | 20 | 79.9 [51.0, 97.9] | 52.5 [30.9, 70.2] | 0.861 [0.844, 0.888] |
+| Summary + AFT | 0 | 20 | 69.9 [46.7, 86.5] | 46.2 [31.2, 59.6] | 0.851 [0.824, 0.887] |
+| Summary + AFT | 1 | 20 | 79.2 [51.7, 102.9] | 45.9 [31.4, 61.5] | 0.858 [0.817, 0.904] |
+| Summary + AFT | 2 | 20 | 58.7 [34.5, 86.2] | 33.2 [23.5, 46.0] | 0.881 [0.851, 0.909] |
+| Summary + AFT | 3 | 20 | 64.7 [49.8, 77.9] | 43.2 [34.0, 52.2] | 0.866 [0.839, 0.894] |
+| Summary + AFT | 4 | 20 | 73.5 [45.3, 91.3] | 46.6 [27.3, 62.5] | 0.885 [0.868, 0.905] |
+| Summary + Cox | 0 | 20 | 69.6 [46.0, 87.3] | 45.8 [30.3, 60.0] | 0.849 [0.820, 0.886] |
+| Summary + Cox | 1 | 20 | 83.0 [51.2, 112.3] | 46.0 [31.2, 62.5] | 0.855 [0.813, 0.903] |
+| Summary + Cox | 2 | 20 | 66.0 [33.8, 102.2] | 33.3 [22.8, 47.4] | 0.880 [0.850, 0.908] |
+| Summary + Cox | 3 | 20 | 80.2 [52.4, 104.8] | 46.5 [35.0, 58.9] | 0.864 [0.838, 0.892] |
+| Summary + Cox | 4 | 20 | 75.7 [45.7, 94.5] | 47.6 [27.3, 64.4] | 0.883 [0.867, 0.903] |
+| Summary + RSF | 0 | 20 | 65.7 [39.3, 84.2] | 40.0 [24.0, 54.6] | 0.872 [0.845, 0.901] |
+| Summary + RSF | 1 | 20 | 65.2 [41.8, 85.4] | 37.4 [24.6, 51.4] | 0.865 [0.832, 0.911] |
+| Summary + RSF | 2 | 20 | 46.5 [26.2, 67.8] | 25.8 [17.5, 36.6] | 0.889 [0.864, 0.918] |
+| Summary + RSF | 3 | 20 | 64.9 [45.6, 81.2] | 40.5 [29.8, 51.6] | 0.868 [0.840, 0.899] |
+| Summary + RSF | 4 | 20 | 79.1 [49.3, 97.4] | 47.9 [27.7, 65.0] | 0.902 [0.882, 0.919] |
+| KM null (reference) | 0 | 20 | 113.7 [62.1, 142.4] | 81.9 [52.4, 105.1] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 1 | 20 | 76.6 [65.1, 88.9] | 62.5 [54.4, 71.6] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 2 | 20 | 81.8 [60.7, 102.4] | 63.7 [50.9, 78.6] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 3 | 20 | 123.6 [93.0, 146.5] | 94.0 [72.2, 111.7] | 0.500 [0.500, 0.500] |
+| KM null (reference) | 4 | 20 | 128.0 [86.8, 153.0] | 92.8 [63.8, 115.4] | 0.500 [0.500, 0.500] |
+
+| Model | RMSE, landmark s ∈ [30, 100) | s ∈ [100, 200) | s ≥ 200 |
+|---|---|---|---|
+| FPCA + AFT | 108.4 (splits 91.5–135.6); CI width 88.8 | 63.8 (splits 39.9–74.8); CI width 46.8 | 33.8 (splits 18.8–59.6); CI width 20.8 |
+| FPCA + Cox | 108.1 (splits 91.9–125.3); CI width 91.0 | 61.1 (splits 39.6–73.6); CI width 40.2 | 35.3 (splits 19.0–62.5); CI width 22.1 |
+| Summary + AFT | 98.2 (splits 86.2–116.4); CI width 73.1 | 60.8 (splits 42.4–71.0); CI width 41.1 | 31.8 (splits 16.2–50.4); CI width 20.2 |
+| Summary + Cox | 110.9 (splits 96.9–133.4); CI width 95.9 | 60.9 (splits 42.1–73.5); CI width 41.0 | 32.6 (splits 16.0–52.4); CI width 21.3 |
+| Summary + RSF | 94.2 (splits 70.9–110.3); CI width 74.9 | 55.0 (splits 29.0–74.9); CI width 44.7 | 27.5 (splits 13.4–44.3); CI width 22.3 |
+| KM null (reference) | 130.9 (splits 90.4–176.7); CI width 96.6 | 100.1 (splits 65.4–126.9); CI width 61.3 | 82.4 (splits 75.1–92.1); CI width 21.8 |
+
+**Option A (single landmark; secondary)** for FD001. FD003 Option A is in Part B, §R2.8.
+
+| Model | IBS ↓ | Harrell C ↑ | RUL RMSE internal ↓ | RUL MAE internal ↓ | RUL RMSE official ↓ | n official | n |
+|---|---|---|---|---|---|---|---|
+| FPCA + AFT | 0.064 ± 0.017 | 0.884 ± 0.011 | 18.4 ± 4.9 | 12.4 ± 3.1 | 23.0 ± 1.2 | 55 ± 3 | 5 |
+| FPCA + Cox | 0.061 ± 0.016 | 0.885 ± 0.012 | 17.9 ± 5.9 | 12.6 ± 3.4 | 39.5 ± 12.4 | 55 ± 3 | 5 |
+| Summary + AFT | 0.112 ± 0.047 | 0.853 ± 0.063 | 25.0 ± 5.7 | 17.6 ± 3.8 | 45.0 ± 16.1 | 55 ± 3 | 5 |
+| Summary + Cox | 0.067 ± 0.036 | 0.901 ± 0.055 | 18.2 ± 8.4 | 11.9 ± 4.5 | 25.6 ± 2.0 | 55 ± 3 | 5 |
+| Summary + RSF | 0.101 ± 0.032 | 0.838 ± 0.070 | 28.2 ± 14.9 | 19.4 ± 8.7 | 33.1 ± 5.5 | 55 ± 3 | 5 |
+| KM null (reference) | 0.198 ± 0.011 | 0.500 ± 0.000 | 47.5 ± 13.9 | 34.6 ± 8.9 | 54.1 ± 1.3 | 55 ± 3 | 5 |
+
+## R3.7 Decisions in round 3 (D57–D66)
+
+| ID | Decision | Status | Content | Rationale |
+|---|---|---|---|---|
+| D57 | **Owner decision (2026-10-17): R2 recovery by option (c)** | ADOPTED (owner) | Develop a new frequency-aware functional representation (multi-scale spectral and derivative-energy features; precise mathematical definition; numerical tests) that keeps the original scientific question and retains oscillation-frequency information without relying on phase. Before the new gate: document and pre-register the architecture, hypotheses, search budget and criteria. **Original thresholds kept** (no amendment without owner approval). Model selection on train/validation only; final evaluation on genuinely fresh test data and independent confirmation seeds. All old results are kept; the report states that the new design was motivated by the earlier failures. **No KAN-vs-MLP test until the conventional MLP passes the revised gate.** If the new representation fails, diagnose and report honestly. | Owner instruction |
+| D58 | **Owner decision (2026-10-17): PBC endpoint** | ADOPTED (owner; provisional) | **E2 (death or transplantation; transplant-free survival) is the provisional primary endpoint; E1 (death, transplant censored) is a sensitivity analysis.** Clinical interpretation and censoring assumptions are stated in docs/design.md §9.1. No definitive clinical endpoint is claimed until confirmed with the owner's professor. E3 (competing risks) remains future work unless a properly specified competing-risks analysis is justified. Supersedes D9-R's "pending" status. | Owner instruction |
+| D59 | **Owner decision (2026-10-17): C-MAPSS landmark design** | ADOPTED (owner) | **Option B (trailing windows) is the primary RUL benchmark; Option A is secondary.** Metrics are reported separately by landmark band, and the correlation between windows from the same engine is accounted for (engine-cluster bootstrap confidence intervals and engine-weighted metrics, D62). RUL evaluation stays separate from genuine right-censored survival evaluation (PBC). Supersedes D3b-R's "pending" status. | Owner instruction |
+| D60 | Frequency-information diagnostic (2026-10-17; seed-21 training split only) | ADOPTED | Before choosing the representation: is ω recoverable phase-invariantly from what the models see? On the 12-basis smoothed x₂ curves: linear probe of ω on log fixed-Fourier power R² 0.94 (but phase explains 19% of its estimate error); derivative-energy ratio 0.84 (phase explains 23%); quadrature-pair projection spectrum argmax estimate correlation 0.94 (phase explains 0.5%). On the noiseless truth: 0.99 / 0.93 / 1.00. **Conclusion:** the smoother retains ω; the earlier fronts did not expose it in a phase-invariant, linearly usable form (`reports/diag_frequency_information.json`). | Motivates D61 |
+| D61 | **Pre-registration: revision-4 frequency-aware representation, search, revised gate and confirmation** (registered 2026-10-17, before any search fit) | ADOPTED | **Architecture:** front "fa" (docs/design.md §3.2c): A3 tensor spline + standardised quadrature-pair projection spectrum R and log-gap L (33 log-spaced frequencies on [0.25, 4]), derivative energies e₀, e₁, e₂ and soft frequency f̂; options log Fourier power ("fourier") and half-window spectra ("windows"). Implemented and tested (FQ-1..FQ-9 pass). **Hypothesis HF:** with "fa", the conventional fae_mlp passes R2 on fresh gate data and on ≥ 4 of 5 fresh confirmation seeds. **Search (validation only; seed 21 train/validation; budget ≤ 13 fits + 2 information fits; same selection rule as D41):** base = the A3 selection (r 8, α 1, Adam 3e-3, objective early stopping, 3000 epochs / patience 100, H 32, hidden 64). F1 front {tspline (A3, reference only), fa} (the selection is restricted to "fa" variants: A3 already failed the gate); F2 multi-scale options {fa, fa + fourier, fa + windows}; F3 frequency-grid density J ∈ {17, 33}; F4 latent r ∈ {8, 12}; F5 α ∈ {1, 0.1}; F6 stability seeds 1, 2; F7 information only: fae_linear and fae_kan. **Revised gate (`tests/test_learnability_fa.py`):** the test code of the original gate with **fresh data seed 41** (never generated before) and the selected configuration; R1, R2, R3 criteria and **thresholds unchanged** (R1: C ≥ oracle − 0.02 and \|σ̂ − 0.5\| ≤ 0.05; R2: C ≥ oracle − 0.03 and mean probe R² ≥ 0.8; R3: \|C − C_R2\| ≤ 0.02 and naive error > aware error for seeds 0–2). **Confirmation:** fresh seeds 111–115, held-out test split, R2 criteria. **CONFIRMED only if R1, R2 and R3 pass on seed 41 and ≥ 4 of 5 replications pass.** If confirmed: the pre-specified neural analyses (H1, H2, H3, CONTROLS; `run_neural_synthetic.py`, analysis plan of D33/protocol) with the selected configuration, then ablations and KAN-FAE pruning/symbolic extraction. If not confirmed: diagnose and report; no further extension without owner approval. | Owner decision D57 |
+| D62 | C-MAPSS Option B uncertainty accounting for within-engine correlation (2026-10-17) | ADOPTED | Per D59: Option B test metrics are complemented by an **engine-cluster bootstrap** (1000 resamples of test engines with replacement, seed fixed per split; percentile 95% CI for RMSE, MAE and Harrell C, overall and per landmark band) plus engine-weighted RMSE (already present). Option B is re-run for FD001 and FD003 as code version v3 (same models, splits and tuning; earlier records kept). | Owner decision D59 |
+| D63 | FQ test repairs (disclosure, 2026-10-17) | ADOPTED | FQ attempts 1–4 (logs `fq_tests_attempt*.log`). Design calibration (not a test change): the soft frequency uses the log gap L = −log(1 − R + 1e-4) with κ₀ = 4, chosen on pure sinusoids and the seed-21 training split (§3.2c). Test-premise repairs, thresholds of the property under test unchanged: FQ-2 (repair 1: tolerance for the ε = 1e-8 in the definition; repair 2: phase invariance asserted at the true frequency only, which is what the mathematics gives, and the design text corrected); FQ-4 (repair 1: ε tolerance; repair 2: exact bound 2ε/residual; its energy assertion, unreachable before attempt 3, repaired once with the same bound); FQ-5 (repair 1: harness kept the autograd graph). All 11 FQ tests pass. | Integrity |
+| D64 | Historical gate test kept as a record (2026-10-17) | ADOPTED | `tests/test_learnability.py` (seed 21) is pinned to the A3 configuration it evaluated (explicitly, no longer via DEFAULTS), and its R2 test is marked `xfail(strict=True)` with the reason "A3 design failed R2 (D46/D53)". It still runs on every full suite and is reported as an expected failure; if it ever passed, strict xfail would flag it. DEFAULTS are not changed for revision 4: the revised gate and all neural analyses read the configuration from the selection file. | Keeps the suite informative without hiding the historical failure |
+| D65 | Overfitting diagnostic of the revision-4 front (registered 2026-10-17 after the D61 search, before reading the revised gate; validation data only) | ADOPTED | **Observation (D61 search):** every "fa" fit overfits (train C 0.87–0.91 vs validation 0.75–0.82; A3: 0.855 vs 0.844), stops early (≈ 500–1200 epochs) and loses the b and A probes, while ω becomes decodable (validation probe 0.83–0.89). **Hypothesis:** the 114–408-dimensional standardised spectral block feeding the front's linear map overfits with 1200 training individuals. **Diagnostic (seed-21 train/validation; not a selection, not a gate):** (i) compact summary `fa_compact` (f̂, peak log gap, e₀, e₁, e₂ per channel; 15 features; test FQ-10) with J = 17 and J = 33, r = 8 and 12; (ii) full J = 17 with r = 12 and the spectral map's weights decayed 10× more (wd 1e-3) — implemented as the global wd setting. Outcome recorded in `reports/diag_fa_overfitting.jsonl`. **Any configuration derived from this diagnostic is a new design revision (4b) and needs owner approval and a new pre-registered gate on fresh seeds before evaluation (D61).** | Diagnosis only |
+| D66 | R1 seed-sensitivity diagnostic (registered 2026-10-17, after the revised gate's R1 failed) | ADOPTED | Revised gate seed 41: R1 C 0.8931 (≥ 0.8756, passes) but σ̂ = 0.5707 (\|σ̂ − 0.5\| = 0.071 > 0.05). R1 uses the true parameters as inputs, so it does not involve the representation. **Diagnostic:** the identical R1 procedure on diagnostic seeds 501–510 (used nowhere else) plus 21 and 41, reporting the distribution of σ̂ and C − oracle, and (added after the first pass) the profile MLE of σ with the learned η held fixed. The R1 threshold is not changed; the outcome is reported as a property of the gate check. | Diagnosis only |
+
+## R3.8 Tests
+
+All test records: `reports/test_results.csv` (1443 records over 44 runs).
+- The historical seed-21 gate (A3 design) is kept, pinned to its configuration.
+- Its R2 is recorded as an **expected failure** (strict xfail, D64): it still runs, and it would be flagged if it
+  ever passed.
+
+| Criterion | Test | Kind | Attempts recorded | Failed attempts | Latest outcome |
+|---|---|---|---|---|---|
+| R1 | test_R1_oracle_features_head | STAT | 12 | 0 | PASSED |
+| R2 | test_R2_fae_mlp_end_to_end | STAT | 12 | 11 | XFAILED |
+| R3 | test_R3_censoring_awareness | STAT | 12 | 2 | PASSED |
+| F6a | test_F6a_identity_map_equals_functional_linear | DET | 9 | 0 | PASSED |
+| F6b | test_F6b_discretisation_consistency | DET | 9 | 0 | PASSED |
+| F6c | test_F6c_shapes_and_gradcheck | DET | 9 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[fae_mlp-linear] | DET | 5 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[fae_mlp-nonlinear] | DET | 5 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[fae_kan-nonlinear] | DET | 5 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[flat_ae-linear] | DET | 5 | 0 | PASSED |
+| AUD-2 | test_AUD2_reconstruction_weighting_matches_numpy | DET | 5 | 0 | PASSED |
+| AUD-3 | test_AUD3_S1_freezes_autoencoder_in_head_phase | DET | 5 | 0 | PASSED |
+| AUD-4 | test_AUD4_survival_only_gives_no_decoder_gradient | DET | 5 | 0 | PASSED |
+| AUD-5 | test_AUD5_time_scaling_consistent | DET | 5 | 0 | PASSED |
+| AUD-6 | test_AUD6_front_end_shared_between_arms | DET | 5 | 0 | PASSED |
+| LS-1 | test_LS1_no_censoring_reduces_to_ols | DET | 5 | 0 | PASSED |
+| LS-2 | test_LS2_km_matches_lifelines_and_bj_conditional_mean | DET | 5 | 0 | PASSED |
+| LS-3 | test_LS3_transform_integral_and_nonnegativity | DET | 5 | 0 | PASSED |
+| LS-4 | test_LS4_slope_recovery_bj_ipcw | STAT | 5 | 0 | PASSED |
+| LS-5 | test_LS5_transform_unbiased_on_time_scale | STAT | 5 | 0 | PASSED |
+| KREG-1 | test_KREG1_regularization_matches_definition_and_has_gradien | DET | 5 | 0 | PASSED |
+| KREG-2 | test_KREG2_edge_sum_equals_forward | DET | 5 | 0 | PASSED |
+| KREG-3 | test_KREG3_edge_and_node_pruning | DET | 5 | 0 | PASSED |
+| KREG-4 | test_KREG4_exact_symbolic_substitution_leaves_output_unchang | DET | 5 | 0 | PASSED |
+| SYM-1 | test_SYM1_linear_accepted_at_stage1 | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[tanh-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[x^2-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[sin-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[exp-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-3 | test_SYM3_rejects_unrepresentable_function | STAT | 4 | 0 | PASSED |
+| SYM-4 | test_SYM4_pysr_stage_runs_and_is_held_out_validated | STAT | 5 | 1 | PASSED |
+| F7 | test_F7_energy_front_exact | DET | 7 | 0 | PASSED |
+| F8 | test_F8_tensor_spline_front | DET | 7 | 0 | PASSED |
+| F9 | test_F9_derivative_energy_exact | DET | 5 | 0 | PASSED |
+| INT-1 | test_INT1_matches_scipy_interval_probabilities[weibull] | DET | 6 | 1 | PASSED |
+| INT-1 | test_INT1_matches_scipy_interval_probabilities[lognormal] | DET | 6 | 1 | PASSED |
+| INT-1 | test_INT1_matches_scipy_interval_probabilities[loglogistic] | DET | 6 | 0 | PASSED |
+| INT-2 | test_INT2_approaches_density_for_narrow_intervals | DET | 6 | 0 | PASSED |
+| INT-3 | test_INT3_gradients_and_stability | DET | 6 | 0 | PASSED |
+| F8b | test_F8b_feature_cache_never_returns_another_tensors_feature | DET | 5 | 1 | PASSED |
+| R1 | test_R1_oracle_features_head | STAT | 2 | 2 | FAILED |
+| R2 | test_R2_fae_mlp_end_to_end | STAT | 2 | 2 | FAILED |
+| R3 | test_R3_censoring_awareness | STAT | 2 | 0 | PASSED |
+
+**All test runs, in chronological order**
+
+| Test run (chronological) | Passed | Failed | Skipped |
+|---|---|---|---|
+| stageA_attempt1 | 41 | 4 | 0 |
+| stageA_attempt2 | 41 | 4 | 0 |
+| stageA_attempt3 | 45 | 0 | 0 |
+| stageB_attempt1 | 40 | 0 | 0 |
+| stageC_attempt1 | 19 | 0 | 0 |
+| stageD_attempt1 | 54 | 1 | 1 |
+| stageD_attempt2 | 7 | 1 | 0 |
+| stageD_attempt3 | 8 | 0 | 0 |
+| stageD_gate_attempt1 | 1 | 2 | 0 |
+| stageD_gate_attempt2 | 1 | 2 | 0 |
+| stageD_gate_attempt3 | 2 | 1 | 0 |
+| stageCDE_final | 55 | 0 | 1 |
+| stageF_attempt1 | 2 | 0 | 0 |
+| regress_after_penalty_fix | 73 | 0 | 1 |
+| stageG_attempt1 | 4 | 0 | 0 |
+| final_full_suite | 148 | 1 | 1 |
+| rev3_unit_attempt1 | 50 | 0 | 1 |
+| rev3_gate_attempt1 | 2 | 1 | 0 |
+| audit_attempt1 | 9 | 0 | 0 |
+| censored_ls_attempt1 | 5 | 0 | 0 |
+| kan_regress_after_pruning | 12 | 0 | 0 |
+| kreg_sym_attempt1 | 10 | 1 | 0 |
+| kreg_sym_attempt2 | 1 | 0 | 0 |
+| f7f8_attempt1 | 5 | 0 | 0 |
+| f8_after_cache | 5 | 0 | 0 |
+| d41_gate_selected | 2 | 1 | 0 |
+| f9_attempt1 | 6 | 0 | 0 |
+| interval_attempt1 | 3 | 2 | 0 |
+| interval_attempt2 | 5 | 0 | 0 |
+| gate_ext | 2 | 1 | 0 |
+| cache_regression_oldcode | 0 | 1 | 0 |
+| cache_regression_fixed | 7 | 0 | 0 |
+| gate_D53_recompute | 2 | 1 | 0 |
+| final_full_suite_round2 | 90 | 2 | 0 |
+| final_full_suite_round2_rerun | 178 | 8 | 1 |
+| models_repair_D56 | 28 | 0 | 1 |
+| final_full_suite_round2_v3 | 185 | 1 | 1 |
+| fq_attempt1 | 7 | 4 | 0 |
+| fq_attempt2 | 9 | 2 | 0 |
+| fq_attempt3 | 10 | 1 | 0 |
+| fq_attempt4 | 11 | 0 | 0 |
+| revised_gate_fa | 1 | 2 | 0 |
+| fq10 | 3 | 0 | 0 |
+| final_full_suite_round3 | 198 | 2 | 1 |
+
+## R3.9 Unresolved items and decisions requested
+
+1. **Whether to proceed with revision 4b.** This would be the compact phase-invariant summary (validation: probe
+   criterion met; C about 0.035 short), plus a targeted fix for the survival-part generalisation gap. If you
+   approve, it gets its own pre-registration, a fresh gate seed and fresh confirmation seeds. Otherwise R2 stays
+   failed and H1 stays blocked.
+2. **R1's σ criterion.** It fails on most seeds because σ has not converged at the early-stopping epoch, not
+   because of the representation. Options:
+   - keep it unchanged;
+   - approve a protocol amendment (for example, judge σ by its profile MLE given the trained head, or train R1's
+     head without early stopping).
+
+   I have not changed it.
+3. **PBC endpoint.** E2 is provisional until your professor confirms it.
+4. **Still not run:** C-MAPSS FD002/FD004 (need operating-condition normalisation) and E3 (competing risks).
+
+## R3.10 Task ledger
+
+### Task ledger: originally failed, blocked, skipped or unrun items (opened 2026-10-17)
+
+Each row is updated as work proceeds. The final column points to the supporting log or record. Original
+statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-run of revision 3.
+
+| # | Item | Original status / reason | Blocking dependency | Alternatives considered | Experiments / tests | Final outcome | Evidence | Remaining limitation |
+|---|---|---|---|---|---|---|---|---|
+| L1 | Learnability gate R2 (functional MLP AE) | FAILED (original design, 2 repairs: C 0.8361); FAILED again with revision 3 NFL front (C 0.8461) | – | Fronts A0–A4 (linear, pointwise-MLP NFL, energy, tensor spline, tensor spline + derivative energy); latent size 4/8; α 1/0.1/0; Adam 1e-3/3e-3, AdamW; early stopping on objective/NLL; linear/MLP/KAN encoders; 3000/10000 epochs; capacity 32/64 and 64/128 | D41 + D46 controlled search (validation only; 17 fits after deduplication); official gate; fresh replications on seeds 101–110; D53 defect found, fixed and all affected results recomputed | **FAILED (final, pre-registered):** gate C 0.8497 < 0.8636 (probe mean 0.663 < 0.8; ω probe ≈ 0); replications 0/5 (D41) and 0/5 (D46). No further extension (D46) | `reports/learnability_search.jsonl`, `reports/learnability_confirmation_*.jsonl`, `reports/logs/stageD_gate_D53.log` | The frequency parameter ω is not linearly decodable from a reconstruction-driven latent; next steps need an owner decision (report I.15) Round 3 (owner option (c), D57/D61): frequency-aware representation; validation-only search (11 fits); revised gate on fresh seed 41: **R2 FAILED** (C 0.8189 < 0.8656; ω probe 0.865); fresh confirmations 111–115: 0/5. Diagnosis D65 (overfitting of the spectral block; a compact summary meets the probe criterion on validation but not C) and D66 (R1's σ check not robust) |
+| L2 | H1 primary: KAN vs MLP functional AE | NOT RUN (blocked by L1, D33) | L1 | – | – | **BLOCKED** (L1 failed; `scripts/run_neural_synthetic.py` ready but deliberately not run) | – | No evidence for or against KAN |
+| L3 | H2: α > 0 vs α = 0 | NOT RUN (blocked by L1) | L1 | (α was varied inside the search, on validation only; not a test of H2) | – | **BLOCKED** | – | |
+| L4 | H3: functional vs flattened under sparse sampling | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L5 | Training controls S1/S2/S3/survival-only on the revised design | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L6 | Ablations AB1–AB8 | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L7 | Neural models on C-MAPSS and PBC | NOT RUN (blocked by L1) | L1, L2 | KAN-AFT (non-functional, reference method) was run on PBC instead (D52) | – | **BLOCKED** for KAN-FAE; KAN-AFT on PBC DONE | `reports/kanaft_pbc.jsonl` | |
+| L8 | KAN regularisation and pruning | NOT IMPLEMENTED (audit finding A-KAN-REG) | – | CoxKAN Eqs. 5–8 / KAN-AFT L_R; edge and node pruning (θ = 1e-2) | KREG-1..4 (pass); KAN-AFT synthetic (12 fits) and PBC (10 fits) with before/after metrics; D54 threshold diagnostic | **DONE (implemented, tested, applied to KAN-AFT).** At θ = 1e-2 an edge was pruned in only 1 of 22 fits (seed 203 IPCW, λ = 1e-2: the true null z₄); D54 explains why (offset-inclusive score; scale dependence) | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl`, `reports/pruning_threshold_diag.jsonl` | Not applied to KAN-FAE (blocked by L1). θ = 1e-2 does not remove the true null edge at the λ chosen on validation |
+| L9 | Symbolic formula extraction (R² > 0.99) | NOT IMPLEMENTED (audit finding A-SYM) | L8 | Stage 1 linear → stage 2 library (15 functions, affine form) → stage 3 PySR 2.7.0 | SYM-1..4 (pass); KAN-AFT synthetic with known truth (3 seeds × 4 losses); PBC (2 endpoints × 5 splits) | **DONE for KAN-AFT.** Synthetic: true shapes (tanh, quadratic, sine) recovered with validation R² > 0.99; rejected fits keep the spline; substitution changes test C by ≤ 0.002. PBC: formulas accepted for some covariates, but the accepted family is not stable across splits | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl` | **KAN-FAE symbolic extraction BLOCKED by L1.** Real-data formula forms are not stable across resamples (interpret edge shapes, not formula identity) |
+| L10 | Censoring-adjusted least-squares estimators (BJ, IPCW, transform) | NOT IMPLEMENTED (new requirement) | – | KAN-AFT Appendix A; BJ log scale (Efron tail) and time-scale variant; IPCW with G(T−); Fan–Gijbels transform | LS-1..5 (pass); KAN-AFT synthetic per loss; L16 study (D50) | **DONE** as separate validated variants (Cox partial likelihood not inserted into the AFT model). Transform biased on the log scale (A-TRANSFORM); marginal IPCW biased under CA-1-only censoring | `src/kanfae/survival/censored_ls.py`, `reports/censoring_variants.jsonl` | Not combined with KAN-FAE joint training (blocked by L1; BJ needs an outer loop) |
+| L11 | M2 for the linear autoencoder | SKIPPED: rank-limited, not applicable (D32) | – | none needed; a mathematical impossibility, not a defect | – | remains NOT APPLICABLE | `reports/logs/stageCDE_unit_final.log` | |
+| L12 | PBC endpoint choice (E1 / E2 / competing risks) | UNRESOLVED owner decision (D9-R) | owner | – | E1 and E2 both run as labelled sensitivity analyses (baselines and KAN-AFT) | **DECIDED (D58, provisional):** E2 primary, E1 sensitivity; to be confirmed with the owner's professor | `docs/design.md` §9.1 | E3 (competing risks) future work |
+| L13 | C-MAPSS landmark design (A / B) | UNRESOLVED owner decision (D3b-R) | owner | – | Both options run (FD001, FD003); Option B re-run with engine-cluster bootstrap (v3, D62) | **DECIDED (D59):** Option B primary, Option A secondary | `docs/design.md` §9.2 | |
+| L14 | Interval likelihood for integer cycles | NOT IMPLEMENTED (D25) | – | `log[S(y−1) − S(y)]` for events; stable log-difference form | INT-1..3; INT-1 failed once (test-reference cancellation, D48), then passed | **DONE (implemented and tested)** | `src/kanfae/survival/aft.py`, `tests/test_interval_likelihood.py` | Not yet used in a C-MAPSS experiment (would only matter for neural/AFT models on integer cycles; deferred) |
+| L15 | C-MAPSS FD002–FD004 | NOT RUN (budget) | – | FD003 shares FD001's single operating condition; FD002/FD004 need per-condition normalisation | FD003: baselines, 3 analyses × 5 splits (D51) | **FD003 DONE (baselines). FD002/FD004 NOT RUN** (new preprocessing design needed; not improvised) | `reports/experiment_results.jsonl` (dataset `cmapss_FD003`) | FD002/FD004 remain unrun |
+| L16 | Informative-censoring and misspecification synthetic variants | NOT RUN | – | CA2 / CA1 (covariate-dependent censoring) / MIS (skewed mixture errors) | D50 study: 20 replicates × 3 scenarios × 6 estimators | **DONE.** Parametric log-normal and BJ unbiased in all three; marginal-G IPCW biased under CA1 (β₁ bias −0.07); transform biased everywhere (−0.14 to −0.82); oracle conditional-G IPCW reduces but does not remove the CA1 bias (practical positivity) | `reports/censoring_variants.jsonl` | Linear estimators only; not repeated with neural models |
+| L17 | Literature review / bibliographic verification | NOT DONE (D27) | – | Targeted search; arXiv versions of uploaded references with checksums | `docs/literature_review.md` | **DONE (targeted).** Closely related prior work found (FunKAN, Wu et al.); **no novelty claim** is made | `docs/literature_review.md` | Not a systematic review; discrepancies recorded, not resolved |
+| L18 | Diagnostic run `diag_rev3_R2` (NFL variants) | STOPPED by me after 1 of 5 configurations, to free CPU; superseded by the controlled search in L1 | – | – | – | STOPPED (partial log kept) | `reports/logs/diag_rev3_R2.log` | |
+| L19 | Feature-cache defect (D53) | NEW (found 2026-10-17 via replication seed 110) | – | – | Regression test F8b; recomputation of the search, gate and confirmations | **FIXED**; all affected results recomputed; superseded records kept | `reports/superseded_D53/`, `reports/logs/diag_seed110*.log` | |
+| L20 | Revision 4b (compact frequency summary + survival-generalisation fix) | NEW (round 3 diagnosis D65) | owner approval + new pre-registration | compact summary (validation probe criterion met, C 0.035 short) | – | **AWAITING OWNER DECISION** | `reports/diag_fa_overfitting.jsonl` | Not gate-tested |
+| L21 | Robustness of the R1 σ criterion | NEW (round 3 diagnosis D66) | owner decision on a protocol amendment | profile-MLE σ given the trained head; or no early stopping for R1's head | 12-seed diagnostic | **AWAITING OWNER DECISION** (threshold unchanged) | `reports/diag_r1_seeds.jsonl` | |
+| L22 | H1 / H2 / H3 / controls / ablations / KAN-FAE symbolic extraction (round 3) | BLOCKED (D57: no KAN-vs-MLP test before the MLP passes the revised gate) | L1, L20 | – | guard in `run_neural_synthetic.py` verified | **BLOCKED** | `reports/revised_gate_verdict.json` | |
+
+
+## R3.11 Reproducibility
+
+### Reproducibility
+
+Project instructions (the repository README.md is intentionally left unchanged, D28).
+
+
+```bash
+### environment (project-local; never touches the global Python)
+bash scripts/setup_env.sh                          # or: KANFAE_FROM_LOCK=1 bash scripts/setup_env.sh
+bash scripts/verify_env.sh                         # E-1 / E-5 evidence
+### tests (every attempt is appended to reports/logs/test_records.jsonl)
+KANFAE_RUN_ID=rerun .venv/bin/python -m pytest -v -rA tests/
+### data (public sources; checksums in reports/run_manifest.json)
+###   C-MAPSS: https://phm-datasets.s3.amazonaws.com/NASA/6.+Turbofan+Engine+Degradation+Simulation+Data+Set.zip
+###            -> extract inner CMAPSSData.zip into data/raw/cmapss/
+###   PBC:     https://cran.r-project.org/src/contrib/survival_3.8-12.tar.gz -> data/raw/pbc/{DESCRIPTION,data/pbc.rda}
+### experiments (resumable; completed run IDs are skipped)
+bash scripts/run_all_experiments.sh                # synthetic (5 replicates x 6 settings) + C-MAPSS (5 splits)
+.venv/bin/python scripts/run_cmapss.py --splits 5 --analyses cmapss_A,cmapss_A_artificial --models sum_cox --code-version D37
+.venv/bin/python scripts/run_pbc.py --splits 5
+### round 2 (2026-10-17): learnability recovery (validation-only search, then gate and fresh-seed confirmations)
+.venv/bin/python scripts/learnability_search.py            # D41 steps S1-S7 -> reports/learnability_search.jsonl
+.venv/bin/python scripts/learnability_search_ext.py        # D46 steps S8-S11 -> reports/learnability_selected_ext.json
+KANFAE_RUN_ID=gate .venv/bin/python -m pytest -v -s tests/test_learnability.py
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --seeds 101,102,103,104,105
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_ext.json \
+    --seeds 106,107,108,109,110 --tag _ext
+### round 2: estimators, KAN-AFT, symbolic extraction, censoring variants, pruning diagnostic, FD003
+.venv/bin/python scripts/run_kanaft_symbolic.py             # synthetic known-truth KAN-AFT (resumable; --fresh)
+.venv/bin/python scripts/run_censoring_variants.py          # L16 / D50
+.venv/bin/python scripts/diag_pruning_threshold.py          # D54
+.venv/bin/python scripts/run_kanaft_pbc.py                  # D52
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --code-version v2   # D51
+### round 3 (2026-10-17): revision 4 (frequency-aware front), pre-registered in D61 before these runs
+.venv/bin/python scripts/diag_frequency_information.py     # D60 (seed-21 training split only)
+.venv/bin/python -m pytest -v tests/test_frequency_front.py # FQ-1..FQ-10
+.venv/bin/python scripts/learnability_search_fa.py         # validation-only search -> reports/learnability_selected_fa.json
+KANFAE_RUN_ID=revised_gate_fa .venv/bin/python -m pytest -v -s tests/test_learnability_fa.py   # fresh seed 41
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa.json \
+    --seeds 111,112,113,114,115 --tag _fa
+.venv/bin/python scripts/revised_gate_verdict.py           # -> reports/revised_gate_verdict.json (D61 rule)
+.venv/bin/python scripts/run_neural_synthetic.py           # refuses to run unless the verdict is CONFIRMED (D57)
+.venv/bin/python scripts/diag_fa_overfitting.py            # D65 (validation only)
+.venv/bin/python scripts/diag_r1_seeds.py                  # D66
+.venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3   # D62
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3
+### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
+.venv/bin/python scripts/build_report_round3.py
+### report (round 2 part + round 1 part)
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/aggregate_results.py
+.venv/bin/python scripts/make_figures.py && .venv/bin/python scripts/make_figures_round2.py
+.venv/bin/python scripts/build_report_round2.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py
+```
+
+Every executed command, with its exit code and timing, is in `reports/logs/commands.jsonl`. The full outputs
+are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execution_log.md`.
+
+
+
+# Part B and Part C: historical records
+
+Part B is the round-2 report, and Part C, nested at its end, is the round-1 report. Both are regenerated from the
+same records, with their sections renumbered R2.x and R1.x. Their conclusions on R2 are superseded by Part A; their
+tables and numbers are unchanged history. Test counts quoted in their summaries are those of each round's own final
+full-suite run. Embedded living documents (audit, ledger, decision rows, reproducibility) show their current version.
+
+
+# Part B: round-2 report (2026-10-17), historical record
+
 <p class="small">Research prototype report, revision 2 · generated from saved records by
-<code>scripts/build_report_round2.py</code> · git <code>46d241e</code> (local branch
+<code>scripts/build_report_round2.py</code> · git <code>396100c</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
 publication-ready</b> · <b>no novelty claim</b> (see I.3). Part I covers round 2 (reference-based audit, failure
 recovery, symbolic extraction). Part II is the round-1 report, kept as the historical record; where the two
 disagree, Part I supersedes it.</p>
 
-## 0. Final summary (plain English)
+## R2-0. Final summary (plain English)
 
-### 0.1 Learnability gate: the result you asked to see
+### R2-0.1 Learnability gate: the result you asked to see
 
 The gate checks, on simulated data with a known answer, whether the conventional functional autoencoder (MLP
 version) learns the risk-relevant information well enough for a KAN-versus-MLP comparison to mean anything.
@@ -31,7 +686,7 @@ that front end lost more elsewhere than it gained. Under the rules fixed before 
 search, the KAN-versus-MLP comparison (H1) and everything that depends on it remain **blocked**. We therefore
 have **no evidence for or against KAN in the functional autoencoder**.
 
-### 0.2 What we achieved in this round
+### R2-0.2 What we achieved in this round
 
 1. **Reference-based audit.** Every equation is mapped to its file, function and test (I.2). The audit found 3
    missing features (KAN regularisation, pruning, symbolic extraction), 1 mathematical limitation in a reference
@@ -58,7 +713,7 @@ have **no evidence for or against KAN in the functional autoencoder**.
    - C-MAPSS FD003 baselines (L15, partial);
    - targeted literature review (L17).
 
-### 0.3 What improved compared with round 1
+### R2-0.3 What improved compared with round 1
 
 | Aspect | Round 1 | Round 2 |
 |---|---|---|
@@ -70,7 +725,7 @@ have **no evidence for or against KAN in the functional autoencoder**.
 | Literature basis | none (D27) | targeted review; references cited for each adopted method |
 | Interval likelihood, FD003, censoring variants | not run | done |
 
-### 0.4 Objective status (final)
+### R2-0.4 Objective status (final)
 
 | Objective | Status | Evidence |
 |---|---|---|
@@ -88,9 +743,9 @@ have **no evidence for or against KAN in the functional autoencoder**.
 | PBC endpoint (L12), C-MAPSS landmark design (L13) | **OPEN: owner decisions** | I.15 |
 | Test suite (latest outcome per test) | 187 tests: 185 passed, 1 failed (R2), 1 skipped (documented N/A) | I.11 |
 
-## I.1 Learnability gate R2: history, controlled search, confirmation
+## R2.1 Learnability gate R2: history, controlled search, confirmation
 
-### I.1.1 Gate history (every look at the gate test split)
+### R2.1.1 Gate history (every look at the gate test split)
 
 ![R2 gate history](figures/fig_r2_gate_history.png)
 
@@ -108,7 +763,7 @@ The "SUPERSEDED" rows were computed with the defective feature cache (D53). Thei
 (last row) gives identical numbers: the defect did not affect the gate run. The gate data were looked at after each
 design iteration; this is disclosed, and it is why fresh replication seeds decide the confirmation.
 
-### I.1.2 Controlled search (validation data only; D41 steps S1–S7, D46 steps S8–S10)
+### R2.1.2 Controlled search (validation data only; D41 steps S1–S7, D46 steps S8–S10)
 
 - **Selection rule (fixed in D41 before any fit).** A configuration passing both validation criteria is preferred.
   Otherwise the score is validation C + 0.1 × probe mean. Ties keep the simpler configuration.
@@ -172,7 +827,7 @@ count), and the selection is unchanged.
 | S9-front | A4-fae_mlp-a6f2e0d9 | 0.8364 | 0.8364 | 0.0000 | 0.633 | 0.633 |
 | S10-capacity | A3-fae_mlp-1e90fb8a | 0.8451 | 0.8451 | 0.0000 | 0.592 | 0.592 |
 
-### I.1.3 Independent confirmations (fresh data seeds; held-out test split)
+### R2.1.3 Independent confirmations (fresh data seeds; held-out test split)
 
 ![Confirmations](figures/fig_r2_confirmations.png)
 
@@ -216,7 +871,7 @@ count), and the selection is unchanged.
   - seeds 101–109: identical.
 - **Records.** The superseded records are kept in `reports/superseded_D53/`.
 
-### I.1.4 Interpretation
+### R2.1.4 Interpretation
 
 - **The failure is specific and repeatable.** Every selected-configuration fit decodes a, b and the amplitude A
   reasonably well (probe R² 0.68–0.94; mostly above 0.8), but not the frequency ω (|probe R²| ≤ 0.083), and C
@@ -228,7 +883,7 @@ count), and the selection is unchanged.
 - **Conclusion: no legitimate configuration in the registered search space passed R2.** Changing the threshold,
   the probe definition or the data would invalidate the gate (D11, D39), so this is reported as a failure.
 
-## I.2 Reference-based audit
+## R2.2 Reference-based audit
 
 ### Source-code and mathematical audit (2026-10-17)
 
@@ -310,7 +965,7 @@ estimators are separate, validated variants in `KANAFT` and are compared in `rep
   test ID; it is repeated as test F7 in the final suite.
 
 
-## I.3 Literature review and how each reference was used
+## R2.3 Literature review and how each reference was used
 
 ### Literature review (targeted; 2026-10-17)
 
@@ -376,7 +1031,7 @@ the CoxKAN journal version may differ from arXiv v2.
 | AESurv (bbae479) | Survival model on autoencoder features (vector omics + clinical) | Autoencoder reconstruction, then survival model | Standard right censoring | The idea of a jointly informative latent | Vector inputs, two-stage training |
 | SAVAE (s41598-024-76047-z) | VAE with parametric time-to-event distributions | ELBO with a censored parametric likelihood | CA-1 | Parametric censored likelihood in an autoencoder objective (closest in spirit) | Variational (probabilistic) latent; vector inputs |
 
-## I.4 Survival losses: parametric likelihood vs censoring-adjusted least squares
+## R2.4 Survival losses: parametric likelihood vs censoring-adjusted least squares
 
 - **Estimator validation (all passed; details in I.11).**
   - LS-1: no censoring reduces every estimator to OLS.
@@ -441,7 +1096,7 @@ the CoxKAN journal version may differ from arXiv v2.
 Buckley–James is the robust alternative when the error family is in doubt, but it needs an outer
 impute-and-refit loop.
 
-## I.5 KAN regularisation and pruning (before/after)
+## R2.5 KAN regularisation and pruning (before/after)
 
 - **Regularisation:** `λ(|Φ|₁ + λ_ent S(Φ) + λ_coef |C|₁)`, as in CoxKAN Eqs. 5–8 and KAN-AFT L_R, with λ chosen
   on validation data from {0, 1e-3, 1e-2}.
@@ -473,7 +1128,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 | 203 | 0.01 | 1.218 / 0.849 / 0.299 / 0.013 | 1.218 / 0.810 / 0.299 / 0.013 | no | yes |
 | 203 | 0.1 | 1.184 / 0.738 / 0.213 / 0.001 | 1.169 / 0.761 / 0.214 / 0.001 | yes | yes |
 
-## I.6 Symbolic formula extraction
+## R2.6 Symbolic formula extraction
 
 - **Procedure (mandatory, staged).**
   - Stage 1: linear `a·x + b`.
@@ -563,7 +1218,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 | E2 | age | 3/5 | cos ×1, gaussian ×2 |
 | E2 | sex(f=1) | 5/5 | linear ×5 |
 
-## I.7 KAN-AFT on PBC (real, right-censored; 730-day landmark; E1 and E2 as sensitivity analyses)
+## R2.7 KAN-AFT on PBC (real, right-censored; 730-day landmark; E1 and E2 as sensitivity analyses)
 
 - **Inputs:** the last value of 6 longitudinal markers before the landmark, plus age and sex.
 - **Comparator:** a linear Weibull AFT on the same inputs.
@@ -600,7 +1255,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 - The round-1 baselines (Part II, §II.10.4) used different (summary) features, so they are not a like-for-like
   comparison.
 
-## I.8 C-MAPSS FD003 (real simulated turbofan data; RUL benchmark; baselines; D51)
+## R2.8 C-MAPSS FD003 (real simulated turbofan data; RUL benchmark; baselines; D51)
 
 - **FD003** has one operating condition and two fault modes. It was run with the unchanged FD001 pipeline: 5 splits,
   the same models and tuning.
@@ -614,6 +1269,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 | FPCA + AFT | 0.054 ± 0.018 | 0.919 ± 0.010 | 40.6 ± 16.5 | 30.9 ± 2.3 | 53 ± 2 | 5 |
 | FPCA + Cox | 0.052 ± 0.019 | 0.916 ± 0.013 | 63.8 ± 23.4 | 39.0 ± 1.9 | 53 ± 2 | 5 |
 | Summary + AFT | 0.089 ± 0.031 | 0.905 ± 0.021 | 71.0 ± 24.2 | 93.7 ± 47.3 | 53 ± 2 | 5 |
+| Summary + Cox | 0.068 ± 0.025 | 0.922 ± 0.023 | 89.0 ± 34.2 | 50.2 ± 22.2 | 53 ± 2 | 5 |
 | Summary + RSF | 0.090 ± 0.026 | 0.887 ± 0.030 | 60.2 ± 25.2 | 55.9 ± 10.0 | 53 ± 2 | 5 |
 | KM null (reference) | 0.205 ± 0.035 | 0.500 ± 0.000 | 104.2 ± 35.7 | 102.7 ± 3.7 | 53 ± 2 | 5 |
 
@@ -635,6 +1291,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 | FPCA + AFT | 0.184 ± 0.239 | 0.906 ± 0.028 | 84.1 ± 81.1 | 103.7 ± 71.9 | 53 ± 2 | 5 |
 | FPCA + Cox | 0.176 ± 0.200 | 0.905 ± 0.032 | 127.7 ± 97.7 | 130.5 ± 81.4 | 53 ± 2 | 5 |
 | Summary + AFT | 0.190 ± 0.134 | 0.890 ± 0.048 | 89.7 ± 42.3 | 127.4 ± 63.9 | 53 ± 2 | 5 |
+| Summary + Cox | 0.178 ± 0.185 | 0.921 ± 0.022 | 117.4 ± 98.2 | 87.2 ± 55.5 | 53 ± 2 | 5 |
 | Summary + RSF | 0.176 ± 0.119 | 0.883 ± 0.035 | 60.7 ± 29.3 | 65.1 ± 18.2 | 53 ± 2 | 5 |
 | KM null (reference) | 0.382 ± 0.203 | 0.500 ± 0.000 | 105.3 ± 36.7 | 103.5 ± 7.6 | 53 ± 2 | 5 |
 
@@ -642,7 +1299,7 @@ Summary + AFT diverged in all 15 of its records under artificial censoring (reco
 did on FD001 (Part II, §II.10.3.3), so it has no row above. Every failed and diverged record is kept in
 `reports/experiment_results.csv`.
 
-## I.9 Interval (integer-cycle) likelihood (L14)
+## R2.9 Interval (integer-cycle) likelihood (L14)
 
 `aft_interval_log_likelihood` gives:
 - events: `log[S(y − 1) − S(y)]`;
@@ -659,7 +1316,7 @@ Tests:
 
 The likelihood is implemented and tested, but not yet used in an experiment.
 
-## I.10 Correctness and validity, kept separate
+## R2.10 Correctness and validity, kept separate
 
 | Kind | Question | Evidence | Status |
 |---|---|---|---|
@@ -671,55 +1328,58 @@ The likelihood is implemented and tested, but not yet used in an experiment.
 | Scientific claims | Is KAN better than MLP for functional survival? | H1 | **Not tested (blocked)**; no claim made |
 | Novelty | Is the method new? | Targeted review | **No claim made** |
 
-## I.11 Test history
+## R2.11 Test history
 
 Every pytest attempt is appended to `reports/logs/test_records.jsonl` and compiled to `reports/test_results.csv`
-(1191 records over 37 runs). Failures are kept.
+(1443 records over 44 runs). Failures are kept.
 
 **Round-2 criteria (latest outcome and full attempt counts)**
 
 | Criterion | Test | Kind | Attempts recorded | Failed attempts | Latest outcome |
 |---|---|---|---|---|---|
-| R1 | test_R1_oracle_features_head | STAT | 11 | 0 | PASSED |
-| R2 | test_R2_fae_mlp_end_to_end | STAT | 11 | 11 | FAILED |
-| R3 | test_R3_censoring_awareness | STAT | 11 | 2 | PASSED |
-| F6a | test_F6a_identity_map_equals_functional_linear | DET | 8 | 0 | PASSED |
-| F6b | test_F6b_discretisation_consistency | DET | 8 | 0 | PASSED |
-| F6c | test_F6c_shapes_and_gradcheck | DET | 8 | 0 | PASSED |
-| AUD-1 | test_AUD1_joint_objective_decomposition[fae_mlp-linear] | DET | 4 | 0 | PASSED |
-| AUD-1 | test_AUD1_joint_objective_decomposition[fae_mlp-nonlinear] | DET | 4 | 0 | PASSED |
-| AUD-1 | test_AUD1_joint_objective_decomposition[fae_kan-nonlinear] | DET | 4 | 0 | PASSED |
-| AUD-1 | test_AUD1_joint_objective_decomposition[flat_ae-linear] | DET | 4 | 0 | PASSED |
-| AUD-2 | test_AUD2_reconstruction_weighting_matches_numpy | DET | 4 | 0 | PASSED |
-| AUD-3 | test_AUD3_S1_freezes_autoencoder_in_head_phase | DET | 4 | 0 | PASSED |
-| AUD-4 | test_AUD4_survival_only_gives_no_decoder_gradient | DET | 4 | 0 | PASSED |
-| AUD-5 | test_AUD5_time_scaling_consistent | DET | 4 | 0 | PASSED |
-| AUD-6 | test_AUD6_front_end_shared_between_arms | DET | 4 | 0 | PASSED |
-| LS-1 | test_LS1_no_censoring_reduces_to_ols | DET | 4 | 0 | PASSED |
-| LS-2 | test_LS2_km_matches_lifelines_and_bj_conditional_mean | DET | 4 | 0 | PASSED |
-| LS-3 | test_LS3_transform_integral_and_nonnegativity | DET | 4 | 0 | PASSED |
-| LS-4 | test_LS4_slope_recovery_bj_ipcw | STAT | 4 | 0 | PASSED |
-| LS-5 | test_LS5_transform_unbiased_on_time_scale | STAT | 4 | 0 | PASSED |
-| KREG-1 | test_KREG1_regularization_matches_definition_and_has_gradien | DET | 4 | 0 | PASSED |
-| KREG-2 | test_KREG2_edge_sum_equals_forward | DET | 4 | 0 | PASSED |
-| KREG-3 | test_KREG3_edge_and_node_pruning | DET | 4 | 0 | PASSED |
-| KREG-4 | test_KREG4_exact_symbolic_substitution_leaves_output_unchang | DET | 4 | 0 | PASSED |
-| SYM-1 | test_SYM1_linear_accepted_at_stage1 | DET | 3 | 0 | PASSED |
-| SYM-2 | test_SYM2_library_recovers_known_forms[tanh-<lambda>] | DET | 3 | 0 | PASSED |
-| SYM-2 | test_SYM2_library_recovers_known_forms[x^2-<lambda>] | DET | 3 | 0 | PASSED |
-| SYM-2 | test_SYM2_library_recovers_known_forms[sin-<lambda>] | DET | 3 | 0 | PASSED |
-| SYM-2 | test_SYM2_library_recovers_known_forms[exp-<lambda>] | DET | 3 | 0 | PASSED |
-| SYM-3 | test_SYM3_rejects_unrepresentable_function | STAT | 3 | 0 | PASSED |
-| SYM-4 | test_SYM4_pysr_stage_runs_and_is_held_out_validated | STAT | 4 | 1 | PASSED |
-| F7 | test_F7_energy_front_exact | DET | 6 | 0 | PASSED |
-| F8 | test_F8_tensor_spline_front | DET | 6 | 0 | PASSED |
-| F9 | test_F9_derivative_energy_exact | DET | 4 | 0 | PASSED |
-| INT-1 | test_INT1_matches_scipy_interval_probabilities[weibull] | DET | 5 | 1 | PASSED |
-| INT-1 | test_INT1_matches_scipy_interval_probabilities[lognormal] | DET | 5 | 1 | PASSED |
-| INT-1 | test_INT1_matches_scipy_interval_probabilities[loglogistic] | DET | 5 | 0 | PASSED |
-| INT-2 | test_INT2_approaches_density_for_narrow_intervals | DET | 5 | 0 | PASSED |
-| INT-3 | test_INT3_gradients_and_stability | DET | 5 | 0 | PASSED |
-| F8b | test_F8b_feature_cache_never_returns_another_tensors_feature | DET | 4 | 1 | PASSED |
+| R1 | test_R1_oracle_features_head | STAT | 12 | 0 | PASSED |
+| R2 | test_R2_fae_mlp_end_to_end | STAT | 12 | 11 | XFAILED |
+| R3 | test_R3_censoring_awareness | STAT | 12 | 2 | PASSED |
+| F6a | test_F6a_identity_map_equals_functional_linear | DET | 9 | 0 | PASSED |
+| F6b | test_F6b_discretisation_consistency | DET | 9 | 0 | PASSED |
+| F6c | test_F6c_shapes_and_gradcheck | DET | 9 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[fae_mlp-linear] | DET | 5 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[fae_mlp-nonlinear] | DET | 5 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[fae_kan-nonlinear] | DET | 5 | 0 | PASSED |
+| AUD-1 | test_AUD1_joint_objective_decomposition[flat_ae-linear] | DET | 5 | 0 | PASSED |
+| AUD-2 | test_AUD2_reconstruction_weighting_matches_numpy | DET | 5 | 0 | PASSED |
+| AUD-3 | test_AUD3_S1_freezes_autoencoder_in_head_phase | DET | 5 | 0 | PASSED |
+| AUD-4 | test_AUD4_survival_only_gives_no_decoder_gradient | DET | 5 | 0 | PASSED |
+| AUD-5 | test_AUD5_time_scaling_consistent | DET | 5 | 0 | PASSED |
+| AUD-6 | test_AUD6_front_end_shared_between_arms | DET | 5 | 0 | PASSED |
+| LS-1 | test_LS1_no_censoring_reduces_to_ols | DET | 5 | 0 | PASSED |
+| LS-2 | test_LS2_km_matches_lifelines_and_bj_conditional_mean | DET | 5 | 0 | PASSED |
+| LS-3 | test_LS3_transform_integral_and_nonnegativity | DET | 5 | 0 | PASSED |
+| LS-4 | test_LS4_slope_recovery_bj_ipcw | STAT | 5 | 0 | PASSED |
+| LS-5 | test_LS5_transform_unbiased_on_time_scale | STAT | 5 | 0 | PASSED |
+| KREG-1 | test_KREG1_regularization_matches_definition_and_has_gradien | DET | 5 | 0 | PASSED |
+| KREG-2 | test_KREG2_edge_sum_equals_forward | DET | 5 | 0 | PASSED |
+| KREG-3 | test_KREG3_edge_and_node_pruning | DET | 5 | 0 | PASSED |
+| KREG-4 | test_KREG4_exact_symbolic_substitution_leaves_output_unchang | DET | 5 | 0 | PASSED |
+| SYM-1 | test_SYM1_linear_accepted_at_stage1 | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[tanh-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[x^2-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[sin-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-2 | test_SYM2_library_recovers_known_forms[exp-<lambda>] | DET | 4 | 0 | PASSED |
+| SYM-3 | test_SYM3_rejects_unrepresentable_function | STAT | 4 | 0 | PASSED |
+| SYM-4 | test_SYM4_pysr_stage_runs_and_is_held_out_validated | STAT | 5 | 1 | PASSED |
+| F7 | test_F7_energy_front_exact | DET | 7 | 0 | PASSED |
+| F8 | test_F8_tensor_spline_front | DET | 7 | 0 | PASSED |
+| F9 | test_F9_derivative_energy_exact | DET | 5 | 0 | PASSED |
+| INT-1 | test_INT1_matches_scipy_interval_probabilities[weibull] | DET | 6 | 1 | PASSED |
+| INT-1 | test_INT1_matches_scipy_interval_probabilities[lognormal] | DET | 6 | 1 | PASSED |
+| INT-1 | test_INT1_matches_scipy_interval_probabilities[loglogistic] | DET | 6 | 0 | PASSED |
+| INT-2 | test_INT2_approaches_density_for_narrow_intervals | DET | 6 | 0 | PASSED |
+| INT-3 | test_INT3_gradients_and_stability | DET | 6 | 0 | PASSED |
+| F8b | test_F8b_feature_cache_never_returns_another_tensors_feature | DET | 5 | 1 | PASSED |
+| R1 | test_R1_oracle_features_head | STAT | 2 | 2 | FAILED |
+| R2 | test_R2_fae_mlp_end_to_end | STAT | 2 | 2 | FAILED |
+| R3 | test_R3_censoring_awareness | STAT | 2 | 0 | PASSED |
 
 **All test runs, in chronological order**
 
@@ -762,8 +1422,15 @@ Every pytest attempt is appended to `reports/logs/test_records.jsonl` and compil
 | final_full_suite_round2_rerun | 178 | 8 | 1 |
 | models_repair_D56 | 28 | 0 | 1 |
 | final_full_suite_round2_v3 | 185 | 1 | 1 |
+| fq_attempt1 | 7 | 4 | 0 |
+| fq_attempt2 | 9 | 2 | 0 |
+| fq_attempt3 | 10 | 1 | 0 |
+| fq_attempt4 | 11 | 0 | 0 |
+| revised_gate_fa | 1 | 2 | 0 |
+| fq10 | 3 | 0 | 0 |
+| final_full_suite_round3 | 198 | 2 | 1 |
 
-## I.12 Task ledger (every failed, blocked or unrun item)
+## R2.12 Task ledger (every failed, blocked or unrun item)
 
 ### Task ledger: originally failed, blocked, skipped or unrun items (opened 2026-10-17)
 
@@ -772,7 +1439,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 
 | # | Item | Original status / reason | Blocking dependency | Alternatives considered | Experiments / tests | Final outcome | Evidence | Remaining limitation |
 |---|---|---|---|---|---|---|---|---|
-| L1 | Learnability gate R2 (functional MLP AE) | FAILED (original design, 2 repairs: C 0.8361); FAILED again with revision 3 NFL front (C 0.8461) | – | Fronts A0–A4 (linear, pointwise-MLP NFL, energy, tensor spline, tensor spline + derivative energy); latent size 4/8; α 1/0.1/0; Adam 1e-3/3e-3, AdamW; early stopping on objective/NLL; linear/MLP/KAN encoders; 3000/10000 epochs; capacity 32/64 and 64/128 | D41 + D46 controlled search (validation only; 17 fits after deduplication); official gate; fresh replications on seeds 101–110; D53 defect found, fixed and all affected results recomputed | **FAILED (final, pre-registered):** gate C 0.8497 < 0.8636 (probe mean 0.663 < 0.8; ω probe ≈ 0); replications 0/5 (D41) and 0/5 (D46). No further extension (D46) | `reports/learnability_search.jsonl`, `reports/learnability_confirmation_*.jsonl`, `reports/logs/stageD_gate_D53.log` | The frequency parameter ω is not linearly decodable from a reconstruction-driven latent; next steps need an owner decision (report I.15) |
+| L1 | Learnability gate R2 (functional MLP AE) | FAILED (original design, 2 repairs: C 0.8361); FAILED again with revision 3 NFL front (C 0.8461) | – | Fronts A0–A4 (linear, pointwise-MLP NFL, energy, tensor spline, tensor spline + derivative energy); latent size 4/8; α 1/0.1/0; Adam 1e-3/3e-3, AdamW; early stopping on objective/NLL; linear/MLP/KAN encoders; 3000/10000 epochs; capacity 32/64 and 64/128 | D41 + D46 controlled search (validation only; 17 fits after deduplication); official gate; fresh replications on seeds 101–110; D53 defect found, fixed and all affected results recomputed | **FAILED (final, pre-registered):** gate C 0.8497 < 0.8636 (probe mean 0.663 < 0.8; ω probe ≈ 0); replications 0/5 (D41) and 0/5 (D46). No further extension (D46) | `reports/learnability_search.jsonl`, `reports/learnability_confirmation_*.jsonl`, `reports/logs/stageD_gate_D53.log` | The frequency parameter ω is not linearly decodable from a reconstruction-driven latent; next steps need an owner decision (report I.15) Round 3 (owner option (c), D57/D61): frequency-aware representation; validation-only search (11 fits); revised gate on fresh seed 41: **R2 FAILED** (C 0.8189 < 0.8656; ω probe 0.865); fresh confirmations 111–115: 0/5. Diagnosis D65 (overfitting of the spectral block; a compact summary meets the probe criterion on validation but not C) and D66 (R1's σ check not robust) |
 | L2 | H1 primary: KAN vs MLP functional AE | NOT RUN (blocked by L1, D33) | L1 | – | – | **BLOCKED** (L1 failed; `scripts/run_neural_synthetic.py` ready but deliberately not run) | – | No evidence for or against KAN |
 | L3 | H2: α > 0 vs α = 0 | NOT RUN (blocked by L1) | L1 | (α was varied inside the search, on validation only; not a test of H2) | – | **BLOCKED** | – | |
 | L4 | H3: functional vs flattened under sparse sampling | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
@@ -783,17 +1450,20 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L9 | Symbolic formula extraction (R² > 0.99) | NOT IMPLEMENTED (audit finding A-SYM) | L8 | Stage 1 linear → stage 2 library (15 functions, affine form) → stage 3 PySR 2.7.0 | SYM-1..4 (pass); KAN-AFT synthetic with known truth (3 seeds × 4 losses); PBC (2 endpoints × 5 splits) | **DONE for KAN-AFT.** Synthetic: true shapes (tanh, quadratic, sine) recovered with validation R² > 0.99; rejected fits keep the spline; substitution changes test C by ≤ 0.002. PBC: formulas accepted for some covariates, but the accepted family is not stable across splits | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl` | **KAN-FAE symbolic extraction BLOCKED by L1.** Real-data formula forms are not stable across resamples (interpret edge shapes, not formula identity) |
 | L10 | Censoring-adjusted least-squares estimators (BJ, IPCW, transform) | NOT IMPLEMENTED (new requirement) | – | KAN-AFT Appendix A; BJ log scale (Efron tail) and time-scale variant; IPCW with G(T−); Fan–Gijbels transform | LS-1..5 (pass); KAN-AFT synthetic per loss; L16 study (D50) | **DONE** as separate validated variants (Cox partial likelihood not inserted into the AFT model). Transform biased on the log scale (A-TRANSFORM); marginal IPCW biased under CA-1-only censoring | `src/kanfae/survival/censored_ls.py`, `reports/censoring_variants.jsonl` | Not combined with KAN-FAE joint training (blocked by L1; BJ needs an outer loop) |
 | L11 | M2 for the linear autoencoder | SKIPPED: rank-limited, not applicable (D32) | – | none needed; a mathematical impossibility, not a defect | – | remains NOT APPLICABLE | `reports/logs/stageCDE_unit_final.log` | |
-| L12 | PBC endpoint choice (E1 / E2 / competing risks) | UNRESOLVED owner decision (D9-R) | owner | – | E1 and E2 both run as labelled sensitivity analyses (baselines and KAN-AFT) | **STILL OPEN (owner decision)** | `configs/pbc/` | E3 (competing risks) not implemented |
-| L13 | C-MAPSS landmark design (A / B) | UNRESOLVED owner decision (D3b-R) | owner | – | Both options run as labelled analyses (FD001, FD003) | **STILL OPEN (owner decision)** | `configs/cmapss/` | |
+| L12 | PBC endpoint choice (E1 / E2 / competing risks) | UNRESOLVED owner decision (D9-R) | owner | – | E1 and E2 both run as labelled sensitivity analyses (baselines and KAN-AFT) | **DECIDED (D58, provisional):** E2 primary, E1 sensitivity; to be confirmed with the owner's professor | `docs/design.md` §9.1 | E3 (competing risks) future work |
+| L13 | C-MAPSS landmark design (A / B) | UNRESOLVED owner decision (D3b-R) | owner | – | Both options run (FD001, FD003); Option B re-run with engine-cluster bootstrap (v3, D62) | **DECIDED (D59):** Option B primary, Option A secondary | `docs/design.md` §9.2 | |
 | L14 | Interval likelihood for integer cycles | NOT IMPLEMENTED (D25) | – | `log[S(y−1) − S(y)]` for events; stable log-difference form | INT-1..3; INT-1 failed once (test-reference cancellation, D48), then passed | **DONE (implemented and tested)** | `src/kanfae/survival/aft.py`, `tests/test_interval_likelihood.py` | Not yet used in a C-MAPSS experiment (would only matter for neural/AFT models on integer cycles; deferred) |
 | L15 | C-MAPSS FD002–FD004 | NOT RUN (budget) | – | FD003 shares FD001's single operating condition; FD002/FD004 need per-condition normalisation | FD003: baselines, 3 analyses × 5 splits (D51) | **FD003 DONE (baselines). FD002/FD004 NOT RUN** (new preprocessing design needed; not improvised) | `reports/experiment_results.jsonl` (dataset `cmapss_FD003`) | FD002/FD004 remain unrun |
 | L16 | Informative-censoring and misspecification synthetic variants | NOT RUN | – | CA2 / CA1 (covariate-dependent censoring) / MIS (skewed mixture errors) | D50 study: 20 replicates × 3 scenarios × 6 estimators | **DONE.** Parametric log-normal and BJ unbiased in all three; marginal-G IPCW biased under CA1 (β₁ bias −0.07); transform biased everywhere (−0.14 to −0.82); oracle conditional-G IPCW reduces but does not remove the CA1 bias (practical positivity) | `reports/censoring_variants.jsonl` | Linear estimators only; not repeated with neural models |
 | L17 | Literature review / bibliographic verification | NOT DONE (D27) | – | Targeted search; arXiv versions of uploaded references with checksums | `docs/literature_review.md` | **DONE (targeted).** Closely related prior work found (FunKAN, Wu et al.); **no novelty claim** is made | `docs/literature_review.md` | Not a systematic review; discrepancies recorded, not resolved |
 | L18 | Diagnostic run `diag_rev3_R2` (NFL variants) | STOPPED by me after 1 of 5 configurations, to free CPU; superseded by the controlled search in L1 | – | – | – | STOPPED (partial log kept) | `reports/logs/diag_rev3_R2.log` | |
 | L19 | Feature-cache defect (D53) | NEW (found 2026-10-17 via replication seed 110) | – | – | Regression test F8b; recomputation of the search, gate and confirmations | **FIXED**; all affected results recomputed; superseded records kept | `reports/superseded_D53/`, `reports/logs/diag_seed110*.log` | |
+| L20 | Revision 4b (compact frequency summary + survival-generalisation fix) | NEW (round 3 diagnosis D65) | owner approval + new pre-registration | compact summary (validation probe criterion met, C 0.035 short) | – | **AWAITING OWNER DECISION** | `reports/diag_fa_overfitting.jsonl` | Not gate-tested |
+| L21 | Robustness of the R1 σ criterion | NEW (round 3 diagnosis D66) | owner decision on a protocol amendment | profile-MLE σ given the trained head; or no early stopping for R1's head | 12-seed diagnostic | **AWAITING OWNER DECISION** (threshold unchanged) | `reports/diag_r1_seeds.jsonl` | |
+| L22 | H1 / H2 / H3 / controls / ablations / KAN-FAE symbolic extraction (round 3) | BLOCKED (D57: no KAN-vs-MLP test before the MLP passes the revised gate) | L1, L20 | – | guard in `run_neural_synthetic.py` verified | **BLOCKED** | `reports/revised_gate_verdict.json` | |
 
 
-## I.13 Decision log, round 2 (D38–D54)
+## R2.13 Decision log, round 2 (D38–D54)
 
 | ID | Decision | Status | Content | Rationale |
 |---|---|---|---|---|
@@ -816,8 +1486,18 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | D54 | Pruning-threshold diagnostic (registered before running, 2026-10-17) | ADOPTED | Observation: at the reference threshold θ = 1e-2 no edge was pruned in any KAN-AFT fit (synthetic or PBC), including the true null covariate z₄. Diagnostic only (no model selection, no re-reporting of test metrics): synthetic seeds 201–203, parametric loss, λ ∈ {0, 1e-3, 1e-2, 1e-1}; record each first-layer edge's L1 score (mean \|φ\| over training inputs, the quantity thresholded by `prune_edges`), and report the smallest θ that would remove z₄ and whether any true edge would be removed at that θ. θ = 1e-2 stays the reported setting (from the references). | Explains the before/after pruning result; no threshold is changed |
 | D55 | Correction to the D54 observation (2026-10-17) | ADOPTED | D54 stated that no edge was pruned in any KAN-AFT fit. The records show **one** pruning event in 22 fits: synthetic seed 203, IPCW loss, λ = 1e-2 (selected on validation), which removed exactly the true null edge z₄ (`reports/kanaft_symbolic.jsonl`). The D54 diagnostic and its conclusion (the offset-inclusive score and the scale dependence of θ) are unaffected. | Accuracy of the record |
 | D56 | Unit-test regressions after D45 and lock-file evidence (2026-10-17) | ADOPTED | **My oversight:** the D45 change of DEFAULTS (r 4 → 8, front → tspline) was not followed by a full unit-test run. The final full-suite run (`final_full_suite_round2_rerun`) found 6 regressions besides the expected R2 failure: M1 (5 models) asserted a hard-coded latent width of 4, and M3 called `kan_match` without `r` although its comment says matching uses the current defaults (analytic 5090 vs instantiated 5484 parameters). Both tests now read `DEFAULTS["r"]` and `DEFAULTS["kan_grid"]`; no tolerance changed; `tests/test_models.py`: 28 passed, 1 documented skip. **E-5:** the lock file was extended for PySR (D43) but the fresh-venv reproduction evidence dated from Stage A, so E-5 failed on stale evidence. `scripts/verify_env.sh` was re-run (rebuild from the lock in a scratch venv); its fresh evidence decides E-5. A full-suite run interrupted by a worker restart (`final_full_suite_round2`) is kept as a partial record. | Honest record of a process gap; tests corrected to their stated intent |
+| D57 | **Owner decision (2026-10-17): R2 recovery by option (c)** | ADOPTED (owner) | Develop a new frequency-aware functional representation (multi-scale spectral and derivative-energy features; precise mathematical definition; numerical tests) that keeps the original scientific question and retains oscillation-frequency information without relying on phase. Before the new gate: document and pre-register the architecture, hypotheses, search budget and criteria. **Original thresholds kept** (no amendment without owner approval). Model selection on train/validation only; final evaluation on genuinely fresh test data and independent confirmation seeds. All old results are kept; the report states that the new design was motivated by the earlier failures. **No KAN-vs-MLP test until the conventional MLP passes the revised gate.** If the new representation fails, diagnose and report honestly. | Owner instruction |
+| D58 | **Owner decision (2026-10-17): PBC endpoint** | ADOPTED (owner; provisional) | **E2 (death or transplantation; transplant-free survival) is the provisional primary endpoint; E1 (death, transplant censored) is a sensitivity analysis.** Clinical interpretation and censoring assumptions are stated in docs/design.md §9.1. No definitive clinical endpoint is claimed until confirmed with the owner's professor. E3 (competing risks) remains future work unless a properly specified competing-risks analysis is justified. Supersedes D9-R's "pending" status. | Owner instruction |
+| D59 | **Owner decision (2026-10-17): C-MAPSS landmark design** | ADOPTED (owner) | **Option B (trailing windows) is the primary RUL benchmark; Option A is secondary.** Metrics are reported separately by landmark band, and the correlation between windows from the same engine is accounted for (engine-cluster bootstrap confidence intervals and engine-weighted metrics, D62). RUL evaluation stays separate from genuine right-censored survival evaluation (PBC). Supersedes D3b-R's "pending" status. | Owner instruction |
+| D60 | Frequency-information diagnostic (2026-10-17; seed-21 training split only) | ADOPTED | Before choosing the representation: is ω recoverable phase-invariantly from what the models see? On the 12-basis smoothed x₂ curves: linear probe of ω on log fixed-Fourier power R² 0.94 (but phase explains 19% of its estimate error); derivative-energy ratio 0.84 (phase explains 23%); quadrature-pair projection spectrum argmax estimate correlation 0.94 (phase explains 0.5%). On the noiseless truth: 0.99 / 0.93 / 1.00. **Conclusion:** the smoother retains ω; the earlier fronts did not expose it in a phase-invariant, linearly usable form (`reports/diag_frequency_information.json`). | Motivates D61 |
+| D61 | **Pre-registration: revision-4 frequency-aware representation, search, revised gate and confirmation** (registered 2026-10-17, before any search fit) | ADOPTED | **Architecture:** front "fa" (docs/design.md §3.2c): A3 tensor spline + standardised quadrature-pair projection spectrum R and log-gap L (33 log-spaced frequencies on [0.25, 4]), derivative energies e₀, e₁, e₂ and soft frequency f̂; options log Fourier power ("fourier") and half-window spectra ("windows"). Implemented and tested (FQ-1..FQ-9 pass). **Hypothesis HF:** with "fa", the conventional fae_mlp passes R2 on fresh gate data and on ≥ 4 of 5 fresh confirmation seeds. **Search (validation only; seed 21 train/validation; budget ≤ 13 fits + 2 information fits; same selection rule as D41):** base = the A3 selection (r 8, α 1, Adam 3e-3, objective early stopping, 3000 epochs / patience 100, H 32, hidden 64). F1 front {tspline (A3, reference only), fa} (the selection is restricted to "fa" variants: A3 already failed the gate); F2 multi-scale options {fa, fa + fourier, fa + windows}; F3 frequency-grid density J ∈ {17, 33}; F4 latent r ∈ {8, 12}; F5 α ∈ {1, 0.1}; F6 stability seeds 1, 2; F7 information only: fae_linear and fae_kan. **Revised gate (`tests/test_learnability_fa.py`):** the test code of the original gate with **fresh data seed 41** (never generated before) and the selected configuration; R1, R2, R3 criteria and **thresholds unchanged** (R1: C ≥ oracle − 0.02 and \|σ̂ − 0.5\| ≤ 0.05; R2: C ≥ oracle − 0.03 and mean probe R² ≥ 0.8; R3: \|C − C_R2\| ≤ 0.02 and naive error > aware error for seeds 0–2). **Confirmation:** fresh seeds 111–115, held-out test split, R2 criteria. **CONFIRMED only if R1, R2 and R3 pass on seed 41 and ≥ 4 of 5 replications pass.** If confirmed: the pre-specified neural analyses (H1, H2, H3, CONTROLS; `run_neural_synthetic.py`, analysis plan of D33/protocol) with the selected configuration, then ablations and KAN-FAE pruning/symbolic extraction. If not confirmed: diagnose and report; no further extension without owner approval. | Owner decision D57 |
+| D62 | C-MAPSS Option B uncertainty accounting for within-engine correlation (2026-10-17) | ADOPTED | Per D59: Option B test metrics are complemented by an **engine-cluster bootstrap** (1000 resamples of test engines with replacement, seed fixed per split; percentile 95% CI for RMSE, MAE and Harrell C, overall and per landmark band) plus engine-weighted RMSE (already present). Option B is re-run for FD001 and FD003 as code version v3 (same models, splits and tuning; earlier records kept). | Owner decision D59 |
+| D63 | FQ test repairs (disclosure, 2026-10-17) | ADOPTED | FQ attempts 1–4 (logs `fq_tests_attempt*.log`). Design calibration (not a test change): the soft frequency uses the log gap L = −log(1 − R + 1e-4) with κ₀ = 4, chosen on pure sinusoids and the seed-21 training split (§3.2c). Test-premise repairs, thresholds of the property under test unchanged: FQ-2 (repair 1: tolerance for the ε = 1e-8 in the definition; repair 2: phase invariance asserted at the true frequency only, which is what the mathematics gives, and the design text corrected); FQ-4 (repair 1: ε tolerance; repair 2: exact bound 2ε/residual; its energy assertion, unreachable before attempt 3, repaired once with the same bound); FQ-5 (repair 1: harness kept the autograd graph). All 11 FQ tests pass. | Integrity |
+| D64 | Historical gate test kept as a record (2026-10-17) | ADOPTED | `tests/test_learnability.py` (seed 21) is pinned to the A3 configuration it evaluated (explicitly, no longer via DEFAULTS), and its R2 test is marked `xfail(strict=True)` with the reason "A3 design failed R2 (D46/D53)". It still runs on every full suite and is reported as an expected failure; if it ever passed, strict xfail would flag it. DEFAULTS are not changed for revision 4: the revised gate and all neural analyses read the configuration from the selection file. | Keeps the suite informative without hiding the historical failure |
+| D65 | Overfitting diagnostic of the revision-4 front (registered 2026-10-17 after the D61 search, before reading the revised gate; validation data only) | ADOPTED | **Observation (D61 search):** every "fa" fit overfits (train C 0.87–0.91 vs validation 0.75–0.82; A3: 0.855 vs 0.844), stops early (≈ 500–1200 epochs) and loses the b and A probes, while ω becomes decodable (validation probe 0.83–0.89). **Hypothesis:** the 114–408-dimensional standardised spectral block feeding the front's linear map overfits with 1200 training individuals. **Diagnostic (seed-21 train/validation; not a selection, not a gate):** (i) compact summary `fa_compact` (f̂, peak log gap, e₀, e₁, e₂ per channel; 15 features; test FQ-10) with J = 17 and J = 33, r = 8 and 12; (ii) full J = 17 with r = 12 and the spectral map's weights decayed 10× more (wd 1e-3) — implemented as the global wd setting. Outcome recorded in `reports/diag_fa_overfitting.jsonl`. **Any configuration derived from this diagnostic is a new design revision (4b) and needs owner approval and a new pre-registered gate on fresh seeds before evaluation (D61).** | Diagnosis only |
+| D66 | R1 seed-sensitivity diagnostic (registered 2026-10-17, after the revised gate's R1 failed) | ADOPTED | Revised gate seed 41: R1 C 0.8931 (≥ 0.8756, passes) but σ̂ = 0.5707 (\|σ̂ − 0.5\| = 0.071 > 0.05). R1 uses the true parameters as inputs, so it does not involve the representation. **Diagnostic:** the identical R1 procedure on diagnostic seeds 501–510 (used nowhere else) plus 21 and 41, reporting the distribution of σ̂ and C − oracle, and (added after the first pass) the profile MLE of σ with the learned η held fixed. The R1 threshold is not changed; the outcome is reported as a property of the gate check. | Diagnosis only |
 
-## I.14 Reproducibility
+## R2.14 Reproducibility
 
 ### Reproducibility
 
@@ -851,6 +1531,21 @@ KANFAE_RUN_ID=gate .venv/bin/python -m pytest -v -s tests/test_learnability.py
 .venv/bin/python scripts/diag_pruning_threshold.py          # D54
 .venv/bin/python scripts/run_kanaft_pbc.py                  # D52
 .venv/bin/python scripts/run_cmapss.py --subset FD003 --code-version v2   # D51
+### round 3 (2026-10-17): revision 4 (frequency-aware front), pre-registered in D61 before these runs
+.venv/bin/python scripts/diag_frequency_information.py     # D60 (seed-21 training split only)
+.venv/bin/python -m pytest -v tests/test_frequency_front.py # FQ-1..FQ-10
+.venv/bin/python scripts/learnability_search_fa.py         # validation-only search -> reports/learnability_selected_fa.json
+KANFAE_RUN_ID=revised_gate_fa .venv/bin/python -m pytest -v -s tests/test_learnability_fa.py   # fresh seed 41
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa.json \
+    --seeds 111,112,113,114,115 --tag _fa
+.venv/bin/python scripts/revised_gate_verdict.py           # -> reports/revised_gate_verdict.json (D61 rule)
+.venv/bin/python scripts/run_neural_synthetic.py           # refuses to run unless the verdict is CONFIRMED (D57)
+.venv/bin/python scripts/diag_fa_overfitting.py            # D65 (validation only)
+.venv/bin/python scripts/diag_r1_seeds.py                  # D66
+.venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3   # D62
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3
+### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
+.venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/aggregate_results.py
 .venv/bin/python scripts/make_figures.py && .venv/bin/python scripts/make_figures_round2.py
@@ -863,7 +1558,7 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-## I.15 Limitations and decisions requested from the owner
+## R2.15 Limitations and decisions requested from the owner
 
 - **R2 failed under the pre-registered protocol (D46: no further extension), so KAN-FAE is not ready for H1.**
   Legitimate next steps need your decision, because each changes the scientific question:
@@ -968,7 +1663,7 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 | E2 | 4 | age | library | `-0.617361*gaussian(0.998016*x + -2.11707) + 0.193193` | 5 | 0.9967 | 0.9966 | 0.9959 | 0.0087 | 0.0523 | [-2.10, 2.76] |
 | E2 | 4 | sex(f=1) | linear | `0.0955712*x + 0.0403551` | 1 | 1.0000 | 1.0000 | 0.4907 | 0.0000 | 0.2197 | [-2.97, 0.34] |
 
-# Part II: round-1 report (2026-10-16), historical record
+# Part C: round-1 report (2026-10-16), historical record
 
 The text below is the round-1 report, regenerated from the same records. Its gate and baseline sections are
 unchanged history. Its "unfinished work" items are now tracked in the ledger (I.12), and its R2 conclusion is
@@ -976,10 +1671,10 @@ superseded by I.1.
 
 
 <p class="small">Research prototype report · generated 2026-10-16 from saved results by <code>scripts/build_report.py</code> ·
-git <code>46d241e</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
+git <code>396100c</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
 <b>research prototype, not publication-ready</b> · no novelty claim is made.</p>
 
-## II.1 Executive summary (plain English)
+## R1.1 Executive summary (plain English)
 
 **What we set out to test.** Whether a new kind of neural network building block, the Kolmogorov–Arnold
 network (KAN), helps a "functional autoencoder" predict *time-to-event* from patient-like or machine-like
@@ -1025,12 +1720,12 @@ measurements that change over time, compared with a matched conventional network
 - Which PBC endpoint to adopt.
 - Which C-MAPSS landmark design to adopt.
 
-**Test status.** 187 test cases; latest outcomes: 185 passed,
+**Test status.** 150 test cases; latest outcomes: 148 passed,
 1 failed (the learnability check R2), 1 skipped (documented not-applicable
 case). Every attempt, including failures, is logged.
 
 
-## II.2 Research objective and hypotheses
+## R1.2 Research objective and hypotheses
 
 **Narrow research question.** Does a KAN-based functional representation improve survival prediction from
 multivariate time-varying trajectories over parameter-matched conventional baselines?
@@ -1047,7 +1742,7 @@ ran (decision D24):
 
 The project makes **no novelty claim**. No literature review was performed (D27).
 
-## II.3 Files and modules created or modified
+## R1.3 Files and modules created or modified
 
 The existing `README.md` was not modified (D28). Everything else was created in this session.
 
@@ -1071,7 +1766,7 @@ The existing `README.md` was not modified (D28). Everything else was created in 
 | `scripts/compile_test_results.py`, `aggregate_results.py`, `make_figures.py`, `build_report.py`, `build_manifest.py`, `build_pdf.sh` | Reporting pipeline (all numbers are generated from saved results) |
 | `tests/` (11 files) | Acceptance tests for Stages A–G |
 
-## II.4 Environment, package versions and hardware limitations
+## R1.4 Environment, package versions and hardware limitations
 
 - **Interpreter:** Python 3.13 in a project-local virtual environment `.venv`, created by `scripts/setup_env.sh`.
 - **Global environment unchanged:** `pip list` diff is empty (E-1).
@@ -1096,16 +1791,16 @@ The existing `README.md` was not modified (D28). Everything else was created in 
 | pytest | 9.1.1 |
 | hypothesis | 6.170.0 |
 
-## II.5 Model architecture, equations and key design choices
+## R1.5 Model architecture, equations and key design choices
 
 The full specification is in `docs/design.md`.
 
-### II.5.1 Landmark prediction
+### R1.5.1 Landmark prediction
 
 A trajectory observed on a window ending at landmark `s` is used to predict the residual time `T* − s` for
 individuals at risk at `s`. No input is dated after `s` (test K4).
 
-### II.5.2 Censoring-aware AFT likelihood
+### R1.5.2 Censoring-aware AFT likelihood
 
 ```
 log T = η + σ ε,    w = (log y − η)/σ,    S(t) = S_ε((log t − η)/σ)
@@ -1115,20 +1810,20 @@ Log-normal: log f = −w²/2 − ½ log 2π,   log S = log Φ(−w)
 Log-logistic: log f = w − 2 softplus(w),  log S = −softplus(w)
 ```
 
-### II.5.3 Functional representation
+### R1.5.3 Functional representation
 
 - **Smoother:** a quadrature-weighted penalised B-spline smoother (D20):
   `c = (ΦᵀQΦ + λR + λ₀I)⁻¹ ΦᵀQy`, with cell-length weights `Q`. The data term therefore approximates
   `∫ (y − x)² dt` and is consistent under refinement of the sampling (test F3).
 - **Functional linear layer:** `h_j = b_j + Σ_d ∫ β_jd(t) x_d(t) dt = b_j + Σ_d c_dᵀ J b_jd`.
 
-### II.5.4 Autoencoders
+### R1.5.4 Autoencoders
 
 - **Encoder and decoder:** `z = g_enc(h)`; `ĉ = g_dec(z)`; `x̂(t) = Σ_k ĉ_k φ_k(t)`; head `η = wᵀ[z, u] + b`.
 - **Reconstruction loss:** weights every **individual** equally (D19).
 - **Total loss:** `L = mean(−ℓ) + α·L_rec + λ_β Σ bᵀR_βb`.
 
-### II.5.5 KAN layer and parameter matching
+### R1.5.5 KAN layer and parameter matching
 
 - **KAN layer** (in-house; passed F-KAN-1..4):
   `out_q = Σ_p [w^b_pq SiLU(x_p) + w^s_pq Σ_g a_pqg B_g(x_p)] + bias_q`.
@@ -1139,7 +1834,7 @@ Log-logistic: log f = w − 2 softplus(w),  log S = −softplus(w)
   - Repaired defaults: 5090 vs 5032 (+1.2%).
   - For D ≥ 6, a decoder hidden width of 3 < r is unavoidable under matching; this is a recorded limitation.
 
-### II.5.6 Key corrections made before any training
+### R1.5.6 Key corrections made before any training
 
 - D30: BatchNorm instead of LayerNorm. A per-sample LayerNorm would have removed 2 of the 4 latent degrees of
   freedom.
@@ -1147,7 +1842,7 @@ Log-logistic: log f = w − 2 softplus(w),  log S = −softplus(w)
 - D32: M2 targets that each model can represent.
 - D36 (later): linear-AFT penalty scaling, found during the C-MAPSS smoke test.
 
-## II.6 Datasets, sources, dimensions, missingness and preprocessing
+## R1.6 Datasets, sources, dimensions, missingness and preprocessing
 
 | Dataset | Kind | Source / provenance | Dimensions used | Outcome |
 |---|---|---|---|---|
@@ -1182,14 +1877,14 @@ Log-logistic: log f = w − 2 softplus(w),  log S = −softplus(w)
 
 ![PBC visits](figures/fig_pbc_visits.png)
 
-## II.7 Tests performed, statuses and errors
+## R1.7 Tests performed, statuses and errors
 
-### II.7.1 Status of every acceptance criterion
+### R1.7.1 Status of every acceptance criterion
 
 All tests were run through `scripts/run_logged.sh`. Every attempt, including failed attempts, is in
-`reports/test_results.csv` (1191 test records over 37 pytest runs). The latest
-outcome of each test is in `reports/test_results_latest.csv`: 187 test cases, of which
-185 passed, 1 failed and 1 skipped.
+`reports/test_results.csv` (1443 test records over 44 pytest runs). The latest
+outcome of each test is in `reports/test_results_latest.csv`: 150 test cases, of which
+148 passed, 1 failed and 1 skipped.
 
 Test types:
 - **DET:** deterministic numerical checks.
@@ -1247,9 +1942,9 @@ Test types:
 | D | M2 | DET | 4 | PASS (+skip) | 0 |
 | D | M3 | DET | 3 | PASS | 1 |
 | D | M5 | DET | 10 | PASS | 0 |
-| D | R1 | STAT | 1 | PASS | 0 |
-| D | R2 | STAT | 1 | FAIL | 11 |
-| D | R3 | STAT | 1 | PASS | 2 |
+| D | R1 | STAT | 2 | FAIL | 2 |
+| D | R2 | STAT | 2 | FAIL | 13 |
+| D | R3 | STAT | 2 | PASS | 2 |
 | E | Q1 | DET | 3 | PASS | 2 |
 | E | Q2 | DET/STAT | 2 | PASS | 0 |
 | E | Q3 | DET | 1 | PASS | 0 |
@@ -1265,6 +1960,16 @@ Test types:
 | AUDIT | AUD-4 | DET | 1 | PASS | 0 |
 | AUDIT | AUD-5 | DET | 1 | PASS | 0 |
 | AUDIT | AUD-6 | DET | 1 | PASS | 0 |
+| C4 | FQ-1 | DET | 1 | PASS | 0 |
+| C4 | FQ-10 | DET | 1 | PASS | 0 |
+| C4 | FQ-2 | DET | 1 | PASS | 2 |
+| C4 | FQ-3 | DET | 3 | PASS | 1 |
+| C4 | FQ-4 | DET | 1 | PASS | 3 |
+| C4 | FQ-5 | DET | 1 | PASS | 1 |
+| C4 | FQ-6 | DET | 1 | PASS | 0 |
+| C4 | FQ-7 | DET | 1 | PASS | 0 |
+| C4 | FQ-8 | DET | 1 | PASS | 0 |
+| C4 | FQ-9 | STAT | 1 | PASS | 0 |
 | A3 | INT-1 | DET | 3 | PASS | 2 |
 | A3 | INT-2 | DET | 1 | PASS | 0 |
 | A3 | INT-3 | DET | 1 | PASS | 0 |
@@ -1282,9 +1987,9 @@ Test types:
 | SYM | SYM-3 | STAT | 1 | PASS | 0 |
 | SYM | SYM-4 | STAT | 1 | PASS | 1 |
 
-## II.8 Test counts and the actual errors
+## R1.8 Test counts and the actual errors
 
-### II.8.1 Test-run counts (chronological)
+### R1.8.1 Test-run counts (chronological)
 
 | pytest run (KANFAE_RUN_ID) | passed | failed | skipped |
 |---|---|---|---|
@@ -1325,8 +2030,15 @@ Test types:
 | final_full_suite_round2_rerun | 178 | 8 | 1 |
 | models_repair_D56 | 28 | 0 | 1 |
 | final_full_suite_round2_v3 | 185 | 1 | 1 |
+| fq_attempt1 | 7 | 4 | 0 |
+| fq_attempt2 | 9 | 2 | 0 |
+| fq_attempt3 | 10 | 1 | 0 |
+| fq_attempt4 | 11 | 0 | 0 |
+| revised_gate_fa | 1 | 2 | 0 |
+| fq10 | 3 | 0 | 0 |
+| final_full_suite_round3 | 198 | 2 | 1 |
 
-### II.8.2 Actual errors and how each was handled
+### R1.8.2 Actual errors and how each was handled
 
 | Test run | Criterion | Test | Error (truncated) |
 |---|---|---|---|
@@ -1365,6 +2077,17 @@ Test types:
 | final_full_suite_round2_rerun | M1 | test_M1_shapes[flat_ae] | AssertionError: assert (48, 8) == (48, 4)      At index 1 diff: 8 != 4      Full diff:     (         48,   -     4,...      ...Full output truncated ( |
 | final_full_suite_round2_rerun | M3 | test_M3_parameter_matching[3] | assert 5484 == 5090 |
 | final_full_suite_round2_v3 | R2 | test_R2_fae_mlp_end_to_end | assert np.float64(0.8498245614035088) >= (np.float64(0.8936215538847118) - 0.03) |
+| fq_attempt1 | FQ-2 | test_FQ2_phase_invariance | assert np.float64(3.018392824571947e-08) < 1e-09  +  where np.float64(3.018392824571947e-08) = abs((np.float64(0.9999999698160718) - 1)) |
+| fq_attempt1 | FQ-3 | test_FQ3_peak_at_true_frequency[16] | AssertionError: assert np.float64(0.36405233994478636) < np.float64(0.22314355131420976)  +  where np.float64(0.36405233994478636) = <built-in method  |
+| fq_attempt1 | FQ-4 | test_FQ4_scale_and_trend_invariance | assert False  +  where False = <built-in method allclose of type object at 0x7fbcb87e41a0>(tensor([[[[0.4619, 0.4614, 0.4608, 0.4602, 0.4593, 0.4583,  |
+| fq_attempt1 | FQ-5 | test_FQ5_gradcheck | torch.autograd.gradcheck.GradcheckError: Jacobian mismatch for output 0 with respect to input 0, numerical:tensor([[ 7.2011e-01,  0.0000e+00,  2.4458e |
+| fq_attempt2 | FQ-2 | test_FQ2_phase_invariance | assert (np.float64(0.5012705672624919) < 0.0001)  +  where np.float64(0.5012705672624919) = <built-in method max of numpy.ndarray object at 0x7fb9aee7 |
+| fq_attempt2 | FQ-4 | test_FQ4_scale_and_trend_invariance | assert False  +  where False = <built-in method allclose of type object at 0x7fb9d5be41a0>(tensor([[[[0.4619, 0.4614, 0.4608, 0.4602, 0.4593, 0.4583,  |
+| fq_attempt3 | FQ-4 | test_FQ4_scale_and_trend_invariance | AssertionError: assert False  +  where False = <built-in method allclose of type object at 0x7fb9a0de41a0>((tensor([[1.6537],\n        [0.8909],\n     |
+| revised_gate_fa | R1 | test_R1_oracle_features_head | assert (np.float64(0.8931203007518796) >= (np.float64(0.8955639097744361) - 0.02) and 0.07074905689989797 <= 0.05)  +  where 0.07074905689989797 = abs |
+| revised_gate_fa | R2 | test_R2_fae_mlp_end_to_end | assert np.float64(0.8189473684210526) >= (np.float64(0.8955639097744361) - 0.03) |
+| final_full_suite_round3 | R1 | test_R1_oracle_features_head | assert (np.float64(0.8931203007518796) >= (np.float64(0.8955639097744361) - 0.02) and 0.07074905689989797 <= 0.05)  +  where 0.07074905689989797 = abs |
+| final_full_suite_round3 | R2 | test_R2_fae_mlp_end_to_end | assert np.float64(0.8155889724310776) >= (np.float64(0.8955639097744361) - 0.03) |
 
 **Explanations** (each failure got at most two targeted repairs; no threshold was changed, D11).
 
@@ -1385,7 +2108,7 @@ Test types:
   - The fixture uses test times inside the support.
 - **Stage D, learnability gate: R2 FAILED after both permitted repairs** (§10.1).
 
-## II.9 Baselines, splits, seeds, tuning rules and metrics
+## R1.9 Baselines, splits, seeds, tuning rules and metrics
 
 **Models actually run (validated, non-neural).**
 
@@ -1445,12 +2168,12 @@ and H1 was not run. Comparisons between baselines are descriptive.
 | cmapss_A | FPCA + AFT | {"n_components": 12} ×5; {"n_components": 4} ×3; {"n_components": 8} ×2 |
 | cmapss_A | FPCA + Cox | {"n_components": 12, "penalizer": 0.01} ×5; {"n_components": 4, "penalizer": 0.01} ×4; {"n_components": 8, "penalizer": 0.01} ×1 |
 | cmapss_A | Summary + AFT | {"l2": 1.0} ×10 |
-| cmapss_A | Summary + Cox | {"penalizer": 0.1} ×4; {"penalizer": 1.0} ×1 |
+| cmapss_A | Summary + Cox | {"penalizer": 0.1} ×9; {"penalizer": 1.0} ×1 |
 | cmapss_A | Summary + RSF | {"min_samples_leaf": 5} ×10 |
 | cmapss_A_artificial | FPCA + AFT | {"n_components": 8} ×6; {"n_components": 12} ×3; {"n_components": 4} ×1 |
 | cmapss_A_artificial | FPCA + Cox | {"n_components": 8, "penalizer": 0.01} ×5; {"n_components": 12, "penalizer": 0.01} ×4; {"n_components": 4, "penalizer": 0.01} ×1 |
 | cmapss_A_artificial | Summary + AFT | {"l2": 1.0} ×9 |
-| cmapss_A_artificial | Summary + Cox | {"penalizer": 0.1} ×3; {"penalizer": 0.01} ×1; {"penalizer": 1.0} ×1 |
+| cmapss_A_artificial | Summary + Cox | {"penalizer": 0.1} ×8; {"penalizer": 0.01} ×1; {"penalizer": 1.0} ×1 |
 | cmapss_A_artificial | Summary + RSF | {"min_samples_leaf": 5} ×10 |
 | cmapss_B | FPCA + AFT | {"n_components": 8} ×4; {"n_components": 12} ×4; {"n_components": 4} ×2 |
 | cmapss_B | FPCA + Cox | {"n_components": 8, "penalizer": 0.01} ×4; {"n_components": 12, "penalizer": 0.01} ×4; {"n_components": 4, "penalizer": 0.01} ×2 |
@@ -1506,22 +2229,28 @@ and H1 was not run. Comparisons between baselines are descriptive.
 | cmapss_A | FPCA + Cox | current | 50 | 0 | 0 |
 | cmapss_A | KM null (reference) | current | 20 | 0 | 0 |
 | cmapss_A | Summary + AFT | current | 50 | 0 | 0 |
-| cmapss_A | Summary + Cox | current | 25 | 0 | 0 |
-| cmapss_A | Summary + Cox | superseded (D37) | 30 | 0 | 16 |
+| cmapss_A | Summary + Cox | current | 50 | 0 | 0 |
+| cmapss_A | Summary + Cox | superseded (re-run: D37 / D62) | 5 | 0 | 16 |
 | cmapss_A | Summary + RSF | current | 70 | 0 | 0 |
 | cmapss_A_artificial | FPCA + AFT | current | 50 | 0 | 0 |
 | cmapss_A_artificial | FPCA + Cox | current | 50 | 0 | 0 |
 | cmapss_A_artificial | KM null (reference) | current | 20 | 0 | 0 |
 | cmapss_A_artificial | Summary + AFT | current | 18 | 31 | 0 |
-| cmapss_A_artificial | Summary + Cox | current | 25 | 0 | 0 |
-| cmapss_A_artificial | Summary + Cox | superseded (D37) | 30 | 0 | 16 |
+| cmapss_A_artificial | Summary + Cox | current | 50 | 0 | 0 |
+| cmapss_A_artificial | Summary + Cox | superseded (re-run: D37 / D62) | 5 | 0 | 16 |
 | cmapss_A_artificial | Summary + RSF | current | 70 | 0 | 0 |
 | cmapss_B | FPCA + AFT | current | 50 | 0 | 0 |
+| cmapss_B | FPCA + AFT | superseded (re-run: D37 / D62) | 50 | 0 | 0 |
 | cmapss_B | FPCA + Cox | current | 50 | 0 | 0 |
+| cmapss_B | FPCA + Cox | superseded (re-run: D37 / D62) | 50 | 0 | 0 |
 | cmapss_B | KM null (reference) | current | 20 | 0 | 0 |
+| cmapss_B | KM null (reference) | superseded (re-run: D37 / D62) | 20 | 0 | 0 |
 | cmapss_B | Summary + AFT | current | 50 | 0 | 0 |
+| cmapss_B | Summary + AFT | superseded (re-run: D37 / D62) | 50 | 0 | 0 |
 | cmapss_B | Summary + Cox | current | 50 | 0 | 0 |
+| cmapss_B | Summary + Cox | superseded (re-run: D37 / D62) | 50 | 0 | 0 |
 | cmapss_B | Summary + RSF | current | 70 | 0 | 0 |
+| cmapss_B | Summary + RSF | superseded (re-run: D37 / D62) | 70 | 0 | 0 |
 | pbc_E1 | FPCA + AFT | current | 25 | 0 | 0 |
 | pbc_E1 | FPCA + Cox | current | 25 | 0 | 0 |
 | pbc_E1 | KM null (reference) | current | 10 | 0 | 0 |
@@ -1545,7 +2274,7 @@ and H1 was not run. Comparisons between baselines are descriptive.
 | synthetic_baselines | Summary + RSF | current | 210 | 0 | 0 |
 
 
-## II.10 Experimental results
+## R1.10 Experimental results
 
 All results below are **actual outputs of logged runs** (`reports/experiment_results.jsonl` and `.csv`;
 summaries in `reports/tables/`). Values are mean ± SD over 5 replicates or splits. For the random survival
@@ -1556,7 +2285,7 @@ replicates/splits contributing.
 > natural censoring)**; its survival-framing metrics involve no censoring, except in §10.3.3, which is
 > **ARTIFICIAL CENSORING**. §10.4 is **REAL (PBC, genuinely right-censored)**.
 
-### II.10.1 Learnability gate (SYNTHETIC; seed 21; N = 2000; stage D)
+### R1.10.1 Learnability gate (SYNTHETIC; seed 21; N = 2000; stage D)
 
 - **R1 PASS.** An MLP AFT head given the *true* latent parameters (a, b, A, ω) reached test C = 0.8910
   (oracle 0.8936), with σ = 0.4816 (truth 0.5). The survival head and likelihood can learn the
@@ -1592,7 +2321,7 @@ replicates/splits contributing.
   (`reports/logs/diag_R2_budget.log`). This single-seed observation on the gate data set must not be read as
   a KAN advantage.
 
-### II.10.2 Synthetic experiments with validated baselines (SYNTHETIC)
+### R1.10.2 Synthetic experiments with validated baselines (SYNTHETIC)
 
 **Pre-registered primary setting P0** (V1, dense, 30% censoring, Weibull):
 
@@ -1693,7 +2422,7 @@ observation points on the standardised scale, both weightings, D19):
 ![Calibration](figures/fig_calibration.png)
 
 
-### II.10.3 C-MAPSS FD001 (REAL simulated turbofan data; RUL benchmark)
+### R1.10.3 C-MAPSS FD001 (REAL simulated turbofan data; RUL benchmark)
 
 **RUL results are reported separately from survival-framing metrics.**
 - With no censoring, the IBS here is an unweighted Brier score, and Harrell's C equals Uno's C up to
@@ -1702,7 +2431,7 @@ observation points on the standardised scale, both weightings, D19):
 - "Official" means the NASA test trajectories, which have true RUL.
 - Neither landmark option is the approved design (D3b-R). They are separate, labelled analyses.
 
-#### II.10.3.1 Option A (single landmark s0 = minimum training-split life − 1; full history)
+#### R1.10.3.1 Option A (single landmark s0 = minimum training-split life − 1; full history)
 
 | Model | IBS ↓ | Harrell C ↑ | RUL RMSE internal ↓ | RUL MAE internal ↓ | RUL RMSE official ↓ | n official | n |
 |---|---|---|---|---|---|---|---|
@@ -1713,7 +2442,7 @@ observation points on the standardised scale, both weightings, D19):
 | Summary + RSF | 0.101 ± 0.032 | 0.838 ± 0.070 | 28.2 ± 14.9 | 19.4 ± 8.7 | 33.1 ± 5.5 | 55 ± 3 | 5 |
 | KM null (reference) | 0.198 ± 0.011 | 0.500 ± 0.000 | 47.5 ± 13.9 | 34.6 ± 8.9 | 54.1 ± 1.3 | 55 ± 3 | 5 |
 
-#### II.10.3.2 Option B (trailing 30-cycle windows every 10 cycles; landmark s as a covariate)
+#### R1.10.3.2 Option B (trailing 30-cycle windows every 10 cycles; landmark s as a covariate)
 
 | Model | IBS ↓ | Harrell C ↑ | RUL RMSE internal ↓ | RUL MAE internal ↓ | RUL RMSE official ↓ | n official | n |
 |---|---|---|---|---|---|---|---|
@@ -1739,7 +2468,7 @@ Per landmark band (internal test; pooled metrics mix landmarks, so per-band metr
 
 ![C-MAPSS bands](figures/fig_cmapss_bands.png)
 
-#### II.10.3.3 Option A with ARTIFICIAL CENSORING (code-path test only)
+#### R1.10.3.3 Option A with ARTIFICIAL CENSORING (code-path test only)
 
 Training and validation targets were censored independently with `C ~ U(0, max training residual)`. Test
 targets are uncensored. These numbers **test the censoring code path, not real censoring**.
@@ -1783,11 +2512,11 @@ targets are uncensored. These numbers **test the censoring code path, not real c
     4 of 5 splits contribute.
 - **The neural autoencoders were not evaluated** (BLOCKED, D33).
 
-### II.10.4 PBC sequential data (REAL, right-censored; landmark 730 days)
+### R1.10.4 PBC sequential data (REAL, right-censored; landmark 730 days)
 
 The two endpoints estimate different quantities, and **neither is declared definitive** (D9-R).
 
-#### II.10.4.1 E1: death, with transplant treated as censoring (hypothetical no-transplant survival; relies on CA-1 for transplant)
+#### R1.10.4.1 E1: death, with transplant treated as censoring (hypothetical no-transplant survival; relies on CA-1 for transplant)
 
 | Model | IBS (marginal KM) ↓ | IBS (conditional IPCW) ↓ | Uno C ↑ | Harrell C ↑ | D-cal p | n |
 |---|---|---|---|---|---|---|
@@ -1798,7 +2527,7 @@ The two endpoints estimate different quantities, and **neither is declared defin
 | Summary + RSF | 0.129 ± 0.013 | 0.129 ± 0.016 | 0.791 ± 0.047 | 0.831 ± 0.038 | 0.86 ± 0.12 | 5 |
 | KM null (reference) | 0.204 ± 0.011 | 0.202 ± 0.010 | 0.500 ± 0.000 | 0.500 ± 0.000 | 0.85 ± 0.20 | 5 |
 
-#### II.10.4.2 E2: death or transplant, composite (transplant-free survival)
+#### R1.10.4.2 E2: death or transplant, composite (transplant-free survival)
 
 | Model | IBS (marginal KM) ↓ | IBS (conditional IPCW) ↓ | Uno C ↑ | Harrell C ↑ | D-cal p | n |
 |---|---|---|---|---|---|---|
@@ -1811,7 +2540,7 @@ The two endpoints estimate different quantities, and **neither is declared defin
 
 ![PBC IBS](figures/fig_pbc_ibs.png)
 
-#### II.10.4.3 Visit process (descriptive; full cohort; not used as a model feature)
+#### R1.10.4.3 Visit process (descriptive; full cohort; not used as a model feature)
 
 | Endpoint | Cohort | Events | Visits ≤ 730 d: median (range) | ≤ 2 visits | HR per visit (95% CI) | p |
 |---|---|---|---|---|---|---|
@@ -1839,7 +2568,7 @@ The two endpoints estimate different quantities, and **neither is declared defin
 
 
 
-## II.11 Plots (index)
+## R1.11 Plots (index)
 
 All figures are generated by `scripts/make_figures.py` from the saved tables. They are embedded in the sections
 above.
@@ -1855,7 +2584,7 @@ above.
 | `figures/fig_pbc_ibs.png`, `fig_pbc_visits.png` | IBS (marginal vs conditional IPCW); visits before the landmark | PBC (REAL, censored) |
 
 
-## II.12 Runtime, parameter counts and compute constraints
+## R1.12 Runtime, parameter counts and compute constraints
 
 | Dataset | Model | Mean fit time per final run (s) | Mean parameter count* |
 |---|---|---|---|
@@ -1864,11 +2593,11 @@ above.
 | synthetic | Summary + AFT | 0.82 | 14 |
 | synthetic | Summary + Cox | 0.60 | 12 |
 | synthetic | Summary + RSF | 1.61 | 19625 |
-| cmapss_FD001 | FPCA + AFT | 1.94 | 10 |
-| cmapss_FD001 | FPCA + Cox | 1.69 | 7 |
-| cmapss_FD001 | Summary + AFT | 2.67 | 62 |
-| cmapss_FD001 | Summary + Cox | 1.90 | 60 |
-| cmapss_FD001 | Summary + RSF | 3.42 | 16008 |
+| cmapss_FD001 | FPCA + AFT | 2.62 | 10 |
+| cmapss_FD001 | FPCA + Cox | 2.86 | 7 |
+| cmapss_FD001 | Summary + AFT | 3.01 | 62 |
+| cmapss_FD001 | Summary + Cox | 2.89 | 60 |
+| cmapss_FD001 | Summary + RSF | 4.92 | 16008 |
 | pbc | FPCA + AFT | 0.25 | 12 |
 | pbc | FPCA + Cox | 0.24 | 9 |
 | pbc | Summary + AFT | 0.18 | 28 |
@@ -1886,7 +2615,7 @@ above.
   comparisons were blocked.
 - The parameter-matched neural blocks (protocol M3) were verified, but never compared experimentally.
 
-## II.13 What was learned
+## R1.13 What was learned
 
 1. **The censoring-aware AFT machinery is validated.** All three AFT likelihoods matched independent references:
    - scipy closed forms (`rtol = 1e-10`);
@@ -1910,7 +2639,7 @@ above.
 5. **C-MAPSS and PBC baseline results are descriptive and must be read with the caveats in §14.** In
    particular, C-MAPSS contains no natural censoring, and the two PBC endpoints estimate different quantities.
 
-## II.14 Limitations, possible leakage, censoring assumptions and unresolved decisions
+## R1.14 Limitations, possible leakage, censoring assumptions and unresolved decisions
 
 ### Scope
 - The neural comparisons that motivated the project were not run (D33). All experimental results concern
@@ -1968,7 +2697,7 @@ above.
 ### Literature and status
 - No literature review was performed. **The prototype is not publication-ready.**
 
-## II.15 Reproducibility
+## R1.15 Reproducibility
 
 ```bash
 # environment (project-local; never touches the global Python)
@@ -1993,7 +2722,7 @@ bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py
 Every executed command, with its exit code and timing, is in `reports/logs/commands.jsonl`. The full outputs
 are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execution_log.md`.
 
-## II.16 Unfinished work and reasons
+## R1.16 Unfinished work and reasons
 
 | Item | Status | Reason |
 |---|---|---|
@@ -2009,7 +2738,7 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 | Informative-censoring and further misspecification synthetic variants | NOT RUN | Planned for later (design §5.3) |
 | Literature review; bibliographic verification of the method references | NOT DONE | D27 |
 
-## II.17 References
+## R1.17 References
 
 Sources with traceable links (accessed 2026-10-16). The bibliographic details are as stated by the cited source
 pages; they were not checked against the original publications.

@@ -199,9 +199,11 @@ def gate_vals():
 
 def values():
     v = gate_vals()
-    v["n_tests_latest"] = str(len(TL))
+    T1 = TA[TA.run_id == "final_full_suite"]              # round-1 text quotes ITS final full-suite run (round 3)
+    T1 = T1 if len(T1) else TL
+    v["n_tests_latest"] = str(len(T1))
     for o in ("passed", "failed", "skipped"):
-        v[f"latest_{o}"] = str(int((TL.outcome == o).sum()))
+        v[f"latest_{o}"] = str(int((T1.outcome == o).sum()))
     v["n_test_runs"] = str(TA.run_id.nunique())
     v["n_test_records"] = str(len(TA))
     df = pd.read_csv(REP / "experiment_results.csv", low_memory=False)
