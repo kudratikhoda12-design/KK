@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch import nn
 
 from ..functional.basis import BSplineBasis
-from ..functional.layers import FunctionalLinear
+from ..functional.layers import FunctionalLinear, NonlinearFunctional
 from .kan import KANBlock
 
 
@@ -90,11 +90,14 @@ class AFTHead(nn.Module):
 
 class FunctionalAE(nn.Module):
     def __init__(self, D, basis: BSplineBasis, n_beta=8, H=16, r=4, block="mlp", hidden=32, kan_grid=5,
-                 kan_hidden=(None, None), head="linear", p_u=0, seed=0):
+                 kan_hidden=(None, None), head="linear", p_u=0, seed=0, front="linear", n_maps=5, pw_width=16):
         super().__init__()
         torch.manual_seed(seed)
         self.D, self.K = D, basis.K
-        self.flin = FunctionalLinear(D, H, basis, BSplineBasis(n_beta), seed=seed)
+        if front == "nonlinear":       # revision 3 (D38)
+            self.flin = NonlinearFunctional(D, H, basis, BSplineBasis(n_beta), n_maps, pw_width, seed=seed)
+        else:
+            self.flin = FunctionalLinear(D, H, basis, BSplineBasis(n_beta), seed=seed)
         self.encoder = make_block(block, H, r, hidden, kan_grid, kan_hidden[0], seed=seed)
         self.decoder = make_block(block, r, D * basis.K, hidden, kan_grid, kan_hidden[1], seed=seed + 100)
         self.head = AFTHead(r + p_u, head)

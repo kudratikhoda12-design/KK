@@ -26,7 +26,10 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=4, H=32, hidden=64
                 head="linear", family="weibull", n_basis=12, n_beta=8, lam_beta=1e-3,
                 # Gate repair 1 (2026-10-16): the original budget (400 epochs, patience 30) was always exhausted
                 # in R2 attempt 1 (reports/logs/diag_R2_budget.log); full-batch Adam needs a larger budget.
-                max_epochs=3000, patience=100, naive=False, holdout_frac=0.15)
+                max_epochs=3000, patience=100, naive=False, holdout_frac=0.15,
+                # Revision 3 (D38, 2026-10-17): nonlinear functional front end shared by MLP and KAN arms.
+                # front="linear" reproduces the original design used in gate attempts 1-3.
+                front="nonlinear", n_maps=5, pw_width=16)
 
 
 def _check(obs):
@@ -88,7 +91,7 @@ class NeuralAFT(BaseModel):
             w, self.match_info = kan2_match(D, self.pre.basis.K, c["H"], c["r"], c["hidden"], c["kan_grid"])
             kh = (c["kan_hidden"] or w, c["kan_hidden"] or w)
         return FunctionalAE(D, self.pre.basis, c["n_beta"], c["H"], c["r"], block, c["hidden"], c["kan_grid"],
-                            kh, c["head"], p_u, seed)
+                            kh, c["head"], p_u, seed, c["front"], c["n_maps"], c["pw_width"])
 
     def _objective(self, T, parts):
         z, out, eta, sigma = self.model(T["inp"], T["u"])
