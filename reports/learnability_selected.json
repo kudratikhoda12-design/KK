@@ -1,0 +1,12 @@
+{
+ "kind": "fae_mlp",
+ "config": {
+  "front": "tspline",
+  "r": 8,
+  "alpha": 1.0,
+  "optimizer": "adam",
+  "lr": 0.003,
+  "es_target": "objective"
+ },
+ "config_id": "A3-fae_mlp-ab243462"
+}

@@ -1,1 +1,16 @@
 == S1-front selected A3-fae_mlp-b30d5348 {'front': 'tspline'}
+[S2-latent] A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8} seed=0: val C=0.8441 (oracle 0.8904) probe mean=0.660 train C=0.8547 31.9s
+== S2-latent selected A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8}
+[S3-alpha] A3-fae_mlp-2ca77221 {'front': 'tspline', 'r': 8, 'alpha': 0.1} seed=0: val C=0.8463 (oracle 0.8904) probe mean=0.628 train C=0.8563 23.6s
+[S3-alpha] A3-fae_mlp-93f0ed9c {'front': 'tspline', 'r': 8, 'alpha': 0.0} seed=0: val C=0.8479 (oracle 0.8904) probe mean=0.602 train C=0.8578 20.8s
+== S3-alpha selected A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0}
+[S4-optim] A3-fae_mlp-000bb682 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.001} seed=0: val C=0.8386 (oracle 0.8904) probe mean=0.661 train C=0.8408 30.5s
+[S4-optim] A3-fae_mlp-b0d4e98c {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adamw', 'lr': 0.003} seed=0: val C=0.8427 (oracle 0.8904) probe mean=0.653 train C=0.8530 30.0s
+== S4-optim selected A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003}
+[S5-es] A3-fae_mlp-57c3cf4f {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'nll'} seed=0: val C=0.8395 (oracle 0.8904) probe mean=0.488 train C=0.8356 8.3s
+== S5-es selected A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'}
+[S6-encoder-info] A3-fae_linear-1f275709 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=0: val C=0.8408 (oracle 0.8904) probe mean=0.682 train C=0.8382 24.5s
+[S6-encoder-info] A3-fae_kan-105b570a {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=0: val C=0.8291 (oracle 0.8904) probe mean=0.619 train C=0.8620 34.7s
+[S7-stability] A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=1: val C=0.8517 (oracle 0.8904) probe mean=0.659 train C=0.8577 26.0s
+[S7-stability] A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective'} seed=2: val C=0.8509 (oracle 0.8904) probe mean=0.650 train C=0.8577 25.7s
+SELECTED {"front": "tspline", "r": 8, "alpha": 1.0, "optimizer": "adam", "lr": 0.003, "es_target": "objective"}

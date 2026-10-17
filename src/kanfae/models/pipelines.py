@@ -22,14 +22,16 @@ from .fae import FlatAE, FunctionalAE, kan2_match, kan_match, n_params
 
 # Gate repair 2 (2026-10-16): H 16 -> 32 and MLP hidden 32 -> 64; train C ~= test C ~= 0.79-0.80 at the original
 # size showed under-fitting (reports/logs/diag_R2_capacity.log). KAN blocks are re-matched automatically (D31).
-DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=4, H=32, hidden=64, kan_grid=5, kan_hidden=None,
+DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64, kan_grid=5, kan_hidden=None,
                 head="linear", family="weibull", n_basis=12, n_beta=8, lam_beta=1e-3,
                 # Gate repair 1 (2026-10-16): the original budget (400 epochs, patience 30) was always exhausted
                 # in R2 attempt 1 (reports/logs/diag_R2_budget.log); full-batch Adam needs a larger budget.
                 max_epochs=3000, patience=100, naive=False, holdout_frac=0.15,
                 # Revision 3 (D38, 2026-10-17): nonlinear functional front end shared by MLP and KAN arms.
                 # front="linear" reproduces the original design used in gate attempts 1-3.
-                front="nonlinear", n_maps=5, pw_width=16,
+                # D45 (2026-10-17): defaults set to the D41-selected configuration A3-fae_mlp-ab243462 before the
+                # confirmation runs (front "tspline", r = 8). Earlier designs: front "linear" (A0), "nonlinear" (A1, D38).
+                front="tspline", n_maps=5, pw_width=16,
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
