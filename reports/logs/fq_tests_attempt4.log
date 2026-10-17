@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 11 items
+
+tests/test_frequency_front.py::test_FQ1_quadratic_forms_match_dense_reference PASSED
+tests/test_frequency_front.py::test_FQ2_phase_invariance R(f0) over phases: min 0.9999999698159758 | off-peak phase variation (leakage): 0.5012705672624919
+PASSED
+tests/test_frequency_front.py::test_FQ3_peak_at_true_frequency[8] f0=0.500: soft-frequency estimates [0.498 0.498 0.497 0.498 0.498 0.497 0.498]
+PASSED
+tests/test_frequency_front.py::test_FQ3_peak_at_true_frequency[16] f0=1.000: soft-frequency estimates [1. 1. 1. 1. 1. 1. 1.]
+PASSED
+tests/test_frequency_front.py::test_FQ3_peak_at_true_frequency[24] f0=2.000: soft-frequency estimates [2. 2. 2. 2. 2. 2. 2.]
+PASSED
+tests/test_frequency_front.py::test_FQ4_scale_and_trend_invariance PASSED
+tests/test_frequency_front.py::test_FQ5_gradcheck PASSED
+tests/test_frequency_front.py::test_FQ6_reduces_to_A3_when_spectral_weights_are_zero PASSED
+tests/test_frequency_front.py::test_FQ7_spectral_cache_is_identity_checked PASSED
+tests/test_frequency_front.py::test_FQ8_discretisation_consistency relative changes [5.2900e-03 1.3105e-03 3.2688e-04 8.1671e-05 2.0415e-05]
+PASSED
+tests/test_frequency_front.py::test_FQ9_frequency_information_on_synthetic_curves corr(f_hat, omega) = 0.947; phase share of error = 0.002
+PASSED
+
+============================== 11 passed in 9.31s ==============================

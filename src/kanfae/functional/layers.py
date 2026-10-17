@@ -189,3 +189,117 @@ class DerivEnergySpline(TensorSplineFunctional):
 
     def roughness_penalty(self):
         return super().roughness_penalty() + torch.einsum("hdl,lm,hdm->", self.qd, self.lin.R_beta, self.qd)
+
+
+def _projector_quadform(Phi, psi, w, rel_tol=1e-12):
+    """M with c^T M c = ||P_S x||^2 for x = Phi c and S = span(columns of psi), L2 metric with weights w.
+    Uses an eigen-decomposition of the Gram matrix of psi (pseudo-inverse below rel_tol), so a nearly collinear
+    subspace (low frequency in a short window) is handled stably."""
+    G = psi.T @ (psi * w[:, None])
+    B = psi.T @ (Phi * w[:, None])                                         # (k, K): <psi_i, phi_k>
+    lam, V = np.linalg.eigh(G)
+    keep = lam > rel_tol * lam.max()
+    Ginv = (V[:, keep] / lam[keep]) @ V[:, keep].T
+    return B.T @ Ginv @ B
+
+
+class FrequencyAwareFunctional(TensorSplineFunctional):
+    """Frequency-aware functional front end (revision 4, "fa"; D57/D61; docs/design.md section 3.2c).
+
+    h = TensorSpline(c) + W standardise(S(c)) + w0, where per channel S stacks
+      R_d(f_j) = (||P_{1,t,sin 2 pi f_j t,cos 2 pi f_j t} x_d||^2 - ||P_{1,t} x_d||^2) / (||x_d - P_{1,t} x_d||^2 + eps)
+                 on a log-spaced grid f_j in f_range (phase-invariant least-squares spectrum; per window),
+      e0 = log(eps + ||x - P_{1,t} x||^2), e1 = log(eps + int x'^2), e2 = log(eps + int x''^2),
+      L_d(f_j) = -log(1 - R_d(f_j) + delta), delta = 1e-4 (log-gap: separates the exact peak R = 1 from the
+                 low-frequency plateau R ~ 0.98-1 that a <= 2-cycle window produces below the true frequency),
+      f_hat_d = sum_j f_j softmax_j(kappa_d L_d(f_j)) (full window; kappa_d = exp(rho_d) learnable, kappa_0 = 4),
+      optionally log(eps + <x, sin>^2 + <x, cos>^2) (phase-dependent Fourier power; search variant "fourier").
+    Every quadratic form is exact up to Gauss-Legendre quadrature (64 nodes per interval). Standardisation is a
+    non-affine BatchNorm with a cumulative average (full-batch training: exactly the training mean / variance)."""
+
+    EPS = 1e-8
+    DELTA = 1e-4
+
+    def __init__(self, n_channels, n_features, basis_x, basis_beta, grid=5, x_range=(-3.0, 3.0), seed=None,
+                 n_freq=33, f_range=(0.25, 4.0), fourier=False, windows=False, kappa0=4.0):
+        super().__init__(n_channels, n_features, basis_x, basis_beta, grid, x_range, seed)
+        dt = torch.get_default_dtype()
+        self.freqs_np = np.geomspace(f_range[0], f_range[1], n_freq)
+        self.fourier, self.windows = fourier, windows
+        z, wz = np.polynomial.legendre.leggauss(64)
+        wins = [(0.0, 1.0)] + ([(0.0, 0.5), (0.5, 1.0)] if windows else [])
+        M, M0, N = [], [], []
+        for lo, hi in wins:
+            brk = np.union1d(basis_x.breaks, [lo, hi])
+            brk = brk[(brk >= lo) & (brk <= hi)]
+            tq = np.concatenate([0.5 * (b - a) * z + 0.5 * (a + b) for a, b in zip(brk[:-1], brk[1:])])
+            wq = np.concatenate([0.5 * (b - a) * wz for a, b in zip(brk[:-1], brk[1:])])
+            Phi = basis_x(tq)
+            base = np.column_stack([np.ones_like(tq), tq])
+            M0.append(_projector_quadform(Phi, base, wq))
+            N.append((Phi * wq[:, None]).T @ Phi)
+            M.append(np.stack([_projector_quadform(Phi, np.column_stack([base, np.sin(2 * np.pi * f * tq),
+                                                                         np.cos(2 * np.pi * f * tq)]), wq)
+                               for f in self.freqs_np]))
+            if lo == 0.0 and hi == 1.0:
+                S = np.stack([np.sin(2 * np.pi * f * tq) for f in self.freqs_np])
+                C = np.stack([np.cos(2 * np.pi * f * tq) for f in self.freqs_np])
+                self.register_buffer("Fs", torch.tensor((S * wq) @ Phi, dtype=dt))           # (J, K)
+                self.register_buffer("Fc", torch.tensor((C * wq) @ Phi, dtype=dt))
+                d1, d2 = basis_x(tq, deriv=1), basis_x(tq, deriv=2)
+                self.register_buffer("Om1", torch.tensor((d1 * wq[:, None]).T @ d1, dtype=dt))
+                self.register_buffer("Om2", torch.tensor((d2 * wq[:, None]).T @ d2, dtype=dt))
+        self.register_buffer("Mf", torch.tensor(np.stack(M), dtype=dt))                     # (nw, J, K, K)
+        self.register_buffer("M0", torch.tensor(np.stack(M0), dtype=dt))                    # (nw, K, K)
+        self.register_buffer("N", torch.tensor(np.stack(N), dtype=dt))                      # (nw, K, K)
+        self.register_buffer("freqs", torch.tensor(self.freqs_np, dtype=dt))
+        nw, J = len(wins), n_freq
+        self.n_spec = n_channels * (2 * nw * J + 3 + (J if fourier else 0) + 1)
+        self.rho = nn.Parameter(torch.full((n_channels,), float(np.log(kappa0))))
+        self.norm = nn.BatchNorm1d(self.n_spec, affine=False, momentum=None)
+        gen = torch.Generator().manual_seed(seed + 17) if seed is not None else None
+        self.spec = nn.Linear(self.n_spec, n_features)
+        with torch.no_grad():
+            self.spec.weight.copy_(torch.randn(n_features, self.n_spec, generator=gen) / np.sqrt(self.n_spec))
+            self.spec.bias.zero_()
+
+    def spectrum(self, c):
+        """R (B, D, nw, J), energies (B, D, 3), log Fourier power (B, D, J) or None. No trainable parameters."""
+        cacheable = not c.requires_grad
+        cache = self.__dict__.setdefault("_spec_cache", {})          # identity-checked (D53)
+        key = id(c)
+        if cacheable and key in cache:
+            src, ver, out = cache[key]
+            if src is c and ver == c._version:
+                return out
+        e_f = torch.einsum("bdk,wjkl,bdl->bdwj", c, self.Mf, c)
+        e_0 = torch.einsum("bdk,wkl,bdl->bdw", c, self.M0, c)
+        tot = torch.einsum("bdk,wkl,bdl->bdw", c, self.N, c)
+        R = (e_f - e_0.unsqueeze(-1)) / (tot - e_0 + self.EPS).unsqueeze(-1)
+        en = torch.stack([torch.log(self.EPS + (tot - e_0)[..., 0]),
+                          torch.log(self.EPS + torch.einsum("bdk,kl,bdl->bd", c, self.Om1, c)),
+                          torch.log(self.EPS + torch.einsum("bdk,kl,bdl->bd", c, self.Om2, c))], -1)
+        fp = (torch.log(self.EPS + torch.einsum("bdk,jk->bdj", c, self.Fs) ** 2
+                        + torch.einsum("bdk,jk->bdj", c, self.Fc) ** 2) if self.fourier else None)
+        out = (R, en, fp)
+        if cacheable:
+            if len(cache) > 8:
+                cache.clear()
+            cache[key] = (c, c._version, out)
+        return out
+
+    def log_gap(self, R):
+        return -torch.log(1.0 - R + self.DELTA)
+
+    def soft_frequency(self, R, rho=None):                            # (B, D, nw, J) -> (B, D)
+        kappa = torch.exp(self.rho if rho is None else rho)[None, :, None]
+        return (torch.softmax(kappa * self.log_gap(R[:, :, 0, :]), -1) * self.freqs).sum(-1)
+
+    def spectral_vector(self, c):
+        R, en, fp = self.spectrum(c)
+        parts = [R.flatten(2), self.log_gap(R).flatten(2), en] + ([fp] if fp is not None else []) + \
+            [self.soft_frequency(R).unsqueeze(-1)]
+        return torch.cat(parts, -1).flatten(1)                        # (B, n_spec)
+
+    def forward(self, c):
+        return super().forward(c) + self.spec(self.norm(self.spectral_vector(c)))

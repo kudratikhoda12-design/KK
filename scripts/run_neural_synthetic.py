@@ -1,6 +1,8 @@
 """Neural experiments on synthetic data (only after the D41 confirmation passes; otherwise not run).
 
-Analyses (configuration from reports/learnability_selected.json, fixed before these runs):
+Analyses (configuration from the pre-registered selection file, fixed before these runs; revision 4: --selected
+defaults to reports/learnability_selected_fa.json). D57/D61: refuses to run unless reports/revised_gate_verdict.json
+records verdict CONFIRMED (revised gate + >= 4/5 fresh confirmations).
   H1        fae_kan vs fae_mlp, setting P0, 5 replicates, tuning rule (4 configs lr x wd, validation IBS), seeds 0-2
   H2        alpha in {0, 1} for fae_mlp and fae_kan (default config, no retuning), P0, 5 replicates x 3 seeds
   H3        fae_mlp vs flat_ae (and fae_kan), setting P-sparse, tuning rule as H1
@@ -31,9 +33,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--analyses", default="H1,H2,H3,CONTROLS")
     ap.add_argument("--reps", type=int, default=5)
+    ap.add_argument("--selected", default="reports/learnability_selected_fa.json")
     args = ap.parse_args()
+    verdict = ROOT / "reports" / "revised_gate_verdict.json"
+    if not verdict.exists() or json.loads(verdict.read_text()).get("verdict") != "CONFIRMED":
+        sys.exit("BLOCKED (D57/D61): the conventional MLP has not passed the revised gate; no neural hypothesis runs.")
     torch.set_default_dtype(torch.float64)
-    sel = json.loads((ROOT / "reports/learnability_selected.json").read_text())
+    sel = json.loads((ROOT / args.selected).read_text())
     base_cfg = {k: v for k, v in sel["config"].items() if k not in ("lr", "wd")}
     (ROOT / "configs/neural").mkdir(parents=True, exist_ok=True)
     (ROOT / "configs/neural/selected.json").write_text(json.dumps(sel, indent=1))

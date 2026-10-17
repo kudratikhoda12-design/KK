@@ -1,0 +1,78 @@
+{
+ "n_train": 1200,
+ "freq_grid": [
+  0.25,
+  0.2726269331663144,
+  0.29730177875068026,
+  0.3242098886627524,
+  0.3535533905932738,
+  0.38555270635198524,
+  0.42044820762685725,
+  0.4585020216023356,
+  0.5,
+  0.5452538663326288,
+  0.5946035575013605,
+  0.6484197773255048,
+  0.7071067811865475,
+  0.7711054127039704,
+  0.8408964152537145,
+  0.9170040432046712,
+  1.0,
+  1.0905077326652577,
+  1.189207115002721,
+  1.2968395546510096,
+  1.4142135623730951,
+  1.542210825407941,
+  1.6817928305074292,
+  1.8340080864093427,
+  1.9999999999999998,
+  2.181015465330515,
+  2.378414230005442,
+  2.5936791093020193,
+  2.82842712474619,
+  3.0844216508158815,
+  3.363585661014858,
+  3.668016172818685,
+  4.0
+ ],
+ "truth": {
+  "fourier_power": {
+   "linear_probe_R2_heldout": 0.9918109316110928,
+   "estimate_corr": 0.9771372716798051,
+   "estimate_R2_after_affine": 0.9621630543290288,
+   "error_variance_explained_by_phase": 0.3157966396993396
+  },
+  "deriv_ratio": {
+   "linear_probe_R2_heldout": 0.9293700780222218,
+   "estimate_corr": 0.9565820603031011,
+   "estimate_R2_after_affine": 0.9293700780222217,
+   "error_variance_explained_by_phase": 0.33940736531718885
+  },
+  "quadrature_projection": {
+   "linear_probe_R2_heldout": 0.9999913727793962,
+   "estimate_corr": 0.997151936941397,
+   "estimate_R2_after_affine": 0.9937996233988269,
+   "error_variance_explained_by_phase": 0.0050288850168381805
+  }
+ },
+ "smoothed_K12": {
+  "fourier_power": {
+   "linear_probe_R2_heldout": 0.9409733159111932,
+   "estimate_corr": 0.9557209100001797,
+   "estimate_R2_after_affine": 0.9139964216041154,
+   "error_variance_explained_by_phase": 0.1897348443361595
+  },
+  "deriv_ratio": {
+   "linear_probe_R2_heldout": 0.8396275244363206,
+   "estimate_corr": 0.9120510728976757,
+   "estimate_R2_after_affine": 0.8396275244363204,
+   "error_variance_explained_by_phase": 0.23248536860623392
+  },
+  "quadrature_projection": {
+   "linear_probe_R2_heldout": 0.8236188993724617,
+   "estimate_corr": 0.9411000557149749,
+   "estimate_R2_after_affine": 0.8577286792050675,
+   "error_variance_explained_by_phase": 0.004630461336005087
+  }
+ }
+}

@@ -15,6 +15,9 @@ from kanfae.survival.aft import aft_nll
 pytestmark = [pytest.mark.stage("D"), pytest.mark.kind("STAT"), pytest.mark.slow]
 torch.set_default_dtype(torch.float64)
 GATE = {}
+# D64: pinned to the configuration this (historical, seed-21) gate evaluated: A3-fae_mlp-ab243462 (D41/D45/D53).
+A3_CFG = dict(front="tspline", r=8, alpha=1.0, optimizer="adam", lr=3e-3, es_target="objective", max_epochs=3000,
+              patience=100, H=32, hidden=64)
 
 
 def _data(sigma_y, censoring):
@@ -59,9 +62,11 @@ def test_R1_oracle_features_head():
 
 
 @pytest.mark.criterion("R2")
+@pytest.mark.xfail(strict=True, reason="historical: the A3 design failed R2 under the pre-registered protocol "
+                                       "(D46/D53); kept as a record (D64); the revised gate is test_learnability_fa.py")
 def test_R2_fae_mlp_end_to_end():
     obs, ora, tr, va, te = _data(0.05, 0.0)
-    m = NeuralAFT("fae_mlp").fit(obs.subset(tr), obs.subset(va), seed=0)
+    m = NeuralAFT("fae_mlp", **A3_CFG).fit(obs.subset(tr), obs.subset(va), seed=0)
     risk = m.predict_risk(obs.subset(te))
     c = harrell_c(obs.y_obs[te], obs.delta[te], risk)
     c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
@@ -90,7 +95,7 @@ def test_R3_censoring_awareness():
     cs = []
     for naive in (False, True):
         for seed in (0, 1, 2):
-            m = NeuralAFT("fae_mlp", naive=naive).fit(obs.subset(tr), obs.subset(va), seed=seed)
+            m = NeuralAFT("fae_mlp", naive=naive, **A3_CFG).fit(obs.subset(tr), obs.subset(va), seed=seed)
             errs[(naive, seed)] = survival_curve_error(m.predict_survival(obs.subset(te), grid), S_true, grid)
             if not naive and seed == 0:
                 cs.append(harrell_c(obs.y_obs[te], obs.delta[te], m.predict_risk(obs.subset(te))))

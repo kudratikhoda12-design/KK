@@ -1,0 +1,12 @@
+truth: fixed Fourier power (argmax)                     {'linear_probe_R2_heldout': 0.992, 'estimate_corr': 0.977, 'estimate_R2_after_affine': 0.962}
+truth: derivative-energy ratio                          {'linear_probe_R2_heldout': 0.929, 'estimate_corr': 0.957, 'estimate_R2_after_affine': 0.929}
+truth: quadrature-pair projection R(f) (argmax)         {'linear_probe_R2_heldout': 1.0, 'estimate_corr': 0.997, 'estimate_R2_after_affine': 0.994}
+   fourier_power: share of estimate error explained by phase = 0.316
+   deriv_ratio: share of estimate error explained by phase = 0.339
+   quadrature_projection: share of estimate error explained by phase = 0.005
+smoothed_K12: fixed Fourier power (argmax)              {'linear_probe_R2_heldout': 0.941, 'estimate_corr': 0.956, 'estimate_R2_after_affine': 0.914}
+smoothed_K12: derivative-energy ratio                   {'linear_probe_R2_heldout': 0.84, 'estimate_corr': 0.912, 'estimate_R2_after_affine': 0.84}
+smoothed_K12: quadrature-pair projection R(f) (argmax)  {'linear_probe_R2_heldout': 0.824, 'estimate_corr': 0.941, 'estimate_R2_after_affine': 0.858}
+   fourier_power: share of estimate error explained by phase = 0.190
+   deriv_ratio: share of estimate error explained by phase = 0.232
+   quadrature_projection: share of estimate error explained by phase = 0.005

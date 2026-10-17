@@ -1,0 +1,60 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 11 items
+
+tests/test_frequency_front.py::test_FQ1_quadratic_forms_match_dense_reference PASSED
+tests/test_frequency_front.py::test_FQ2_phase_invariance R(f0) over phases: min 0.9999999698159758 | off-peak phase variation (leakage): 0.5012705672624919
+PASSED
+tests/test_frequency_front.py::test_FQ3_peak_at_true_frequency[8] f0=0.500: soft-frequency estimates [0.498 0.498 0.497 0.498 0.498 0.497 0.498]
+PASSED
+tests/test_frequency_front.py::test_FQ3_peak_at_true_frequency[16] f0=1.000: soft-frequency estimates [1. 1. 1. 1. 1. 1. 1.]
+PASSED
+tests/test_frequency_front.py::test_FQ3_peak_at_true_frequency[24] f0=2.000: soft-frequency estimates [2. 2. 2. 2. 2. 2. 2.]
+PASSED
+tests/test_frequency_front.py::test_FQ4_scale_and_trend_invariance FAILED
+tests/test_frequency_front.py::test_FQ5_gradcheck PASSED
+tests/test_frequency_front.py::test_FQ6_reduces_to_A3_when_spectral_weights_are_zero PASSED
+tests/test_frequency_front.py::test_FQ7_spectral_cache_is_identity_checked PASSED
+tests/test_frequency_front.py::test_FQ8_discretisation_consistency relative changes [5.2900e-03 1.3105e-03 3.2688e-04 8.1671e-05 2.0415e-05]
+PASSED
+tests/test_frequency_front.py::test_FQ9_frequency_information_on_synthetic_curves corr(f_hat, omega) = 0.947; phase share of error = 0.002
+PASSED
+
+=================================== FAILURES ===================================
+_____________________ test_FQ4_scale_and_trend_invariance ______________________
+
+    @pytest.mark.criterion("FQ-4")
+    def test_FQ4_scale_and_trend_invariance():
+        b = BSplineBasis(12)
+        m = FrequencyAwareFunctional(1, 4, b, BSplineBasis(8), seed=0, windows=True)
+        rng = np.random.default_rng(4)
+        c = rng.normal(size=(4, 1, 12))
+        ones = np.ones(12)
+        greville = np.array([b.knots[k + 1:k + 4].mean() for k in range(12)])      # t = sum_k greville_k phi_k
+        assert np.abs(b(TT) @ greville - TT).max() < 1e-12 and np.abs(b(TT) @ ones - 1).max() < 1e-12
+        c2 = 3.7 * c + 2.0 * ones - 1.5 * greville
+        with torch.no_grad():
+            R1, e1, _ = m.spectrum(torch.tensor(c))
+            R2, e2, _ = m.spectrum(torch.tensor(c2))
+        # repair 2: the only permitted difference is the eps = 1e-8 in the denominator, bounded by 2 eps / residual
+        # (the residual energy within a half window can be ~0.02, so a fixed 1e-7 was too tight).
+        den = torch.einsum("bdk,wkl,bdl->bdw", torch.tensor(c), m.N - m.M0, torch.tensor(c)).unsqueeze(-1)
+        assert ((R1 - R2).abs() <= 2 * m.EPS / den + 1e-9).all()
+>       assert torch.allclose(e2[..., 0] - e1[..., 0], torch.full_like(e1[..., 0], 2 * np.log(3.7)), atol=1e-9, rtol=0)
+E       AssertionError: assert False
+E        +  where False = <built-in method allclose of type object at 0x7fb9a0de41a0>((tensor([[1.6537],\n        [0.8909],\n        [1.1925],\n        [1.1438]]) - tensor([[-0.9629],\n        [-1.7258],\n        [-1.4242],\n        [-1.4729]])), tensor([[2.6167],\n        [2.6167],\n        [2.6167],\n        [2.6167]]), atol=1e-09, rtol=0)
+E        +    where <built-in method allclose of type object at 0x7fb9a0de41a0> = torch.allclose
+E        +    and   tensor([[2.6167],\n        [2.6167],\n        [2.6167],\n        [2.6167]]) = <built-in method full_like of type object at 0x7fb9a0de41a0>(tensor([[-0.9629],\n        [-1.7258],\n        [-1.4242],\n        [-1.4729]]), (2 * np.float64(1.308332819650179)))
+E        +      where <built-in method full_like of type object at 0x7fb9a0de41a0> = torch.full_like
+E        +      and   np.float64(1.308332819650179) = <ufunc 'log'>(3.7)
+E        +        where <ufunc 'log'> = np.log
+
+tests/test_frequency_front.py:116: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_frequency_front.py::test_FQ4_scale_and_trend_invariance - A...
+========================= 1 failed, 10 passed in 9.91s =========================

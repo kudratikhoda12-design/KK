@@ -23,7 +23,7 @@ with open(ROOT / "reports/test_results_latest.csv", "w", newline="") as fh:
         w.writerow({k: r.get(k, "") for k in fields})
 runs = OrderedDict()
 for r in recs:
-    d = runs.setdefault(r["run_id"], {"passed": 0, "failed": 0, "skipped": 0})
+    d = runs.setdefault(r["run_id"], {"passed": 0, "failed": 0, "skipped": 0, "xfailed": 0})
     d[r["outcome"]] = d.get(r["outcome"], 0) + 1
 print(json.dumps(runs, indent=1))
-print("latest:", {o: sum(1 for r in latest.values() if r["outcome"] == o) for o in ("passed", "failed", "skipped")})
+print("latest:", {o: sum(1 for r in latest.values() if r["outcome"] == o) for o in ("passed", "failed", "skipped", "xfailed")})

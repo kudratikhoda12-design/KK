@@ -34,7 +34,11 @@ def pytest_runtest_logreport(report):
             msg = str(report.longrepr.reprcrash.message) if hasattr(report.longrepr, "reprcrash") else str(report.longrepr)
         elif report.outcome == "skipped":
             msg = str(report.longrepr[-1]) if isinstance(report.longrepr, tuple) else str(report.longrepr)
-        rec = dict(run_id=RUN_ID, nodeid=report.nodeid, outcome=report.outcome, phase=report.when,
+        outcome = report.outcome
+        if hasattr(report, "wasxfail"):              # D64: expected failures are recorded as such, not as skips
+            outcome = "xfailed" if report.outcome == "skipped" else "xpassed"
+            msg = f"expected failure: {report.wasxfail}"
+        rec = dict(run_id=RUN_ID, nodeid=report.nodeid, outcome=outcome, phase=report.when,
                    duration_s=round(report.duration, 4), criterion=props.get("criterion", ""),
                    kind=props.get("kind", ""), stage=props.get("stage", ""), message=msg[:500])
         RECORD.parent.mkdir(parents=True, exist_ok=True)

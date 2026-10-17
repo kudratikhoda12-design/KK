@@ -221,6 +221,72 @@ h_j    = b_j + Σ_d Σ_m ∫ β_jdm(t) g_dm(x_d(t)) dt,   β_jdm(t) = Σ_l b_jdm
 - It is shared by the MLP and KAN arms, so the comparison still isolates the encoder/decoder blocks.
 - **[ASSUMPTION]** A generic learned pointwise nonlinearity is not tailored to the synthetic generator (D39).
 
+### 3.2c Frequency-aware functional representation (revision 4, D57/D61; motivated by the R2 failures)
+
+**Motivation (stated, not hidden).** The fronts A0–A4 failed the learnability gate R2 (round 2): the oscillation
+frequency ω was never linearly decodable from the latent (probe R² ≤ 0.2). The D60 diagnostic showed that ω *is*
+recoverable from the smoothed curves, but only phase-invariant features recover it cleanly; with at most two cycles
+on [0, 1], Fourier power and derivative energy depend on the unknown phase φ through spectral leakage.
+
+**Definition.** Each channel is the smoothed curve `x_d(t) = Σ_k c_dk φ_k(t)` on [0, 1] (§3.1), with the
+L²[0, 1] inner product `⟨u, v⟩ = ∫₀¹ u v dt`. For a subspace S, `P_S` is the orthogonal projector. Let
+`B₀ = span{1, t}` and, for a frequency f (cycles per unit time), `B_f = span{1, t, sin 2πft, cos 2πft}`.
+
+1. **Quadrature-pair projection spectrum** (multi-scale over frequency): on a log-spaced grid
+   `f_j ∈ [0.25, 4]` (J points; 4 octaves),
+
+   `R_d(f) = (‖P_{B_f} x_d‖² − ‖P_{B₀} x_d‖²) / (‖x_d − P_{B₀} x_d‖² + ε)`,  ε = 1e-8.
+
+   Properties (each has a numerical test):
+   - `0 ≤ R ≤ 1`;
+   - **phase-invariant at the true frequency:** `B_{f₀}` contains `sin(2πf₀t + φ)` for every φ, so
+     `R(f₀) = 1` and the peak location do not depend on φ. Off the peak, R(f) depends on φ through leakage
+     (test FQ-2 reports this; the soft estimate f̂ relies only on the peak);
+   - invariant to scaling x and to adding `α + βt`;
+   - `R(f₀) = 1` when `x = α + βt + A sin(2πf₀t + φ)`.
+
+   It is the continuous-time least-squares (Lomb–Scargle-type) spectrum with a floating linear trend.
+   **Computation (exact up to quadrature):** `‖P_S x‖² = bᵀ G_S⁻¹ b` with `G_S = [⟨ψ_i, ψ_j⟩]`,
+   `b = [⟨ψ_i, x⟩] = Φ_S c`, `Φ_S[i, k] = ⟨ψ_i, φ_k⟩`. So `‖P_S x‖² = cᵀ M_S c` with the fixed matrix
+   `M_S = Φ_Sᵀ G_S⁻¹ Φ_S`, precomputed by Gauss–Legendre quadrature (64 nodes per spline interval).
+2. **Derivative-energy features** (scale space over derivative order m = 0, 1, 2):
+   - `e₀ = log(ε + ‖x − P_{B₀}x‖²)`;
+   - `e_m = log(ε + ∫ (x^{(m)})² dt)` for m = 1, 2;
+   - each is an exact quadratic form `cᵀ Ω_m c`.
+3. **Log-gap spectrum and soft frequency estimate** (exposes ω on a linear scale):
+   `L_d(f) = −log(1 − R_d(f) + δ)` with δ = 1e-4, and
+   `f̂_d = Σ_j f_j softmax_j(κ_d L_d(f_j))`, with a learnable sharpness `κ_d = exp(ρ_d)`, initialised at κ = 4.
+   - **Why the log gap.** With at most about 2 cycles in the window, `{1, t, sin, cos}` at a frequency below f₀
+     behaves like a cubic polynomial space and fits the partial cycle almost exactly. So R has a plateau of about
+     0.98–1 for f ≤ f₀ and equals 1 only at f₀; the log gap separates the two.
+   - **Calibration** (pure sinusoids and the seed-21 *training* split only): δ, κ₀ ∈ {1e-4, 1e-3, 1e-2} ×
+     {0.5, 1, 2, 4}, and κ ∈ {20, 100, 300} on R itself. Chosen: δ = 1e-4, κ₀ = 4 (worst pure-sinusoid error
+     0.6% vs 36% with κ = 20 on R; training correlation with ω 0.951).
+   - Both R and L enter the feature vector.
+4. **Optional log Fourier power** (variant "FA-QF"): `log(ε + ⟨x, sin 2πf⟩² + ⟨x, cos 2πf⟩²)`. It is
+   phase-dependent and is included only as a search alternative.
+5. **Optional time-localised scales** ("windows"): the same spectrum computed on [0, ½] and [½, 1] (in-window L²
+   metric). A search alternative only.
+
+**Front end "fa".** The output is
+
+`h = TensorSpline(c) + W · vec(Ŝ) + w₀`,
+
+where:
+- `TensorSpline` is the A3 front (§3.2b), which keeps level, trend and amplitude information;
+- Ŝ stacks, per channel: R_d(f_1..f_J), e₀, e₁, e₂ and f̂_d (plus the optional items);
+- the features are standardised with **training-set** mean and SD, frozen at fit time;
+- W is a learnable linear map; with W = 0, w₀ = 0 the front reduces exactly to A3 (test FQ-6).
+
+The features have no trainable parameters except κ, so for non-differentiated inputs they are cached with the
+D53-safe cache (identity-checked).
+
+**What is unchanged.**
+- The simulator, the AFT likelihood and the autoencoder decoder.
+- The latent probe, the criteria R1–R3 and **all thresholds**.
+- The KAN/MLP difference, which lies in the encoder/decoder blocks downstream of the shared front, so H1 keeps
+  its meaning.
+
 ### 3.3 Functional PCA baseline (D12)
 
 ```
@@ -499,3 +565,37 @@ Houwelingen); Kolmogorov–Arnold networks (Liu et al.).
 | S6 | PHM Society mirror, `https://data.phmsociety.org/nasa/` |
 | S7 | `https://ieee-dataport.org/documents/nasa-turbofan-jet-engine-data-set` |
 | S8 | `https://data.nasa.gov/dataset/c-mapss-aircraft-engine-simulator-data` |
+
+## 9. Endpoint and benchmark decisions (owner, 2026-10-17)
+
+### 9.1 PBC (D58): E2 provisional primary, E1 sensitivity
+
+- **E2, death or liver transplantation (transplant-free survival).**
+  - *Clinical interpretation:* the time until the patient's native liver fails, by death or by the need for
+    transplantation.
+  - *Censoring:* alive without transplant at the end of follow-up. Assumed non-informative given the landmark
+    covariates (CA-1).
+  - *Why it is preferred:* transplantation is part of the outcome, so the doubtful assumption that transplant is
+    independent of prognosis is not needed.
+- **E1, death with transplant treated as censoring (sensitivity).**
+  - *Interpretation:* the hypothetical survival had transplantation not been available.
+  - *Assumption required:* CA-1 for transplantation, i.e. transplant is unrelated to prognosis given the
+    covariates. This is clinically doubtful, because patients are selected for transplantation by disease
+    severity.
+  - *Use:* a sensitivity analysis only.
+- **Status:** E2 is **provisional**. It is not claimed as a definitive clinical endpoint until confirmed with the
+  owner's professor.
+- **E3 (cause-specific / Fine–Gray competing risks)** stays future work, unless a properly specified competing-risks
+  analysis is justified.
+
+### 9.2 C-MAPSS (D59): Option B primary, Option A secondary
+
+- **Option B (trailing 30-cycle windows every 10 cycles; landmark s as a covariate)** is the primary RUL
+  benchmark. **Option A** (a single landmark per engine) is secondary.
+- **Correlation between windows.** Windows from the same engine are correlated, so the uncertainty for Option B is
+  reported with an **engine-cluster bootstrap** (engines resampled with replacement; 1000 resamples; percentile
+  95% CI) together with engine-weighted RMSE (D62).
+- **Landmark bands.** Metrics are reported separately per landmark band.
+- **Framing.** C-MAPSS run-to-failure data have no genuine right censoring. They are evaluated as an RUL benchmark,
+  kept separate from the genuine right-censored survival evaluation on PBC.
+
