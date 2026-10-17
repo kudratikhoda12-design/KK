@@ -128,3 +128,19 @@ def aft_survival(t, eta, sigma, family="weibull"):
 def aft_median(eta, sigma, family="weibull"):
     fam = get_family(family)
     return torch.exp(torch.as_tensor(eta) + sigma * fam.quantile(0.5))
+
+
+def aft_interval_log_likelihood(y, delta, eta, sigma, family="weibull", width=1.0):
+    """Discrete-time (integer-cycle) AFT likelihood (ledger L14; D25 alternative):
+    event observed in cycle y (failure in (y - width, y]):  log[S(y - width) - S(y)]
+    right-censored at y (survived beyond y):                  log S(y)
+    Computed stably as log S(y - w) + log(1 - exp(log S(y) - log S(y - w))) with S(t <= 0) = 1."""
+    fam = get_family(family)
+    y, eta = torch.as_tensor(y), torch.as_tensor(eta)
+    sigma = torch.as_tensor(sigma, dtype=eta.dtype)
+    logS_y = fam.log_S((torch.log(y) - eta) / sigma)
+    lo = y - width
+    logS_lo = torch.where(lo > 0, fam.log_S((torch.log(lo.clamp_min(1e-300)) - eta) / sigma), torch.zeros_like(y))
+    diff = (logS_y - logS_lo).clamp_max(-1e-300)
+    ev = logS_lo + torch.log(-torch.expm1(diff))
+    return torch.where(torch.as_tensor(delta).bool(), ev, logS_y)

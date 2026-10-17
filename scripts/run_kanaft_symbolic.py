@@ -60,14 +60,19 @@ def evaluate(m, Ztr, ytr, dtr, Z, y, d, eta_true, grid):
 
 def main():
     torch.set_default_dtype(torch.float64)
-    with open(OUT, "w") as fh:
-        pass
+    # resumable (2026-10-17): the first run hit the 2-hour background limit after 9 of 12 records; completed
+    # (seed, loss) pairs are kept and skipped. Pass --fresh to start over.
+    if "--fresh" in sys.argv or not OUT.exists():
+        OUT.write_text("")
+    done = {(r["seed"], r["loss"]) for r in map(json.loads, OUT.read_text().splitlines())}
     for seed in (201, 202, 203):
         Z, y, d, eta = simulate(2000, seed)
         idx = np.random.default_rng(seed).permutation(2000)
         tr, va, te = idx[:1200], idx[1200:1600], idx[1600:]
         grid = np.linspace(0, np.quantile(np.exp(eta + SIGMA * 0.5772 * -1), 0.9) * 3, 101)
         for loss in ("parametric", "bj", "ipcw", "transform"):
+            if (seed, loss) in done:
+                continue
             t0 = time.time()
             tuning = []
             for lam in (0.0, 1e-3, 1e-2):

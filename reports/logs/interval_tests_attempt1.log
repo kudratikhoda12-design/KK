@@ -1,0 +1,82 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 5 items
+
+tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[weibull] FAILED [ 20%]
+tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[lognormal] FAILED [ 40%]
+tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[loglogistic] PASSED [ 60%]
+tests/test_interval_likelihood.py::test_INT2_approaches_density_for_narrow_intervals PASSED [ 80%]
+tests/test_interval_likelihood.py::test_INT3_gradients_and_stability PASSED [100%]
+
+=================================== FAILURES ===================================
+___________ test_INT1_matches_scipy_interval_probabilities[weibull] ____________
+
+family = 'weibull'
+
+    @pytest.mark.criterion("INT-1")
+    @pytest.mark.parametrize("family", list(REF))
+    def test_INT1_matches_scipy_interval_probabilities(family):
+        y = torch.tensor([1.0, 2.0, 5.0, 37.0, 120.0, 300.0])
+        for eta in (2.0, 4.0, 5.5):
+            for sigma in (0.3, 1.0):
+                d = ll = aft_interval_log_likelihood(y, torch.ones(6), torch.full((6,), eta), sigma, family).numpy()
+                dist = REF[family](eta, sigma)
+                ref = np.log(dist.sf(np.maximum(y.numpy() - 1, 0)) - dist.sf(y.numpy()))
+>               np.testing.assert_allclose(ll, ref, rtol=1e-9, atol=1e-12)
+E               AssertionError: 
+E               Not equal to tolerance rtol=1e-09, atol=1e-12
+E               
+E               inf location mismatch:
+E                ACTUAL: array([-6.667303e+00, -4.467706e+00, -2.146608e+00, -1.960552e+02,
+E                      -1.054856e+04, -2.274787e+05])
+E                DESIRED: array([  -6.667303,   -4.467706,   -2.146608, -196.055241,        -inf,
+E                             -inf])
+
+tests/test_interval_likelihood.py:25: AssertionError
+__________ test_INT1_matches_scipy_interval_probabilities[lognormal] ___________
+
+family = 'lognormal'
+
+    @pytest.mark.criterion("INT-1")
+    @pytest.mark.parametrize("family", list(REF))
+    def test_INT1_matches_scipy_interval_probabilities(family):
+        y = torch.tensor([1.0, 2.0, 5.0, 37.0, 120.0, 300.0])
+        for eta in (2.0, 4.0, 5.5):
+            for sigma in (0.3, 1.0):
+                d = ll = aft_interval_log_likelihood(y, torch.ones(6), torch.full((6,), eta), sigma, family).numpy()
+                dist = REF[family](eta, sigma)
+                ref = np.log(dist.sf(np.maximum(y.numpy() - 1, 0)) - dist.sf(y.numpy()))
+>               np.testing.assert_allclose(ll, ref, rtol=1e-9, atol=1e-12)
+E               AssertionError: 
+E               Not equal to tolerance rtol=1e-09, atol=1e-12
+E               
+E               Mismatched elements: 1 / 6 (16.7%)
+E               Mismatch at index:
+E                [0]: -25.059636762455693 (ACTUAL), -25.059632661312826 (DESIRED)
+E               Max absolute difference among violations: 4.10114287e-06
+E               Max relative difference among violations: 1.63655347e-07
+E                ACTUAL: array([-25.059637, -11.925762,  -2.575889, -17.475549, -47.533305,
+E                      -81.558748])
+E                DESIRED: array([-25.059633, -11.925762,  -2.575889, -17.475549, -47.533305,
+E                      -81.558748])
+
+tests/test_interval_likelihood.py:25: AssertionError
+=============================== warnings summary ===============================
+tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[weibull]
+  /home/user/KK/tests/test_interval_likelihood.py:24: RuntimeWarning: divide by zero encountered in log
+    ref = np.log(dist.sf(np.maximum(y.numpy() - 1, 0)) - dist.sf(y.numpy()))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[loglogistic]
+PASSED tests/test_interval_likelihood.py::test_INT2_approaches_density_for_narrow_intervals
+PASSED tests/test_interval_likelihood.py::test_INT3_gradients_and_stability
+FAILED tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[weibull]
+FAILED tests/test_interval_likelihood.py::test_INT1_matches_scipy_interval_probabilities[lognormal]
+==================== 2 failed, 3 passed, 1 warning in 3.16s ====================

@@ -1,0 +1,7 @@
+[S8-budget] A3-fae_mlp-e0c038e1 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective', 'max_epochs': 10000, 'patience': 300} seed=0: val C=0.8442 probe=[ 0.95  0.85  0.84 -0.01] mean=0.658 train C=0.8568 epochs=[3517] 34.7s
+== S8-budget selected A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective', 'max_epochs': 3000, 'patience': 100}
+[S9-front] A4-fae_mlp-a6f2e0d9 {'front': 'tsd', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective', 'max_epochs': 3000, 'patience': 100} seed=0: val C=0.8364 probe=[0.89 0.56 0.67 0.43] mean=0.633 train C=0.8424 epochs=[1426] 20.0s
+== S9-front selected A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective', 'max_epochs': 3000, 'patience': 100}
+[S10-capacity] A3-fae_mlp-1e90fb8a {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective', 'max_epochs': 3000, 'patience': 100, 'H': 64, 'hidden': 128} seed=0: val C=0.8451 probe=[ 0.92  0.75  0.72 -0.02] mean=0.592 train C=0.8639 epochs=[2507] 30.7s
+== S10-capacity selected A3-fae_mlp-ab243462 {'front': 'tspline', 'r': 8, 'alpha': 1.0, 'optimizer': 'adam', 'lr': 0.003, 'es_target': 'objective', 'max_epochs': 3000, 'patience': 100, 'H': 32, 'hidden': 64}
+SELECTED {"front": "tspline", "r": 8, "alpha": 1.0, "optimizer": "adam", "lr": 0.003, "es_target": "objective", "max_epochs": 3000, "patience": 100, "H": 32, "hidden": 64}
