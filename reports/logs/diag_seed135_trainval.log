@@ -1,0 +1,4 @@
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+seed 131: stop epoch 278 (min-val-NLL epoch 278); train C 0.8572; val C 0.8613 (oracle 0.9010); val probe [0.886 0.727 0.841 0.864]
+seed 135: stop epoch 91 (min-val-NLL epoch 91); train C 0.8055; val C 0.7716 (oracle 0.8804); val probe [0.827 0.607 0.637 0.849]

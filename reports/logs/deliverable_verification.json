@@ -1,14 +1,14 @@
 {
  "pdf_exists": true,
  "pdf_opens": true,
- "pdf_pages": 80,
- "pdf_text_chars": 606203,
+ "pdf_pages": 96,
+ "pdf_text_chars": 736607,
  "pdf_no_placeholders": true,
  "pdf_has_part1_sections": true,
  "pdf_has_all_17_sections": true,
- "page_renders": 80,
+ "page_renders": 96,
  "blank_pages": [],
- "md_3dp_numbers": 504,
+ "md_3dp_numbers": 518,
  "md_numbers_missing_in_pdf": [],
  "report_values_used": 31,
  "report_values_missing_in_pdf": [],
@@ -16,27 +16,28 @@
  "report_template_round2.md_values_used": 24,
  "report_template_round3.md_values_used": 15,
  "report_template_round4.md_values_used": 14,
+ "report_template_round5.md_values_used": 14,
  "P0_summary_values_in_pdf": "21/21",
- "tests_reported": 209,
+ "tests_reported": 220,
  "tests_without_log_evidence": [],
  "final_suite_counts_round1": {
   "passed": 148,
   "failed": 1,
   "skipped": 1
  },
- "final_suite_run": "final_full_suite_round4_rerun",
+ "final_suite_run": "final_full_suite_round5",
  "final_suite_counts": {
-  "passed": 203,
+  "passed": 212,
   "failed": 2,
   "skipped": 1,
-  "xfailed": 3
+  "xfailed": 5
  },
  "final_suite_failures": [
-  "tests/test_learnability_fa4b.py::test_R1_oracle_features_head",
-  "tests/test_learnability_fa4b.py::test_R2_fae_mlp_end_to_end"
+  "tests/test_learnability_fa4c.py::test_R1_oracle_features_head",
+  "tests/test_learnability_fa4c.py::test_R2_fae_mlp_end_to_end"
  ],
  "final_suite_only_failure_is_R2": true,
- "commands_logged": 93,
+ "commands_logged": 102,
  "commands_missing_log_file": [],
  "experiment_csv_rows_equal_jsonl": true,
  "experiment_records": 2393,

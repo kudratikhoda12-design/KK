@@ -228,6 +228,7 @@ def renumber(txt, prefix, part_re):
 
 
 def main():
+    R1.use_snapshot("final_full_suite_round3")                 # round-3 part: test records up to round 3
     vals = values()
     tpl = (REP / "report_template_round3.md").read_text()
     out = re.sub(r"\{\{T:([A-Za-z0-9_\-]+)\}\}", lambda m: TABLES[m.group(1)](), tpl)

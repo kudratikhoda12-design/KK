@@ -56,6 +56,15 @@ KANFAE_RUN_ID=revised_gate_fa4b .venv/bin/python -m pytest -v -s tests/test_lear
 .venv/bin/python scripts/diag_data_ceiling.py             # D75 (seed 21 validation)
 .venv/bin/python scripts/diag_data_ceiling_seeds.py       # D75 (fresh seeds 701-710)
 .venv/bin/python scripts/make_figures_round4.py && .venv/bin/python scripts/build_report_round4.py
+# round 5 (2026-10-18): Revision 4c, pre-registered in D81/D82 before these runs; all fits single-threaded (D79)
+OMP_NUM_THREADS=1 .venv/bin/python -m pytest -v tests/test_training_stability.py tests/test_ceiling.py   # RS, CEIL
+OMP_NUM_THREADS=1 .venv/bin/python scripts/learnability_search_fa4c.py        # Step 1 -> reports/learnability_selected_fa4c.json
+OMP_NUM_THREADS=1 KANFAE_RUN_ID=revised_gate_fa4c .venv/bin/python -m pytest -v -s tests/test_learnability_fa4c.py  # seed 81
+OMP_NUM_THREADS=1 .venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4c.json \
+    --seeds 131,132,133,134,135 --tag _fa4c --amended --threads 1
+.venv/bin/python scripts/revised_gate_verdict.py fa4c     # -> reports/revised_gate_verdict_fa4c.json (D82 rule)
+.venv/bin/python scripts/diag_4c_stability.py             # D83 diagnostics
+.venv/bin/python scripts/build_report_round5.py           # report revision 5 (all parts, per-round snapshots)
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)

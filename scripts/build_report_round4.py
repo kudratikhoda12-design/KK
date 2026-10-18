@@ -152,10 +152,10 @@ def suite_table():
         g = TA[TA.run_id == run]
         if len(g):
             rows.append([run, int((g.outcome == "passed").sum()), int((g.outcome == "failed").sum()),
-                         int((g.outcome == "xfailed").sum()), int((g.outcome == "skipped").sum()),
+                         int((g.outcome == "xfailed").sum()), int((g.outcome == "skipped").sum()), len(g),
                          "; ".join(n.split("::")[-1] + " (" + n.split("::")[0].split("/")[-1] + ")"
                                    for n in g[g.outcome == "failed"].nodeid)])
-    return md_table(["Full-suite run", "Passed", "Failed", "Expected failures (historical, strict)", "Skipped",
+    return md_table(["Full-suite run", "Passed", "Failed", "Expected failures (historical, strict)", "Skipped", "Total",
                      "Failed tests"], rows)
 
 
@@ -184,6 +184,7 @@ def values():
 
 
 def main():
+    R1.use_snapshot("final_full_suite_round4_rerun")           # round-4 part: test records up to round 4
     vals = values()
     tpl = (REP / "report_template_round4.md").read_text()
     out = re.sub(r"\{\{T:([A-Za-z0-9_\-]+)\}\}", lambda m: TABLES[m.group(1)](), tpl)

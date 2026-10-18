@@ -53,3 +53,21 @@ sel = fin[fin.seed == 0].groupby(["analysis", "setting", "model"])["config"].agg
 sel.reset_index().to_csv(OUT / "selected_configs.csv", index=False)
 n_bad = (df.status != "ok").sum()
 print(f"{len(df)} records; {len(fin)} final; {n_bad} not ok; tables in {OUT}")
+
+# Round-1 snapshot (owner reporting fix, round 5): the round-1 report part must show round-1 records only, i.e. without
+# the C-MAPSS FD003 runs (v2) and the Option-B re-runs (v3), with only the round-1 supersession rule (D37).
+r1 = df[(df.dataset != "cmapss_FD003") & ~df.code_version.isin(["v2", "v3"])].copy()
+r1["used_in_summary"] = True
+for (an, mo), ver in {("cmapss_A", "sum_cox"): "D37", ("cmapss_A_artificial", "sum_cox"): "D37"}.items():
+    sel = (r1.analysis == an) & (r1.model == mo)
+    if (sel & (r1.code_version == ver)).any():
+        r1.loc[sel & (r1.code_version != ver), "used_in_summary"] = False
+r1["record_set"] = np.where(r1.used_in_summary, "current", "superseded (D37)")
+r1.groupby(["analysis", "model", "record_set", "phase", "status"]).size().rename("n").reset_index().to_csv(
+    OUT / "r1_run_status_counts.csv", index=False)
+f1 = r1[(r1.phase == "final") & r1.used_in_summary & (r1.status == "ok")]
+pr1 = f1.groupby(["dataset", "analysis", "setting", "model", "replicate"])[metric_cols].mean().reset_index()
+a1 = pr1.groupby(["dataset", "analysis", "setting", "model"])[metric_cols].agg(["mean", "std", "count"])
+a1.columns = [f"{a}__{b}" for a, b in a1.columns]
+a1.reset_index().to_csv(OUT / "r1_summary_by_model.csv", index=False)
+print(f"round-1 snapshot: {len(r1)} records ({int((r1.status != 'ok').sum())} not ok)")

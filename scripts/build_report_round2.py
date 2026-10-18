@@ -241,9 +241,10 @@ def test_run_history():
     TA = R1.TA
     rows = []
     for rid, g in TA.groupby("run_id", sort=False):
-        rows.append([rid, int((g.outcome == "passed").sum()), int((g.outcome == "failed").sum()),
-                     int((g.outcome == "skipped").sum())])
-    return md_table(["Test run (chronological)", "Passed", "Failed", "Skipped"], rows)
+        c = [int((g.outcome == o).sum()) for o in ("passed", "failed", "skipped", "xfailed")]
+        rows.append([rid] + c + [len(g)])
+    return md_table(["Test run (chronological)", "Passed", "Failed", "Skipped", "Expected failures (xfail)", "Total"],
+                    rows)
 
 
 def decisions_round2():
@@ -326,6 +327,7 @@ def render_round1():
 
 
 def main():
+    R1.use_snapshot("final_full_suite_round2_v3")              # round-2 part: test records up to round 2
     vals = values()
     tpl = (REP / "report_template_round2.md").read_text()
 

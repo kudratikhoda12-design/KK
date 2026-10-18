@@ -41,7 +41,10 @@ def main():
     assert sorted(r["data_seed"] for r in recs) == sp["seeds"], sorted(r["data_seed"] for r in recs)
     n_pass = sum(r["pass"] for r in recs)
     m = re.search(r"R2: C = ([0-9.]+), oracle C = ([0-9.]+); probe R2 \(a,b,A,omega\) = \[([^\]]+)\], mean ([0-9.]+)", log)
-    v = dict(gate_seed=sp["gate_seed"], gate=outcome, gate_R2_C=float(m.group(1)), gate_R2_threshold=float(m.group(2)) - 0.03,
+    am = re.search(r"R2-amended: C_ceiling = ([0-9.]+); threshold = min\(([0-9.]+), ([0-9.]+)\) = ([0-9.]+)", log)
+    thr = float(am.group(4)) if am else float(m.group(2)) - 0.03     # fa4c: the amended threshold (D82)
+    v = dict(gate_seed=sp["gate_seed"], gate=outcome, gate_R2_C=float(m.group(1)), gate_R2_threshold=thr,
+             gate_C_ceiling=float(am.group(1)) if am else None,
              gate_probe=[float(x) for x in m.group(3).split()], gate_probe_mean=float(m.group(4)),
              confirmations_passed=n_pass, confirmations_total=len(recs),
              verdict="CONFIRMED" if all(outcome.get(k, False) for k in sp["rule_tests"]) and n_pass >= 4 else "NOT CONFIRMED",

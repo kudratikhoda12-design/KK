@@ -1,0 +1,23 @@
+{
+ "gate_seed": 81,
+ "gate": {
+  "R1": false,
+  "R1A": true,
+  "R2": false,
+  "R3": true
+ },
+ "gate_R2_C": 0.8421,
+ "gate_R2_threshold": 0.839,
+ "gate_C_ceiling": 0.854,
+ "gate_probe": [
+  0.896,
+  0.582,
+  0.798,
+  0.814
+ ],
+ "gate_probe_mean": 0.772,
+ "confirmations_passed": 1,
+ "confirmations_total": 5,
+ "verdict": "NOT CONFIRMED",
+ "rule": "R1-A, amended R2 and R3 pass on seed 81 and amended R2 passes on >= 4/5 of seeds 131-135 (D80/D82); original R1 reported side by side, not part of the rule"
+}

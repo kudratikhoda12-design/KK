@@ -32,7 +32,15 @@ if json.loads(SEL.read_text()).get("step1", {}).get("STEP1") != "PASSED":
     pytest.skip("4c gate NOT RUN: Step 1 (training stability / stopping rule) did not pass (D80/D81)",
                 allow_module_level=True)
 CFG = json.loads(SEL.read_text())["config"]
-torch.set_num_threads(1)                                            # D79: deterministic single-threaded fits
+
+
+@pytest.fixture(autouse=True, scope="module")
+def _single_thread():
+    """D79: deterministic single-threaded fits, scoped to this module (the previous count is restored)."""
+    prev = torch.get_num_threads()
+    torch.set_num_threads(1)
+    yield
+    torch.set_num_threads(prev)
 
 
 def _data(sigma_y, censoring):

@@ -1,0 +1,53 @@
+{
+ "kind": "fae_mlp",
+ "config": {
+  "front": "fa",
+  "fa_compact": true,
+  "fa_nfreq": 17,
+  "r": 12,
+  "alpha": 1.0,
+  "optimizer": "adam",
+  "lr": 0.003,
+  "wd": 0.0001,
+  "head_wd": 0.01,
+  "es_target": "nll",
+  "max_epochs": 3000,
+  "patience": 100,
+  "H": 32,
+  "hidden": 64,
+  "fa_balance": true,
+  "clip": 1.0
+ },
+ "config_id": "A6-fae_mlp-ee5e6740",
+ "step1": {
+  "jumps_zero_all_seeds": true,
+  "stopping_conflict_resolved_all_seeds": true,
+  "per_seed": [
+   {
+    "seed": 0,
+    "jumps": 0,
+    "delivered_val_nll": 1.2154896470818495,
+    "min_val_nll": 1.2154896470818495,
+    "val_C": 0.8474310776942355,
+    "val_probe_mean": 0.7870407836956047
+   },
+   {
+    "seed": 1,
+    "jumps": 0,
+    "delivered_val_nll": 1.200522767383653,
+    "min_val_nll": 1.200522767383653,
+    "val_C": 0.8483082706766917,
+    "val_probe_mean": 0.6743208046384973
+   },
+   {
+    "seed": 2,
+    "jumps": 0,
+    "delivered_val_nll": 1.186438954385614,
+    "min_val_nll": 1.186438954385614,
+    "val_C": 0.8496741854636591,
+    "val_probe_mean": 0.7910280084839202
+   }
+  ],
+  "STEP1": "PASSED"
+ }
+}

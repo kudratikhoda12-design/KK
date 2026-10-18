@@ -1,4 +1,29 @@
-# Final status: KAN-FAE research prototype, round 4 (2026-10-18)
+# Final status: KAN-FAE research prototype, round 5 (2026-10-18)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (Part A = round 5; Parts B–E = rounds 4, 3, 2, 1, each from its
+own snapshot); deliverable verification passes. Status: **research prototype; no successful KAN-FAE model; not
+publication-ready; no novelty claim.**
+
+| Step | Result |
+|---|---|
+| Determinism (D79) | The 0.0053 difference explained (thread-count floating point, amplified by instability; 3 threads non-deterministic). All round-5 fits single-threaded |
+| Step 1: Revision 4c (D81) | **PASSED**: spectral balance + clipping (Adam 3e-3) + NLL stopping; zero jumps on seeds 0–2; stopping conflict resolved. Full-budget jumps 12 → 0; thread spread 0.013 → 0.0006 |
+| Step 2: amended gate, seed 81 (D82) | R1 original FAIL (reported); R1-A PASS; R2 concordance part PASS (C 0.8421 ≥ 0.8390); **R2 probe part FAIL** (0.772 < 0.78); R3 PASS |
+| Confirmations 131–135 | **1/5** → **NOT CONFIRMED** |
+| Step 3 | **NOT RUN** (guard) |
+| Diagnosis (D84, D85) | NLL early stopping ends training at the survival optimum (epochs 91–430) before the latent learns b and A; the registered tie-break chose it over the identical-risk two-checkpoint rule; the early-epoch latent probe is numerically fragile (±0.01–0.02) |
+| Tests | `final_full_suite_round5`: 212 passed, 2 failed (4c gate original R1, R2), 5 expected failures (historical gates), 1 skipped (220). Gate reproduction in the registered environment: exact |
+| Reporting fixes | xfail and total columns in every run table; historical parts rendered from their own snapshots; round-1 C-MAPSS tables without FD003/v3 |
+
+## Decision requested
+
+Pre-register two-checkpoint stopping with a burn-in before NLL-based selection, chosen by robustness across
+training seeds, and evaluate it on new fresh seeds under the unchanged D82 criteria (L27).
+
+---
+
+# Round 4 status (2026-10-18), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (80 pages; Part A = round 4; Parts B–D = rounds 3, 2, 1);

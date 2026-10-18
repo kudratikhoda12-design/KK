@@ -1,0 +1,79 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 4 items
+
+tests/test_learnability_fa4c.py::test_R1_oracle_features_head R1: C = 0.8888, oracle C = 0.8908, sigma = 0.5648 (truth 0.5)
+FAILED
+tests/test_learnability_fa4c.py::test_R1A_profile_sigma R1-A: C = 0.8888, oracle C = 0.8908, profile sigma (train, eta fixed) = 0.4921; early-stopped sigma = 0.5648 (truth 0.5)
+PASSED
+tests/test_learnability_fa4c.py::test_R2_fae_mlp_end_to_end R2: C = 0.8421, oracle C = 0.8908; probe R2 (a,b,A,omega) = [0.896 0.582 0.798 0.814], mean 0.772; epochs [430]
+R2-amended: C_ceiling = 0.8540; threshold = min(0.8608, 0.8390) = 0.8390; C = 0.8421; probe mean 0.772 (>= 0.78), omega 0.814 (>= 0.80)
+FAILED
+tests/test_learnability_fa4c.py::test_R3_censoring_awareness R3: survival-curve error aware [0.1147, 0.1135, 0.122] naive [0.1336, 0.138, 0.1425] ; C (aware, seed 0) = 0.8317
+R3: |C - C_R2| = 0.0104
+PASSED
+
+=================================== FAILURES ===================================
+_________________________ test_R1_oracle_features_head _________________________
+
+    @pytest.mark.criterion("R1")
+    def test_R1_oracle_features_head():
+        r = _r1_fit()
+        print(f"R1: C = {r['c']:.4f}, oracle C = {r['c_or']:.4f}, sigma = {r['sigma']:.4f} (truth 0.5)")
+>       assert r["c"] >= r["c_or"] - 0.02 and abs(r["sigma"] - 0.5) <= 0.05
+E       assert (np.float64(0.8888095238095238) >= (np.float64(0.890827067669173) - 0.02) and 0.0648282032554901 <= 0.05)
+E        +  where 0.0648282032554901 = abs((0.5648282032554901 - 0.5))
+
+tests/test_learnability_fa4c.py:102: AssertionError
+__________________________ test_R2_fae_mlp_end_to_end __________________________
+
+    @pytest.mark.criterion("R2")
+    def test_R2_fae_mlp_end_to_end():
+        """Amended R2 (D80/D82): C >= min(C_oracle - 0.03, C_ceiling - 0.015) on the test split, where C_ceiling is the
+        per-individual parametric plug-in (kanfae.evaluation.ceiling, D75 definition) on the SAME test split; and mean
+        linear-probe R^2 >= 0.78 with the omega probe >= 0.80."""
+        from kanfae.evaluation.ceiling import ceiling_C
+        obs, ora, tr, va, te = _data(0.05, 0.0)
+        m = NeuralAFT("fae_mlp", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)
+        risk = m.predict_risk(obs.subset(te))
+        c = harrell_c(obs.y_obs[te], obs.delta[te], risk)
+        c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
+        c_ceil = ceiling_C(obs, te)
+        Ztr, Zte = m.latent(obs.subset(tr)), m.latent(obs.subset(te))
+        A = np.column_stack([np.ones(len(Ztr)), Ztr])
+        r2 = []
+        for j in range(4):
+            tgt = ora.theta[tr, j]
+            coef = np.linalg.solve(A.T @ A + 1e-3 * np.eye(A.shape[1]), A.T @ tgt)
+            pred = np.column_stack([np.ones(len(Zte)), Zte]) @ coef
+            yt = ora.theta[te, j]
+            r2.append(1 - np.sum((yt - pred) ** 2) / np.sum((yt - yt.mean()) ** 2))
+        thr = min(c_or - 0.03, c_ceil - 0.015)
+        GATE["R2_C"] = c
+        print(f"R2: C = {c:.4f}, oracle C = {c_or:.4f}; probe R2 (a,b,A,omega) = {np.round(r2, 3)}, mean {np.mean(r2):.3f}; "
+              f"epochs {[r['epochs'] for r in m.info['runs']]}")
+        print(f"R2-amended: C_ceiling = {c_ceil:.4f}; threshold = min({c_or - 0.03:.4f}, {c_ceil - 0.015:.4f}) = {thr:.4f}; "
+              f"C = {c:.4f}; probe mean {np.mean(r2):.3f} (>= 0.78), omega {r2[3]:.3f} (>= 0.80)")
+        assert c >= thr
+>       assert np.mean(r2) >= 0.78 and r2[3] >= 0.80
+E       assert (np.float64(0.7724595025209056) >= 0.78)
+E        +  where np.float64(0.7724595025209056) = <function mean at 0x7fc90a7afcf0>([np.float64(0.8955798131394217), np.float64(0.5820172277542599), np.float64(0.7981053869225561), np.float64(0.8141355822673847)])
+E        +    where <function mean at 0x7fc90a7afcf0> = np.mean
+
+tests/test_learnability_fa4c.py:141: AssertionError
+=============================== warnings summary ===============================
+tests/test_learnability_fa4c.py::test_R1_oracle_features_head
+  /home/user/KK/tests/test_learnability_fa4c.py:76: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_learnability_fa4c.py::test_R1_oracle_features_head - assert...
+FAILED tests/test_learnability_fa4c.py::test_R2_fae_mlp_end_to_end - assert (...
+=================== 2 failed, 2 passed, 1 warning in 50.15s ====================

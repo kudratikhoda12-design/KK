@@ -139,3 +139,10 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   ceiling; 9/10 fresh seeds below the threshold even for near-optimal estimates), D77 (training instability).
 - Revision-4 gate marked historical strict xfail (D76). First round-4 suite found a FlatAE regression (D78), fixed;
   rerun: 203 passed, 2 failed (4b gate R1/R2), 3 xfailed, 1 skipped. Report revision 4 (80 pages); verification passes.
+- Round 5 (owner D80). D79 determinism: identical 3-thread runs differ; all round-5 fits single-threaded. Revision
+  4c mechanisms + RS tests (RS-5 caught a BatchNorm leak in the refit, fixed); C_ceiling module + CEIL tests.
+  Pre-registration D81/D82 committed (4605c50) before any fit.
+- Step 1 PASSED (D83; disclosed tie at H3). Step 2 seed 81: R1-A pass, R2 concordance pass / probe fail, R3 pass;
+  confirmations 131-135 1/5; NOT CONFIRMED; Step 3 not run. Diagnosis D84 (early NLL stopping; seed 135 stopped at
+  epoch 91). D85 gate reproduction exact in the registered environment.
+- Full suite round 5: 212 passed, 2 failed, 5 xfailed, 1 skipped. Report revision 5 with per-round snapshots.

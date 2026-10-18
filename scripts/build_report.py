@@ -15,10 +15,30 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 REP = ROOT / "reports"
-S = pd.read_csv(REP / "tables/summary_by_model.csv")
-STATUS = pd.read_csv(REP / "tables/run_status_counts.csv")
+S_CUR = pd.read_csv(REP / "tables/summary_by_model.csv")
+STATUS_CUR = pd.read_csv(REP / "tables/run_status_counts.csv")
+TA_ALL = pd.read_csv(REP / "test_results.csv").fillna("")
+S, STATUS = S_CUR, STATUS_CUR
 TL = pd.read_csv(REP / "test_results_latest.csv").fillna("")
-TA = pd.read_csv(REP / "test_results.csv").fillna("")
+TA = TA_ALL
+EXP_ROUND1 = False
+
+
+def use_snapshot(last_run=None, experiments="current"):
+    """Owner reporting fix (round 5): render a report part from ITS round's records.
+    Tests: records up to and including the last record of run `last_run` (file order is chronological); TL = latest
+    outcome per test within that snapshot. Experiments: "r1" = round-1 aggregate tables (no FD003, no v3 re-runs)."""
+    global TA, TL, S, STATUS, EXP_ROUND1
+    if last_run is None:
+        TA = TA_ALL
+    else:
+        idx = TA_ALL.index[TA_ALL.run_id == last_run]
+        TA = TA_ALL.loc[:idx.max()] if len(idx) else TA_ALL
+    TL = TA.drop_duplicates("nodeid", keep="last")
+    r1 = experiments == "r1" and (REP / "tables/r1_summary_by_model.csv").exists()
+    S = pd.read_csv(REP / "tables/r1_summary_by_model.csv") if r1 else S_CUR
+    STATUS = pd.read_csv(REP / "tables/r1_run_status_counts.csv") if r1 else STATUS_CUR
+    EXP_ROUND1 = r1
 LABEL = {"fpca_aft": "FPCA + AFT", "fpca_cox": "FPCA + Cox", "sum_aft": "Summary + AFT", "sum_cox": "Summary + Cox",
          "sum_rsf": "Summary + RSF", "km_null": "KM null (reference)", "oracle_true": "True model (reference)"}
 ORDER = list(LABEL)
@@ -78,8 +98,10 @@ def failures_table():
 
 def run_counts_table():
     runs = TA.groupby("run_id", sort=False).outcome.value_counts().unstack(fill_value=0)
-    rows = [[k, int(r.get("passed", 0)), int(r.get("failed", 0)), int(r.get("skipped", 0))] for k, r in runs.iterrows()]
-    return md_table(["pytest run (KANFAE_RUN_ID)", "passed", "failed", "skipped"], rows)
+    rows = [[k] + [int(r.get(o, 0)) for o in ("passed", "failed", "skipped", "xfailed")] + [int(r.sum())]
+            for k, r in runs.iterrows()]
+    return md_table(["pytest run (KANFAE_RUN_ID)", "passed", "failed", "skipped", "expected failures (xfail)",
+                     "total"], rows)
 
 
 def status_table():
@@ -207,6 +229,8 @@ def values():
     v["n_test_runs"] = str(TA.run_id.nunique())
     v["n_test_records"] = str(len(TA))
     df = pd.read_csv(REP / "experiment_results.csv", low_memory=False)
+    if EXP_ROUND1:                                       # round-1 snapshot (owner reporting fix, round 5)
+        df = df[(df.dataset != "cmapss_FD003") & ~df.code_version.isin(["v2", "v3"])]
     v["n_exp_records"] = str(len(df))
     v["n_exp_not_ok"] = str(int((df.status != "ok").sum()))
     v["git_head"] = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], capture_output=True,
@@ -219,6 +243,7 @@ def values():
 
 
 def main():
+    use_snapshot("final_full_suite", experiments="r1")       # round-1 part: round-1 records only
     tpl = (REP / "report_template.md").read_text()
     vals = values()
 

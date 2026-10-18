@@ -84,6 +84,8 @@ def _r1_fit():
 
 
 @pytest.mark.criterion("R1")
+@pytest.mark.xfail(strict=True, reason="historical: revision-4b gate (seed 61), original R1 sigma failed (D71); "
+                                       "superseded by revision 4c (D81/D82); kept as a record (D84)")
 def test_R1_oracle_features_head():
     r = _r1_fit()
     print(f"R1: C = {r['c']:.4f}, oracle C = {r['c_or']:.4f}, sigma = {r['sigma']:.4f} (truth 0.5)")
@@ -99,6 +101,8 @@ def test_R1A_profile_sigma():
 
 
 @pytest.mark.criterion("R2")
+@pytest.mark.xfail(strict=True, reason="historical: revision 4b failed R2 under D71 (C 0.8372 < 0.8662); superseded by "
+                                       "revision 4c (D81/D82); kept as a record (D84)")
 def test_R2_fae_mlp_end_to_end():
     obs, ora, tr, va, te = _data(0.05, 0.0)
     m = NeuralAFT("fae_mlp", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)

@@ -1,0 +1,41 @@
+{
+ "full_budget": {
+  "4b base": {
+   "threads": 1,
+   "val_C": 0.8318922305764411,
+   "epochs": 3000,
+   "jumps": 12,
+   "max_train_nll_after300": 12.530574059909247
+  },
+  "4c selection": {
+   "threads": 1,
+   "val_C": 0.8474310776942355,
+   "epochs": 3000,
+   "jumps": 0,
+   "max_train_nll_after300": 1.13911504175098
+  }
+ },
+ "thread_spread": [
+  {
+   "threads": 1,
+   "val_C": 0.8474310776942355,
+   "epochs": 430,
+   "jumps": 0,
+   "max_train_nll_after300": 1.13911504175098
+  },
+  {
+   "threads": 2,
+   "val_C": 0.8467919799498747,
+   "epochs": 427,
+   "jumps": 0,
+   "max_train_nll_after300": 1.1424311630385433
+  },
+  {
+   "threads": 4,
+   "val_C": 0.8473809523809523,
+   "epochs": 430,
+   "jumps": 0,
+   "max_train_nll_after300": 1.1392001149117066
+  }
+ ]
+}
