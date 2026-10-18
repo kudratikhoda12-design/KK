@@ -146,3 +146,12 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   confirmations 131-135 1/5; NOT CONFIRMED; Step 3 not run. Diagnosis D84 (early NLL stopping; seed 135 stopped at
   epoch 91). D85 gate reproduction exact in the registered environment.
 - Full suite round 5: 212 passed, 2 failed, 5 xfailed, 1 skipped. Report revision 5 with per-round snapshots.
+- Round 6 (owner D86). Single-threading in the run wrapper and pytest session; R1.9 snapshot; 4c gate strict xfail;
+  burn-in `min_epochs` + BI tests (BI-1 exact reproduction). Seed 91 found previously generated (CEIL-2) and replaced
+  by 92. Pre-registration D87/D88 committed (29ad9e7) before any 4d fit.
+- Step 1 (24 fits, seed-21 train/validation, single-threaded): FAILED (D89); closest candidate short by 0.001 on
+  training seed 1's probe mean. Step 2 and Step 3 not run; seeds 92 and 141–145 unused.
+- `final_full_suite_round6`: 215 passed, 1 skipped recorded (223; pytest 224). Module-level skip not recorded:
+  conftest collection hook added (D90); `final_full_suite_round6_rerun`: 215 passed, 0 failed, 2 skipped, 7 xfailed (224).
+- First round-6 verification flagged a near-blank PDF page 2 (contents overflow); contents set in two columns (D90).
+  Report revision 6 (106 pages); deliverable verification ALL_CHECKS_PASS.

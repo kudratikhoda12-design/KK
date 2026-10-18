@@ -1,0 +1,36 @@
+/home/user/KK/src/kanfae/models/pipelines.py:154: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+[cand0] A7-fae_mlp-2f08c68b seed=0 two_checkpoint burn-in 300 lr 0.003: val C 0.8474 probe [0.904 0.69  0.808 0.87 ] mean 0.818 jumps 0 | objective stop 493 risk/refit epoch 329 | 14.8s
+[cand0] A7-fae_mlp-2f08c68b seed=1 two_checkpoint burn-in 300 lr 0.003: val C 0.8491 probe [0.913 0.69  0.744 0.666] mean 0.753 jumps 0 | objective stop 442 risk/refit epoch 303 | 12.4s
+[cand0] A7-fae_mlp-2f08c68b seed=2 two_checkpoint burn-in 300 lr 0.003: val C 0.8498 probe [0.919 0.728 0.826 0.762] mean 0.809 jumps 0 | objective stop 581 risk/refit epoch 310 | 14.2s
+== cand0 two_checkpoint burn-in 300 lr 0.003: mean val C 0.8488 mean probe 0.793 min seed probe 0.753 min seed omega 0.666 max jumps 0 -> eligible False
+[cand1] A7-fae_mlp-5d0310b4 seed=0 two_checkpoint burn-in 300 lr 0.001: val C 0.8478 probe [0.926 0.776 0.842 0.876] mean 0.855 jumps 0 | objective stop 985 risk/refit epoch 593 | 20.3s
+[cand1] A7-fae_mlp-5d0310b4 seed=1 two_checkpoint burn-in 300 lr 0.001: val C 0.8482 probe [0.901 0.676 0.725 0.813] mean 0.779 jumps 0 | objective stop 1035 risk/refit epoch 565 | 20.7s
+[cand1] A7-fae_mlp-5d0310b4 seed=2 two_checkpoint burn-in 300 lr 0.001: val C 0.8496 probe [0.88  0.685 0.826 0.86 ] mean 0.813 jumps 0 | objective stop 1076 risk/refit epoch 727 | 23.9s
+== cand1 two_checkpoint burn-in 300 lr 0.001: mean val C 0.8486 mean probe 0.816 min seed probe 0.779 min seed omega 0.813 max jumps 0 -> eligible False
+[cand2] A7-fae_mlp-d02d2382 seed=0 two_checkpoint burn-in 500 lr 0.003: val C 0.8465 probe [0.904 0.69  0.808 0.87 ] mean 0.818 jumps 0 | objective stop 493 risk/refit epoch 500 | 14.1s
+[cand2] A7-fae_mlp-d02d2382 seed=1 two_checkpoint burn-in 500 lr 0.003: val C 0.8478 probe [0.913 0.69  0.744 0.666] mean 0.753 jumps 0 | objective stop 442 risk/refit epoch 502 | 12.6s
+[cand2] A7-fae_mlp-d02d2382 seed=2 two_checkpoint burn-in 500 lr 0.003: val C 0.8475 probe [0.919 0.728 0.826 0.762] mean 0.809 jumps 0 | objective stop 581 risk/refit epoch 501 | 14.0s
+== cand2 two_checkpoint burn-in 500 lr 0.003: mean val C 0.8473 mean probe 0.793 min seed probe 0.753 min seed omega 0.666 max jumps 0 -> eligible False
+[cand3] A7-fae_mlp-53362c72 seed=0 two_checkpoint burn-in 500 lr 0.001: val C 0.8478 probe [0.926 0.776 0.842 0.876] mean 0.855 jumps 0 | objective stop 985 risk/refit epoch 593 | 20.7s
+[cand3] A7-fae_mlp-53362c72 seed=1 two_checkpoint burn-in 500 lr 0.001: val C 0.8482 probe [0.901 0.676 0.725 0.813] mean 0.779 jumps 0 | objective stop 1035 risk/refit epoch 565 | 21.0s
+[cand3] A7-fae_mlp-53362c72 seed=2 two_checkpoint burn-in 500 lr 0.001: val C 0.8496 probe [0.88  0.685 0.826 0.86 ] mean 0.813 jumps 0 | objective stop 1076 risk/refit epoch 727 | 21.3s
+== cand3 two_checkpoint burn-in 500 lr 0.001: mean val C 0.8486 mean probe 0.816 min seed probe 0.779 min seed omega 0.813 max jumps 0 -> eligible False
+[cand4] A7-fae_mlp-ebd85f6c seed=0 two_state_refit burn-in 300 lr 0.003: val C 0.8463 probe [0.904 0.69  0.808 0.87 ] mean 0.818 jumps 0 | objective stop 493 risk/refit epoch 300 | 16.7s
+[cand4] A7-fae_mlp-ebd85f6c seed=1 two_state_refit burn-in 300 lr 0.003: val C 0.8483 probe [0.913 0.69  0.744 0.666] mean 0.753 jumps 0 | objective stop 442 risk/refit epoch 300 | 15.6s
+[cand4] A7-fae_mlp-ebd85f6c seed=2 two_state_refit burn-in 300 lr 0.003: val C 0.8481 probe [0.919 0.728 0.826 0.762] mean 0.809 jumps 0 | objective stop 581 risk/refit epoch 300 | 16.9s
+== cand4 two_state_refit burn-in 300 lr 0.003: mean val C 0.8476 mean probe 0.793 min seed probe 0.753 min seed omega 0.666 max jumps 0 -> eligible False
+[cand5] A7-fae_mlp-0702d16d seed=0 two_state_refit burn-in 300 lr 0.001: val C 0.8394 probe [0.926 0.776 0.842 0.876] mean 0.855 jumps 0 | objective stop 985 risk/refit epoch 318 | 23.6s
+[cand5] A7-fae_mlp-0702d16d seed=1 two_state_refit burn-in 300 lr 0.001: val C 0.8414 probe [0.901 0.676 0.725 0.813] mean 0.779 jumps 0 | objective stop 1035 risk/refit epoch 300 | 24.7s
+[cand5] A7-fae_mlp-0702d16d seed=2 two_state_refit burn-in 300 lr 0.001: val C 0.8437 probe [0.88  0.685 0.826 0.86 ] mean 0.813 jumps 0 | objective stop 1076 risk/refit epoch 347 | 25.0s
+== cand5 two_state_refit burn-in 300 lr 0.001: mean val C 0.8415 mean probe 0.816 min seed probe 0.779 min seed omega 0.813 max jumps 0 -> eligible False
+[cand6] A7-fae_mlp-c39e18c7 seed=0 two_state_refit burn-in 500 lr 0.003: val C 0.8462 probe [0.904 0.69  0.808 0.87 ] mean 0.818 jumps 0 | objective stop 493 risk/refit epoch 500 | 17.4s
+[cand6] A7-fae_mlp-c39e18c7 seed=1 two_state_refit burn-in 500 lr 0.003: val C 0.8486 probe [0.913 0.69  0.744 0.666] mean 0.753 jumps 0 | objective stop 442 risk/refit epoch 599 | 17.6s
+[cand6] A7-fae_mlp-c39e18c7 seed=2 two_state_refit burn-in 500 lr 0.003: val C 0.8487 probe [0.919 0.728 0.826 0.762] mean 0.809 jumps 0 | objective stop 581 risk/refit epoch 500 | 17.8s
+== cand6 two_state_refit burn-in 500 lr 0.003: mean val C 0.8478 mean probe 0.793 min seed probe 0.753 min seed omega 0.666 max jumps 0 -> eligible False
+[cand7] A7-fae_mlp-d125e78e seed=0 two_state_refit burn-in 500 lr 0.001: val C 0.8420 probe [0.926 0.776 0.842 0.876] mean 0.855 jumps 0 | objective stop 985 risk/refit epoch 500 | 24.1s
+[cand7] A7-fae_mlp-d125e78e seed=1 two_state_refit burn-in 500 lr 0.001: val C 0.8405 probe [0.901 0.676 0.725 0.813] mean 0.779 jumps 0 | objective stop 1035 risk/refit epoch 500 | 25.4s
+[cand7] A7-fae_mlp-d125e78e seed=2 two_state_refit burn-in 500 lr 0.001: val C 0.8451 probe [0.88  0.685 0.826 0.86 ] mean 0.813 jumps 0 | objective stop 1076 risk/refit epoch 500 | 26.6s
+== cand7 two_state_refit burn-in 500 lr 0.001: mean val C 0.8426 mean probe 0.816 min seed probe 0.779 min seed omega 0.813 max jumps 0 -> eligible False
+STEP 1 FAILED | selected None

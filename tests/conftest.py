@@ -57,6 +57,19 @@ def pytest_runtest_logreport(report):
         rec = dict(run_id=RUN_ID, nodeid=report.nodeid, outcome=outcome, phase=report.when,
                    duration_s=round(report.duration, 4), criterion=props.get("criterion", ""),
                    kind=props.get("kind", ""), stage=props.get("stage", ""), message=msg[:500])
-        RECORD.parent.mkdir(parents=True, exist_ok=True)
-        with open(RECORD, "a") as fh:
-            fh.write(json.dumps(rec) + "\n")
+        _write(rec)
+
+
+def pytest_collectreport(report):
+    # D90: a module-level skip (pytest.skip(..., allow_module_level=True)) never yields test items, so it is recorded
+    # here, once per skipped module, so that the recorded totals equal pytest's own counts.
+    if report.outcome == "skipped" and report.nodeid.endswith(".py"):
+        msg = str(report.longrepr[-1]) if isinstance(report.longrepr, tuple) else str(report.longrepr)
+        _write(dict(run_id=RUN_ID, nodeid=report.nodeid, outcome="skipped", phase="collect", duration_s=0.0,
+                    criterion="", kind="", stage="", message=msg[:500]))
+
+
+def _write(rec):
+    RECORD.parent.mkdir(parents=True, exist_ok=True)
+    with open(RECORD, "a") as fh:
+        fh.write(json.dumps(rec) + "\n")

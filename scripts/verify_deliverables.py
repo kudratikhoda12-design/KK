@@ -18,7 +18,7 @@ REP = ROOT / "reports"
 res = {}
 
 
-FINAL_RUN = "final_full_suite_round5"
+FINAL_RUN = "final_full_suite_round6_rerun"
 
 
 def norm(s):
@@ -37,6 +37,7 @@ T = norm(text) + " || " + norm(raw)          # layout and raw extraction (raw ke
 res["pdf_no_placeholders"] = "{{" not in text
 # round 3 (2026-10-17): Part A sections 0.1-0.3 and R3.1-R3.11; round 2 renumbered R2.1-R2.15; round 1 R1.1-R1.17
 res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 5)) and all(
+    re.search(rf"\bR6\.{k}\s", T) for k in range(1, 11)) and all(
     re.search(rf"\bR5\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR4\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR3\.{k}\s", T) for k in range(1, 12)) and all(re.search(rf"\bR2\.{k}\s", T) for k in range(1, 16))
@@ -64,7 +65,8 @@ res["round2_values_missing_in_pdf"] = []
 for tpl, vf in (("report_template_round2.md", "report_values_round2.json"),
                 ("report_template_round3.md", "report_values_round3.json"),
                 ("report_template_round4.md", "report_values_round4.json"),
-                ("report_template_round5.md", "report_values_round5.json")):
+                ("report_template_round5.md", "report_values_round5.json"),
+                ("report_template_round6.md", "report_values_round6.json")):
     vals2 = json.loads((REP / vf).read_text())
     used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / tpl).read_text()))
     res[f"{tpl}_values_used"] = len(used2)
@@ -93,8 +95,9 @@ res["final_suite_counts"] = {o: sum(r["outcome"] == o for r in final2) for o in 
 # round 3: the failures allowed are exactly the revised gate's (reported as R2/R1 FAILED); everything else must pass
 res["final_suite_failures"] = sorted(r["nodeid"] for r in final2 if r["outcome"] == "failed")
 res["final_suite_only_failure_is_R2"] = set(res["final_suite_failures"]) <= {
-    "tests/test_learnability_fa4c.py::test_R1_oracle_features_head",
-    "tests/test_learnability_fa4c.py::test_R2_fae_mlp_end_to_end"} and len(final2) > 0   # round 5: the current design
+    "tests/test_learnability_fa4d.py::test_R1_oracle_features_head",
+    "tests/test_learnability_fa4d.py::test_R2_fae_mlp_end_to_end"} and len(final2) > 0   # round 6: the current design
+                                                                                         # (its gate skips: Step 1 failed)
 
 cmds = [json.loads(l) for l in (REP / "logs/commands.jsonl").read_text().splitlines() if l.strip()]
 res["commands_logged"] = len(cmds)
