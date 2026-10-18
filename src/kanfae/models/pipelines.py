@@ -48,6 +48,11 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64
                 # min_epochs, and validation-NLL-based state selection (two_checkpoint risk state, NLL early stopping,
                 # head refit) considers only epochs >= min_epochs.
                 min_epochs=0,
+                # Revision 4f (D100; default None reproduces the earlier behaviour): head_refit="mlp" fits a small
+                # nonlinear AFT head (AFTHead kind "mlp", hidden 16) on the frozen latent of the joint run's
+                # objective-minimum state, with validation-NLL early stopping (BatchNorm frozen, as in the D81 refit);
+                # it replaces the two_checkpoint risk state.
+                head_refit=None,
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
@@ -127,7 +132,8 @@ class NeuralAFT(BaseModel):
     def _run(self, Ttr, Tva, parts, params, track_nll_state=False):
         Opt = torch.optim.AdamW if self.cfg["optimizer"] == "adamw" else torch.optim.Adam
         if self.cfg["head_wd"] is not None and hasattr(self.model, "head"):
-            hw = {id(p) for n, p in self.model.named_parameters() if n == "head.net.weight"}
+            # head weight matrices (linear head: head.net.weight; D100 nonlinear head: head.net.<i>.weight)
+            hw = {id(p) for n, p in self.model.named_parameters() if n.startswith("head.net") and n.endswith("weight")}
             params = [{"params": [p for p in params if id(p) not in hw]},
                       {"params": [p for p in params if id(p) in hw], "weight_decay": self.cfg["head_wd"]}]
         opt = Opt(params, lr=self.cfg["lr"], weight_decay=self.cfg["wd"])
@@ -213,6 +219,8 @@ class NeuralAFT(BaseModel):
             runs.append(run)
             if mode == "two_state_refit":
                 runs.append(self._refit_head(Ttr, Tva))
+            if self.cfg["head_refit"] is not None:
+                runs.append(self._refit_nonlinear_head(Ttr, Tva, seed))
         self.info = {"runs": runs, "lambda": self.pre.lam_, "block_params": self.model.block_params()}
         self.n_params = n_params(self.model)
         self.fit_seconds = time.time() - t0
@@ -257,6 +265,40 @@ class NeuralAFT(BaseModel):
             for p in self.model.parameters():
                 p.requires_grad_(True)
         run["refit"] = True
+        return run
+
+    def _refit_nonlinear_head(self, Ttr, Tva, seed):
+        """D100 nonlinear_refit: after the joint run (whose trajectory is untouched), replace the AFT head by a new
+        nonlinear head (kind cfg["head_refit"]) and fit it on the frozen latent of the objective-minimum state with
+        validation-NLL early stopping; the two_checkpoint risk state is discarded. Initialisation: the head's own
+        generator (seed + 7919); final bias at the training mean log time; sigma from the joint run's head."""
+        from .fae import AFTHead
+        old = self.model.head
+        gen_state = torch.random.get_rng_state()
+        torch.manual_seed(seed + 7919)
+        head = AFTHead(old.net.in_features if isinstance(old.net, torch.nn.Linear) else self.cfg["r"],
+                       kind=self.cfg["head_refit"])
+        torch.random.set_rng_state(gen_state)
+        with torch.no_grad():
+            last = [m for m in head.net.modules() if isinstance(m, torch.nn.Linear)][-1]
+            last.bias.fill_(float(torch.log(Ttr["y"]).mean()))
+            head.rho.copy_(old.rho)
+        self.model.head = head
+        self.risk_model = None
+        for n, p in self.model.named_parameters():
+            p.requires_grad_(n.startswith("head."))
+        saved = self.cfg["es_target"]
+        self.cfg["es_target"] = "nll"
+        self._freeze_non_head = True
+        try:
+            run = self._run(Ttr, Tva, "nll", list(head.parameters()))
+        finally:
+            self.cfg["es_target"] = saved
+            self._freeze_non_head = False
+            for p in self.model.parameters():
+                p.requires_grad_(True)
+        run["refit"] = True
+        run["head_refit"] = self.cfg["head_refit"]
         return run
 
     def _forward(self, P):

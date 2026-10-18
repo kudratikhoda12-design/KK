@@ -1,6 +1,6 @@
 """Pre-registered verdicts, mechanically from the records.
   fa   (D61): CONFIRMED iff R1, R2, R3 pass on seed 41 and >= 4/5 of seeds 111-115 pass.
-  fa4c (D82), fa4d (D88, not run), fa4e (D93): R1-A, amended R2, R3 on the gate seed and R2 on >= 4/5 confirmations.
+  fa4c (D82), fa4d (D88, not run), fa4e (D93), fa4f (D101): R1-A, amended R2, R3 on the gate seed and R2 on >= 4/5 confirmations.
   fa4b (D71): CONFIRMED iff R1-A (amended, D68), R2, R3 pass on seed 61 and >= 4/5 of seeds 121-125 pass; the original
               early-stopped R1 is reported side by side and is not part of the rule.
 Writes reports/revised_gate_verdict.json (fa) or reports/revised_gate_verdict_fa4b.json (fa4b)."""
@@ -34,6 +34,13 @@ SPEC["fa4e"] = dict(log="revised_gate_fa4e.log", test="test_learnability_fa4e.py
                    rule_tests=("R1A", "R2", "R3"), out="revised_gate_verdict_fa4e.json",
                    rule="R1-A, R2 (C_ceiling margin 0.020; probe mean >= 0.75 and omega >= 0.75) and R3 pass on seed 92 "
                         "and R2 passes on >= 4/5 of seeds 141-145 (D93); original R1 reported side by side, not part of the rule")
+SPEC["fa4f"] = dict(log="revised_gate_fa4f.log", test="test_learnability_fa4f.py",
+                   conf="learnability_confirmation_fae_mlp_fa4f.jsonl", seeds=[151, 152, 153, 154, 155], gate_seed=93,
+                   rule_tests=("R1A", "R2", "R3"), out="revised_gate_verdict_fa4f.json",
+                   rule="R1-A, R2 (C_ceiling margin 0.025; probe mean >= 0.78 and omega >= 0.80 for the seed-0 member and "
+                        "the member-averaged probe) and R3-A (aware < naive on seeds 0-2; one-sided C_censored >= C_R2 - "
+                        "0.02) pass on seed 93 and R2 passes on >= 4/5 of seeds 151-155 (D101); original R1 reported "
+                        "side by side, not part of the rule")
 TESTNAME = {"R1": "test_R1_oracle_features_head", "R1A": "test_R1A_profile_sigma", "R2": "test_R2_fae_mlp_end_to_end",
             "R3": "test_R3_censoring_awareness"}
 

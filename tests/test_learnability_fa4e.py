@@ -98,6 +98,7 @@ def _r1_fit():
 
 
 @pytest.mark.criterion("R1")
+@pytest.mark.xfail(strict=True, reason="historical: revision-4e gate (seed 92), original R1 sigma failed (D95); superseded by revision 4f (D100/D101); kept as a record (D99)")
 def test_R1_oracle_features_head():
     r = _r1_fit()
     print(f"R1: C = {r['c']:.4f}, oracle C = {r['c_or']:.4f}, sigma = {r['sigma']:.4f} (truth 0.5)")
@@ -113,6 +114,7 @@ def test_R1A_profile_sigma():
 
 
 @pytest.mark.criterion("R2")
+@pytest.mark.xfail(strict=True, reason="historical: revision 4e failed R2's concordance part on seed 92 (D95); superseded by revision 4f (D100/D101); kept as a record (D99)")
 def test_R2_fae_mlp_end_to_end():
     """R2 (D93): C >= min(C_oracle - 0.03, C_ceiling - 0.020) on the test split (0.015 reported), where C_ceiling is the
     per-individual parametric plug-in (kanfae.evaluation.ceiling, D75 definition) on the SAME test split; and mean
@@ -149,6 +151,7 @@ def test_R2_fae_mlp_end_to_end():
 
 
 @pytest.mark.criterion("R3")
+@pytest.mark.xfail(strict=True, reason="historical: revision 4e failed the two-sided R3 on seed 92 (D95); superseded by revision 4f (D100/D101); kept as a record (D99)")
 def test_R3_censoring_awareness():
     obs, ora, tr, va, te = _data(0.1, 0.3)
     grid = np.linspace(0, ora.t_max, 101)
