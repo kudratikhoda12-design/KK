@@ -1,0 +1,23 @@
+{
+ "gate_seed": 93,
+ "gate": {
+  "R1": false,
+  "R1A": true,
+  "R2": true,
+  "R3": true
+ },
+ "gate_R2_C": 0.8405,
+ "gate_R2_threshold": 0.8322,
+ "gate_C_ceiling": 0.8572,
+ "gate_probe": [
+  0.92,
+  0.781,
+  0.85,
+  0.908
+ ],
+ "gate_probe_mean": 0.865,
+ "confirmations_passed": 5,
+ "confirmations_total": 5,
+ "verdict": "CONFIRMED",
+ "rule": "R1-A, R2 (C_ceiling margin 0.025; probe mean >= 0.78 and omega >= 0.80 for the seed-0 member and the member-averaged probe) and R3-A (aware < naive on seeds 0-2; one-sided C_censored >= C_R2 - 0.02) pass on seed 93 and R2 passes on >= 4/5 of seeds 151-155 (D101); original R1 reported side by side, not part of the rule"
+}

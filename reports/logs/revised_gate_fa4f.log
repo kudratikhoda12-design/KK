@@ -1,0 +1,50 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 4 items
+
+tests/test_learnability_fa4f.py::test_R1_oracle_features_head R1: C = 0.8766, oracle C = 0.8802, sigma = 0.5867 (truth 0.5)
+FAILED
+tests/test_learnability_fa4f.py::test_R1A_profile_sigma R1-A: C = 0.8766, oracle C = 0.8802, profile sigma (train, eta fixed) = 0.4972; early-stopped sigma = 0.5867 (truth 0.5)
+PASSED
+tests/test_learnability_fa4f.py::test_R2_fae_mlp_end_to_end R2: C = 0.8405, oracle C = 0.8802; probe R2 (a,b,A,omega) = [0.92  0.781 0.85  0.908], mean 0.865; epochs [[1013], [995], [1192]]
+R2-amended: C_ceiling = 0.8572; threshold = min(0.8502, 0.8322) = 0.8322; C = 0.8405; probe mean 0.865 (>= 0.78), omega 0.908 (>= 0.80)
+R2 ensemble: k = 3, head_mode = nonlinear_joint; member C [np.float64(0.8391), np.float64(0.8379), np.float64(0.8409)]; member-averaged probe [0.912 0.747 0.831 0.909], mean 0.850
+R2 concordance with the 0.020 margin (reported only): threshold 0.8372; pass True
+R2 concordance with the 0.015 margin (reported only): threshold 0.8422; pass False
+R2 probe part under the three definitions: D82 (mean >= 0.78, omega >= 0.80; gating) True; original (mean >= 0.80) True; D91 (0.75/0.75) True
+PASSED
+tests/test_learnability_fa4f.py::test_R3_censoring_awareness R3: survival-curve error aware [0.0835, 0.0905, 0.0874] naive [0.1227, 0.1279, 0.1229] ; C (aware, k = 3) = 0.8485; ensemble error aware 0.0861 naive 0.1242
+R3: |C - C_R2| = 0.0080; one-sided C - C_R2 = +0.0080 (>= -0.02 gating); two-sided (reported only) pass True
+PASSED
+
+=================================== FAILURES ===================================
+_________________________ test_R1_oracle_features_head _________________________
+
+    @pytest.mark.criterion("R1")
+    def test_R1_oracle_features_head():
+        r = _r1_fit()
+        print(f"R1: C = {r['c']:.4f}, oracle C = {r['c_or']:.4f}, sigma = {r['sigma']:.4f} (truth 0.5)")
+>       assert r["c"] >= r["c_or"] - 0.02 and abs(r["sigma"] - 0.5) <= 0.05
+E       assert (np.float64(0.8766290726817043) >= (np.float64(0.8801629072681705) - 0.02) and 0.08668859383775562 <= 0.05)
+E        +  where 0.08668859383775562 = abs((0.5866885938377556 - 0.5))
+
+tests/test_learnability_fa4f.py:109: AssertionError
+=============================== warnings summary ===============================
+tests/test_learnability_fa4f.py::test_R1_oracle_features_head
+  /home/user/KK/tests/test_learnability_fa4f.py:83: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_learnability_fa4f.py::test_R1A_profile_sigma
+PASSED tests/test_learnability_fa4f.py::test_R2_fae_mlp_end_to_end
+PASSED tests/test_learnability_fa4f.py::test_R3_censoring_awareness
+FAILED tests/test_learnability_fa4f.py::test_R1_oracle_features_head - assert...
+============== 1 failed, 3 passed, 1 warning in 168.78s (0:02:48) ==============
