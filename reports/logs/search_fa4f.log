@@ -1,0 +1,25 @@
+/home/user/KK/src/kanfae/models/pipelines.py:160: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+[head0] A7-fae_mlp-3639a3d8 fae_mlp linear seed=0: val C 0.8486 probe [0.912 0.698 0.824 0.882] mean 0.829 jumps 0 | objective stop 1144 risk state 647 refit stop None | 23.0s
+[head0] A7-fae_mlp-3639a3d8 fae_mlp linear seed=1: val C 0.8487 probe [0.925 0.782 0.838 0.871] mean 0.854 jumps 0 | objective stop 944 risk state 703 refit stop None | 19.0s
+[head0] A7-fae_mlp-3639a3d8 fae_mlp linear seed=2: val C 0.8478 probe [0.932 0.791 0.843 0.863] mean 0.857 jumps 0 | objective stop 1078 risk state 684 refit stop None | 20.7s
+== linear ensemble 1: val C 0.8484 (single seeds [0.8486 0.8487 0.8478]) mean probe 0.847 min seed probe 0.829 min omega 0.863 jumps 0 -> eligible True
+== linear ensemble 3: val C 0.8496 (single seeds [0.8486 0.8487 0.8478]) mean probe 0.847 min seed probe 0.829 min omega 0.863 jumps 0 -> eligible True
+[head1] A7-fae_mlp-450f8fd4 fae_mlp nonlinear_joint seed=0: val C 0.8479 probe [0.915 0.72  0.858 0.855] mean 0.837 jumps 0 | objective stop 1024 risk state 712 refit stop None | 20.4s
+[head1] A7-fae_mlp-450f8fd4 fae_mlp nonlinear_joint seed=1: val C 0.8511 probe [0.913 0.691 0.794 0.827] mean 0.806 jumps 0 | objective stop 1076 risk state 777 refit stop None | 20.9s
+[head1] A7-fae_mlp-450f8fd4 fae_mlp nonlinear_joint seed=2: val C 0.8488 probe [0.901 0.674 0.828 0.881] mean 0.821 jumps 0 | objective stop 1146 risk state 746 refit stop None | 21.2s
+== nonlinear_joint ensemble 1: val C 0.8493 (single seeds [0.8479 0.8511 0.8488]) mean probe 0.821 min seed probe 0.806 min omega 0.827 jumps 0 -> eligible True
+== nonlinear_joint ensemble 3: val C 0.8510 (single seeds [0.8479 0.8511 0.8488]) mean probe 0.821 min seed probe 0.806 min omega 0.827 jumps 0 -> eligible True
+[head2] A7-fae_mlp-95676d56 fae_mlp nonlinear_refit seed=0: val C 0.8423 probe [0.912 0.698 0.824 0.882] mean 0.829 jumps 0 | objective stop 1144 risk state 647 refit stop 300 | 24.5s
+[head2] A7-fae_mlp-95676d56 fae_mlp nonlinear_refit seed=1: val C 0.8433 probe [0.925 0.782 0.838 0.871] mean 0.854 jumps 0 | objective stop 944 risk state 703 refit stop 300 | 22.2s
+[head2] A7-fae_mlp-95676d56 fae_mlp nonlinear_refit seed=2: val C 0.8432 probe [0.932 0.791 0.843 0.863] mean 0.857 jumps 0 | objective stop 1078 risk state 684 refit stop 300 | 23.2s
+== nonlinear_refit ensemble 1: val C 0.8429 (single seeds [0.8423 0.8433 0.8432]) mean probe 0.847 min seed probe 0.829 min omega 0.863 jumps 0 -> eligible True
+== nonlinear_refit ensemble 3: val C 0.8456 (single seeds [0.8423 0.8433 0.8432]) mean probe 0.847 min seed probe 0.829 min omega 0.863 jumps 0 -> eligible True
+[info] A7-fae_linear-2304819f fae_linear nonlinear_joint seed=0: val C 0.8458 probe [0.939 0.832 0.899 0.91 ] mean 0.895 jumps 0 | objective stop 1240 risk state 956 refit stop None | 21.0s
+[info] A7-fae_linear-2304819f fae_linear nonlinear_joint seed=1: val C 0.8437 probe [0.946 0.834 0.876 0.882] mean 0.884 jumps 0 | objective stop 1118 risk state 892 refit stop None | 19.1s
+[info] A7-fae_linear-2304819f fae_linear nonlinear_joint seed=2: val C 0.8436 probe [0.949 0.856 0.881 0.853] mean 0.885 jumps 0 | objective stop 1485 risk state 910 refit stop None | 24.2s
+[info] A7-fae_kan-d284f500 fae_kan nonlinear_joint seed=0: val C 0.8325 probe [0.853 0.505 0.751 0.666] mean 0.694 jumps 0 | objective stop 727 risk state 480 refit stop None | 53.7s
+[info] A7-fae_kan-d284f500 fae_kan nonlinear_joint seed=1: val C 0.8372 probe [0.866 0.611 0.699 0.747] mean 0.730 jumps 0 | objective stop 744 risk state 527 refit stop None | 55.0s
+[info] A7-fae_kan-d284f500 fae_kan nonlinear_joint seed=2: val C 0.8273 probe [0.86  0.528 0.761 0.751] mean 0.725 jumps 0 | objective stop 707 risk state 376 refit stop None | 48.2s
+STEP 1 PASSED | selected nonlinear_joint ensemble 3
