@@ -1,0 +1,2 @@
+{"threads": 1, "omp": "1", "val_C": 0.8221679197994988, "epochs": [1142], "best_val": [2.6180785588165403]}
+expected (pre-change, D79): val_C 0.8221679197994988, epochs [1142], best_val [2.6180785588165403]

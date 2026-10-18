@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 4 items
+
+tests/test_training_stability.py::test_RS2_balance_matches_a3_rms_on_training_data {'spec_gain': 0.3629222636827502, 'init_rms_a3': 0.34963885490521335, 'init_rms_spec_before': 0.9633987492452417, 'init_rms_spec_after': 0.34963885490521335}
+PASSED
+tests/test_training_stability.py::test_RS3_gradient_clipping_is_applied PASSED
+tests/test_training_stability.py::test_RS4_two_checkpoint_risk_comes_from_the_validation_nll_minimum PASSED
+tests/test_training_stability.py::test_RS5_two_state_refit_changes_only_the_head changed tensors: ['head.rho', 'head.net.weight', 'head.net.bias']
+PASSED
+
+=============================== warnings summary ===============================
+tests/test_training_stability.py::test_RS2_balance_matches_a3_rms_on_training_data
+  /home/user/KK/src/kanfae/models/pipelines.py:148: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    tr_nll.append(float(tn)); va_nll.append(float(vn))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 4 passed, 1 warning in 6.45s =========================

@@ -18,6 +18,11 @@ SPEC = {"fa": dict(log="revised_gate_fa.log", test="test_learnability_fa.py", co
                      rule_tests=("R1A", "R2", "R3"), out="revised_gate_verdict_fa4b.json",
                      rule="R1-A (D68), R2, R3 pass on seed 61 and >= 4/5 of seeds 121-125 pass (D71); original R1 "
                           "reported side by side, not part of the rule")}
+SPEC["fa4c"] = dict(log="revised_gate_fa4c.log", test="test_learnability_fa4c.py",
+                   conf="learnability_confirmation_fae_mlp_fa4c.jsonl", seeds=[131, 132, 133, 134, 135], gate_seed=81,
+                   rule_tests=("R1A", "R2", "R3"), out="revised_gate_verdict_fa4c.json",
+                   rule="R1-A, amended R2 and R3 pass on seed 81 and amended R2 passes on >= 4/5 of seeds 131-135 "
+                        "(D80/D82); original R1 reported side by side, not part of the rule")
 TESTNAME = {"R1": "test_R1_oracle_features_head", "R1A": "test_R1A_profile_sigma", "R2": "test_R2_fae_mlp_end_to_end",
             "R3": "test_R3_censoring_awareness"}
 

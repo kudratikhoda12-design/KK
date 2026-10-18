@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 3 items
+
+tests/test_ceiling.py::test_CEIL1_recovers_parameters_from_noiseless_curves PASSED [ 33%]
+tests/test_ceiling.py::test_CEIL2_per_individual_no_cross_individual_fitting PASSED [ 66%]
+tests/test_ceiling.py::test_CEIL3_identical_to_the_D75_diagnostic PASSED [100%]
+
+============================== 3 passed in 17.83s ==============================

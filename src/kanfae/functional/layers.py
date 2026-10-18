@@ -259,6 +259,9 @@ class FrequencyAwareFunctional(TensorSplineFunctional):
         self.norm = nn.BatchNorm1d(self.n_spec, affine=False, momentum=None)
         gen = torch.Generator().manual_seed(seed + 17) if seed is not None else None
         self.spec = nn.Linear(self.n_spec, n_features)
+        # Revision 4c (D81): fixed gain on the spectral path, set from TRAINING statistics at fit time so that its
+        # initial output RMS matches the A3 path (1.0 = no rescaling, the earlier behaviour).
+        self.register_buffer("spec_gain", torch.tensor(1.0))
         with torch.no_grad():
             self.spec.weight.copy_(torch.randn(n_features, self.n_spec, generator=gen) / np.sqrt(self.n_spec))
             self.spec.bias.zero_()
@@ -304,5 +307,10 @@ class FrequencyAwareFunctional(TensorSplineFunctional):
             [self.soft_frequency(R).unsqueeze(-1)]
         return torch.cat(parts, -1).flatten(1)                        # (B, n_spec)
 
+    def path_outputs(self, c):
+        """(A3 path, spectral path) outputs, for the D81 balance and diagnostics."""
+        return super().forward(c), self.spec_gain * self.spec(self.norm(self.spectral_vector(c)))
+
     def forward(self, c):
-        return super().forward(c) + self.spec(self.norm(self.spectral_vector(c)))
+        a3, sp = self.path_outputs(c)
+        return a3 + sp

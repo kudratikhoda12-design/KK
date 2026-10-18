@@ -37,6 +37,13 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64
                 # Revision 4b (D71): survival-path regularisation (defaults reproduce the earlier behaviour exactly):
                 # dropout between latent and AFT head; separate L2 (coupled, as Adam's wd) on the head weights.
                 head_dropout=0.0, head_wd=None,
+                # Revision 4c (D81; defaults reproduce the earlier behaviour exactly): fa_balance scales the spectral
+                # path to the A3 path's RMS on the training data at initialisation; clip = gradient-norm clipping
+                # (None = off); es_mode: "single" (es_target as before), "two_state_refit" (joint training stopped on
+                # the objective, then the AFT head is re-initialised and refitted on the frozen latent with
+                # validation-NLL early stopping), "two_checkpoint" (latent/decoder from the validation-objective
+                # minimum; risk predictions from the full-model state at the validation-NLL minimum).
+                fa_balance=False, clip=None, es_mode="single",
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
@@ -113,7 +120,7 @@ class NeuralAFT(BaseModel):
         a = self.cfg["alpha"]
         return {"nll": nll + pen, "rec": rec + pen, "joint": nll + a * rec + pen}[parts], (nll, rec)
 
-    def _run(self, Ttr, Tva, parts, params):
+    def _run(self, Ttr, Tva, parts, params, track_nll_state=False):
         Opt = torch.optim.AdamW if self.cfg["optimizer"] == "adamw" else torch.optim.Adam
         if self.cfg["head_wd"] is not None and hasattr(self.model, "head"):
             hw = {id(p) for n, p in self.model.named_parameters() if n == "head.net.weight"}
@@ -121,15 +128,26 @@ class NeuralAFT(BaseModel):
                       {"params": [p for p in params if id(p) in hw], "weight_decay": self.cfg["head_wd"]}]
         opt = Opt(params, lr=self.cfg["lr"], weight_decay=self.cfg["wd"])
         best, best_state, bad, hist = np.inf, None, 0, []
+        flat = [p for g in params for p in (g["params"] if isinstance(g, dict) else [g])]
+        tr_nll, va_nll = [], []
+        best_nll, best_nll_state, best_nll_ep = np.inf, None, -1
         for ep in range(self.cfg["max_epochs"]):
             self.model.train()
+            if getattr(self, "_freeze_non_head", False):      # D81 refit: frozen parts stay in eval mode (BatchNorm
+                self.model.eval()                               # running statistics must not move), head trains
+                self.model.head.train()
             opt.zero_grad()
-            loss, _ = self._objective(Ttr, parts)
+            loss, (tn, _) = self._objective(Ttr, parts)
             loss.backward()
+            if self.cfg["clip"] is not None:
+                torch.nn.utils.clip_grad_norm_(flat, self.cfg["clip"])
             opt.step()
             self.model.eval()
             with torch.no_grad():
                 vl, (vn, vr) = self._objective(Tva, parts)
+            tr_nll.append(float(tn)); va_nll.append(float(vn))
+            if track_nll_state and float(vn) < best_nll - 1e-6:
+                best_nll, best_nll_state, best_nll_ep = float(vn), copy.deepcopy(self.model.state_dict()), ep
             vl = float(vn) if (self.cfg["es_target"] == "nll" and parts != "rec") else float(vl)
             hist.append((ep, float(loss.detach()), vl))
             if not np.isfinite(vl):
@@ -142,7 +160,17 @@ class NeuralAFT(BaseModel):
                     break
         if best_state is not None:
             self.model.load_state_dict(best_state)
-        return {"parts": parts, "epochs": len(hist), "best_val": best, "diverged": not np.isfinite(best)}
+        tn = np.asarray(tr_nll)
+        stop_ep = int(np.argmin([h[2] for h in hist])) if hist else -1
+        out = {"parts": parts, "epochs": len(hist), "best_val": best, "diverged": not np.isfinite(best),
+               # D81 stability diagnostics (training NLL, per epoch): jumps > 0.2 after epoch 300
+               "nll_jumps_gt02_after300": int((np.diff(tn)[300:] > 0.2).sum()) if len(tn) > 301 else 0,
+               "max_train_nll_after300": float(tn[300:].max()) if len(tn) > 300 else float("nan"),
+               "epoch_min_val_nll": int(np.argmin(va_nll)) if va_nll else -1, "min_val_nll": float(np.min(va_nll)) if va_nll else np.nan,
+               "stop_epoch": stop_ep, "val_nll_at_stop": float(va_nll[stop_ep]) if va_nll else np.nan}
+        if track_nll_state:
+            out["nll_state"], out["nll_state_epoch"] = best_nll_state, best_nll_ep
+        return out
 
     def fit(self, train, val, seed=0):
         t0 = time.time()
@@ -151,6 +179,7 @@ class NeuralAFT(BaseModel):
         Ptr, Pva = self.prepare(train), self.prepare(val)
         Ttr, Tva = self._tensors(Ptr), self._tensors(Pva)
         self.model = self._build(Ptr.values.shape[2], Ptr.u.shape[1], seed)
+        self.risk_model = None
         s = self.cfg["strategy"]
         runs = []
         if s in ("S1", "S3"):
@@ -162,13 +191,66 @@ class NeuralAFT(BaseModel):
                 runs.append(self._run(Ttr, Tva, "nll", list(self.model.head.parameters())))
                 for p in self.model.parameters():
                     p.requires_grad_(True)
+        if self.cfg["fa_balance"] and hasattr(self.model, "flin") and hasattr(self.model.flin, "path_outputs"):
+            self._balance_spectral(Ttr)
         if s in ("S2", "S3"):
             parts = "joint" if self.cfg["alpha"] > 0 else "nll"
-            runs.append(self._run(Ttr, Tva, parts, list(self.model.parameters())))
+            mode = self.cfg["es_mode"]
+            if mode != "single" and self.cfg["es_target"] != "objective":
+                raise ValueError("two-state stopping requires es_target='objective' for the joint run")
+            run = self._run(Ttr, Tva, parts, list(self.model.parameters()), track_nll_state=(mode == "two_checkpoint"))
+            if mode == "two_checkpoint":
+                self.risk_model = copy.deepcopy(self.model)
+                self.risk_model.load_state_dict(run.pop("nll_state"))
+                run["risk_state_epoch"] = run.pop("nll_state_epoch")
+            runs.append(run)
+            if mode == "two_state_refit":
+                runs.append(self._refit_head(Ttr, Tva))
         self.info = {"runs": runs, "lambda": self.pre.lam_, "block_params": self.model.block_params()}
         self.n_params = n_params(self.model)
         self.fit_seconds = time.time() - t0
         return self
+
+    def _balance_spectral(self, Ttr):
+        """D81: set the spectral-path gain so its initial output RMS on the TRAINING data equals the A3 path's.
+        Train-mode forward under no_grad: the non-affine BatchNorm (cumulative average) records the same full-batch
+        training statistics it records at every training step."""
+        fl = self.model.flin
+        self.model.train()
+        with torch.no_grad():
+            T = Ttr["inp"]
+            a3, sp = fl.path_outputs(T)
+            g = float(a3.pow(2).mean().sqrt() / sp.pow(2).mean().sqrt().clamp_min(1e-12))
+            fl.spec_gain.fill_(g)
+            a3b, spb = fl.path_outputs(T)
+        self.balance_info = {"spec_gain": g, "init_rms_a3": float(a3.pow(2).mean().sqrt()),
+                             "init_rms_spec_before": float(sp.pow(2).mean().sqrt()),
+                             "init_rms_spec_after": float(spb.pow(2).mean().sqrt())}
+
+    def _refit_head(self, Ttr, Tva):
+        """D81 two_state_refit: freeze everything but the AFT head; re-initialise the head (zero weights, intercept
+        at the training mean log time, sigma at its current value) and refit on the frozen latent, early stopping on
+        the validation NLL."""
+        head = self.model.head
+        if not isinstance(head.net, torch.nn.Linear):
+            raise ValueError("two_state_refit is defined for the linear AFT head only")
+        with torch.no_grad():
+            head.net.weight.zero_()
+            head.net.bias.fill_(float(torch.log(Ttr["y"]).mean()))
+        for n, p in self.model.named_parameters():
+            p.requires_grad_(n.startswith("head."))
+        saved = self.cfg["es_target"]
+        self.cfg["es_target"] = "nll"
+        self._freeze_non_head = True
+        try:
+            run = self._run(Ttr, Tva, "nll", list(head.parameters()))
+        finally:
+            self.cfg["es_target"] = saved
+            self._freeze_non_head = False
+            for p in self.model.parameters():
+                p.requires_grad_(True)
+        run["refit"] = True
+        return run
 
     def _forward(self, P):
         T = self._tensors(P)
@@ -176,6 +258,9 @@ class NeuralAFT(BaseModel):
         with torch.no_grad():
             z, out, eta, sigma = self.model(T["inp"], T["u"])
             xhat = self.model.reconstruct_at(out, T["design"])
+            if getattr(self, "risk_model", None) is not None:          # D81 two_checkpoint: risk from the NLL state
+                self.risk_model.eval()
+                _, _, eta, sigma = self.risk_model(T["inp"], T["u"])
         return z.numpy(), eta.numpy(), float(sigma), xhat.numpy()
 
     def predict_survival(self, obs, times, P=None):

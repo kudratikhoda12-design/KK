@@ -32,7 +32,12 @@ def main():
     ap.add_argument("--selected", default="reports/learnability_selected.json")
     ap.add_argument("--seeds", default="101,102,103,104,105")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--amended", action="store_true", help="D80/D82 criteria: C >= min(oracle-0.03, C_ceiling-0.015), "
+                                                            "probe mean >= 0.78 and omega probe >= 0.80")
+    ap.add_argument("--threads", type=int, default=None, help="torch threads (D79: 1 for deterministic fits)")
     a = ap.parse_args()
+    if a.threads:
+        torch.set_num_threads(a.threads)
     sel = json.loads((ROOT / a.selected).read_text())
     kind = a.kind or sel["kind"]
     out = ROOT / "reports" / f"learnability_confirmation_{kind}{a.tag}.jsonl"
@@ -49,11 +54,18 @@ def main():
                    threshold=c_or - 0.03, probe=pr, probe_mean=float(np.mean(pr)),
                    pass_C=bool(c >= c_or - 0.03), pass_probe=bool(np.mean(pr) >= 0.8),
                    runtime_s=round(time.time() - t0, 1), block_params=m.info["block_params"])
+        if a.amended:
+            from kanfae.evaluation.ceiling import ceiling_C
+            c_ceil = ceiling_C(obs, te)
+            rec.update(criteria="amended D80/D82", C_ceiling=c_ceil, threshold=min(c_or - 0.03, c_ceil - 0.015))
+            rec["pass_C"] = bool(c >= rec["threshold"])
+            rec["pass_probe"] = bool(np.mean(pr) >= 0.78 and pr[3] >= 0.80)
         rec["pass"] = rec["pass_C"] and rec["pass_probe"]
         recs.append(rec)
         with open(out, "a") as fh:
             fh.write(json.dumps(rec) + "\n")
-        print(f"seed {seed}: C={c:.4f} (oracle {c_or:.4f}, threshold {c_or - 0.03:.4f}) probe={np.round(pr, 3)} "
+        print(f"seed {seed}: C={c:.4f} (oracle {c_or:.4f}, threshold {rec['threshold']:.4f}"
+              f"{', C_ceiling %.4f' % rec['C_ceiling'] if 'C_ceiling' in rec else ''}) probe={np.round(pr, 3)} "
               f"mean={np.mean(pr):.3f} pass={rec['pass']} [{rec['runtime_s']}s]", flush=True)
     n = sum(r["pass"] for r in recs)
     print(f"CONFIRMATION ({kind}): {n}/5 replications pass -> {'CONFIRMED' if n >= 4 else 'NOT CONFIRMED'}")

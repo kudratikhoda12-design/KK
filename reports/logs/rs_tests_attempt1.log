@@ -1,0 +1,54 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 4 items
+
+tests/test_training_stability.py::test_RS2_balance_matches_a3_rms_on_training_data {'spec_gain': 0.3629222636827502, 'init_rms_a3': 0.34963885490521335, 'init_rms_spec_before': 0.9633987492452417, 'init_rms_spec_after': 0.34963885490521335}
+PASSED
+tests/test_training_stability.py::test_RS3_gradient_clipping_is_applied PASSED
+tests/test_training_stability.py::test_RS4_two_checkpoint_risk_comes_from_the_validation_nll_minimum PASSED
+tests/test_training_stability.py::test_RS5_two_state_refit_changes_only_the_head FAILED
+
+=================================== FAILURES ===================================
+________________ test_RS5_two_state_refit_changes_only_the_head ________________
+
+    @pytest.mark.criterion("RS-5")
+    def test_RS5_two_state_refit_changes_only_the_head():
+        obs, tr, va, te = _data()
+        m = NeuralAFT("fae_mlp", es_mode="two_state_refit", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)
+        single = NeuralAFT("fae_mlp", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)
+>       np.testing.assert_array_equal(m.latent(obs.subset(te)), single.latent(obs.subset(te)))
+E       AssertionError: 
+E       Arrays are not equal
+E       
+E       Mismatched elements: 480 / 480 (100%)
+E       First 5 mismatches are at indices:
+E        [0, 0]: 0.6871121059817608 (ACTUAL), 0.6873858800433174 (DESIRED)
+E        [0, 1]: -0.9516080820361463 (ACTUAL), -0.9523205406672854 (DESIRED)
+E        [0, 2]: 0.20616866786878818 (ACTUAL), 0.20699249997911867 (DESIRED)
+E        [0, 3]: 1.0376351380888102 (ACTUAL), 1.0377938272938998 (DESIRED)
+E        [0, 4]: 0.8343418732097536 (ACTUAL), 0.8338344508372796 (DESIRED)
+E       Max absolute difference among violations: 0.00233024
+E       Max relative difference among violations: 0.10780042
+E        ACTUAL: array([[ 6.871121e-01, -9.516081e-01,  2.061687e-01,  1.037635e+00,
+E                8.343419e-01,  9.028054e-01,  7.990440e-01, -5.482555e-01,
+E                8.447729e-01,  2.746944e-01, -4.188264e-01,  4.728758e-01],...
+E        DESIRED: array([[ 6.873859e-01, -9.523205e-01,  2.069925e-01,  1.037794e+00,
+E                8.338345e-01,  9.030959e-01,  7.997853e-01, -5.475695e-01,
+E                8.460717e-01,  2.743628e-01, -4.185700e-01,  4.732784e-01],...
+
+tests/test_training_stability.py:71: AssertionError
+=============================== warnings summary ===============================
+tests/test_training_stability.py::test_RS2_balance_matches_a3_rms_on_training_data
+  /home/user/KK/src/kanfae/models/pipelines.py:145: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    tr_nll.append(float(tn)); va_nll.append(float(vn))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_training_stability.py::test_RS5_two_state_refit_changes_only_the_head
+==================== 1 failed, 3 passed, 1 warning in 6.89s ====================
