@@ -1,12 +1,574 @@
-<p class="small">Research prototype report, revision 6 · generated from saved records by
-<code>scripts/build_report_round6.py</code> · git <code>29ad9e7</code> (local branch
+<p class="small">Research prototype report, revision 7 · generated from saved records by
+<code>scripts/build_report_round7.py</code> · git <code>0d8c37a</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part A is round 6 (owner decisions D86).
-Parts B–F are the round-5 to round-1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part A is round 7 (owner decisions D91).
+Parts B–G are the round-6 to round-1 reports, each regenerated from its own round's records.</p>
 
-## 0. Round-6 summary (plain English)
+## 0. Round-7 summary (plain English)
 
 ### 0.1 Outcome
+
+| Step | Result |
+|---|---|
+| **Step 1: Revision 4e search** (r × patience × α; two-tier rule; seed-21 train/validation only) | **PASSED via Tier 1**. Selected r 16, patience 100, α 1 (`A7-fae_mlp-94415d4f`); six of eight candidates met Tier 1, so the fallback was not needed. The 4d candidate was re-fitted and reproduced bit for bit |
+| **Step 2: gate, fresh seed 92** | R1-A PASS. **R2 probe part PASS** (mean 0.884, ω 0.903; also passes 0.78/0.80 and the original 0.80). **R2 concordance part FAIL**: C 0.8384 < 0.8406, short by 0.0022. **R3 FAIL**: \|C − C_R2\| 0.0254 > 0.02 (the censored-data C is *higher*) |
+| Confirmations, fresh seeds 141–145 | **4/5 pass** (seed 143 fails the concordance part by 0.0019) |
+| Verdict (pre-registered, D93) | **NOT CONFIRMED** |
+| **Step 3: KAN vs MLP and downstream** | **NOT RUN** (the code guard refuses; `reports/logs/guard_check_fa4e_after.log`) |
+
+### 0.2 What we learned
+
+1. **The representation problem is solved.**
+   - With latent size r = 16, the latent encodes all four curve parameters on every fresh seed: test probe means
+     0.83–0.88, ω 0.85–0.92.
+   - It passes even the strictest probe definition used so far (mean ≥ 0.80) on all six fresh seeds. The
+     re-referenced probe threshold (0.75) therefore decided nothing.
+2. **Patience was not the lever; capacity was.**
+   - Patience 300 gave fits identical to patience 100: the joint objective had no later minimum.
+   - Raising r from 12 to 16 lifted the weakest training seed's probe from 0.779 to 0.829.
+3. **The remaining gap is concordance relative to C_ceiling.**
+   - Across the six fresh test splits, C − C_ceiling lies between −0.008 and −0.022. Two splits (seeds 92, 143)
+     fall just beyond the 0.020 margin.
+   - On seed-92 validation, five training seeds give C − C_ceiling between −0.014 and −0.021, with a training-seed
+     SD of 0.0026.
+   - So the 0.0022 shortfall is within training-seed variation. The systematic part (about −0.016) is the gap
+     between a linear AFT head on the latent and the nonlinear true risk formula, which C_ceiling applies.
+4. **R3 failed in an unexpected direction.** Censoring awareness works: the censoring-aware error is about half the
+   naive one on all three training seeds. But R3 also requires \|C_censored − C_R2\| ≤ 0.02, and here C on the
+   censored data (0.8638) exceeded R2's C (0.8384) by 0.0254.
+
+### 0.3 Decision requested (nothing has been run)
+
+Seeds 92 and 141–145 are now used; any further gate needs new fresh seeds.
+
+1. **(Recommended) Revision 4f: the risk mapping.**
+   - Keep the 4e representation fixed.
+   - Pre-register a Step-1 search on seed-21 validation over two factors:
+     - the risk head: linear (current) vs a small nonlinear head on the latent;
+     - averaging the risk score over training seeds 0–2.
+   - Rationale: these target the two measured parts of the gap, the head's approximation error (about −0.016) and
+     single-seed variance (SD 0.0026). D74's negative result for an MLP head was obtained on the much weaker 4b
+     latent, so it needs re-testing.
+2. **R3's form (your call, prospectively only).**
+   - R3 is two-sided, so it fails when censored-data concordance is *better* than R2's.
+   - A one-sided form (C_censored ≥ C_R2 − 0.02) would match its stated purpose. It would have passed on seed 92,
+     which is exactly why it can only be adopted for new seeds.
+3. **Or accept the verdict.** The MLP stays not gate-qualified, and H1 stays blocked.
+
+H1 stays blocked under every option until a gate is passed.
+
+### 0.4 Evidence, kept separate by kind
+
+| Kind | Status |
+|---|---|
+| **Software correctness (tests)** | Final suite: 228 tests: 216 passed, 3 failed (the current 4e gate's original R1, R2 and R3: live, real), 7 expected failures (historical gates, strict), 2 skipped (the documented N/A case and the 4d gate file, which never ran) |
+| **Learnability (gate)** | **Not achieved.** Revision 4e passes R1-A and the probe part, fails R2's concordance part by 0.0022 and fails R3; confirmations 4/5 |
+| **Survival prediction (real data)** | Unchanged: descriptive only. PBC E2 provisional primary, E1 sensitivity |
+| **Symbolic approximation** | KAN-AFT only. **Not performed for KAN-FAE** (Step 3 not run) |
+| **Scientific novelty** | **No claim** |
+| **Publication readiness** | **No** |
+
+## R7.1 Owner decisions and fact check (D91)
+
+- **Revision 4e.**
+  - Fixed at 4d cand1: fa compact, 17 frequencies, spectral balance, clip 1.0, Adam lr 1e-3, two-checkpoint
+    stopping, burn-in 300.
+  - Searched: r ∈ {12, 16} × objective patience ∈ {100, 300} × α ∈ {1, 2}.
+- **Two-tier selection.**
+  - Tier 1 is the D87 multi-seed rule.
+  - Tier 2 is an owner fallback with every seed's probe mean ≥ 0.775.
+- **Gate criteria.**
+  - R1-A.
+  - R2 concordance with C_ceiling margin 0.020.
+  - **R2 probe part re-referenced to mean ≥ 0.75 and ω ≥ 0.75**, with the 0.78/0.80 and 0.80 definitions reported
+    side by side.
+  - R3 unchanged.
+- **Fact check of the rationale against the records.** All the cited numbers are correct:
+  - ω probe 0.824 on the quadrature-projection spectrum;
+  - b least-squares R² 0.835;
+  - test probe means 0.755 and 0.752 on seeds 61 and 122;
+  - ω ≤ 0.20 for the frequency-blind fronts;
+  - 4d timing.
+  - One nuance: 0.824 is the probe on the raw spectrum, not an upper bound. Log Fourier power gives 0.941, and the
+    learned latents reached 0.923.
+- **Disclosure.** The probe re-reference and Tier 2 were set after seeing rounds 4–6. They are prospective only with
+  respect to seeds 92 and 141–145, which had never been generated. R7.6 shows what they would have changed
+  historically: no verdict.
+
+## R7.2 Step 1: pre-registered search (D92) and result (D94)
+
+| Candidate | r | Patience | α | Mean val C (seeds 0–2) | Mean probe (≥ 0.80) | Min seed probe (T1 ≥ 0.78; T2 ≥ 0.775) | Min seed ω (≥ 0.80) | Max jumps (= 0) | Tier 1 | Tier 2 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| cand0 (= 4d cand1) | 12 | 100 | 1.0 | 0.8486 | 0.816 | 0.779 | 0.813 | 0 | no | **yes** |
+| cand1 | 12 | 100 | 2.0 | 0.8480 | 0.842 | 0.804 | 0.842 | 0 | **yes** | **yes** |
+| cand2 | 12 | 300 | 1.0 | 0.8486 | 0.816 | 0.779 | 0.813 | 0 | no | **yes** |
+| cand3 | 12 | 300 | 2.0 | 0.8480 | 0.842 | 0.804 | 0.842 | 0 | **yes** | **yes** |
+| cand4 | 16 | 100 | 1.0 | 0.8484 | 0.847 | 0.829 | 0.863 | 0 | **yes** | **yes** |
+| cand5 | 16 | 100 | 2.0 | 0.8474 | 0.849 | 0.846 | 0.874 | 0 | **yes** | **yes** |
+| cand6 | 16 | 300 | 1.0 | 0.8484 | 0.847 | 0.829 | 0.863 | 0 | **yes** | **yes** |
+| cand7 | 16 | 300 | 2.0 | 0.8474 | 0.849 | 0.846 | 0.874 | 0 | **yes** | **yes** |
+
+**Step 1: PASSED**: selected cand4 (`A7-fae_mlp-94415d4f`) via **Tier 1**.
+
+**Per seed:**
+
+| Candidate | Model | r | Patience | α | Training seed | Val C | Val probe a / b / A / ω | Probe mean | Jumps | Epochs run | Objective-minimum epoch (latent) | Risk-state epoch |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| cand0 | fae_mlp | 12 | 100 | 1.0 | 0 | 0.8478 | 0.926 / 0.776 / 0.842 / 0.876 | 0.855 | 0 | 1086 | 985 | 593 |
+| cand0 | fae_mlp | 12 | 100 | 1.0 | 1 | 0.8482 | 0.901 / 0.676 / 0.725 / 0.813 | 0.779 | 0 | 1136 | 1035 | 565 |
+| cand0 | fae_mlp | 12 | 100 | 1.0 | 2 | 0.8496 | 0.880 / 0.685 / 0.826 / 0.860 | 0.813 | 0 | 1177 | 1076 | 727 |
+| cand1 | fae_mlp | 12 | 100 | 2.0 | 0 | 0.8473 | 0.935 / 0.795 / 0.802 / 0.877 | 0.852 | 0 | 1291 | 1190 | 588 |
+| cand1 | fae_mlp | 12 | 100 | 2.0 | 1 | 0.8490 | 0.922 / 0.764 / 0.689 / 0.842 | 0.804 | 0 | 1069 | 968 | 581 |
+| cand1 | fae_mlp | 12 | 100 | 2.0 | 2 | 0.8477 | 0.924 / 0.819 / 0.870 / 0.864 | 0.869 | 0 | 1248 | 1147 | 684 |
+| cand2 | fae_mlp | 12 | 300 | 1.0 | 0 | 0.8478 | 0.926 / 0.776 / 0.842 / 0.876 | 0.855 | 0 | 1286 | 985 | 593 |
+| cand2 | fae_mlp | 12 | 300 | 1.0 | 1 | 0.8482 | 0.901 / 0.676 / 0.725 / 0.813 | 0.779 | 0 | 1336 | 1035 | 565 |
+| cand2 | fae_mlp | 12 | 300 | 1.0 | 2 | 0.8496 | 0.880 / 0.685 / 0.826 / 0.860 | 0.813 | 0 | 1377 | 1076 | 727 |
+| cand3 | fae_mlp | 12 | 300 | 2.0 | 0 | 0.8473 | 0.935 / 0.795 / 0.802 / 0.877 | 0.852 | 0 | 1491 | 1190 | 588 |
+| cand3 | fae_mlp | 12 | 300 | 2.0 | 1 | 0.8490 | 0.922 / 0.764 / 0.689 / 0.842 | 0.804 | 0 | 1269 | 968 | 581 |
+| cand3 | fae_mlp | 12 | 300 | 2.0 | 2 | 0.8477 | 0.924 / 0.819 / 0.870 / 0.864 | 0.869 | 0 | 1448 | 1147 | 684 |
+| cand4 | fae_mlp | 16 | 100 | 1.0 | 0 | 0.8486 | 0.912 / 0.698 / 0.824 / 0.882 | 0.829 | 0 | 1245 | 1144 | 647 |
+| cand4 | fae_mlp | 16 | 100 | 1.0 | 1 | 0.8487 | 0.925 / 0.782 / 0.838 / 0.871 | 0.854 | 0 | 1045 | 944 | 703 |
+| cand4 | fae_mlp | 16 | 100 | 1.0 | 2 | 0.8478 | 0.932 / 0.791 / 0.843 / 0.863 | 0.857 | 0 | 1179 | 1078 | 684 |
+| cand5 | fae_mlp | 16 | 100 | 2.0 | 0 | 0.8474 | 0.913 / 0.765 / 0.848 / 0.874 | 0.850 | 0 | 1203 | 1102 | 641 |
+| cand5 | fae_mlp | 16 | 100 | 2.0 | 1 | 0.8488 | 0.931 / 0.796 / 0.779 / 0.876 | 0.846 | 0 | 1311 | 1210 | 712 |
+| cand5 | fae_mlp | 16 | 100 | 2.0 | 2 | 0.8460 | 0.925 / 0.782 / 0.828 / 0.874 | 0.852 | 0 | 1178 | 1077 | 659 |
+| cand6 | fae_mlp | 16 | 300 | 1.0 | 0 | 0.8486 | 0.912 / 0.698 / 0.824 / 0.882 | 0.829 | 0 | 1445 | 1144 | 647 |
+| cand6 | fae_mlp | 16 | 300 | 1.0 | 1 | 0.8487 | 0.925 / 0.782 / 0.838 / 0.871 | 0.854 | 0 | 1245 | 944 | 703 |
+| cand6 | fae_mlp | 16 | 300 | 1.0 | 2 | 0.8478 | 0.932 / 0.791 / 0.843 / 0.863 | 0.857 | 0 | 1379 | 1078 | 684 |
+| cand7 | fae_mlp | 16 | 300 | 2.0 | 0 | 0.8474 | 0.913 / 0.765 / 0.848 / 0.874 | 0.850 | 0 | 1403 | 1102 | 641 |
+| cand7 | fae_mlp | 16 | 300 | 2.0 | 1 | 0.8488 | 0.931 / 0.796 / 0.779 / 0.876 | 0.846 | 0 | 1511 | 1210 | 712 |
+| cand7 | fae_mlp | 16 | 300 | 2.0 | 2 | 0.8460 | 0.925 / 0.782 / 0.828 / 0.874 | 0.852 | 0 | 1378 | 1077 | 659 |
+| info | fae_linear | 16 | 100 | 1.0 | 0 | 0.8392 | 0.952 / 0.865 / 0.937 / 0.851 | 0.901 | 0 | 3000 | 2999 | 2995 |
+| info | fae_kan | 16 | 100 | 1.0 | 0 | 0.8298 | 0.863 / 0.566 / 0.716 / 0.709 | 0.714 | 0 | 840 | 739 | 497 |
+
+**Determinism check:** cand0 is 4d cand1 re-fitted in round 7.
+
+| Training seed | 4d cand1 val C (round 6) | 4e cand0 val C (round 7) | 4d probe mean | 4e probe mean | Bit-identical (C, probes, delivered NLL) |
+|---|---|---|---|---|---|
+| 0 | 0.847845 | 0.847845 | 0.855011 | 0.855011 | **yes** |
+| 1 | 0.848183 | 0.848183 | 0.778973 | 0.778973 | **yes** |
+| 2 | 0.849624 | 0.849624 | 0.812639 | 0.812639 | **yes** |
+
+**Reading.**
+- **Patience.** Patience 300 restores exactly the same objective-minimum state as patience 100 (epochs 944–1210);
+  it only trains 200 epochs longer before restoring it.
+- **α.** α = 2 improves the latent at r 12 (minimum seed probe 0.779 → 0.804) at a tiny concordance cost.
+- **Latent size.** r 16 improves it more (0.829 at α 1; 0.846 at α 2).
+- **Selection.** By the registered rule (highest mean validation C), cand4 was selected; it tied exactly with cand6.
+- **Information-only fits (seed 0).** fae_linear: validation C 0.8392, probe 0.901. fae_kan: validation C 0.8298,
+  probe 0.714.
+
+## R7.3 Step 2: gate on fresh seed 92 (D93, D95)
+
+| Criterion (fresh seed 92) | Values | Outcome |
+|---|---|---|
+| R1, original (early-stopped σ̂; reported, not gating) | C 0.8903; σ̂ 0.6082 | **FAIL** |
+| R1-A (gating; profile σ̂ on training data, η fixed) | C 0.8903 ≥ 0.8717; profile σ̂ 0.4983 | PASS |
+| R2, concordance part | C 0.8384 vs min(C_oracle − 0.03 = 0.8617, C_ceiling − 0.020 = 0.8406) = 0.8406 (C_ceiling 0.8606); short by 0.0022. With margin 0.015 (reported): threshold 0.8456, fail | **FAIL** |
+| R2, probe part (D91: mean ≥ 0.75 and ω ≥ 0.75) | mean 0.884; ω 0.903; a / b / A / ω = 0.93 / 0.832 / 0.87 / 0.903. Under D82 (0.78/0.80): pass; under the original (mean ≥ 0.80): pass | PASS |
+| R2 overall | both parts required | **FAIL** |
+| R3 (unchanged) | error aware [0.0822, 0.0837, 0.0813] < naive [0.1544, 0.1514, 0.1554] (pass); C under censoring 0.8638; \|C − C_R2\| = 0.0254 > 0.02 | **FAIL** |
+
+**Reproduction inside the final suite** (single-threaded everywhere since D86):
+
+| Printed gate value (registered run) | Final suite |
+|---|---|
+| R1: C = 0.8903, oracle C = 0.8917, sigma = 0.6082 | **identical** |
+| R1-A: C = 0.8903, oracle C = 0.8917, profile sigma (train, eta fixed) = 0.4983; early-stop | **identical** |
+| R2: C = 0.8384, oracle C = 0.8917; probe R2 (a,b,A,omega) = [0.93  0.832 0.87  0.903], mea | **identical** |
+| R2-amended: C_ceiling = 0.8606; threshold = min(0.8617, 0.8406) = 0.8406; C = 0.8384; prob | **identical** |
+| R3: survival-curve error aware [0.0822, 0.0837, 0.0813] naive [0.1544, 0.1514, 0.1554] ; C | **identical** |
+| \|C - C_R2\| = 0.0254 | **identical** |
+
+## R7.4 Fresh confirmations, seeds 141–145
+
+| Fresh seed | Test C | Oracle C | C_ceiling | Threshold (margin 0.020) | C − C_ceiling | C part | Probe a / b / A / ω | Probe mean | Probe 0.75/0.75 (gating) | Probe 0.78/0.80 | Probe original 0.80 | R2 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 141 | 0.8503 | 0.8878 | 0.8622 | 0.8422 | -0.0119 | PASS | 0.928 / 0.798 / 0.837 / 0.921 | 0.871 | PASS | PASS | PASS | PASS |
+| 142 | 0.8400 | 0.8814 | 0.8487 | 0.8287 | -0.0087 | PASS | 0.916 / 0.787 / 0.820 / 0.881 | 0.851 | PASS | PASS | PASS | PASS |
+| 143 | 0.8597 | 0.9012 | 0.8816 | 0.8616 | -0.0219 | **FAIL** | 0.922 / 0.782 / 0.769 / 0.854 | 0.832 | PASS | PASS | PASS | **FAIL** |
+| 144 | 0.8550 | 0.8987 | 0.8663 | 0.8463 | -0.0113 | PASS | 0.915 / 0.726 / 0.852 / 0.905 | 0.850 | PASS | PASS | PASS | PASS |
+| 145 | 0.8462 | 0.8859 | 0.8542 | 0.8342 | -0.0080 | PASS | 0.903 / 0.726 / 0.818 / 0.887 | 0.834 | PASS | PASS | PASS | PASS |
+| **Total** |  |  |  |  |  | 4/5 |  |  | 5/5 | 5/5 | 5/5 | **4/5** |
+
+## R7.5 Why the gate failed: diagnostic on seed-92 train/validation (D96, D97)
+
+The diagnostic was registered before running and used no test data.
+
+| Training seed | Val C | Val C − C_ceiling | Val probe a / b / A / ω | Probe mean | Objective-minimum epoch | Risk-state epoch |
+|---|---|---|---|---|---|---|
+| 0 | 0.8415 | -0.0151 | 0.916 / 0.787 / 0.852 / 0.891 | 0.861 | 951 | 627 |
+| 1 | 0.8361 | -0.0205 | 0.923 / 0.762 / 0.805 / 0.898 | 0.847 | 981 | 610 |
+| 2 | 0.8429 | -0.0137 | 0.906 / 0.707 / 0.837 / 0.894 | 0.836 | 1018 | 608 |
+| 3 | 0.8411 | -0.0155 | 0.920 / 0.728 / 0.749 / 0.872 | 0.817 | 957 | 579 |
+| 4 | 0.8410 | -0.0156 | 0.919 / 0.737 / 0.813 / 0.906 | 0.844 | 970 | 656 |
+
+Seed-92 validation split: oracle C 0.8880, C_ceiling 0.8566; validation C mean 0.8405, SD 0.0026, range 0.0068.
+
+**Reading.**
+- **The concordance shortfall is within training-seed noise.** The gate fits one training seed (0). Across seeds
+  0–4, validation C varies with SD 0.0026, more than the 0.0022 shortfall.
+- **The gap to C_ceiling is systematic.** It averages about −0.016 on this split and −0.008 to −0.022 across the six
+  fresh test splits. C_ceiling applies the true nonlinear risk formula to per-individual parameter estimates; the
+  model uses a linear AFT head on the latent. With the latent now encoding the parameters well, this head gap is
+  the most plausible remaining source.
+- **R3.** The censored-data model's C (0.8638) exceeds R2's single fit (0.8384), so the symmetric tolerance fails.
+  R3's purpose (censoring awareness) is met: the error is about half the naive error.
+
+## R7.6 The probe re-reference, retrospectively (information only)
+
+Every historical gate seed and confirmation, re-scored under the three probe definitions. **No verdict is changed.**
+
+| Revision | Seed | Test probe mean | Test ω | Original (mean ≥ 0.80) | D82 (0.78 / 0.80) | D91 (0.75 / 0.75) |
+|---|---|---|---|---|---|---|
+| Revision 4 (fa) | gate 41 | 0.716 | 0.865 | fail | fail | fail |
+| Revision 4 (fa) | 111 | 0.690 | 0.845 | fail | fail | fail |
+| Revision 4 (fa) | 112 | 0.696 | 0.897 | fail | fail | fail |
+| Revision 4 (fa) | 113 | 0.727 | 0.869 | fail | fail | fail |
+| Revision 4 (fa) | 114 | 0.696 | 0.830 | fail | fail | fail |
+| Revision 4 (fa) | 115 | 0.741 | 0.888 | fail | fail | fail |
+| **Revision 4 (fa): verdict as recorded** |  |  |  |  |  | NOT CONFIRMED |
+| Revision 4b | gate 61 | 0.755 | 0.874 | fail | fail | pass |
+| Revision 4b | 121 | 0.806 | 0.923 | pass | pass | pass |
+| Revision 4b | 122 | 0.752 | 0.893 | fail | fail | pass |
+| Revision 4b | 123 | 0.806 | 0.898 | pass | pass | pass |
+| Revision 4b | 124 | 0.820 | 0.893 | pass | pass | pass |
+| Revision 4b | 125 | 0.829 | 0.901 | pass | pass | pass |
+| **Revision 4b: verdict as recorded** |  |  |  |  |  | NOT CONFIRMED |
+| Revision 4c | gate 81 | 0.772 | 0.814 | fail | fail | pass |
+| Revision 4c | 131 | 0.812 | 0.863 | pass | pass | pass |
+| Revision 4c | 132 | 0.742 | 0.757 | fail | fail | fail |
+| Revision 4c | 133 | 0.747 | 0.779 | fail | fail | fail |
+| Revision 4c | 134 | 0.719 | 0.638 | fail | fail | fail |
+| Revision 4c | 135 | 0.727 | 0.845 | fail | fail | fail |
+| **Revision 4c: verdict as recorded** |  |  |  |  |  | NOT CONFIRMED |
+| Revision 4e | gate 92 | 0.884 | 0.903 | pass | pass | pass |
+| Revision 4e | 141 | 0.871 | 0.921 | pass | pass | pass |
+| Revision 4e | 142 | 0.851 | 0.881 | pass | pass | pass |
+| Revision 4e | 143 | 0.832 | 0.854 | pass | pass | pass |
+| Revision 4e | 144 | 0.850 | 0.905 | pass | pass | pass |
+| Revision 4e | 145 | 0.834 | 0.887 | pass | pass | pass |
+| **Revision 4e: verdict as recorded** |  |  |  |  |  | NOT CONFIRMED |
+
+**Reading.**
+- Under 0.75/0.75, the probe part would have passed on the 4b and 4c gate seeds, but 4b and 4c would still have
+  failed overall (concordance, and 4c's confirmations).
+- For Revision 4e, the definition made no difference: it passes all three on every seed.
+
+## R7.7 All gate looks so far
+
+| Design | Gate seed | R2 test C | Threshold | Probe mean | ω probe | R2 |
+|---|---|---|---|---|---|---|
+| Original design, attempt 1 | 21 | 0.7545 | 0.8636 | 0.398 | 0.022 | FAIL |
+| Original design, repair 1 (epochs) | 21 | 0.8050 | 0.8636 | 0.404 | 0.035 | FAIL |
+| Original design, repair 2 (capacity) | 21 | 0.8361 | 0.8636 | 0.471 | 0.166 | FAIL |
+| Revision 3: NFL front | 21 | 0.8461 | 0.8636 | 0.509 | 0.200 | FAIL |
+| D41-selected configuration [SUPERSEDED, D53 cache defect] | 21 | 0.8497 | 0.8636 | 0.663 | 0.014 | FAIL |
+| After D46 extension, same config [SUPERSEDED, D53] | 21 | 0.8497 | 0.8636 | 0.663 | 0.014 | FAIL |
+| A3 configuration, recomputed with the fixed cache | 21 | 0.8497 | 0.8636 | 0.663 | 0.014 | FAIL |
+| Revision 4: frequency-aware front (D61) | 41 (fresh) | 0.8189 | 0.8656 | 0.716 | 0.865 | FAIL |
+| Revision 4b: compact front + head weight decay (D71) | 61 (fresh) | 0.8372 | 0.8662 | 0.755 | 0.874 | FAIL |
+| Revision 4c: balance + clipping + NLL stopping (D81; **amended criteria** D82) | 81 (fresh) | 0.8421 | 0.8390 (amended) | 0.772 | 0.814 | FAIL (C part PASS; probe part FAIL) |
+| Revision 4d: two-state stopping + burn-in, multi-seed selection (D87/D88) | 92 (fresh; not generated) | – | – | – | – | **not evaluated: Step 1 failed (D89)** |
+| Revision 4e: r 16, two-checkpoint, burn-in 300, lr 1e-3 (D92; criteria D93) | 92 (fresh) | 0.8384 | 0.8406 (C_ceiling margin 0.020) | 0.884 | 0.903 | **FAIL** (C part FAIL by 0.0022; probe part PASS); R3 FAIL; confirmations 4/5; **NOT CONFIRMED** |
+
+## R7.8 Decisions in round 7 (D91–D98)
+
+| ID | Decision | Status | Content | Rationale |
+|---|---|---|---|---|
+| D91 | **Owner decisions, Round 7 (2026-10-18)** | ADOPTED (owner) | (1) Approve **Revision 4e**: Step 1 is a representation-capacity and reconstruction search with everything else fixed at 4d cand1 (fa compact, 17 freqs, fa_balance, clip 1.0, Adam lr 1e-3, wd 1e-4, head_wd 1e-2, two_checkpoint, min_epochs 300, max 3000 epochs, H 32, hidden 64). Factors: r ∈ {12, 16} × objective patience ∈ {100, 300} × α ∈ {1, 2}, on training seeds 0–2 (seed-21 train/validation, single-threaded). It uses a **two-tier selection rule**: Tier 1 is the D87 multi-seed rule; Tier 2 is an owner fallback (every seed's probe mean ≥ 0.775, other conditions as Tier 1). (2) Step 2 on the unused seeds: gate seed 92 and confirmations 141–145. Criteria: R1-A; R2 concordance as D88 (margin 0.020, with 0.015 reported); **R2 probe part re-referenced to mean probe ≥ 0.75 and ω probe ≥ 0.75**, with the 0.78/0.80 and 0.80 definitions reported side by side; R3 unchanged. CONFIRMED iff R1-A, R2 and R3 pass on seed 92 and R2 passes on ≥ 4/5 confirmations. The guard moves to `revised_gate_verdict_fa4e.json`. (3) Step 3 only if CONFIRMED: D31 parameter matching (and the D ≥ 6 check before real data); H1, H2, H3, controls, secondary settings, AB1–AB8, KAN-FAE pruning (uncentred and centred scores) and symbolic extraction, on replicates 1000–1004, single-threaded; real data if budget and D31 permit. (4) Keep Rounds 1–6 intact; build `build_report_round7.py`; keep commits local. **Fact check of the owner's rationale against the records:** (i) quadrature-projection spectrum on smoothed K12, held-out linear probe R²(ω) = 0.8236 (`diag_frequency_information.json`): correct. That is the probe on the raw spectrum, not an upper bound: log Fourier power gives 0.941, and the learned fa latents reached ω up to 0.923 on earlier test splits (range 0.638–0.923). (ii) Per-individual least squares R²(b) = 0.8354 on seed-21 validation (`diag_data_ceiling.json`; flexible regressor 0.856): correct. (iii) Test-split probe means 0.755 (gate seed 61) and 0.752 (confirmation 122): correct. (iv) Frequency-blind fronts: ω ≤ 0.20 in every recorded gate and confirmation (A3 confirmations −0.04 to 0.08): correct. (v) 4d cand1 timing: risk-state epochs 565–727, objective stop epochs 985–1076: correct. **Disclosure:** both the probe re-reference and Tier 2 were set after seeing the round 4–6 results. Tier 2 admits 4d cand1 by construction (min seed probe 0.779), and the 0.75/0.75 rule would have passed the R2 probe part on the 4b gate seed (0.755) and the 4c gate seed (0.772, ω 0.814). They are prospective only with respect to seeds 92 and 141–145, which have never been generated. Retrospectively, under 0.75/0.75 the 4c confirmations would still pass the probe part on 1 of 5 seeds (131; 132 0.742, 133 0.747, 134 0.719, 135 0.727); no historical verdict is changed. | Owner decision; facts verified |
+| D92 | **Pre-registration: Step 1, Revision 4e** (registered 2026-10-18, before any 4e fit) | ADOPTED | `scripts/learnability_search_fa4e.py`; seed-21 train/validation only; single-threaded. Base as D91 (`front="fa"`, `fa_compact=True` is the code form of fa_compact). **Candidates (full factorial, this order for ties):** r {12, 16} × patience {100, 300} × α {1.0, 2.0}. cand0 = (12, 100, 1.0) is 4d cand1; it is re-fitted, and its records must reproduce 4d cand1 exactly (a determinism check, reported). Each candidate runs on training seeds 0, 1, 2 (24 fits). **Tier 1:** on all 3 seeds zero training-NLL jumps > 0.2 after epoch 300; mean over seeds of the validation probe mean ≥ 0.80; every seed's probe mean ≥ 0.780; every seed's ω ≥ 0.80. Select the highest mean validation C; ties go to the highest minimum seed probe, then the earlier candidate. **Tier 2 (only if no candidate is Tier-1 eligible):** zero jumps; mean probe ≥ 0.80; every seed's ω ≥ 0.80; every seed's probe mean ≥ 0.775. Select the highest minimum seed probe; ties go to the highest mean probe, then the highest mean validation C. The tier is recorded in `reports/learnability_selected_fa4e.json`. If neither tier yields a candidate, Step 1 fails (no further fallback). Information only: fae_linear and fae_kan with the selection, seed 0. | Owner decision D91 |
+| D93 | **Pre-registration: Step 2, Revision 4e gate and confirmation** (registered 2026-10-18, before any seed-92 or seed-141..145 data are generated) | ADOPTED | **Seed check (repeated):** seeds 92 and 141–145 appear in no record, log or result file; their only code references are the unrun 4d files. `tests/test_learnability_fa4d.py` stays as the skipped 4d record. `tests/test_learnability_fa4e.py`, seed 92: **R1-A** gating, original R1 reported. **R2:** (i) test C ≥ min(C_oracle − 0.03, C_ceiling − 0.020), with 0.015 reported; (ii) mean probe ≥ 0.75 **and** ω ≥ 0.75 on the test split; the 0.78/0.80 and 0.80 outcomes are printed side by side. **R3** unchanged. **Confirmations:** seeds 141–145, `confirm_learnability.py --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1 --tag _fa4e`; the R2 rule as above per seed, with all three probe definitions recorded. **CONFIRMED iff** R1-A, R2 and R3 pass on seed 92 and R2 passes on ≥ 4/5 confirmation seeds (`revised_gate_verdict.py fa4e`). The guard in `run_neural_synthetic.py` accepts `learnability_selected_fa4e.json` only with a CONFIRMED `revised_gate_verdict_fa4e.json`. Step 3 runs only if CONFIRMED (D91 (3)). | Owner decision D91 |
+| D94 | **Step-1 outcome, Revision 4e: PASSED (Tier 1)** (2026-10-18) | ADOPTED | 24 fits plus 2 information fits (`reports/learnability_search_fa4e.jsonl`). Tier-1 eligible: cand1, cand3 (r 12, α 2) and cand4–cand7 (r 16). **Selected cand4: r 16, patience 100, α 1.0** (`A7-fae_mlp-94415d4f`). It has the highest mean validation C among Tier-1 candidates, 0.8484, tied exactly with cand6 (identical fits). The registered tie-breaks (equal minimum seed probe) keep the earlier one. Mean probe 0.847; minimum seed probe 0.829; minimum ω 0.863; zero jumps. Tier 2 was not needed. **Determinism:** cand0 reproduces 4d cand1 exactly on all three seeds (validation C, probes and delivered NLL bit-identical). **Findings:** (i) patience 300 gives fits *identical* to patience 100 (same objective-minimum epoch, 944–1210): the joint objective has no later minimum within 300 epochs. So the D91 hypothesis that patience 100 halts latent training prematurely is not supported; training simply runs 200 epochs longer before restoring the same state. (ii) Capacity helps: r 16 raises the minimum seed probe from 0.779 to 0.829 (α 1) and 0.846 (α 2). (iii) α 2 at r 12 raises the probe (0.816 → 0.842) at a cost of 0.0006 in validation C. Information only, seed 0: fae_linear validation C 0.8392 (probe 0.901); fae_kan validation C 0.8298 (probe 0.714). | Pre-registered rule applied as written |
+| D95 | **Step-2 outcome, Revision 4e: NOT CONFIRMED** (2026-10-18) | ADOPTED | **Gate seed 92** (`reports/logs/revised_gate_fa4e.log`): original R1 FAIL (early-stopped σ̂ 0.608; reported); **R1-A PASS** (C 0.8903 vs oracle 0.8917; profile σ̂ 0.498). **R2 concordance part FAIL**: C 0.8384 < 0.8406 = min(0.8617, C_ceiling 0.8606 − 0.020), short by 0.0022; it also fails with the 0.015 margin (0.8456). **R2 probe part PASS** under all three definitions: mean 0.884, ω 0.903 (a 0.930, b 0.832, A 0.870). **R3 FAIL**: censoring-aware error below naive on all three seeds (0.081–0.084 vs 0.151–0.155), but \|C − C_R2\| = 0.0254 > 0.02; the censored-data C (0.8638) is *higher* than R2's C. **Confirmations 141–145:** 4/5 pass R2. Seed 143 fails the concordance part (C 0.8597 < 0.8616; C − C_ceiling = −0.0219). The probe part passes on all five seeds under all three definitions (means 0.832–0.871, ω 0.854–0.921). **Verdict (D93 rule, `reports/revised_gate_verdict_fa4e.json`): NOT CONFIRMED.** The guard refuses (`reports/logs/guard_check_fa4e_after.log`); **Step 3 is not run.** Reading: the representation problem is solved on every fresh seed, under every probe definition, so the probe re-reference (D91) did not decide any outcome. The binding constraints are now concordance relative to C_ceiling (C − C_ceiling between −0.008 and −0.022 across the six fresh seeds) and the two-sided R3 tolerance. | Pre-registered rule applied as written |
+| D96 | **Diagnostic (registered before running, 2026-10-18): gate seed 92, training-seed spread** | ADOPTED | Diagnosis only (no selection; no gate re-evaluation; the seed-92 **test split is not used**). On the seed-92 R2 data (σ_y 0.05, no censoring), train/validation splits only: fit the 4e selection with training seeds 0–4 and record validation C, validation C_ceiling (same D75 plug-in, on the validation split), validation C − C_ceiling, probe and stop epochs (`scripts/diag_4e_seed92.py`, `reports/diag_4e_seed92.json`). **Question:** is the 0.0022 shortfall within training-seed variation, i.e. is the gate decided by a single training seed? | Informs the next owner decision |
+| D97 | **D96 diagnostic result** (2026-10-18; seed-92 train/validation only) | ADOPTED | Training seeds 0–4 on the seed-92 validation split (`reports/diag_4e_seed92.json`): validation C 0.8361–0.8429 (mean 0.8405, SD 0.0026, range 0.0068); C_ceiling 0.8566; C − C_ceiling between −0.0137 and −0.0205 (training seed 0: −0.0151); probe means 0.81–0.87. **Reading:** (i) the gate's 0.0022 shortfall is smaller than one training-seed SD, so which training seed the gate fits decides the pass/fail outcome of R2's concordance part on seed 92; (ii) the gap between C and C_ceiling is systematic, about −0.016 on average (−0.008 to −0.022 across the six fresh test splits), close to the 0.020 margin. Its likely source is the one the owner named in D88: a linear AFT head versus the nonlinear true risk formula. No gate result is changed. | Informs the next owner decision (L30) |
+| D98 | **Report rendering fixes (round 7)** (2026-10-18) | ADOPTED | Found while checking the revision-7 PDF; no number, test or result changes. (i) A bare `\|C − C_R2\|` inside a table row split the cell in pandoc's pipe tables, hiding the R3 outcome column in the gate tables (rounds 3–5 and the new 4e table). The round-7 builder now escapes it in table rows. (ii) The decision tables of the historical parts used open-ended ID filters, so later decisions (e.g. D95) appeared under "Decisions in round 4/5/6". Each builder now filters its own round's range: D38–D56, D57–D66, D67–D78, D79–D85, D86–D90; round 7 starts at D91. (iii) The round-7 gate-reproduction table first compared against the first matching line anywhere in the suite log, which belongs to other gate files, and wrongly showed DIFFERENT. It now compares within the 4e section; every printed gate value is identical. | Correct rendering; a defect in the comparison was fixed, not the comparison's outcome |
+
+## R7.9 Tests
+
+| Full-suite run | Passed | Failed | Skipped | Expected failures (xfail) | Total | Failed tests |
+|---|---|---|---|---|---|---|
+| final_full_suite | 148 | 1 | 1 | 0 | 150 | test_R2_fae_mlp_end_to_end (test_learnability.py) |
+| final_full_suite_round2_v3 | 185 | 1 | 1 | 0 | 187 | test_R2_fae_mlp_end_to_end (test_learnability.py) |
+| final_full_suite_round3 | 198 | 2 | 1 | 1 | 202 | test_R1_oracle_features_head (test_learnability_fa.py); test_R2_fae_mlp_end_to_end (test_learnability_fa.py) |
+| final_full_suite_round4_rerun | 203 | 2 | 1 | 3 | 209 | test_R1_oracle_features_head (test_learnability_fa4b.py); test_R2_fae_mlp_end_to_end (test_learnability_fa4b.py) |
+| final_full_suite_round5 | 212 | 2 | 1 | 5 | 220 | test_R1_oracle_features_head (test_learnability_fa4c.py); test_R2_fae_mlp_end_to_end (test_learnability_fa4c.py) |
+| final_full_suite_round6 | 215 | 0 | 1 | 7 | 223 | – |
+| final_full_suite_round6_rerun | 215 | 0 | 2 | 7 | 224 | – |
+| final_full_suite_round7 | 216 | 3 | 2 | 7 | 228 | test_R1_oracle_features_head (test_learnability_fa4e.py); test_R2_fae_mlp_end_to_end (test_learnability_fa4e.py); test_R3_censoring_awareness (test_learnability_fa4e.py) |
+
+**New tests:** `tests/test_learnability_fa4e.py` (the 4e gate). `tests/test_learnability_fa4d.py` stays as the
+skipped 4d record (D93).
+
+| Criterion | Test (tests/test_learnability_fa4e.py) | Attempts | Failed attempts | Latest |
+|---|---|---|---|---|
+| – | tests/test_learnability_fa4e.py | 1 | 0 | SKIPPED |
+| R1 | test_R1_oracle_features_head | 2 | 2 | FAILED |
+| R1-A | test_R1A_profile_sigma | 2 | 0 | PASSED |
+| R2 | test_R2_fae_mlp_end_to_end | 2 | 2 | FAILED |
+| R3 | test_R3_censoring_awareness | 2 | 2 | FAILED |
+
+The module-level SKIPPED row is a collection check run while writing the pre-registration, before the Step-1
+selection existed (run `20261018T175917`; "pre-registered selection not produced yet"). No gate code ran in it.
+
+**All test runs, in chronological order** (every failure is kept; `reports/test_results.csv` has every record)
+
+| Test run (chronological) | Passed | Failed | Skipped | Expected failures (xfail) | Total |
+|---|---|---|---|---|---|
+| stageA_attempt1 | 41 | 4 | 0 | 0 | 45 |
+| stageA_attempt2 | 41 | 4 | 0 | 0 | 45 |
+| stageA_attempt3 | 45 | 0 | 0 | 0 | 45 |
+| stageB_attempt1 | 40 | 0 | 0 | 0 | 40 |
+| stageC_attempt1 | 19 | 0 | 0 | 0 | 19 |
+| stageD_attempt1 | 54 | 1 | 1 | 0 | 56 |
+| stageD_attempt2 | 7 | 1 | 0 | 0 | 8 |
+| stageD_attempt3 | 8 | 0 | 0 | 0 | 8 |
+| stageD_gate_attempt1 | 1 | 2 | 0 | 0 | 3 |
+| stageD_gate_attempt2 | 1 | 2 | 0 | 0 | 3 |
+| stageD_gate_attempt3 | 2 | 1 | 0 | 0 | 3 |
+| stageCDE_final | 55 | 0 | 1 | 0 | 56 |
+| stageF_attempt1 | 2 | 0 | 0 | 0 | 2 |
+| regress_after_penalty_fix | 73 | 0 | 1 | 0 | 74 |
+| stageG_attempt1 | 4 | 0 | 0 | 0 | 4 |
+| final_full_suite | 148 | 1 | 1 | 0 | 150 |
+| rev3_unit_attempt1 | 50 | 0 | 1 | 0 | 51 |
+| rev3_gate_attempt1 | 2 | 1 | 0 | 0 | 3 |
+| audit_attempt1 | 9 | 0 | 0 | 0 | 9 |
+| censored_ls_attempt1 | 5 | 0 | 0 | 0 | 5 |
+| kan_regress_after_pruning | 12 | 0 | 0 | 0 | 12 |
+| kreg_sym_attempt1 | 10 | 1 | 0 | 0 | 11 |
+| kreg_sym_attempt2 | 1 | 0 | 0 | 0 | 1 |
+| f7f8_attempt1 | 5 | 0 | 0 | 0 | 5 |
+| f8_after_cache | 5 | 0 | 0 | 0 | 5 |
+| d41_gate_selected | 2 | 1 | 0 | 0 | 3 |
+| f9_attempt1 | 6 | 0 | 0 | 0 | 6 |
+| interval_attempt1 | 3 | 2 | 0 | 0 | 5 |
+| interval_attempt2 | 5 | 0 | 0 | 0 | 5 |
+| gate_ext | 2 | 1 | 0 | 0 | 3 |
+| cache_regression_oldcode | 0 | 1 | 0 | 0 | 1 |
+| cache_regression_fixed | 7 | 0 | 0 | 0 | 7 |
+| gate_D53_recompute | 2 | 1 | 0 | 0 | 3 |
+| final_full_suite_round2 | 90 | 2 | 0 | 0 | 92 |
+| final_full_suite_round2_rerun | 178 | 8 | 1 | 0 | 187 |
+| models_repair_D56 | 28 | 0 | 1 | 0 | 29 |
+| final_full_suite_round2_v3 | 185 | 1 | 1 | 0 | 187 |
+| fq_attempt1 | 7 | 4 | 0 | 0 | 11 |
+| fq_attempt2 | 9 | 2 | 0 | 0 | 11 |
+| fq_attempt3 | 10 | 1 | 0 | 0 | 11 |
+| fq_attempt4 | 11 | 0 | 0 | 0 | 11 |
+| revised_gate_fa | 1 | 2 | 0 | 0 | 3 |
+| fq10 | 3 | 0 | 0 | 0 | 3 |
+| final_full_suite_round3 | 198 | 2 | 1 | 1 | 202 |
+| hr_attempt1 | 3 | 0 | 0 | 0 | 3 |
+| revised_gate_fa4b | 2 | 2 | 0 | 0 | 4 |
+| final_full_suite_round4 | 200 | 5 | 1 | 3 | 209 |
+| flat_ae_fix_D78 | 4 | 0 | 0 | 0 | 4 |
+| final_full_suite_round4_rerun | 203 | 2 | 1 | 3 | 209 |
+| rs_attempt1 | 3 | 1 | 0 | 0 | 4 |
+| rs_attempt2 | 4 | 0 | 0 | 0 | 4 |
+| ceil_attempt1 | 3 | 0 | 0 | 0 | 3 |
+| revised_gate_fa4c | 2 | 2 | 0 | 0 | 4 |
+| final_full_suite_round5 | 212 | 2 | 1 | 5 | 220 |
+| gate_fa4c_reproduction | 2 | 2 | 0 | 0 | 4 |
+| bi_attempt1 | 7 | 0 | 0 | 0 | 7 |
+| final_full_suite_round6 | 215 | 0 | 1 | 7 | 223 |
+| final_full_suite_round6_rerun | 215 | 0 | 2 | 7 | 224 |
+| 20261018T175917 | 0 | 0 | 1 | 0 | 1 |
+| revised_gate_fa4e | 1 | 3 | 0 | 0 | 4 |
+| final_full_suite_round7 | 216 | 3 | 2 | 7 | 228 |
+
+## R7.10 PBC endpoint (provisional; unchanged)
+
+E2 (death or transplantation) is the provisional primary endpoint and E1 a sensitivity analysis, pending the
+professor's confirmation (`docs/pbc_endpoint_justification.md`).
+
+| Model | IBS (marginal KM) ↓ | IBS (conditional IPCW) ↓ | Uno C ↑ | Harrell C ↑ | D-cal p | n |
+|---|---|---|---|---|---|---|
+| FPCA + AFT | 0.133 ± 0.018 | 0.139 ± 0.024 | 0.800 ± 0.017 | 0.827 ± 0.019 | 0.83 ± 0.18 | 5 |
+| FPCA + Cox | 0.135 ± 0.022 | 0.141 ± 0.029 | 0.797 ± 0.015 | 0.824 ± 0.016 | 0.91 ± 0.07 | 5 |
+| Summary + AFT | 0.138 ± 0.036 | 0.143 ± 0.039 | 0.787 ± 0.022 | 0.832 ± 0.017 | 0.81 ± 0.18 | 5 |
+| Summary + Cox | 0.135 ± 0.029 | 0.140 ± 0.034 | 0.787 ± 0.010 | 0.830 ± 0.011 | 0.82 ± 0.19 | 5 |
+| Summary + RSF | 0.140 ± 0.029 | 0.144 ± 0.035 | 0.811 ± 0.033 | 0.846 ± 0.019 | 0.73 ± 0.25 | 5 |
+| KM null (reference) | 0.222 ± 0.022 | 0.222 ± 0.026 | 0.500 ± 0.000 | 0.500 ± 0.000 | 0.78 ± 0.22 | 5 |
+
+| Model | IBS (marginal KM) ↓ | IBS (conditional IPCW) ↓ | Uno C ↑ | Harrell C ↑ | D-cal p | n |
+|---|---|---|---|---|---|---|
+| FPCA + AFT | 0.118 ± 0.012 | 0.116 ± 0.012 | 0.801 ± 0.057 | 0.836 ± 0.031 | 0.88 ± 0.15 | 5 |
+| FPCA + Cox | 0.116 ± 0.007 | 0.114 ± 0.009 | 0.812 ± 0.051 | 0.845 ± 0.026 | 0.88 ± 0.24 | 5 |
+| Summary + AFT | 0.123 ± 0.013 | 0.121 ± 0.012 | 0.811 ± 0.042 | 0.841 ± 0.024 | 0.68 ± 0.39 | 5 |
+| Summary + Cox | 0.120 ± 0.020 | 0.118 ± 0.019 | 0.810 ± 0.061 | 0.841 ± 0.035 | 0.87 ± 0.16 | 5 |
+| Summary + RSF | 0.129 ± 0.013 | 0.129 ± 0.016 | 0.791 ± 0.047 | 0.831 ± 0.038 | 0.86 ± 0.12 | 5 |
+| KM null (reference) | 0.204 ± 0.011 | 0.202 ± 0.010 | 0.500 ± 0.000 | 0.500 ± 0.000 | 0.85 ± 0.20 | 5 |
+
+## R7.11 Task ledger
+
+### Task ledger: originally failed, blocked, skipped or unrun items (opened 2026-10-17)
+
+Each row is updated as work proceeds. The final column points to the supporting log or record. Original
+statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-run of revision 3.
+
+| # | Item | Original status / reason | Blocking dependency | Alternatives considered | Experiments / tests | Final outcome | Evidence | Remaining limitation |
+|---|---|---|---|---|---|---|---|---|
+| L1 | Learnability gate R2 (functional MLP AE) | FAILED (original design, 2 repairs: C 0.8361); FAILED again with revision 3 NFL front (C 0.8461) | – | Fronts A0–A4 (linear, pointwise-MLP NFL, energy, tensor spline, tensor spline + derivative energy); latent size 4/8; α 1/0.1/0; Adam 1e-3/3e-3, AdamW; early stopping on objective/NLL; linear/MLP/KAN encoders; 3000/10000 epochs; capacity 32/64 and 64/128 | D41 + D46 controlled search (validation only; 17 fits after deduplication); official gate; fresh replications on seeds 101–110; D53 defect found, fixed and all affected results recomputed | **FAILED (final, pre-registered):** gate C 0.8497 < 0.8636 (probe mean 0.663 < 0.8; ω probe ≈ 0); replications 0/5 (D41) and 0/5 (D46). No further extension (D46) | `reports/learnability_search.jsonl`, `reports/learnability_confirmation_*.jsonl`, `reports/logs/stageD_gate_D53.log` | The frequency parameter ω is not linearly decodable from a reconstruction-driven latent; next steps need an owner decision (report I.15) Round 3 (owner option (c), D57/D61): frequency-aware representation; validation-only search (11 fits); revised gate on fresh seed 41: **R2 FAILED** (C 0.8189 < 0.8656; ω probe 0.865); fresh confirmations 111–115: 0/5. Diagnosis D65 (overfitting of the spectral block; a compact summary meets the probe criterion on validation but not C) and D66 (R1's σ check not robust) Round 4 (owner D67, pre-registered D71): Revision 4b (compact front + head weight decay): fresh seed 61 R2 FAILED (C 0.8372 < 0.8662); confirmations 121–125: 0/5. Diagnosis D74/D75: the R2 concordance criterion is at or beyond the information limit of the data (near-optimal estimates + true risk function below the threshold on 9/10 fresh seeds) Round 5 (owner D80): Revision 4c Step 1 PASSED (instability and stopping conflict fixed on validation); Step 2 amended gate (seed 81) NOT CONFIRMED: concordance part passed, probe part failed (0.772 < 0.78); confirmations 131–135: 1/5 (D84) Round 6 (owner D86): Revision 4d Step 1 FAILED (no candidate met the multi-seed eligibility; closest short by 0.001 on one seed's probe); gate not run (D89) |
+| L2 | H1 primary: KAN vs MLP functional AE | NOT RUN (blocked by L1, D33) | L1 | – | – | **BLOCKED** (L1 failed; `scripts/run_neural_synthetic.py` ready but deliberately not run) | – | No evidence for or against KAN |
+| L3 | H2: α > 0 vs α = 0 | NOT RUN (blocked by L1) | L1 | (α was varied inside the search, on validation only; not a test of H2) | – | **BLOCKED** | – | |
+| L4 | H3: functional vs flattened under sparse sampling | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L5 | Training controls S1/S2/S3/survival-only on the revised design | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L6 | Ablations AB1–AB8 | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L7 | Neural models on C-MAPSS and PBC | NOT RUN (blocked by L1) | L1, L2 | KAN-AFT (non-functional, reference method) was run on PBC instead (D52) | – | **BLOCKED** for KAN-FAE; KAN-AFT on PBC DONE | `reports/kanaft_pbc.jsonl` | |
+| L8 | KAN regularisation and pruning | NOT IMPLEMENTED (audit finding A-KAN-REG) | – | CoxKAN Eqs. 5–8 / KAN-AFT L_R; edge and node pruning (θ = 1e-2) | KREG-1..4 (pass); KAN-AFT synthetic (12 fits) and PBC (10 fits) with before/after metrics; D54 threshold diagnostic | **DONE (implemented, tested, applied to KAN-AFT).** At θ = 1e-2 an edge was pruned in only 1 of 22 fits (seed 203 IPCW, λ = 1e-2: the true null z₄); D54 explains why (offset-inclusive score; scale dependence) | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl`, `reports/pruning_threshold_diag.jsonl` | Not applied to KAN-FAE (blocked by L1). θ = 1e-2 does not remove the true null edge at the λ chosen on validation |
+| L9 | Symbolic formula extraction (R² > 0.99) | NOT IMPLEMENTED (audit finding A-SYM) | L8 | Stage 1 linear → stage 2 library (15 functions, affine form) → stage 3 PySR 2.7.0 | SYM-1..4 (pass); KAN-AFT synthetic with known truth (3 seeds × 4 losses); PBC (2 endpoints × 5 splits) | **DONE for KAN-AFT.** Synthetic: true shapes (tanh, quadratic, sine) recovered with validation R² > 0.99; rejected fits keep the spline; substitution changes test C by ≤ 0.002. PBC: formulas accepted for some covariates, but the accepted family is not stable across splits | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl` | **KAN-FAE symbolic extraction BLOCKED by L1.** Real-data formula forms are not stable across resamples (interpret edge shapes, not formula identity) |
+| L10 | Censoring-adjusted least-squares estimators (BJ, IPCW, transform) | NOT IMPLEMENTED (new requirement) | – | KAN-AFT Appendix A; BJ log scale (Efron tail) and time-scale variant; IPCW with G(T−); Fan–Gijbels transform | LS-1..5 (pass); KAN-AFT synthetic per loss; L16 study (D50) | **DONE** as separate validated variants (Cox partial likelihood not inserted into the AFT model). Transform biased on the log scale (A-TRANSFORM); marginal IPCW biased under CA-1-only censoring | `src/kanfae/survival/censored_ls.py`, `reports/censoring_variants.jsonl` | Not combined with KAN-FAE joint training (blocked by L1; BJ needs an outer loop) |
+| L11 | M2 for the linear autoencoder | SKIPPED: rank-limited, not applicable (D32) | – | none needed; a mathematical impossibility, not a defect | – | remains NOT APPLICABLE | `reports/logs/stageCDE_unit_final.log` | |
+| L12 | PBC endpoint choice (E1 / E2 / competing risks) | UNRESOLVED owner decision (D9-R) | owner | – | E1 and E2 both run as labelled sensitivity analyses (baselines and KAN-AFT) | **DECIDED (D58, provisional):** E2 primary, E1 sensitivity; to be confirmed with the owner's professor | `docs/design.md` §9.1 | E3 (competing risks) future work |
+| L13 | C-MAPSS landmark design (A / B) | UNRESOLVED owner decision (D3b-R) | owner | – | Both options run (FD001, FD003); Option B re-run with engine-cluster bootstrap (v3, D62) | **DECIDED (D59):** Option B primary, Option A secondary | `docs/design.md` §9.2 | |
+| L14 | Interval likelihood for integer cycles | NOT IMPLEMENTED (D25) | – | `log[S(y−1) − S(y)]` for events; stable log-difference form | INT-1..3; INT-1 failed once (test-reference cancellation, D48), then passed | **DONE (implemented and tested)** | `src/kanfae/survival/aft.py`, `tests/test_interval_likelihood.py` | Not yet used in a C-MAPSS experiment (would only matter for neural/AFT models on integer cycles; deferred) |
+| L15 | C-MAPSS FD002–FD004 | NOT RUN (budget) | – | FD003 shares FD001's single operating condition; FD002/FD004 need per-condition normalisation | FD003: baselines, 3 analyses × 5 splits (D51) | **FD003 DONE (baselines). FD002/FD004 NOT RUN** (new preprocessing design needed; not improvised) | `reports/experiment_results.jsonl` (dataset `cmapss_FD003`) | FD002/FD004 remain unrun |
+| L16 | Informative-censoring and misspecification synthetic variants | NOT RUN | – | CA2 / CA1 (covariate-dependent censoring) / MIS (skewed mixture errors) | D50 study: 20 replicates × 3 scenarios × 6 estimators | **DONE.** Parametric log-normal and BJ unbiased in all three; marginal-G IPCW biased under CA1 (β₁ bias −0.07); transform biased everywhere (−0.14 to −0.82); oracle conditional-G IPCW reduces but does not remove the CA1 bias (practical positivity) | `reports/censoring_variants.jsonl` | Linear estimators only; not repeated with neural models |
+| L17 | Literature review / bibliographic verification | NOT DONE (D27) | – | Targeted search; arXiv versions of uploaded references with checksums | `docs/literature_review.md` | **DONE (targeted).** Closely related prior work found (FunKAN, Wu et al.); **no novelty claim** is made | `docs/literature_review.md` | Not a systematic review; discrepancies recorded, not resolved |
+| L18 | Diagnostic run `diag_rev3_R2` (NFL variants) | STOPPED by me after 1 of 5 configurations, to free CPU; superseded by the controlled search in L1 | – | – | – | STOPPED (partial log kept) | `reports/logs/diag_rev3_R2.log` | |
+| L19 | Feature-cache defect (D53) | NEW (found 2026-10-17 via replication seed 110) | – | – | Regression test F8b; recomputation of the search, gate and confirmations | **FIXED**; all affected results recomputed; superseded records kept | `reports/superseded_D53/`, `reports/logs/diag_seed110*.log` | |
+| L20 | Revision 4b (compact frequency summary + survival-generalisation fix) | NEW (round 3 diagnosis D65) | owner approval + new pre-registration | survival-path regularisation (early stopping, head dropout, head weight decay, weight decay, latent size) | D70 diagnosis; D71 search (11 + 2 fits), gate seed 61, confirmations 121–125 | **DONE: FAILED R2** (NOT CONFIRMED) | `reports/revised_gate_verdict_fa4b.json` | Recommendation: re-reference R2's concordance criterion (L23) |
+| L21 | Robustness of the R1 σ criterion | NEW (round 3 diagnosis D66) | owner decision | prospective amendment R1-A (owner D68) | fresh seeds 601–610 and gate seed 61: original check 0/11 pass, R1-A 11/11 pass | **DONE (amendment adopted prospectively; original results unchanged)** | `reports/r1a_fresh_seeds.jsonl` | |
+| L22 | H1 / H2 / H3 / controls / ablations AB1–AB8 / KAN-FAE pruning (uncentred + centred) and symbolic extraction / D31 check for D ≥ 6 | BLOCKED (D57) | L1 | – | guard verified for the revision-4, 4b and 4c selections | **BLOCKED / NOT RUN** (no design has passed the gate) | `reports/revised_gate_verdict_fa4c.json` | |
+| L23 | Attainable reference for R2's concordance criterion | NEW (round 4, D75) | owner decision | – | owner amendment D80/D82 (C_ceiling − 0.015) | **DONE (amended prospectively; used for the 4c gate)** | `src/kanfae/evaluation/ceiling.py` | |
+| L24 | Training stability of the frequency-aware front | NEW (round 4, D77) | owner decision | spectral balance, clipping, lr, AdamW | Step-1 search D81; full-budget diagnostic D83 | **DONE: fixed** (jumps 12 → 0; thread spread 0.013 → 0.0006) | `reports/diag_4c_stability.json` | |
+| L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
+| L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
+| L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **AWAITING OWNER DECISION** | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
+
+
+## R7.12 Reproducibility
+
+### Reproducibility
+
+Project instructions (the repository README.md is intentionally left unchanged, D28).
+
+
+```bash
+### environment (project-local; never touches the global Python)
+bash scripts/setup_env.sh                          # or: KANFAE_FROM_LOCK=1 bash scripts/setup_env.sh
+bash scripts/verify_env.sh                         # E-1 / E-5 evidence
+### tests (every attempt is appended to reports/logs/test_records.jsonl)
+KANFAE_RUN_ID=rerun .venv/bin/python -m pytest -v -rA tests/
+### data (public sources; checksums in reports/run_manifest.json)
+###   C-MAPSS: https://phm-datasets.s3.amazonaws.com/NASA/6.+Turbofan+Engine+Degradation+Simulation+Data+Set.zip
+###            -> extract inner CMAPSSData.zip into data/raw/cmapss/
+###   PBC:     https://cran.r-project.org/src/contrib/survival_3.8-12.tar.gz -> data/raw/pbc/{DESCRIPTION,data/pbc.rda}
+### experiments (resumable; completed run IDs are skipped)
+bash scripts/run_all_experiments.sh                # synthetic (5 replicates x 6 settings) + C-MAPSS (5 splits)
+.venv/bin/python scripts/run_cmapss.py --splits 5 --analyses cmapss_A,cmapss_A_artificial --models sum_cox --code-version D37
+.venv/bin/python scripts/run_pbc.py --splits 5
+### round 2 (2026-10-17): learnability recovery (validation-only search, then gate and fresh-seed confirmations)
+.venv/bin/python scripts/learnability_search.py            # D41 steps S1-S7 -> reports/learnability_search.jsonl
+.venv/bin/python scripts/learnability_search_ext.py        # D46 steps S8-S11 -> reports/learnability_selected_ext.json
+KANFAE_RUN_ID=gate .venv/bin/python -m pytest -v -s tests/test_learnability.py
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --seeds 101,102,103,104,105
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_ext.json \
+    --seeds 106,107,108,109,110 --tag _ext
+### round 2: estimators, KAN-AFT, symbolic extraction, censoring variants, pruning diagnostic, FD003
+.venv/bin/python scripts/run_kanaft_symbolic.py             # synthetic known-truth KAN-AFT (resumable; --fresh)
+.venv/bin/python scripts/run_censoring_variants.py          # L16 / D50
+.venv/bin/python scripts/diag_pruning_threshold.py          # D54
+.venv/bin/python scripts/run_kanaft_pbc.py                  # D52
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --code-version v2   # D51
+### round 3 (2026-10-17): revision 4 (frequency-aware front), pre-registered in D61 before these runs
+.venv/bin/python scripts/diag_frequency_information.py     # D60 (seed-21 training split only)
+.venv/bin/python -m pytest -v tests/test_frequency_front.py # FQ-1..FQ-10
+.venv/bin/python scripts/learnability_search_fa.py         # validation-only search -> reports/learnability_selected_fa.json
+KANFAE_RUN_ID=revised_gate_fa .venv/bin/python -m pytest -v -s tests/test_learnability_fa.py   # fresh seed 41
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa.json \
+    --seeds 111,112,113,114,115 --tag _fa
+.venv/bin/python scripts/revised_gate_verdict.py           # -> reports/revised_gate_verdict.json (D61 rule)
+.venv/bin/python scripts/run_neural_synthetic.py           # refuses to run unless the verdict is CONFIRMED (D57)
+.venv/bin/python scripts/diag_fa_overfitting.py            # D65 (validation only)
+.venv/bin/python scripts/diag_r1_seeds.py                  # D66
+.venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3   # D62
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3
+### round 4 (2026-10-18): Revision 4b, pre-registered in D71 before these runs
+.venv/bin/python scripts/diag_overfit_curves.py            # D70 (seed-21 train/validation only)
+.venv/bin/python -m pytest -v tests/test_survival_regularisation.py   # HR-1..HR-3
+.venv/bin/python scripts/learnability_search_fa4b.py       # -> reports/learnability_selected_fa4b.json
+KANFAE_RUN_ID=revised_gate_fa4b .venv/bin/python -m pytest -v -s tests/test_learnability_fa4b.py   # fresh seed 61
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4b.json \
+    --seeds 121,122,123,124,125 --tag _fa4b
+.venv/bin/python scripts/revised_gate_verdict.py fa4b     # -> reports/revised_gate_verdict_fa4b.json (D71 rule)
+.venv/bin/python scripts/diag_r1_seeds.py --seeds 601,602,603,604,605,606,607,608,609,610 --out reports/r1a_fresh_seeds.jsonl
+.venv/bin/python scripts/diag_4b_ceiling.py               # D74
+.venv/bin/python scripts/diag_data_ceiling.py             # D75 (seed 21 validation)
+.venv/bin/python scripts/diag_data_ceiling_seeds.py       # D75 (fresh seeds 701-710)
+.venv/bin/python scripts/make_figures_round4.py && .venv/bin/python scripts/build_report_round4.py
+### round 5 (2026-10-18): Revision 4c, pre-registered in D81/D82 before these runs; all fits single-threaded (D79)
+OMP_NUM_THREADS=1 .venv/bin/python -m pytest -v tests/test_training_stability.py tests/test_ceiling.py   # RS, CEIL
+OMP_NUM_THREADS=1 .venv/bin/python scripts/learnability_search_fa4c.py        # Step 1 -> reports/learnability_selected_fa4c.json
+OMP_NUM_THREADS=1 KANFAE_RUN_ID=revised_gate_fa4c .venv/bin/python -m pytest -v -s tests/test_learnability_fa4c.py  # seed 81
+OMP_NUM_THREADS=1 .venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4c.json \
+    --seeds 131,132,133,134,135 --tag _fa4c --amended --threads 1
+.venv/bin/python scripts/revised_gate_verdict.py fa4c     # -> reports/revised_gate_verdict_fa4c.json (D82 rule)
+.venv/bin/python scripts/diag_4c_stability.py             # D83 diagnostics
+.venv/bin/python scripts/build_report_round5.py           # report revision 5 (all parts, per-round snapshots)
+### round 6 (2026-10-18): every run_logged command and the pytest session are single-threaded (D86)
+scripts/run_logged.sh bi_tests .venv/bin/python -m pytest -v tests/test_burn_in.py          # BI-2..BI-4
+scripts/run_logged.sh search_fa4d .venv/bin/python scripts/learnability_search_fa4d.py      # Step 1 (D87)
+### Step 2 would be: tests/test_learnability_fa4d.py (seed 92) and
+###   confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4d.json --seeds 141,142,143,144,145 \
+###   --tag _fa4d --amended --ceiling-margin 0.02 --threads 1 ; revised_gate_verdict.py fa4d   (not run: Step 1 failed)
+KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_suite_round6_rerun \
+    .venv/bin/python -m pytest -v -rA -s tests/                                          # final suite (D90)
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round6.py           # report revision 6
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
+.venv/bin/python scripts/build_report_round3.py
+### report (round 2 part + round 1 part)
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/aggregate_results.py
+.venv/bin/python scripts/make_figures.py && .venv/bin/python scripts/make_figures_round2.py
+.venv/bin/python scripts/build_report_round2.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py
+```
+
+Every executed command, with its exit code and timing, is in `reports/logs/commands.jsonl`. The full outputs
+are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execution_log.md`.
+
+
+
+# Parts B–G: historical records
+
+Part B (round 6), Part C (round 5), Part D (round 4), Part E (round 3), Part F (round 2) and Part G (round 1) are
+regenerated from the same records. Each part renders from the test records up to its own round's final suite run.
+Their numbers are unchanged history; their conclusions on R2 are superseded by Part A. Embedded living documents
+(audit, ledger, decision rows, reproducibility) show their current version.
+
+
+# Part B: round-6 report (2026-10-18), historical record
+
+<p class="small">Research prototype report, revision 6 · generated from saved records by
+<code>scripts/build_report_round6.py</code> · git <code>0d8c37a</code> (local branch
+<code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part B is round 6 (owner decisions D86).
+Parts C–G are the round-5 to round-1 reports, each regenerated from its own round's records.</p>
+
+## R6-0. Round-6 summary (plain English)
+
+### R6-0.1 Outcome
 
 | Step | Result |
 |---|---|
@@ -15,7 +577,7 @@ Parts B–F are the round-5 to round-1 reports, each regenerated from its own ro
 | **Step 3: KAN vs MLP and downstream** | **NOT RUN** (code guard) |
 | Housekeeping | Done: global single-threading in the run wrapper and the test session; R1.9 counts now ×5; the 4c gate kept as a strict-xfail record; gate seed 91 replaced by 92 because 91 had been generated in round 5 |
 
-### 0.2 What we learned
+### R6-0.2 What we learned
 
 1. **The survival side is now solved and stable.** Every candidate on every training seed reaches validation C
    0.84–0.85, the level of the data-attainable reference, with zero loss spikes.
@@ -31,7 +593,7 @@ Parts B–F are the round-5 to round-1 reports, each regenerated from its own ro
 4. **The 0.001 shortfall is not waived.** Relaxing a threshold after seeing the result would be a post-hoc change.
    The rule was applied as registered.
 
-### 0.3 Decision requested (nothing has been run)
+### R6-0.3 Decision requested (nothing has been run)
 
 The evidence points at the **representation**, not the stopping rule. Two clean options:
 
@@ -45,7 +607,7 @@ The evidence points at the **representation**, not the stopping rule. Two clean 
 
 H1 stays blocked either way until the MLP passes a pre-registered gate.
 
-### 0.4 Evidence, kept separate by kind
+### R6-0.4 Evidence, kept separate by kind
 
 | Kind | Status |
 |---|---|
@@ -151,7 +713,7 @@ With `min_epochs = 0`, the pre-change single-thread fit is reproduced exactly (B
 - **The decisive cell.** At lr 1e-3, training seed 1 (b 0.676, A 0.725) gives a probe mean of 0.779, short of 0.78
   by 0.001.
 - **Next lever:** the remaining gap is representational, so further progress must come from the representation
-  (capacity, or longer reconstruction training before the objective minimum), not from stopping (§0.3).
+  (capacity, or longer reconstruction training before the objective minimum), not from stopping (§R6-0.3).
 
 ## R6.5 All gate looks so far
 
@@ -319,7 +881,9 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
 | L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
 | L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
-| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **AWAITING OWNER DECISION** (or an explicit override for the closest 4d candidate) | `reports/learnability_search_fa4d.jsonl` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **AWAITING OWNER DECISION** | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
 
 
 ## R6.10 Reproducibility
@@ -402,6 +966,20 @@ KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_sui
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round6.py           # report revision 6
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -416,21 +994,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts B–F: historical records
+# Parts C–G: historical records
 
-Part B (round 5), Part C (round 4), Part D (round 3), Part E (round 2) and Part F (round 1) are regenerated from the
+Part C (round 5), Part D (round 4), Part E (round 3), Part F (round 2) and Part G (round 1) are regenerated from the
 same records. Each part renders from the test records up to its own round's final suite run. Their numbers are
 unchanged history; their conclusions on R2 are superseded by Part A. Embedded living documents (audit, ledger,
 decision rows, reproducibility) show their current version.
 
 
-# Part B: round-5 report (2026-10-18), historical record
+# Part C: round-5 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 5 · generated from saved records by
-<code>scripts/build_report_round5.py</code> · git <code>29ad9e7</code> (local branch
+<code>scripts/build_report_round5.py</code> · git <code>0d8c37a</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part B is round 5 (owner decisions D80).
-Parts C–F are the round-4, 3, 2 and 1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part C is round 5 (owner decisions D80).
+Parts D–G are the round-4, 3, 2 and 1 reports, each regenerated from its own round's records.</p>
 
 ## R5-0. Round-5 summary (plain English)
 
@@ -611,7 +1189,7 @@ The simulator is unchanged.
 | R2 (amended), concordance part | C 0.8421 ≥ min(C_oracle − 0.03 = 0.8608, C_ceiling − 0.015 = 0.8390) = 0.8390 (C_ceiling 0.8540) | PASS |
 | R2 (amended), probe part | mean 0.772 (≥ 0.78); ω 0.814 (≥ 0.80); a / b / A / ω = 0.896 / 0.582 / 0.798 / 0.814 | FAIL |
 | R2 overall | both parts required | FAIL |
-| R3 (unchanged) | aware [0.1147, 0.1135, 0.122] vs naive [0.1336, 0.138, 0.1425]; |C − C_R2| = 0.0104 ≤ 0.02 | PASS |
+| R3 (unchanged) | aware [0.1147, 0.1135, 0.122] vs naive [0.1336, 0.138, 0.1425]; \|C − C_R2\| = 0.0104 ≤ 0.02 | PASS |
 
 **Reproduction (D85).**
 - Re-running the gate file in the registered fully single-threaded environment reproduces every number exactly.
@@ -689,11 +1267,6 @@ of two confirmation seeds; their test splits are not touched.
 | D83 | Step-1 outcome and two disclosed diagnostics (2026-10-18) | ADOPTED | **Step 1 PASSED** (pre-registered D81 acceptance): selected `es_target = nll` with `fa_balance` and clipping 1.0 (Adam 3e-3); zero jumps and delivered validation NLL = minimum on seeds 0, 1, 2. **Disclosed tie:** at H3, NLL early stopping and `two_checkpoint` give *identical* risk predictions (both restore the epoch-329 state; validation C 0.8474); the registered tie-break kept the earlier candidate (NLL early stopping, latent probe 0.787) over two_checkpoint (latent from the objective state, probe 0.818). The stability seeds show the selected latent's probe is fragile (seed 1: mean 0.674, ω 0.481; seed 2: ω 0.742). The selection is kept as registered. **Diagnostics added after observing that early-stopped runs end before the D77 spike region (~epoch 1000+), informational only:** (i) D77-comparable full-budget runs (3000 epochs, no early stopping) of the 4b base and the selected configuration, reporting training-NLL jumps; (ii) the pre-registered thread-count spread (1, 2, 4 threads). Seed-21 train/validation only. | Integrity |
 | D84 | Step-2 outcome and test-suite housekeeping (2026-10-18) | ADOPTED | **Revision 4c NOT CONFIRMED** (`reports/revised_gate_verdict_fa4c.json`): seed 81: R1 original FAIL (σ̂ 0.565, reported), R1-A PASS (0.492), R2: concordance part PASS (C 0.8421 ≥ min(0.8608, 0.8540 − 0.015) = 0.8390) but probe part FAIL (mean 0.772 < 0.78; ω 0.814), R3 PASS; confirmations 131–135: 1/5. Step 3 not run (guard). **Diagnosis (train/validation of seeds 131 and 135 only):** NLL early stopping ends training at the survival optimum, epochs 91–430, before the latent learns b and A (probe b 0.57–0.67); on seed 135 the validation NLL dipped at epoch 91 and the whole model was undertrained (train C 0.806). Verdict-script fix: for 4c the recorded gate threshold is the amended one (0.8390), not oracle − 0.03. **Housekeeping (as D64/D76):** the 4b gate's R1 and R2 are strict xfail historical records; the 4c gate's single-threading is scoped to its module by a fixture (no side effects on other test files). Diagnostics D83: full-budget jumps 4b 12 vs 4c 0; thread-count spread 4c 0.0006. | Honest record |
 | D85 | Reproduction check of the 4c gate (2026-10-18) | ADOPTED | Inside `final_full_suite_round5` (environment `OMP_NUM_THREADS=3`; the module fixture pins torch to one thread but numpy's BLAS in preprocessing still used 3), the 4c gate gave C 0.8420, probe mean 0.762, ω 0.794 vs the registered standalone run's 0.8421 / 0.772 / 0.814. Re-running `tests/test_learnability_fa4c.py` in the registered environment (OMP/MKL/OpenBLAS = 1; run `gate_fa4c_reproduction`) reproduced every number exactly. **Reading:** concordance is numerically stable (±0.0001) but the latent probe at the early (NLL-optimal) stopping epoch moves by 0.01–0.02 under tiny numerical differences, enough to cross the ω threshold; consistent with the D84 diagnosis. R2 fails in both runs; the verdict is unchanged. | Reproducibility |
-| D86 | **Owner decisions, Round 6 (2026-10-18), and housekeeping** | ADOPTED (owner) | (1) Approve **Revision 4d** (L27): two-state stopping only, a burn-in `min_epochs` ∈ {300, 500}, lr ∈ {1e-3, 3e-3}, and multi-seed selection. (2) Step 2 on fresh seeds with R2's concordance margin 0.020 (0.015 reported side by side). (3) Step 3 only if confirmed. (4) Housekeeping, done: `scripts/run_logged.sh` exports `OMP_NUM_THREADS=MKL_NUM_THREADS=OPENBLAS_NUM_THREADS=1`; `tests/conftest.py` sets the same variables before any numeric import and pins loaded BLAS pools (threadpoolctl) and torch to one thread for the whole session (closes D85). The round-1 "Selected configurations" table (R1.9) reads a round-1 snapshot (`tables/r1_selected_configs.csv`): C-MAPSS counts ×5, not ×10. The 4c gate (seed 81) R1 and R2 are strict-xfail historical records (as D64/D76/D84). | Owner instruction |
-| D87 | **Pre-registration: Step 1, Revision 4d** (registered 2026-10-18, before any 4d fit) | ADOPTED | **Mechanism:** `min_epochs` burn-in: no early stopping before epoch min_epochs; validation-NLL-based selection (two_checkpoint risk state; head refit) only over epochs ≥ min_epochs. Tests BI-2..BI-4 pass; BI-1: with min_epochs = 0 the pre-change single-thread fit is reproduced exactly. **Search** (`scripts/learnability_search_fa4d.py`; seed-21 train/validation only; single-threaded): base = fa compact, 17 freqs, r 12, α 1, Adam, wd 1e-4, head_wd 1e-2, fa_balance, clip 1.0, joint run stopped on the objective (3000 / patience 100), H 32, hidden 64. **Candidates (full factorial, 8, in this order for ties):** es_mode {two_checkpoint, two_state_refit} × min_epochs {300, 500} × lr {3e-3, 1e-3}; single-state NLL stopping is not a candidate. **Every candidate on training seeds 0, 1, 2** (24 fits). **Eligible iff** on all 3 seeds zero training-NLL jumps > 0.2 after epoch 300, mean (over seeds) validation probe mean ≥ 0.80, every seed's probe mean ≥ 0.78, and every seed's ω probe ≥ 0.80. **Select** the eligible candidate with the highest mean validation C over seeds 0–2. **Step 1 PASSES iff an eligible candidate exists**; otherwise Step 1 FAILS, Step 2 is not run, and the failure is reported (no fallback). Information only: fae_linear and fae_kan with the selection (seed 0). | Owner decision D86 |
-| D88 | **Pre-registration: Step 2, Revision 4d gate and confirmation** (registered 2026-10-18, before any gate data are generated) | ADOPTED | **Seed check:** the owner-proposed gate seed 91 had been generated before (CEIL-2 in round 5: `SynthConfig(n=60, seed=91)`, i.e. the first 60 individuals of a seed-91 data set; no model was trained or evaluated on it). Following the owner's instruction to use never-generated seeds, the gate uses **seed 92** (verified never referenced); confirmation seeds **141–145** verified never used. `tests/test_learnability_fa4d.py` (runs only if Step 1 PASSED): **R1-A** gating (C ≥ C_oracle − 0.02; training-set profile σ̂ within ±0.05; original R1 reported); **R2** gating: (i) test C ≥ min(C_oracle − 0.03, C_ceiling − 0.020), with the 0.015 margin reported side by side; (ii) mean probe ≥ 0.78 and ω probe ≥ 0.80; **R3** unchanged. **Margin justification (owner):** C_ceiling applies the exact nonlinear risk formula 1.5·tanh(2b) − 0.8A² + 0.5·a·ω to noisy parameter estimates, whereas fae_mlp uses a linear AFT head wᵀz + b; a 0.020 margin matches R1's 0.020 margin for learning the risk mapping and accounts for the linear-head approximation gap seen on seeds 132–133 (−0.0198, −0.0209). **Confirmation:** seeds 141–145 (`confirm_learnability.py --amended --ceiling-margin 0.02 --threads 1`). **CONFIRMED iff** R1-A, R2 and R3 pass on seed 92 and R2 passes on ≥ 4 of 5 confirmation seeds (`revised_gate_verdict.py fa4d`). If confirmed: Step 3 as specified (H1, H2, H3, controls, AB1–AB8; KAN-FAE pruning with uncentred and centred scores and symbolic extraction; D31 check for D ≥ 6). | Owner decision D86 |
-| D89 | **Step-1 outcome, Revision 4d: FAILED** (2026-10-18) | ADOPTED | No candidate met the pre-registered multi-seed eligibility (D87); per the registered rule there is no fallback, so **Step 2 (gate seed 92, confirmations 141–145) and Step 3 were not run**, and seeds 92 and 141–145 remain unused. Closest: two_checkpoint, lr 1e-3, burn-in 300 or 500 (identical latents): zero jumps, mean probe 0.816 ≥ 0.80, minimum ω 0.813 ≥ 0.80, but **training seed 1's probe mean 0.779 < 0.78** (b 0.676, A 0.725). **Findings:** (i) mean validation C 0.842–0.849 for every candidate (survival side stable across seeds); (ii) within a learning rate, all stopping modes and burn-ins give *identical* latent probes (the latent comes from the joint-objective minimum, which these settings do not change), so the binding constraint is the representation's linear encoding of b and A, not the stopping rule; (iii) lr 1e-3 improves the latent over 3e-3 (minimum seed probe 0.753 → 0.779; minimum ω 0.666 → 0.813). The 0.001 shortfall is not waived: relaxing the threshold after seeing the result would be a post-hoc change. | Pre-registered rule applied as written |
-| D90 | **Reporting fixes after the round-6 suite** (2026-10-18) | ADOPTED | (i) `final_full_suite_round6` recorded 223 tests while pytest counted 224: the module-level skip of `tests/test_learnability_fa4d.py` (Step 1 failed, D89) produces no test items, so the `pytest_runtest_logreport` hook never saw it. `tests/conftest.py` gains a `pytest_collectreport` hook that records each skipped module once (phase `collect`). The suite was re-run as `final_full_suite_round6_rerun`, which is the round-6 final run; the first run stays in the records unchanged. No test, threshold or model code changed. (ii) The PDF contents list (depth 2, six parts) overflowed onto an almost empty page 2, which the blank-page check flagged; `reports/report.css` now sets the contents list in two columns so it fits on one page. The blank-page check is unchanged. | Exact totals; honest fix of the layout rather than of the check |
 
 ## R5.8 Tests
 
@@ -824,7 +1397,9 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
 | L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
 | L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
-| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **AWAITING OWNER DECISION** (or an explicit override for the closest 4d candidate) | `reports/learnability_search_fa4d.jsonl` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **AWAITING OWNER DECISION** | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
 
 
 ## R5.11 Reproducibility
@@ -907,6 +1482,20 @@ KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_sui
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round6.py           # report revision 6
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -921,21 +1510,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts C–F: historical records
+# Parts D–G: historical records
 
-Part C (round 4), Part D (round 3), Part E (round 2) and Part F (round 1) are regenerated from the same records. Each
+Part D (round 4), Part E (round 3), Part F (round 2) and Part G (round 1) are regenerated from the same records. Each
 part renders from the test records up to its own round's final suite run. Their numbers are unchanged history;
 their conclusions on R2 are superseded by Part A. Embedded living documents (audit, ledger, decision rows,
 reproducibility) show their current version.
 
 
-# Part C: round-4 report (2026-10-18), historical record
+# Part D: round-4 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 4 · generated from saved records by
-<code>scripts/build_report_round4.py</code> · git <code>29ad9e7</code> (local branch
+<code>scripts/build_report_round4.py</code> · git <code>0d8c37a</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part C is round 4 (owner decisions D67–D69).
-Parts D–F are the round-3, round-2 and round-1 reports, kept unchanged as historical records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part D is round 4 (owner decisions D67–D69).
+Parts E–G are the round-3, round-2 and round-1 reports, kept unchanged as historical records.</p>
 
 ## R4-0. Round-4 summary (plain English)
 
@@ -1080,7 +1669,7 @@ configurations whose validation probe ≥ 0.8, otherwise C + 0.1 × probe).
 | R1 (original, early-stopped σ̂; reported, not in the 4b rule) | C 0.8933 ≥ 0.8762; σ̂ 0.5808 (|σ̂ − 0.5| ≤ 0.05) | FAIL |
 | R1-A (amended D68: profile σ̂, training data, η fixed) | C 0.8933; profile σ̂ 0.4924 (|σ̂ − 0.5| ≤ 0.05) | PASS |
 | R2 | C 0.8372 vs ≥ 0.8662; probe a / b / A / ω = 0.893 / 0.592 / 0.661 / 0.874, mean 0.755 vs ≥ 0.8 | FAIL |
-| R3 | aware [0.0969, 0.1005, 0.0971] vs naive [0.1339, 0.1294, 0.1315]; |C − C_R2| = 0.0066 ≤ 0.02 | PASS |
+| R3 | aware [0.0969, 0.1005, 0.0971] vs naive [0.1339, 0.1294, 0.1315]; \|C − C_R2\| = 0.0066 ≤ 0.02 | PASS |
 
 **Fresh confirmations (seeds 121–125).**
 
@@ -1303,18 +1892,6 @@ planned as a separate, specified study?
 | D76 | Revision-4 gate kept as a historical record (2026-10-18) | ADOPTED | As D64 did for A3: `tests/test_learnability_fa.py` (seed 41, revision-4 selection read from its fixed selection file) keeps running; its R1 and R2 are marked `xfail(strict=True)` with the recorded outcome as the reason. The live gate is now `tests/test_learnability_fa4b.py` (revision 4b, seed 61); its failures are reported as failures. Nothing is relabelled as a pass. | Keeps the suite informative |
 | D77 | Observation: optimisation instability of the frequency-aware variants (2026-10-18; from the D70 curves) | ADOPTED | Over the full 3000-epoch curves (recorded every 5 epochs), training-NLL jumps > 0.2: A3 0; revision 4 (fa J17 r12) 13; compact 4; maximum training NLL after epoch 300: 1.38 / 8.06 / 16.55. The frequency-aware variants train unstably (loss spikes) at Adam lr 3e-3, so objective-based stopping can select a state just after a spike. Recorded as a finding and part of the recommendation (stability study: learning rate, gradient clipping, feature scaling); not acted on, per D67 (no repeated redesign). | Honest diagnosis |
 | D78 | Regression found by the round-4 full suite and fixed (2026-10-18) | ADOPTED | `final_full_suite_round4` failed M1[flat_ae], M2[flat_ae] and AUD-1[flat_ae] with `NameError: head_dropout`: the D71 text replacement that added the head-dropout module to `FunctionalAE.__init__` also matched `FlatAE.__init__`, which has no such argument. HR-1..HR-3 exercise only the functional AE, so they did not catch it. The stray lines were removed from `FlatAE` (outside 4b's scope; its forward pass was never changed). The affected tests were re-run, then the full suite (`final_full_suite_round4_rerun`). Both runs are kept in the test history. No gate, search or confirmation used `FlatAE`, so no result is affected. | Regression caught by the full suite |
-| D79 | **Determinism finding; explanation of the 0.0053 difference** (2026-10-18) | ADOPTED | The Revision-4b selection on seed-21 validation gave C 0.8337 in the D71 search (Table R4.3; 3 threads) and 0.8284 in the D74 diagnostic (Table R4.5a; 4 threads). Re-running the identical configuration and seed (`reports/logs/determinism_check_4b.log`): 3 threads gave **0.8246 and 0.8337 in two identical runs (non-deterministic)**; 4 threads 0.8284 twice; 2 threads 0.8207 twice; 1 thread 0.8222 twice. **Explanation:** multithreaded floating-point reductions differ by thread count (and, at 3 threads, between runs); the training instability (D77) amplifies these tiny differences into different trajectories. **Consequences:** (i) the ~0.009 run-to-run spread is as large as the configuration differences the Round-4 search selected on, so that selection may partly reflect numerical noise (disclosed; Round-4 records unchanged); (ii) from Round 5 on, every search, gate and confirmation fit runs **single-threaded** (`OMP_NUM_THREADS=1`, `torch.set_num_threads(1)`), which is reproducible; (iii) the spread across thread counts is reported as a stability diagnostic. | Reproducibility |
-| D80 | **Owner decisions, Round 5 (2026-10-18)** | ADOPTED (owner) | (1) Do not run a re-referenced gate before fixing the Revision-4b training instability and early-stopping conflict (D70, D73, D77). (2) **Step 1, Revision 4c** (pre-registered; seed-21 train/validation only): spectral-block scaling to ~1:1 with the A3 path using training statistics; Adam/AdamW lr {1e-3, 3e-3} with gradient-norm clipping 1.0 so that training-NLL jumps > 0.2 after epoch 300 drop to 0; a two-state stopping rule (latent/decoder at the joint-objective minimum, survival head at / refitted to the validation-NLL minimum); prospective selection rule: among candidates with validation probe mean ≥ 0.78 (≥ 0.80 under two-state stopping), maximise validation C. (3) **Step 2, prospective gate amendment** (simulator unchanged): R1-A gates (C ≥ oracle − 0.02, training-set profile σ̂ within ±0.05; original R1 reported side by side); R2: test C ≥ min(C_oracle − 0.03, C_ceiling − 0.015) **and** mean probe ≥ 0.78 **with** ω probe ≥ 0.80, where C_ceiling is the D75 per-individual parametric plug-in on the same test split; R3 unchanged; fresh gate seed 81, confirmation seeds 131–135; CONFIRMED iff R1-A, R2, R3 pass on 81 and R2 on ≥ 4/5 confirmations. (4) **Step 3 only if confirmed:** H1, H2, H3, controls, ablations AB1–AB8; KAN-FAE pruning with the uncentred reference score and the centred score (λ on validation); D31 matching check for D ≥ 6 before any real-data FAE run. (5) Reporting fixes (round-5 builder). Historical results, logs and xfail tests of Rounds 1–4 unchanged; commits local only. | Owner instruction |
-| D81 | **Pre-registration: Step 1, Revision 4c (training stability and stopping rule)** (registered 2026-10-18, before any 4c fit) | ADOPTED | **Mechanisms (all default off; RS-1: the defaults reproduce the pre-change single-thread fit exactly):** `fa_balance` (fixed spectral-path gain = RMS(A3 path)/RMS(spectral path) on the training data at initialisation; RS-2); `clip` (gradient-norm clipping; RS-3); `es_mode` = `two_checkpoint` (latent/decoder from the validation-objective minimum; risk predictions from the full-model state at the validation-NLL minimum; RS-4) or `two_state_refit` (joint run stopped on the objective, then the linear AFT head is re-initialised and refitted on the frozen latent with validation-NLL early stopping; frozen parts in eval mode; RS-5, which caught and fixed a BatchNorm-statistics leak in the first implementation). **Search** (`scripts/learnability_search_fa4c.py`; seed-21 train/validation only; single-threaded, D79; one factor at a time; ≤ 13 fits): base = the 4b selection; H1 scaling {off, balance}; H2 {unclipped reference, clip 1.0 with Adam 1e-3, Adam 3e-3, AdamW 1e-3, AdamW 3e-3}; H3 stopping {objective, nll, two_state_refit, two_checkpoint}; H4 seeds 1, 2; H5 information: fae_linear, fae_kan. **Selection rule (owner amendment D80):** among candidates with validation probe mean ≥ 0.78 (≥ 0.80 under two-state stopping) and, from H2 on, zero training-NLL jumps > 0.2 after epoch 300 (per-epoch differences), maximise validation C; otherwise C + 0.1 × probe among stable candidates. **Step-1 acceptance:** on seeds 0, 1, 2 the selected configuration has zero jumps and delivers risk predictions whose validation NLL is ≤ the minimum validation NLL of its joint run + 0.01. Otherwise Step 1 FAILS, Step 2 is not run, and the failure is reported. Reported diagnostic: the selected configuration's validation C at 1, 2 and 4 threads. | Owner decision D80 |
-| D82 | **Pre-registration: Step 2, amended gate and confirmation** (registered 2026-10-18, before any gate data are generated) | ADOPTED | Simulator unchanged. `tests/test_learnability_fa4c.py`: the original gate code, **fresh seed 81**, single-threaded, runs only if Step 1 PASSED. **R1** (original, reported) and **R1-A** (gating: C ≥ oracle − 0.02, training-set profile σ̂ within ±0.05). **R2 (amended):** test C ≥ min(C_oracle − 0.03, C_ceiling − 0.015), with C_ceiling = the per-individual parametric plug-in on the same test split (`kanfae.evaluation.ceiling`; CEIL-1..3, identical to D75), **and** mean probe R² ≥ 0.78 **and** ω probe ≥ 0.80. **R3** unchanged. **Confirmation:** fresh seeds 131–135 (`confirm_learnability.py --amended --threads 1`). **CONFIRMED iff** R1-A, R2 and R3 pass on seed 81 **and** R2 passes on ≥ 4 of 5 confirmation seeds (`revised_gate_verdict.py fa4c`). If confirmed: Step 3 as specified by the owner (H1, H2, H3, controls, AB1–AB8; KAN-FAE pruning with the uncentred and centred scores; D31 check for D ≥ 6 before any real-data FAE run). The guard reads `revised_gate_verdict_fa4c.json`. | Owner decision D80 |
-| D83 | Step-1 outcome and two disclosed diagnostics (2026-10-18) | ADOPTED | **Step 1 PASSED** (pre-registered D81 acceptance): selected `es_target = nll` with `fa_balance` and clipping 1.0 (Adam 3e-3); zero jumps and delivered validation NLL = minimum on seeds 0, 1, 2. **Disclosed tie:** at H3, NLL early stopping and `two_checkpoint` give *identical* risk predictions (both restore the epoch-329 state; validation C 0.8474); the registered tie-break kept the earlier candidate (NLL early stopping, latent probe 0.787) over two_checkpoint (latent from the objective state, probe 0.818). The stability seeds show the selected latent's probe is fragile (seed 1: mean 0.674, ω 0.481; seed 2: ω 0.742). The selection is kept as registered. **Diagnostics added after observing that early-stopped runs end before the D77 spike region (~epoch 1000+), informational only:** (i) D77-comparable full-budget runs (3000 epochs, no early stopping) of the 4b base and the selected configuration, reporting training-NLL jumps; (ii) the pre-registered thread-count spread (1, 2, 4 threads). Seed-21 train/validation only. | Integrity |
-| D84 | Step-2 outcome and test-suite housekeeping (2026-10-18) | ADOPTED | **Revision 4c NOT CONFIRMED** (`reports/revised_gate_verdict_fa4c.json`): seed 81: R1 original FAIL (σ̂ 0.565, reported), R1-A PASS (0.492), R2: concordance part PASS (C 0.8421 ≥ min(0.8608, 0.8540 − 0.015) = 0.8390) but probe part FAIL (mean 0.772 < 0.78; ω 0.814), R3 PASS; confirmations 131–135: 1/5. Step 3 not run (guard). **Diagnosis (train/validation of seeds 131 and 135 only):** NLL early stopping ends training at the survival optimum, epochs 91–430, before the latent learns b and A (probe b 0.57–0.67); on seed 135 the validation NLL dipped at epoch 91 and the whole model was undertrained (train C 0.806). Verdict-script fix: for 4c the recorded gate threshold is the amended one (0.8390), not oracle − 0.03. **Housekeeping (as D64/D76):** the 4b gate's R1 and R2 are strict xfail historical records; the 4c gate's single-threading is scoped to its module by a fixture (no side effects on other test files). Diagnostics D83: full-budget jumps 4b 12 vs 4c 0; thread-count spread 4c 0.0006. | Honest record |
-| D85 | Reproduction check of the 4c gate (2026-10-18) | ADOPTED | Inside `final_full_suite_round5` (environment `OMP_NUM_THREADS=3`; the module fixture pins torch to one thread but numpy's BLAS in preprocessing still used 3), the 4c gate gave C 0.8420, probe mean 0.762, ω 0.794 vs the registered standalone run's 0.8421 / 0.772 / 0.814. Re-running `tests/test_learnability_fa4c.py` in the registered environment (OMP/MKL/OpenBLAS = 1; run `gate_fa4c_reproduction`) reproduced every number exactly. **Reading:** concordance is numerically stable (±0.0001) but the latent probe at the early (NLL-optimal) stopping epoch moves by 0.01–0.02 under tiny numerical differences, enough to cross the ω threshold; consistent with the D84 diagnosis. R2 fails in both runs; the verdict is unchanged. | Reproducibility |
-| D86 | **Owner decisions, Round 6 (2026-10-18), and housekeeping** | ADOPTED (owner) | (1) Approve **Revision 4d** (L27): two-state stopping only, a burn-in `min_epochs` ∈ {300, 500}, lr ∈ {1e-3, 3e-3}, and multi-seed selection. (2) Step 2 on fresh seeds with R2's concordance margin 0.020 (0.015 reported side by side). (3) Step 3 only if confirmed. (4) Housekeeping, done: `scripts/run_logged.sh` exports `OMP_NUM_THREADS=MKL_NUM_THREADS=OPENBLAS_NUM_THREADS=1`; `tests/conftest.py` sets the same variables before any numeric import and pins loaded BLAS pools (threadpoolctl) and torch to one thread for the whole session (closes D85). The round-1 "Selected configurations" table (R1.9) reads a round-1 snapshot (`tables/r1_selected_configs.csv`): C-MAPSS counts ×5, not ×10. The 4c gate (seed 81) R1 and R2 are strict-xfail historical records (as D64/D76/D84). | Owner instruction |
-| D87 | **Pre-registration: Step 1, Revision 4d** (registered 2026-10-18, before any 4d fit) | ADOPTED | **Mechanism:** `min_epochs` burn-in: no early stopping before epoch min_epochs; validation-NLL-based selection (two_checkpoint risk state; head refit) only over epochs ≥ min_epochs. Tests BI-2..BI-4 pass; BI-1: with min_epochs = 0 the pre-change single-thread fit is reproduced exactly. **Search** (`scripts/learnability_search_fa4d.py`; seed-21 train/validation only; single-threaded): base = fa compact, 17 freqs, r 12, α 1, Adam, wd 1e-4, head_wd 1e-2, fa_balance, clip 1.0, joint run stopped on the objective (3000 / patience 100), H 32, hidden 64. **Candidates (full factorial, 8, in this order for ties):** es_mode {two_checkpoint, two_state_refit} × min_epochs {300, 500} × lr {3e-3, 1e-3}; single-state NLL stopping is not a candidate. **Every candidate on training seeds 0, 1, 2** (24 fits). **Eligible iff** on all 3 seeds zero training-NLL jumps > 0.2 after epoch 300, mean (over seeds) validation probe mean ≥ 0.80, every seed's probe mean ≥ 0.78, and every seed's ω probe ≥ 0.80. **Select** the eligible candidate with the highest mean validation C over seeds 0–2. **Step 1 PASSES iff an eligible candidate exists**; otherwise Step 1 FAILS, Step 2 is not run, and the failure is reported (no fallback). Information only: fae_linear and fae_kan with the selection (seed 0). | Owner decision D86 |
-| D88 | **Pre-registration: Step 2, Revision 4d gate and confirmation** (registered 2026-10-18, before any gate data are generated) | ADOPTED | **Seed check:** the owner-proposed gate seed 91 had been generated before (CEIL-2 in round 5: `SynthConfig(n=60, seed=91)`, i.e. the first 60 individuals of a seed-91 data set; no model was trained or evaluated on it). Following the owner's instruction to use never-generated seeds, the gate uses **seed 92** (verified never referenced); confirmation seeds **141–145** verified never used. `tests/test_learnability_fa4d.py` (runs only if Step 1 PASSED): **R1-A** gating (C ≥ C_oracle − 0.02; training-set profile σ̂ within ±0.05; original R1 reported); **R2** gating: (i) test C ≥ min(C_oracle − 0.03, C_ceiling − 0.020), with the 0.015 margin reported side by side; (ii) mean probe ≥ 0.78 and ω probe ≥ 0.80; **R3** unchanged. **Margin justification (owner):** C_ceiling applies the exact nonlinear risk formula 1.5·tanh(2b) − 0.8A² + 0.5·a·ω to noisy parameter estimates, whereas fae_mlp uses a linear AFT head wᵀz + b; a 0.020 margin matches R1's 0.020 margin for learning the risk mapping and accounts for the linear-head approximation gap seen on seeds 132–133 (−0.0198, −0.0209). **Confirmation:** seeds 141–145 (`confirm_learnability.py --amended --ceiling-margin 0.02 --threads 1`). **CONFIRMED iff** R1-A, R2 and R3 pass on seed 92 and R2 passes on ≥ 4 of 5 confirmation seeds (`revised_gate_verdict.py fa4d`). If confirmed: Step 3 as specified (H1, H2, H3, controls, AB1–AB8; KAN-FAE pruning with uncentred and centred scores and symbolic extraction; D31 check for D ≥ 6). | Owner decision D86 |
-| D89 | **Step-1 outcome, Revision 4d: FAILED** (2026-10-18) | ADOPTED | No candidate met the pre-registered multi-seed eligibility (D87); per the registered rule there is no fallback, so **Step 2 (gate seed 92, confirmations 141–145) and Step 3 were not run**, and seeds 92 and 141–145 remain unused. Closest: two_checkpoint, lr 1e-3, burn-in 300 or 500 (identical latents): zero jumps, mean probe 0.816 ≥ 0.80, minimum ω 0.813 ≥ 0.80, but **training seed 1's probe mean 0.779 < 0.78** (b 0.676, A 0.725). **Findings:** (i) mean validation C 0.842–0.849 for every candidate (survival side stable across seeds); (ii) within a learning rate, all stopping modes and burn-ins give *identical* latent probes (the latent comes from the joint-objective minimum, which these settings do not change), so the binding constraint is the representation's linear encoding of b and A, not the stopping rule; (iii) lr 1e-3 improves the latent over 3e-3 (minimum seed probe 0.753 → 0.779; minimum ω 0.666 → 0.813). The 0.001 shortfall is not waived: relaxing the threshold after seeing the result would be a post-hoc change. | Pre-registered rule applied as written |
-| D90 | **Reporting fixes after the round-6 suite** (2026-10-18) | ADOPTED | (i) `final_full_suite_round6` recorded 223 tests while pytest counted 224: the module-level skip of `tests/test_learnability_fa4d.py` (Step 1 failed, D89) produces no test items, so the `pytest_runtest_logreport` hook never saw it. `tests/conftest.py` gains a `pytest_collectreport` hook that records each skipped module once (phase `collect`). The suite was re-run as `final_full_suite_round6_rerun`, which is the round-6 final run; the first run stays in the records unchanged. No test, threshold or model code changed. (ii) The PDF contents list (depth 2, six parts) overflowed onto an almost empty page 2, which the blank-page check flagged; `reports/report.css` now sets the contents list in two columns so it fits on one page. The blank-page check is unchanged. | Exact totals; honest fix of the layout rather than of the check |
 
 ## R4.9 Tests
 
@@ -1416,7 +1993,9 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
 | L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
 | L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
-| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **AWAITING OWNER DECISION** (or an explicit override for the closest 4d candidate) | `reports/learnability_search_fa4d.jsonl` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **AWAITING OWNER DECISION** | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
 
 
 ## R4.11 Reproducibility
@@ -1499,6 +2078,20 @@ KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_sui
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round6.py           # report revision 6
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -1513,21 +2106,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts D–F: historical records (round 3, 2, 1)
+# Parts E–G: historical records (round 3, 2, 1)
 
-Part D (round 3), Part E (round 2) and Part F (round 1) are regenerated from the same records, with their sections
+Part E (round 3), Part F (round 2) and Part G (round 1) are regenerated from the same records, with their sections
 numbered R3.x, R2.x and R1.x. Their numbers are unchanged history; their conclusions on R2 are superseded by Part A.
 Test counts quoted in their summaries are those of each round's own final suite run. Embedded living documents
 (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part D: round-3 report (2026-10-17), historical record
+# Part E: round-3 report (2026-10-17), historical record
 
 <p class="small">Research prototype report, revision 3 · generated from saved records by
-<code>scripts/build_report_round3.py</code> · git <code>29ad9e7</code> (local branch
+<code>scripts/build_report_round3.py</code> · git <code>0d8c37a</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready</b> · <b>no novelty claim</b>. Part D is round 3 (owner decisions D57–D59, frequency-aware
-representation, revised gate). Parts E and F are the round-2 and round-1 reports, kept as historical records;
+publication-ready</b> · <b>no novelty claim</b>. Part E is round 3 (owner decisions D57–D59, frequency-aware
+representation, revised gate). Parts F and G are the round-2 and round-1 reports, kept as historical records;
 where they disagree, Part A supersedes them.</p>
 
 ## R3-0. Round-3 summary (plain English)
@@ -1660,7 +2253,7 @@ those of the original gate, unchanged.
 |---|---|---|
 | R1 (oracle-feature head; representation not involved) | C 0.8931 ≥ 0.8756; |σ̂ − 0.5| = 0.0707 ≤ 0.05 | FAIL |
 | R2 (fae_mlp end to end) | C 0.8189 vs ≥ 0.8656; probe a / b / A / ω = 0.819 / 0.459 / 0.721 / 0.865, mean 0.716 vs ≥ 0.8 | FAIL |
-| R3 (censoring awareness) | aware [0.1144, 0.1235, 0.112] vs naive [0.14, 0.1409, 0.1525]; |C − C_R2| = 0.0013 ≤ 0.02 | PASS |
+| R3 (censoring awareness) | aware [0.1144, 0.1235, 0.112] vs naive [0.14, 0.1409, 0.1525]; \|C − C_R2\| = 0.0013 ≤ 0.02 | PASS |
 
 **Fresh confirmations (seeds 111–115).**
 
@@ -1955,30 +2548,6 @@ By landmark band (mean over splits, the range over splits, and the mean engine-c
 | D64 | Historical gate test kept as a record (2026-10-17) | ADOPTED | `tests/test_learnability.py` (seed 21) is pinned to the A3 configuration it evaluated (explicitly, no longer via DEFAULTS), and its R2 test is marked `xfail(strict=True)` with the reason "A3 design failed R2 (D46/D53)". It still runs on every full suite and is reported as an expected failure; if it ever passed, strict xfail would flag it. DEFAULTS are not changed for revision 4: the revised gate and all neural analyses read the configuration from the selection file. | Keeps the suite informative without hiding the historical failure |
 | D65 | Overfitting diagnostic of the revision-4 front (registered 2026-10-17 after the D61 search, before reading the revised gate; validation data only) | ADOPTED | **Observation (D61 search):** every "fa" fit overfits (train C 0.87–0.91 vs validation 0.75–0.82; A3: 0.855 vs 0.844), stops early (≈ 500–1200 epochs) and loses the b and A probes, while ω becomes decodable (validation probe 0.83–0.89). **Hypothesis:** the 114–408-dimensional standardised spectral block feeding the front's linear map overfits with 1200 training individuals. **Diagnostic (seed-21 train/validation; not a selection, not a gate):** (i) compact summary `fa_compact` (f̂, peak log gap, e₀, e₁, e₂ per channel; 15 features; test FQ-10) with J = 17 and J = 33, r = 8 and 12; (ii) full J = 17 with r = 12 and the spectral map's weights decayed 10× more (wd 1e-3) — implemented as the global wd setting. Outcome recorded in `reports/diag_fa_overfitting.jsonl`. **Any configuration derived from this diagnostic is a new design revision (4b) and needs owner approval and a new pre-registered gate on fresh seeds before evaluation (D61).** | Diagnosis only |
 | D66 | R1 seed-sensitivity diagnostic (registered 2026-10-17, after the revised gate's R1 failed) | ADOPTED | Revised gate seed 41: R1 C 0.8931 (≥ 0.8756, passes) but σ̂ = 0.5707 (\|σ̂ − 0.5\| = 0.071 > 0.05). R1 uses the true parameters as inputs, so it does not involve the representation. **Diagnostic:** the identical R1 procedure on diagnostic seeds 501–510 (used nowhere else) plus 21 and 41, reporting the distribution of σ̂ and C − oracle, and (added after the first pass) the profile MLE of σ with the learned η held fixed. The R1 threshold is not changed; the outcome is reported as a property of the gate check. | Diagnosis only |
-| D67 | **Owner decision (2026-10-18): approve Revision 4b** | ADOPTED (owner) | Proceed with the compact 15-feature frequency-aware representation (D65) and a **targeted, scientifically justified** fix for the survival-model generalisation gap. Before any new gate evaluation: precise definition of the changes and hypotheses; pre-registration of architecture, search budget, acceptance criteria, fresh gate seed and independent confirmation seeds; selection on train/validation only; no tuning against the fresh gate or confirmation test sets; historical architecture, thresholds, failures and results unchanged. Overfitting diagnosed with train/validation curves and feature/latent diagnostics. Bounded search (regularisation, latent size, dropout where justified, survival-head regularisation, early stopping), one factor at a time. If 4b fails: report why and recommend the next scientific step; no repeated redesign to force a pass. The KAN-vs-MLP test stays blocked (code guard kept) until the conventional MLP passes the pre-registered revised gate. | Owner instruction |
-| D68 | **Owner decision (2026-10-18): prospective R1 amendment (R1-A)** | ADOPTED (owner) | The original R1 results are not erased or relabelled. The protocol is amended **prospectively** to separate optimisation convergence from parameter recovery. R1-A reports, side by side: (i) the original early-stopped check, unchanged; (ii) the profile maximum-likelihood σ̂ with the trained η held fixed, **estimated on training data only** (no gate-test or confirmation-test outcomes are used to estimate or tune σ). The tolerance \|σ̂ − 0.5\| ≤ 0.05 is unchanged. R1-A is run on fresh seeds. The two are different evaluation procedures; the original registered check is not claimed to have passed. | Owner instruction |
-| D69 | **Owner decision (2026-10-18): PBC endpoint** | ADOPTED (owner; provisional) | E2 (death or transplantation) remains the provisional primary endpoint and E1 a sensitivity analysis, explicitly provisional until the owner confirms with their professor. A brief scientific justification is prepared (`docs/pbc_endpoint_justification.md`). No competing-risk claims without a separately specified and tested analysis. | Owner instruction |
-| D70 | Overfitting diagnosis for Revision 4b (2026-10-18; seed-21 train/validation only) | ADOPTED | Per-epoch curves over the full 3000-epoch budget (`reports/diag_overfit_curves.json`). **A3:** the validation objective and the validation NLL reach their minima together (epochs 2987/2989); train/val C 0.855/0.844. **Revision 4 (fa) and compact:** the validation NLL reaches its minimum at epochs 363/356 and then **rises** (1.37 → 1.68; 1.22 → 1.35), while the reconstruction-dominated joint objective keeps falling until epochs 2285/2227, where early stopping selects; best validation C 0.826/0.846 at epochs 500/450 vs 0.808/0.823 at the end. **Latent:** in-sample vs validation probe R² nearly equal (compact: a 0.906/0.901, b 0.707/0.639, A 0.755/0.719, ω 0.887/0.876), i.e. the representation generalises; the overfitting is in the latent → η survival mapping. **Features:** the spectral path's output RMS (1.1–1.9) is 3–5× the A3 path's (0.38). **Targeted, justified fixes:** stop on the survival part (validation NLL), regularise the survival path (dropout between latent and head; head-specific weight decay), with global weight decay and latent size as secondary factors. | Diagnosis (owner D67) |
-| D71 | **Pre-registration: Revision 4b** (registered 2026-10-18, before any 4b fit) | ADOPTED | **Architecture:** compact frequency-aware front (`fa_compact`: f̂, peak log gap, e₀, e₁, e₂ per channel, 15 features; 17 frequencies) on the A3 front; new options `head_dropout` (dropout on z before the AFT head only; the decoder sees the undropped z) and `head_wd` (L2 on the head weights only); tests HR-1..HR-3 pass. **Hypotheses:** H4b-1 (primary): fae_mlp passes the revised gate on fresh seed 61 and ≥ 4/5 fresh confirmation seeds 121–125. H4b-2 (mechanism, descriptive): the selected configuration has a smaller train−validation C gap than the 4b base. **Search** (seed-21 train/validation only; one factor at a time; D41 selection rule; ≤ 13 fits + 2 information fits): base = compact, 17 freqs, r 12, α 1, Adam 3e-3, wd 1e-4, objective early stopping, 3000/100, H 32, hidden 64; G1 early-stopping target {objective, nll}; G2 head dropout {0, 0.1, 0.25}; G3 head weight decay {global, 1e-2, 1e-1}; G4 global weight decay {1e-4, 1e-3}; G5 latent r {8, 12, 16}; G6 seeds 1, 2; G7 information: fae_linear, fae_kan. **Gate** (`tests/test_learnability_fa4b.py`): original gate code and thresholds, fresh seed 61; R1 reported as registered **and** R1-A (D68). **Verdict:** CONFIRMED iff R1-A, R2 and R3 pass on seed 61 and ≥ 4 of 5 confirmations (seeds 121–125) pass; the original early-stopped R1 is reported side by side and is not part of the rule (owner amendment D68). No tuning on seed 61 or 121–125. **If confirmed:** pre-specified H1, H2, H3, CONTROLS (`run_neural_synthetic.py --selected reports/learnability_selected_fa4b.json`), then KAN-FAE pruning and symbolic extraction. **If not:** report why and recommend the next scientific step; no further redesign. | Owner decision D67 |
-| D72 | R1-A side-by-side evaluation on fresh seeds (registered 2026-10-18) | ADOPTED | Per D68: the original early-stopped R1 and R1-A (profile σ̂ on training data with the trained η fixed; same tolerance) on fresh seeds 601–610 (never used before), reported side by side (`reports/r1a_fresh_seeds.jsonl`). Seeds 21, 41 and 501–510 (D66) are reported as earlier, separate results; nothing is relabelled. | Owner decision D68 |
-| D73 | Documentation correction: wording of the D41 selection rule (2026-10-18) | ADOPTED | The round-2 report summarised the D41 rule as "a configuration passing both validation criteria is preferred". The registered rule (D41) and the code (`learnability_search.score`) select by validation C **among configurations meeting the probe criterion (≥ 0.8)**, and otherwise by C + 0.1 × probe. Found when the first 4b step (G1) selected objective early stopping (validation C 0.8247, probe 0.812) over NLL early stopping (C 0.8468, probe 0.794). The report text is corrected with a dated note; no rule, code or selection changed. | Accuracy of the record |
-| D74 | Revision 4b failure diagnosis: information ceiling of the latent (registered 2026-10-18, after the 4b verdict; seed-21 train/validation only; diagnosis, not selection) | ADOPTED | Question: does the 4b latent lack the risk information, or can the **linear** AFT head (η linear in z) not use it, given η = 1.5 tanh(2b) − 0.8A² + 0.5aω is nonlinear in the parameters? With the 4b selection (and A3 for reference) trained on seed 21 and its latent **frozen**: validation C of (i) a refitted linear Weibull AFT head on z; (ii) a small MLP AFT head on z (2 × 32 SiLU; early stopping on an internal 20% split of the training set, never on validation); (iii) the plug-in true risk function applied to linear-probe-decoded parameters; (iv) the oracle η. No configuration is selected or gated from this diagnostic; any follow-up design needs owner approval and a new pre-registration (D67). | Owner instruction: report why 4b failed and recommend the next step |
-| D75 | Data-information ceiling diagnostic (registered 2026-10-18, after D74; seed-21 train/validation only; diagnosis, not selection) | ADOPTED | D74 found that neither an MLP head nor the true risk function on probe-decoded parameters lifts the frozen latent above validation C ≈ 0.83–0.84. **Question:** is C ≥ oracle − 0.03 attainable from the *observations at all*? The oracle uses the true η, while the curves are 8–40 noisy samples with Gaussian-process noise on x₁. **Estimates of the ceiling** (true risk function applied to estimated parameters): (a) per-individual parametric estimates from the raw observations: a, b by least squares of x₁ on (1, t); A, ω by a grid-plus-refinement least-squares sinusoid fit to x₂ (ω ∈ [0.3, 2.5], phase free); (b) a flexible regressor (gradient boosting) for each parameter from the smoothed coefficients plus the compact spectral features, fitted on the training split; (c) a flexible model (gradient-boosted AFT-free risk score: boosting of the oracle η on inputs, trained on train) for reference. Validation C of each. Extension: the parametric ceiling (a), which fits nothing across individuals, is also computed on all 2000 individuals of 10 never-used seeds 701–710 (`reports/diag_data_ceiling_seeds.jsonl`). If even (a)–(c) fall short of oracle − 0.03, the R2 concordance criterion is not attainable from these data with any representation, and the next scientific step concerns the gate's reference point, not the architecture. | Informs the recommendation (D67) |
-| D76 | Revision-4 gate kept as a historical record (2026-10-18) | ADOPTED | As D64 did for A3: `tests/test_learnability_fa.py` (seed 41, revision-4 selection read from its fixed selection file) keeps running; its R1 and R2 are marked `xfail(strict=True)` with the recorded outcome as the reason. The live gate is now `tests/test_learnability_fa4b.py` (revision 4b, seed 61); its failures are reported as failures. Nothing is relabelled as a pass. | Keeps the suite informative |
-| D77 | Observation: optimisation instability of the frequency-aware variants (2026-10-18; from the D70 curves) | ADOPTED | Over the full 3000-epoch curves (recorded every 5 epochs), training-NLL jumps > 0.2: A3 0; revision 4 (fa J17 r12) 13; compact 4; maximum training NLL after epoch 300: 1.38 / 8.06 / 16.55. The frequency-aware variants train unstably (loss spikes) at Adam lr 3e-3, so objective-based stopping can select a state just after a spike. Recorded as a finding and part of the recommendation (stability study: learning rate, gradient clipping, feature scaling); not acted on, per D67 (no repeated redesign). | Honest diagnosis |
-| D78 | Regression found by the round-4 full suite and fixed (2026-10-18) | ADOPTED | `final_full_suite_round4` failed M1[flat_ae], M2[flat_ae] and AUD-1[flat_ae] with `NameError: head_dropout`: the D71 text replacement that added the head-dropout module to `FunctionalAE.__init__` also matched `FlatAE.__init__`, which has no such argument. HR-1..HR-3 exercise only the functional AE, so they did not catch it. The stray lines were removed from `FlatAE` (outside 4b's scope; its forward pass was never changed). The affected tests were re-run, then the full suite (`final_full_suite_round4_rerun`). Both runs are kept in the test history. No gate, search or confirmation used `FlatAE`, so no result is affected. | Regression caught by the full suite |
-| D79 | **Determinism finding; explanation of the 0.0053 difference** (2026-10-18) | ADOPTED | The Revision-4b selection on seed-21 validation gave C 0.8337 in the D71 search (Table R4.3; 3 threads) and 0.8284 in the D74 diagnostic (Table R4.5a; 4 threads). Re-running the identical configuration and seed (`reports/logs/determinism_check_4b.log`): 3 threads gave **0.8246 and 0.8337 in two identical runs (non-deterministic)**; 4 threads 0.8284 twice; 2 threads 0.8207 twice; 1 thread 0.8222 twice. **Explanation:** multithreaded floating-point reductions differ by thread count (and, at 3 threads, between runs); the training instability (D77) amplifies these tiny differences into different trajectories. **Consequences:** (i) the ~0.009 run-to-run spread is as large as the configuration differences the Round-4 search selected on, so that selection may partly reflect numerical noise (disclosed; Round-4 records unchanged); (ii) from Round 5 on, every search, gate and confirmation fit runs **single-threaded** (`OMP_NUM_THREADS=1`, `torch.set_num_threads(1)`), which is reproducible; (iii) the spread across thread counts is reported as a stability diagnostic. | Reproducibility |
-| D80 | **Owner decisions, Round 5 (2026-10-18)** | ADOPTED (owner) | (1) Do not run a re-referenced gate before fixing the Revision-4b training instability and early-stopping conflict (D70, D73, D77). (2) **Step 1, Revision 4c** (pre-registered; seed-21 train/validation only): spectral-block scaling to ~1:1 with the A3 path using training statistics; Adam/AdamW lr {1e-3, 3e-3} with gradient-norm clipping 1.0 so that training-NLL jumps > 0.2 after epoch 300 drop to 0; a two-state stopping rule (latent/decoder at the joint-objective minimum, survival head at / refitted to the validation-NLL minimum); prospective selection rule: among candidates with validation probe mean ≥ 0.78 (≥ 0.80 under two-state stopping), maximise validation C. (3) **Step 2, prospective gate amendment** (simulator unchanged): R1-A gates (C ≥ oracle − 0.02, training-set profile σ̂ within ±0.05; original R1 reported side by side); R2: test C ≥ min(C_oracle − 0.03, C_ceiling − 0.015) **and** mean probe ≥ 0.78 **with** ω probe ≥ 0.80, where C_ceiling is the D75 per-individual parametric plug-in on the same test split; R3 unchanged; fresh gate seed 81, confirmation seeds 131–135; CONFIRMED iff R1-A, R2, R3 pass on 81 and R2 on ≥ 4/5 confirmations. (4) **Step 3 only if confirmed:** H1, H2, H3, controls, ablations AB1–AB8; KAN-FAE pruning with the uncentred reference score and the centred score (λ on validation); D31 matching check for D ≥ 6 before any real-data FAE run. (5) Reporting fixes (round-5 builder). Historical results, logs and xfail tests of Rounds 1–4 unchanged; commits local only. | Owner instruction |
-| D81 | **Pre-registration: Step 1, Revision 4c (training stability and stopping rule)** (registered 2026-10-18, before any 4c fit) | ADOPTED | **Mechanisms (all default off; RS-1: the defaults reproduce the pre-change single-thread fit exactly):** `fa_balance` (fixed spectral-path gain = RMS(A3 path)/RMS(spectral path) on the training data at initialisation; RS-2); `clip` (gradient-norm clipping; RS-3); `es_mode` = `two_checkpoint` (latent/decoder from the validation-objective minimum; risk predictions from the full-model state at the validation-NLL minimum; RS-4) or `two_state_refit` (joint run stopped on the objective, then the linear AFT head is re-initialised and refitted on the frozen latent with validation-NLL early stopping; frozen parts in eval mode; RS-5, which caught and fixed a BatchNorm-statistics leak in the first implementation). **Search** (`scripts/learnability_search_fa4c.py`; seed-21 train/validation only; single-threaded, D79; one factor at a time; ≤ 13 fits): base = the 4b selection; H1 scaling {off, balance}; H2 {unclipped reference, clip 1.0 with Adam 1e-3, Adam 3e-3, AdamW 1e-3, AdamW 3e-3}; H3 stopping {objective, nll, two_state_refit, two_checkpoint}; H4 seeds 1, 2; H5 information: fae_linear, fae_kan. **Selection rule (owner amendment D80):** among candidates with validation probe mean ≥ 0.78 (≥ 0.80 under two-state stopping) and, from H2 on, zero training-NLL jumps > 0.2 after epoch 300 (per-epoch differences), maximise validation C; otherwise C + 0.1 × probe among stable candidates. **Step-1 acceptance:** on seeds 0, 1, 2 the selected configuration has zero jumps and delivers risk predictions whose validation NLL is ≤ the minimum validation NLL of its joint run + 0.01. Otherwise Step 1 FAILS, Step 2 is not run, and the failure is reported. Reported diagnostic: the selected configuration's validation C at 1, 2 and 4 threads. | Owner decision D80 |
-| D82 | **Pre-registration: Step 2, amended gate and confirmation** (registered 2026-10-18, before any gate data are generated) | ADOPTED | Simulator unchanged. `tests/test_learnability_fa4c.py`: the original gate code, **fresh seed 81**, single-threaded, runs only if Step 1 PASSED. **R1** (original, reported) and **R1-A** (gating: C ≥ oracle − 0.02, training-set profile σ̂ within ±0.05). **R2 (amended):** test C ≥ min(C_oracle − 0.03, C_ceiling − 0.015), with C_ceiling = the per-individual parametric plug-in on the same test split (`kanfae.evaluation.ceiling`; CEIL-1..3, identical to D75), **and** mean probe R² ≥ 0.78 **and** ω probe ≥ 0.80. **R3** unchanged. **Confirmation:** fresh seeds 131–135 (`confirm_learnability.py --amended --threads 1`). **CONFIRMED iff** R1-A, R2 and R3 pass on seed 81 **and** R2 passes on ≥ 4 of 5 confirmation seeds (`revised_gate_verdict.py fa4c`). If confirmed: Step 3 as specified by the owner (H1, H2, H3, controls, AB1–AB8; KAN-FAE pruning with the uncentred and centred scores; D31 check for D ≥ 6 before any real-data FAE run). The guard reads `revised_gate_verdict_fa4c.json`. | Owner decision D80 |
-| D83 | Step-1 outcome and two disclosed diagnostics (2026-10-18) | ADOPTED | **Step 1 PASSED** (pre-registered D81 acceptance): selected `es_target = nll` with `fa_balance` and clipping 1.0 (Adam 3e-3); zero jumps and delivered validation NLL = minimum on seeds 0, 1, 2. **Disclosed tie:** at H3, NLL early stopping and `two_checkpoint` give *identical* risk predictions (both restore the epoch-329 state; validation C 0.8474); the registered tie-break kept the earlier candidate (NLL early stopping, latent probe 0.787) over two_checkpoint (latent from the objective state, probe 0.818). The stability seeds show the selected latent's probe is fragile (seed 1: mean 0.674, ω 0.481; seed 2: ω 0.742). The selection is kept as registered. **Diagnostics added after observing that early-stopped runs end before the D77 spike region (~epoch 1000+), informational only:** (i) D77-comparable full-budget runs (3000 epochs, no early stopping) of the 4b base and the selected configuration, reporting training-NLL jumps; (ii) the pre-registered thread-count spread (1, 2, 4 threads). Seed-21 train/validation only. | Integrity |
-| D84 | Step-2 outcome and test-suite housekeeping (2026-10-18) | ADOPTED | **Revision 4c NOT CONFIRMED** (`reports/revised_gate_verdict_fa4c.json`): seed 81: R1 original FAIL (σ̂ 0.565, reported), R1-A PASS (0.492), R2: concordance part PASS (C 0.8421 ≥ min(0.8608, 0.8540 − 0.015) = 0.8390) but probe part FAIL (mean 0.772 < 0.78; ω 0.814), R3 PASS; confirmations 131–135: 1/5. Step 3 not run (guard). **Diagnosis (train/validation of seeds 131 and 135 only):** NLL early stopping ends training at the survival optimum, epochs 91–430, before the latent learns b and A (probe b 0.57–0.67); on seed 135 the validation NLL dipped at epoch 91 and the whole model was undertrained (train C 0.806). Verdict-script fix: for 4c the recorded gate threshold is the amended one (0.8390), not oracle − 0.03. **Housekeeping (as D64/D76):** the 4b gate's R1 and R2 are strict xfail historical records; the 4c gate's single-threading is scoped to its module by a fixture (no side effects on other test files). Diagnostics D83: full-budget jumps 4b 12 vs 4c 0; thread-count spread 4c 0.0006. | Honest record |
-| D85 | Reproduction check of the 4c gate (2026-10-18) | ADOPTED | Inside `final_full_suite_round5` (environment `OMP_NUM_THREADS=3`; the module fixture pins torch to one thread but numpy's BLAS in preprocessing still used 3), the 4c gate gave C 0.8420, probe mean 0.762, ω 0.794 vs the registered standalone run's 0.8421 / 0.772 / 0.814. Re-running `tests/test_learnability_fa4c.py` in the registered environment (OMP/MKL/OpenBLAS = 1; run `gate_fa4c_reproduction`) reproduced every number exactly. **Reading:** concordance is numerically stable (±0.0001) but the latent probe at the early (NLL-optimal) stopping epoch moves by 0.01–0.02 under tiny numerical differences, enough to cross the ω threshold; consistent with the D84 diagnosis. R2 fails in both runs; the verdict is unchanged. | Reproducibility |
-| D86 | **Owner decisions, Round 6 (2026-10-18), and housekeeping** | ADOPTED (owner) | (1) Approve **Revision 4d** (L27): two-state stopping only, a burn-in `min_epochs` ∈ {300, 500}, lr ∈ {1e-3, 3e-3}, and multi-seed selection. (2) Step 2 on fresh seeds with R2's concordance margin 0.020 (0.015 reported side by side). (3) Step 3 only if confirmed. (4) Housekeeping, done: `scripts/run_logged.sh` exports `OMP_NUM_THREADS=MKL_NUM_THREADS=OPENBLAS_NUM_THREADS=1`; `tests/conftest.py` sets the same variables before any numeric import and pins loaded BLAS pools (threadpoolctl) and torch to one thread for the whole session (closes D85). The round-1 "Selected configurations" table (R1.9) reads a round-1 snapshot (`tables/r1_selected_configs.csv`): C-MAPSS counts ×5, not ×10. The 4c gate (seed 81) R1 and R2 are strict-xfail historical records (as D64/D76/D84). | Owner instruction |
-| D87 | **Pre-registration: Step 1, Revision 4d** (registered 2026-10-18, before any 4d fit) | ADOPTED | **Mechanism:** `min_epochs` burn-in: no early stopping before epoch min_epochs; validation-NLL-based selection (two_checkpoint risk state; head refit) only over epochs ≥ min_epochs. Tests BI-2..BI-4 pass; BI-1: with min_epochs = 0 the pre-change single-thread fit is reproduced exactly. **Search** (`scripts/learnability_search_fa4d.py`; seed-21 train/validation only; single-threaded): base = fa compact, 17 freqs, r 12, α 1, Adam, wd 1e-4, head_wd 1e-2, fa_balance, clip 1.0, joint run stopped on the objective (3000 / patience 100), H 32, hidden 64. **Candidates (full factorial, 8, in this order for ties):** es_mode {two_checkpoint, two_state_refit} × min_epochs {300, 500} × lr {3e-3, 1e-3}; single-state NLL stopping is not a candidate. **Every candidate on training seeds 0, 1, 2** (24 fits). **Eligible iff** on all 3 seeds zero training-NLL jumps > 0.2 after epoch 300, mean (over seeds) validation probe mean ≥ 0.80, every seed's probe mean ≥ 0.78, and every seed's ω probe ≥ 0.80. **Select** the eligible candidate with the highest mean validation C over seeds 0–2. **Step 1 PASSES iff an eligible candidate exists**; otherwise Step 1 FAILS, Step 2 is not run, and the failure is reported (no fallback). Information only: fae_linear and fae_kan with the selection (seed 0). | Owner decision D86 |
-| D88 | **Pre-registration: Step 2, Revision 4d gate and confirmation** (registered 2026-10-18, before any gate data are generated) | ADOPTED | **Seed check:** the owner-proposed gate seed 91 had been generated before (CEIL-2 in round 5: `SynthConfig(n=60, seed=91)`, i.e. the first 60 individuals of a seed-91 data set; no model was trained or evaluated on it). Following the owner's instruction to use never-generated seeds, the gate uses **seed 92** (verified never referenced); confirmation seeds **141–145** verified never used. `tests/test_learnability_fa4d.py` (runs only if Step 1 PASSED): **R1-A** gating (C ≥ C_oracle − 0.02; training-set profile σ̂ within ±0.05; original R1 reported); **R2** gating: (i) test C ≥ min(C_oracle − 0.03, C_ceiling − 0.020), with the 0.015 margin reported side by side; (ii) mean probe ≥ 0.78 and ω probe ≥ 0.80; **R3** unchanged. **Margin justification (owner):** C_ceiling applies the exact nonlinear risk formula 1.5·tanh(2b) − 0.8A² + 0.5·a·ω to noisy parameter estimates, whereas fae_mlp uses a linear AFT head wᵀz + b; a 0.020 margin matches R1's 0.020 margin for learning the risk mapping and accounts for the linear-head approximation gap seen on seeds 132–133 (−0.0198, −0.0209). **Confirmation:** seeds 141–145 (`confirm_learnability.py --amended --ceiling-margin 0.02 --threads 1`). **CONFIRMED iff** R1-A, R2 and R3 pass on seed 92 and R2 passes on ≥ 4 of 5 confirmation seeds (`revised_gate_verdict.py fa4d`). If confirmed: Step 3 as specified (H1, H2, H3, controls, AB1–AB8; KAN-FAE pruning with uncentred and centred scores and symbolic extraction; D31 check for D ≥ 6). | Owner decision D86 |
-| D89 | **Step-1 outcome, Revision 4d: FAILED** (2026-10-18) | ADOPTED | No candidate met the pre-registered multi-seed eligibility (D87); per the registered rule there is no fallback, so **Step 2 (gate seed 92, confirmations 141–145) and Step 3 were not run**, and seeds 92 and 141–145 remain unused. Closest: two_checkpoint, lr 1e-3, burn-in 300 or 500 (identical latents): zero jumps, mean probe 0.816 ≥ 0.80, minimum ω 0.813 ≥ 0.80, but **training seed 1's probe mean 0.779 < 0.78** (b 0.676, A 0.725). **Findings:** (i) mean validation C 0.842–0.849 for every candidate (survival side stable across seeds); (ii) within a learning rate, all stopping modes and burn-ins give *identical* latent probes (the latent comes from the joint-objective minimum, which these settings do not change), so the binding constraint is the representation's linear encoding of b and A, not the stopping rule; (iii) lr 1e-3 improves the latent over 3e-3 (minimum seed probe 0.753 → 0.779; minimum ω 0.666 → 0.813). The 0.001 shortfall is not waived: relaxing the threshold after seeing the result would be a post-hoc change. | Pre-registered rule applied as written |
-| D90 | **Reporting fixes after the round-6 suite** (2026-10-18) | ADOPTED | (i) `final_full_suite_round6` recorded 223 tests while pytest counted 224: the module-level skip of `tests/test_learnability_fa4d.py` (Step 1 failed, D89) produces no test items, so the `pytest_runtest_logreport` hook never saw it. `tests/conftest.py` gains a `pytest_collectreport` hook that records each skipped module once (phase `collect`). The suite was re-run as `final_full_suite_round6_rerun`, which is the round-6 final run; the first run stays in the records unchanged. No test, threshold or model code changed. (ii) The PDF contents list (depth 2, six parts) overflowed onto an almost empty page 2, which the blank-page check flagged; `reports/report.css` now sets the contents list in two columns so it fits on one page. The blank-page check is unchanged. | Exact totals; honest fix of the layout rather than of the check |
 
 ## R3.8 Tests
 
@@ -2134,7 +2703,9 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
 | L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
 | L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
-| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **AWAITING OWNER DECISION** (or an explicit override for the closest 4d candidate) | `reports/learnability_search_fa4d.jsonl` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **AWAITING OWNER DECISION** | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
 
 
 ## R3.11 Reproducibility
@@ -2217,6 +2788,20 @@ KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_sui
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round6.py           # report revision 6
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -2231,21 +2816,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts E and F: historical records (round 2, round 1)
+# Parts F and G: historical records (round 2, round 1)
 
-In this revision, Part E is the round-2 report and Part F, nested at its end, is the round-1 report. Both are regenerated from the
+In this revision, Part F is the round-2 report and Part G, nested at its end, is the round-1 report. Both are regenerated from the
 same records, with their sections renumbered R2.x and R1.x. Their conclusions on R2 are superseded by Part A; their
 tables and numbers are unchanged history. Test counts quoted in their summaries are those of each round's own final
 full-suite run. Embedded living documents (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part E: round-2 report (2026-10-17), historical record
+# Part F: round-2 report (2026-10-17), historical record
 
 <p class="small">Research prototype report, revision 2 · generated from saved records by
-<code>scripts/build_report_round2.py</code> · git <code>29ad9e7</code> (local branch
+<code>scripts/build_report_round2.py</code> · git <code>0d8c37a</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready</b> · <b>no novelty claim</b> (see I.3). Part E (sections R2.x) covers round 2 (reference-based audit, failure
-recovery, symbolic extraction). Part F (sections R1.x) is the round-1 report, kept as the historical record; where the two
+publication-ready</b> · <b>no novelty claim</b> (see I.3). Part F (sections R2.x) covers round 2 (reference-based audit, failure
+recovery, symbolic extraction). Part G (sections R1.x) is the round-1 report, kept as the historical record; where the two
 disagree, Part I supersedes it.</p>
 
 ## R2-0. Final summary (plain English)
@@ -3046,7 +3631,9 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
 | L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
 | L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
-| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **AWAITING OWNER DECISION** (or an explicit override for the closest 4d candidate) | `reports/learnability_search_fa4d.jsonl` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **AWAITING OWNER DECISION** | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
 
 
 ## R2.13 Decision log, round 2 (D38–D54)
@@ -3072,40 +3659,6 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | D54 | Pruning-threshold diagnostic (registered before running, 2026-10-17) | ADOPTED | Observation: at the reference threshold θ = 1e-2 no edge was pruned in any KAN-AFT fit (synthetic or PBC), including the true null covariate z₄. Diagnostic only (no model selection, no re-reporting of test metrics): synthetic seeds 201–203, parametric loss, λ ∈ {0, 1e-3, 1e-2, 1e-1}; record each first-layer edge's L1 score (mean \|φ\| over training inputs, the quantity thresholded by `prune_edges`), and report the smallest θ that would remove z₄ and whether any true edge would be removed at that θ. θ = 1e-2 stays the reported setting (from the references). | Explains the before/after pruning result; no threshold is changed |
 | D55 | Correction to the D54 observation (2026-10-17) | ADOPTED | D54 stated that no edge was pruned in any KAN-AFT fit. The records show **one** pruning event in 22 fits: synthetic seed 203, IPCW loss, λ = 1e-2 (selected on validation), which removed exactly the true null edge z₄ (`reports/kanaft_symbolic.jsonl`). The D54 diagnostic and its conclusion (the offset-inclusive score and the scale dependence of θ) are unaffected. | Accuracy of the record |
 | D56 | Unit-test regressions after D45 and lock-file evidence (2026-10-17) | ADOPTED | **My oversight:** the D45 change of DEFAULTS (r 4 → 8, front → tspline) was not followed by a full unit-test run. The final full-suite run (`final_full_suite_round2_rerun`) found 6 regressions besides the expected R2 failure: M1 (5 models) asserted a hard-coded latent width of 4, and M3 called `kan_match` without `r` although its comment says matching uses the current defaults (analytic 5090 vs instantiated 5484 parameters). Both tests now read `DEFAULTS["r"]` and `DEFAULTS["kan_grid"]`; no tolerance changed; `tests/test_models.py`: 28 passed, 1 documented skip. **E-5:** the lock file was extended for PySR (D43) but the fresh-venv reproduction evidence dated from Stage A, so E-5 failed on stale evidence. `scripts/verify_env.sh` was re-run (rebuild from the lock in a scratch venv); its fresh evidence decides E-5. A full-suite run interrupted by a worker restart (`final_full_suite_round2`) is kept as a partial record. | Honest record of a process gap; tests corrected to their stated intent |
-| D57 | **Owner decision (2026-10-17): R2 recovery by option (c)** | ADOPTED (owner) | Develop a new frequency-aware functional representation (multi-scale spectral and derivative-energy features; precise mathematical definition; numerical tests) that keeps the original scientific question and retains oscillation-frequency information without relying on phase. Before the new gate: document and pre-register the architecture, hypotheses, search budget and criteria. **Original thresholds kept** (no amendment without owner approval). Model selection on train/validation only; final evaluation on genuinely fresh test data and independent confirmation seeds. All old results are kept; the report states that the new design was motivated by the earlier failures. **No KAN-vs-MLP test until the conventional MLP passes the revised gate.** If the new representation fails, diagnose and report honestly. | Owner instruction |
-| D58 | **Owner decision (2026-10-17): PBC endpoint** | ADOPTED (owner; provisional) | **E2 (death or transplantation; transplant-free survival) is the provisional primary endpoint; E1 (death, transplant censored) is a sensitivity analysis.** Clinical interpretation and censoring assumptions are stated in docs/design.md §9.1. No definitive clinical endpoint is claimed until confirmed with the owner's professor. E3 (competing risks) remains future work unless a properly specified competing-risks analysis is justified. Supersedes D9-R's "pending" status. | Owner instruction |
-| D59 | **Owner decision (2026-10-17): C-MAPSS landmark design** | ADOPTED (owner) | **Option B (trailing windows) is the primary RUL benchmark; Option A is secondary.** Metrics are reported separately by landmark band, and the correlation between windows from the same engine is accounted for (engine-cluster bootstrap confidence intervals and engine-weighted metrics, D62). RUL evaluation stays separate from genuine right-censored survival evaluation (PBC). Supersedes D3b-R's "pending" status. | Owner instruction |
-| D60 | Frequency-information diagnostic (2026-10-17; seed-21 training split only) | ADOPTED | Before choosing the representation: is ω recoverable phase-invariantly from what the models see? On the 12-basis smoothed x₂ curves: linear probe of ω on log fixed-Fourier power R² 0.94 (but phase explains 19% of its estimate error); derivative-energy ratio 0.84 (phase explains 23%); quadrature-pair projection spectrum argmax estimate correlation 0.94 (phase explains 0.5%). On the noiseless truth: 0.99 / 0.93 / 1.00. **Conclusion:** the smoother retains ω; the earlier fronts did not expose it in a phase-invariant, linearly usable form (`reports/diag_frequency_information.json`). | Motivates D61 |
-| D61 | **Pre-registration: revision-4 frequency-aware representation, search, revised gate and confirmation** (registered 2026-10-17, before any search fit) | ADOPTED | **Architecture:** front "fa" (docs/design.md §3.2c): A3 tensor spline + standardised quadrature-pair projection spectrum R and log-gap L (33 log-spaced frequencies on [0.25, 4]), derivative energies e₀, e₁, e₂ and soft frequency f̂; options log Fourier power ("fourier") and half-window spectra ("windows"). Implemented and tested (FQ-1..FQ-9 pass). **Hypothesis HF:** with "fa", the conventional fae_mlp passes R2 on fresh gate data and on ≥ 4 of 5 fresh confirmation seeds. **Search (validation only; seed 21 train/validation; budget ≤ 13 fits + 2 information fits; same selection rule as D41):** base = the A3 selection (r 8, α 1, Adam 3e-3, objective early stopping, 3000 epochs / patience 100, H 32, hidden 64). F1 front {tspline (A3, reference only), fa} (the selection is restricted to "fa" variants: A3 already failed the gate); F2 multi-scale options {fa, fa + fourier, fa + windows}; F3 frequency-grid density J ∈ {17, 33}; F4 latent r ∈ {8, 12}; F5 α ∈ {1, 0.1}; F6 stability seeds 1, 2; F7 information only: fae_linear and fae_kan. **Revised gate (`tests/test_learnability_fa.py`):** the test code of the original gate with **fresh data seed 41** (never generated before) and the selected configuration; R1, R2, R3 criteria and **thresholds unchanged** (R1: C ≥ oracle − 0.02 and \|σ̂ − 0.5\| ≤ 0.05; R2: C ≥ oracle − 0.03 and mean probe R² ≥ 0.8; R3: \|C − C_R2\| ≤ 0.02 and naive error > aware error for seeds 0–2). **Confirmation:** fresh seeds 111–115, held-out test split, R2 criteria. **CONFIRMED only if R1, R2 and R3 pass on seed 41 and ≥ 4 of 5 replications pass.** If confirmed: the pre-specified neural analyses (H1, H2, H3, CONTROLS; `run_neural_synthetic.py`, analysis plan of D33/protocol) with the selected configuration, then ablations and KAN-FAE pruning/symbolic extraction. If not confirmed: diagnose and report; no further extension without owner approval. | Owner decision D57 |
-| D62 | C-MAPSS Option B uncertainty accounting for within-engine correlation (2026-10-17) | ADOPTED | Per D59: Option B test metrics are complemented by an **engine-cluster bootstrap** (1000 resamples of test engines with replacement, seed fixed per split; percentile 95% CI for RMSE, MAE and Harrell C, overall and per landmark band) plus engine-weighted RMSE (already present). Option B is re-run for FD001 and FD003 as code version v3 (same models, splits and tuning; earlier records kept). | Owner decision D59 |
-| D63 | FQ test repairs (disclosure, 2026-10-17) | ADOPTED | FQ attempts 1–4 (logs `fq_tests_attempt*.log`). Design calibration (not a test change): the soft frequency uses the log gap L = −log(1 − R + 1e-4) with κ₀ = 4, chosen on pure sinusoids and the seed-21 training split (§3.2c). Test-premise repairs, thresholds of the property under test unchanged: FQ-2 (repair 1: tolerance for the ε = 1e-8 in the definition; repair 2: phase invariance asserted at the true frequency only, which is what the mathematics gives, and the design text corrected); FQ-4 (repair 1: ε tolerance; repair 2: exact bound 2ε/residual; its energy assertion, unreachable before attempt 3, repaired once with the same bound); FQ-5 (repair 1: harness kept the autograd graph). All 11 FQ tests pass. | Integrity |
-| D64 | Historical gate test kept as a record (2026-10-17) | ADOPTED | `tests/test_learnability.py` (seed 21) is pinned to the A3 configuration it evaluated (explicitly, no longer via DEFAULTS), and its R2 test is marked `xfail(strict=True)` with the reason "A3 design failed R2 (D46/D53)". It still runs on every full suite and is reported as an expected failure; if it ever passed, strict xfail would flag it. DEFAULTS are not changed for revision 4: the revised gate and all neural analyses read the configuration from the selection file. | Keeps the suite informative without hiding the historical failure |
-| D65 | Overfitting diagnostic of the revision-4 front (registered 2026-10-17 after the D61 search, before reading the revised gate; validation data only) | ADOPTED | **Observation (D61 search):** every "fa" fit overfits (train C 0.87–0.91 vs validation 0.75–0.82; A3: 0.855 vs 0.844), stops early (≈ 500–1200 epochs) and loses the b and A probes, while ω becomes decodable (validation probe 0.83–0.89). **Hypothesis:** the 114–408-dimensional standardised spectral block feeding the front's linear map overfits with 1200 training individuals. **Diagnostic (seed-21 train/validation; not a selection, not a gate):** (i) compact summary `fa_compact` (f̂, peak log gap, e₀, e₁, e₂ per channel; 15 features; test FQ-10) with J = 17 and J = 33, r = 8 and 12; (ii) full J = 17 with r = 12 and the spectral map's weights decayed 10× more (wd 1e-3) — implemented as the global wd setting. Outcome recorded in `reports/diag_fa_overfitting.jsonl`. **Any configuration derived from this diagnostic is a new design revision (4b) and needs owner approval and a new pre-registered gate on fresh seeds before evaluation (D61).** | Diagnosis only |
-| D66 | R1 seed-sensitivity diagnostic (registered 2026-10-17, after the revised gate's R1 failed) | ADOPTED | Revised gate seed 41: R1 C 0.8931 (≥ 0.8756, passes) but σ̂ = 0.5707 (\|σ̂ − 0.5\| = 0.071 > 0.05). R1 uses the true parameters as inputs, so it does not involve the representation. **Diagnostic:** the identical R1 procedure on diagnostic seeds 501–510 (used nowhere else) plus 21 and 41, reporting the distribution of σ̂ and C − oracle, and (added after the first pass) the profile MLE of σ with the learned η held fixed. The R1 threshold is not changed; the outcome is reported as a property of the gate check. | Diagnosis only |
-| D67 | **Owner decision (2026-10-18): approve Revision 4b** | ADOPTED (owner) | Proceed with the compact 15-feature frequency-aware representation (D65) and a **targeted, scientifically justified** fix for the survival-model generalisation gap. Before any new gate evaluation: precise definition of the changes and hypotheses; pre-registration of architecture, search budget, acceptance criteria, fresh gate seed and independent confirmation seeds; selection on train/validation only; no tuning against the fresh gate or confirmation test sets; historical architecture, thresholds, failures and results unchanged. Overfitting diagnosed with train/validation curves and feature/latent diagnostics. Bounded search (regularisation, latent size, dropout where justified, survival-head regularisation, early stopping), one factor at a time. If 4b fails: report why and recommend the next scientific step; no repeated redesign to force a pass. The KAN-vs-MLP test stays blocked (code guard kept) until the conventional MLP passes the pre-registered revised gate. | Owner instruction |
-| D68 | **Owner decision (2026-10-18): prospective R1 amendment (R1-A)** | ADOPTED (owner) | The original R1 results are not erased or relabelled. The protocol is amended **prospectively** to separate optimisation convergence from parameter recovery. R1-A reports, side by side: (i) the original early-stopped check, unchanged; (ii) the profile maximum-likelihood σ̂ with the trained η held fixed, **estimated on training data only** (no gate-test or confirmation-test outcomes are used to estimate or tune σ). The tolerance \|σ̂ − 0.5\| ≤ 0.05 is unchanged. R1-A is run on fresh seeds. The two are different evaluation procedures; the original registered check is not claimed to have passed. | Owner instruction |
-| D69 | **Owner decision (2026-10-18): PBC endpoint** | ADOPTED (owner; provisional) | E2 (death or transplantation) remains the provisional primary endpoint and E1 a sensitivity analysis, explicitly provisional until the owner confirms with their professor. A brief scientific justification is prepared (`docs/pbc_endpoint_justification.md`). No competing-risk claims without a separately specified and tested analysis. | Owner instruction |
-| D70 | Overfitting diagnosis for Revision 4b (2026-10-18; seed-21 train/validation only) | ADOPTED | Per-epoch curves over the full 3000-epoch budget (`reports/diag_overfit_curves.json`). **A3:** the validation objective and the validation NLL reach their minima together (epochs 2987/2989); train/val C 0.855/0.844. **Revision 4 (fa) and compact:** the validation NLL reaches its minimum at epochs 363/356 and then **rises** (1.37 → 1.68; 1.22 → 1.35), while the reconstruction-dominated joint objective keeps falling until epochs 2285/2227, where early stopping selects; best validation C 0.826/0.846 at epochs 500/450 vs 0.808/0.823 at the end. **Latent:** in-sample vs validation probe R² nearly equal (compact: a 0.906/0.901, b 0.707/0.639, A 0.755/0.719, ω 0.887/0.876), i.e. the representation generalises; the overfitting is in the latent → η survival mapping. **Features:** the spectral path's output RMS (1.1–1.9) is 3–5× the A3 path's (0.38). **Targeted, justified fixes:** stop on the survival part (validation NLL), regularise the survival path (dropout between latent and head; head-specific weight decay), with global weight decay and latent size as secondary factors. | Diagnosis (owner D67) |
-| D71 | **Pre-registration: Revision 4b** (registered 2026-10-18, before any 4b fit) | ADOPTED | **Architecture:** compact frequency-aware front (`fa_compact`: f̂, peak log gap, e₀, e₁, e₂ per channel, 15 features; 17 frequencies) on the A3 front; new options `head_dropout` (dropout on z before the AFT head only; the decoder sees the undropped z) and `head_wd` (L2 on the head weights only); tests HR-1..HR-3 pass. **Hypotheses:** H4b-1 (primary): fae_mlp passes the revised gate on fresh seed 61 and ≥ 4/5 fresh confirmation seeds 121–125. H4b-2 (mechanism, descriptive): the selected configuration has a smaller train−validation C gap than the 4b base. **Search** (seed-21 train/validation only; one factor at a time; D41 selection rule; ≤ 13 fits + 2 information fits): base = compact, 17 freqs, r 12, α 1, Adam 3e-3, wd 1e-4, objective early stopping, 3000/100, H 32, hidden 64; G1 early-stopping target {objective, nll}; G2 head dropout {0, 0.1, 0.25}; G3 head weight decay {global, 1e-2, 1e-1}; G4 global weight decay {1e-4, 1e-3}; G5 latent r {8, 12, 16}; G6 seeds 1, 2; G7 information: fae_linear, fae_kan. **Gate** (`tests/test_learnability_fa4b.py`): original gate code and thresholds, fresh seed 61; R1 reported as registered **and** R1-A (D68). **Verdict:** CONFIRMED iff R1-A, R2 and R3 pass on seed 61 and ≥ 4 of 5 confirmations (seeds 121–125) pass; the original early-stopped R1 is reported side by side and is not part of the rule (owner amendment D68). No tuning on seed 61 or 121–125. **If confirmed:** pre-specified H1, H2, H3, CONTROLS (`run_neural_synthetic.py --selected reports/learnability_selected_fa4b.json`), then KAN-FAE pruning and symbolic extraction. **If not:** report why and recommend the next scientific step; no further redesign. | Owner decision D67 |
-| D72 | R1-A side-by-side evaluation on fresh seeds (registered 2026-10-18) | ADOPTED | Per D68: the original early-stopped R1 and R1-A (profile σ̂ on training data with the trained η fixed; same tolerance) on fresh seeds 601–610 (never used before), reported side by side (`reports/r1a_fresh_seeds.jsonl`). Seeds 21, 41 and 501–510 (D66) are reported as earlier, separate results; nothing is relabelled. | Owner decision D68 |
-| D73 | Documentation correction: wording of the D41 selection rule (2026-10-18) | ADOPTED | The round-2 report summarised the D41 rule as "a configuration passing both validation criteria is preferred". The registered rule (D41) and the code (`learnability_search.score`) select by validation C **among configurations meeting the probe criterion (≥ 0.8)**, and otherwise by C + 0.1 × probe. Found when the first 4b step (G1) selected objective early stopping (validation C 0.8247, probe 0.812) over NLL early stopping (C 0.8468, probe 0.794). The report text is corrected with a dated note; no rule, code or selection changed. | Accuracy of the record |
-| D74 | Revision 4b failure diagnosis: information ceiling of the latent (registered 2026-10-18, after the 4b verdict; seed-21 train/validation only; diagnosis, not selection) | ADOPTED | Question: does the 4b latent lack the risk information, or can the **linear** AFT head (η linear in z) not use it, given η = 1.5 tanh(2b) − 0.8A² + 0.5aω is nonlinear in the parameters? With the 4b selection (and A3 for reference) trained on seed 21 and its latent **frozen**: validation C of (i) a refitted linear Weibull AFT head on z; (ii) a small MLP AFT head on z (2 × 32 SiLU; early stopping on an internal 20% split of the training set, never on validation); (iii) the plug-in true risk function applied to linear-probe-decoded parameters; (iv) the oracle η. No configuration is selected or gated from this diagnostic; any follow-up design needs owner approval and a new pre-registration (D67). | Owner instruction: report why 4b failed and recommend the next step |
-| D75 | Data-information ceiling diagnostic (registered 2026-10-18, after D74; seed-21 train/validation only; diagnosis, not selection) | ADOPTED | D74 found that neither an MLP head nor the true risk function on probe-decoded parameters lifts the frozen latent above validation C ≈ 0.83–0.84. **Question:** is C ≥ oracle − 0.03 attainable from the *observations at all*? The oracle uses the true η, while the curves are 8–40 noisy samples with Gaussian-process noise on x₁. **Estimates of the ceiling** (true risk function applied to estimated parameters): (a) per-individual parametric estimates from the raw observations: a, b by least squares of x₁ on (1, t); A, ω by a grid-plus-refinement least-squares sinusoid fit to x₂ (ω ∈ [0.3, 2.5], phase free); (b) a flexible regressor (gradient boosting) for each parameter from the smoothed coefficients plus the compact spectral features, fitted on the training split; (c) a flexible model (gradient-boosted AFT-free risk score: boosting of the oracle η on inputs, trained on train) for reference. Validation C of each. Extension: the parametric ceiling (a), which fits nothing across individuals, is also computed on all 2000 individuals of 10 never-used seeds 701–710 (`reports/diag_data_ceiling_seeds.jsonl`). If even (a)–(c) fall short of oracle − 0.03, the R2 concordance criterion is not attainable from these data with any representation, and the next scientific step concerns the gate's reference point, not the architecture. | Informs the recommendation (D67) |
-| D76 | Revision-4 gate kept as a historical record (2026-10-18) | ADOPTED | As D64 did for A3: `tests/test_learnability_fa.py` (seed 41, revision-4 selection read from its fixed selection file) keeps running; its R1 and R2 are marked `xfail(strict=True)` with the recorded outcome as the reason. The live gate is now `tests/test_learnability_fa4b.py` (revision 4b, seed 61); its failures are reported as failures. Nothing is relabelled as a pass. | Keeps the suite informative |
-| D77 | Observation: optimisation instability of the frequency-aware variants (2026-10-18; from the D70 curves) | ADOPTED | Over the full 3000-epoch curves (recorded every 5 epochs), training-NLL jumps > 0.2: A3 0; revision 4 (fa J17 r12) 13; compact 4; maximum training NLL after epoch 300: 1.38 / 8.06 / 16.55. The frequency-aware variants train unstably (loss spikes) at Adam lr 3e-3, so objective-based stopping can select a state just after a spike. Recorded as a finding and part of the recommendation (stability study: learning rate, gradient clipping, feature scaling); not acted on, per D67 (no repeated redesign). | Honest diagnosis |
-| D78 | Regression found by the round-4 full suite and fixed (2026-10-18) | ADOPTED | `final_full_suite_round4` failed M1[flat_ae], M2[flat_ae] and AUD-1[flat_ae] with `NameError: head_dropout`: the D71 text replacement that added the head-dropout module to `FunctionalAE.__init__` also matched `FlatAE.__init__`, which has no such argument. HR-1..HR-3 exercise only the functional AE, so they did not catch it. The stray lines were removed from `FlatAE` (outside 4b's scope; its forward pass was never changed). The affected tests were re-run, then the full suite (`final_full_suite_round4_rerun`). Both runs are kept in the test history. No gate, search or confirmation used `FlatAE`, so no result is affected. | Regression caught by the full suite |
-| D79 | **Determinism finding; explanation of the 0.0053 difference** (2026-10-18) | ADOPTED | The Revision-4b selection on seed-21 validation gave C 0.8337 in the D71 search (Table R4.3; 3 threads) and 0.8284 in the D74 diagnostic (Table R4.5a; 4 threads). Re-running the identical configuration and seed (`reports/logs/determinism_check_4b.log`): 3 threads gave **0.8246 and 0.8337 in two identical runs (non-deterministic)**; 4 threads 0.8284 twice; 2 threads 0.8207 twice; 1 thread 0.8222 twice. **Explanation:** multithreaded floating-point reductions differ by thread count (and, at 3 threads, between runs); the training instability (D77) amplifies these tiny differences into different trajectories. **Consequences:** (i) the ~0.009 run-to-run spread is as large as the configuration differences the Round-4 search selected on, so that selection may partly reflect numerical noise (disclosed; Round-4 records unchanged); (ii) from Round 5 on, every search, gate and confirmation fit runs **single-threaded** (`OMP_NUM_THREADS=1`, `torch.set_num_threads(1)`), which is reproducible; (iii) the spread across thread counts is reported as a stability diagnostic. | Reproducibility |
-| D80 | **Owner decisions, Round 5 (2026-10-18)** | ADOPTED (owner) | (1) Do not run a re-referenced gate before fixing the Revision-4b training instability and early-stopping conflict (D70, D73, D77). (2) **Step 1, Revision 4c** (pre-registered; seed-21 train/validation only): spectral-block scaling to ~1:1 with the A3 path using training statistics; Adam/AdamW lr {1e-3, 3e-3} with gradient-norm clipping 1.0 so that training-NLL jumps > 0.2 after epoch 300 drop to 0; a two-state stopping rule (latent/decoder at the joint-objective minimum, survival head at / refitted to the validation-NLL minimum); prospective selection rule: among candidates with validation probe mean ≥ 0.78 (≥ 0.80 under two-state stopping), maximise validation C. (3) **Step 2, prospective gate amendment** (simulator unchanged): R1-A gates (C ≥ oracle − 0.02, training-set profile σ̂ within ±0.05; original R1 reported side by side); R2: test C ≥ min(C_oracle − 0.03, C_ceiling − 0.015) **and** mean probe ≥ 0.78 **with** ω probe ≥ 0.80, where C_ceiling is the D75 per-individual parametric plug-in on the same test split; R3 unchanged; fresh gate seed 81, confirmation seeds 131–135; CONFIRMED iff R1-A, R2, R3 pass on 81 and R2 on ≥ 4/5 confirmations. (4) **Step 3 only if confirmed:** H1, H2, H3, controls, ablations AB1–AB8; KAN-FAE pruning with the uncentred reference score and the centred score (λ on validation); D31 matching check for D ≥ 6 before any real-data FAE run. (5) Reporting fixes (round-5 builder). Historical results, logs and xfail tests of Rounds 1–4 unchanged; commits local only. | Owner instruction |
-| D81 | **Pre-registration: Step 1, Revision 4c (training stability and stopping rule)** (registered 2026-10-18, before any 4c fit) | ADOPTED | **Mechanisms (all default off; RS-1: the defaults reproduce the pre-change single-thread fit exactly):** `fa_balance` (fixed spectral-path gain = RMS(A3 path)/RMS(spectral path) on the training data at initialisation; RS-2); `clip` (gradient-norm clipping; RS-3); `es_mode` = `two_checkpoint` (latent/decoder from the validation-objective minimum; risk predictions from the full-model state at the validation-NLL minimum; RS-4) or `two_state_refit` (joint run stopped on the objective, then the linear AFT head is re-initialised and refitted on the frozen latent with validation-NLL early stopping; frozen parts in eval mode; RS-5, which caught and fixed a BatchNorm-statistics leak in the first implementation). **Search** (`scripts/learnability_search_fa4c.py`; seed-21 train/validation only; single-threaded, D79; one factor at a time; ≤ 13 fits): base = the 4b selection; H1 scaling {off, balance}; H2 {unclipped reference, clip 1.0 with Adam 1e-3, Adam 3e-3, AdamW 1e-3, AdamW 3e-3}; H3 stopping {objective, nll, two_state_refit, two_checkpoint}; H4 seeds 1, 2; H5 information: fae_linear, fae_kan. **Selection rule (owner amendment D80):** among candidates with validation probe mean ≥ 0.78 (≥ 0.80 under two-state stopping) and, from H2 on, zero training-NLL jumps > 0.2 after epoch 300 (per-epoch differences), maximise validation C; otherwise C + 0.1 × probe among stable candidates. **Step-1 acceptance:** on seeds 0, 1, 2 the selected configuration has zero jumps and delivers risk predictions whose validation NLL is ≤ the minimum validation NLL of its joint run + 0.01. Otherwise Step 1 FAILS, Step 2 is not run, and the failure is reported. Reported diagnostic: the selected configuration's validation C at 1, 2 and 4 threads. | Owner decision D80 |
-| D82 | **Pre-registration: Step 2, amended gate and confirmation** (registered 2026-10-18, before any gate data are generated) | ADOPTED | Simulator unchanged. `tests/test_learnability_fa4c.py`: the original gate code, **fresh seed 81**, single-threaded, runs only if Step 1 PASSED. **R1** (original, reported) and **R1-A** (gating: C ≥ oracle − 0.02, training-set profile σ̂ within ±0.05). **R2 (amended):** test C ≥ min(C_oracle − 0.03, C_ceiling − 0.015), with C_ceiling = the per-individual parametric plug-in on the same test split (`kanfae.evaluation.ceiling`; CEIL-1..3, identical to D75), **and** mean probe R² ≥ 0.78 **and** ω probe ≥ 0.80. **R3** unchanged. **Confirmation:** fresh seeds 131–135 (`confirm_learnability.py --amended --threads 1`). **CONFIRMED iff** R1-A, R2 and R3 pass on seed 81 **and** R2 passes on ≥ 4 of 5 confirmation seeds (`revised_gate_verdict.py fa4c`). If confirmed: Step 3 as specified by the owner (H1, H2, H3, controls, AB1–AB8; KAN-FAE pruning with the uncentred and centred scores; D31 check for D ≥ 6 before any real-data FAE run). The guard reads `revised_gate_verdict_fa4c.json`. | Owner decision D80 |
-| D83 | Step-1 outcome and two disclosed diagnostics (2026-10-18) | ADOPTED | **Step 1 PASSED** (pre-registered D81 acceptance): selected `es_target = nll` with `fa_balance` and clipping 1.0 (Adam 3e-3); zero jumps and delivered validation NLL = minimum on seeds 0, 1, 2. **Disclosed tie:** at H3, NLL early stopping and `two_checkpoint` give *identical* risk predictions (both restore the epoch-329 state; validation C 0.8474); the registered tie-break kept the earlier candidate (NLL early stopping, latent probe 0.787) over two_checkpoint (latent from the objective state, probe 0.818). The stability seeds show the selected latent's probe is fragile (seed 1: mean 0.674, ω 0.481; seed 2: ω 0.742). The selection is kept as registered. **Diagnostics added after observing that early-stopped runs end before the D77 spike region (~epoch 1000+), informational only:** (i) D77-comparable full-budget runs (3000 epochs, no early stopping) of the 4b base and the selected configuration, reporting training-NLL jumps; (ii) the pre-registered thread-count spread (1, 2, 4 threads). Seed-21 train/validation only. | Integrity |
-| D84 | Step-2 outcome and test-suite housekeeping (2026-10-18) | ADOPTED | **Revision 4c NOT CONFIRMED** (`reports/revised_gate_verdict_fa4c.json`): seed 81: R1 original FAIL (σ̂ 0.565, reported), R1-A PASS (0.492), R2: concordance part PASS (C 0.8421 ≥ min(0.8608, 0.8540 − 0.015) = 0.8390) but probe part FAIL (mean 0.772 < 0.78; ω 0.814), R3 PASS; confirmations 131–135: 1/5. Step 3 not run (guard). **Diagnosis (train/validation of seeds 131 and 135 only):** NLL early stopping ends training at the survival optimum, epochs 91–430, before the latent learns b and A (probe b 0.57–0.67); on seed 135 the validation NLL dipped at epoch 91 and the whole model was undertrained (train C 0.806). Verdict-script fix: for 4c the recorded gate threshold is the amended one (0.8390), not oracle − 0.03. **Housekeeping (as D64/D76):** the 4b gate's R1 and R2 are strict xfail historical records; the 4c gate's single-threading is scoped to its module by a fixture (no side effects on other test files). Diagnostics D83: full-budget jumps 4b 12 vs 4c 0; thread-count spread 4c 0.0006. | Honest record |
-| D85 | Reproduction check of the 4c gate (2026-10-18) | ADOPTED | Inside `final_full_suite_round5` (environment `OMP_NUM_THREADS=3`; the module fixture pins torch to one thread but numpy's BLAS in preprocessing still used 3), the 4c gate gave C 0.8420, probe mean 0.762, ω 0.794 vs the registered standalone run's 0.8421 / 0.772 / 0.814. Re-running `tests/test_learnability_fa4c.py` in the registered environment (OMP/MKL/OpenBLAS = 1; run `gate_fa4c_reproduction`) reproduced every number exactly. **Reading:** concordance is numerically stable (±0.0001) but the latent probe at the early (NLL-optimal) stopping epoch moves by 0.01–0.02 under tiny numerical differences, enough to cross the ω threshold; consistent with the D84 diagnosis. R2 fails in both runs; the verdict is unchanged. | Reproducibility |
-| D86 | **Owner decisions, Round 6 (2026-10-18), and housekeeping** | ADOPTED (owner) | (1) Approve **Revision 4d** (L27): two-state stopping only, a burn-in `min_epochs` ∈ {300, 500}, lr ∈ {1e-3, 3e-3}, and multi-seed selection. (2) Step 2 on fresh seeds with R2's concordance margin 0.020 (0.015 reported side by side). (3) Step 3 only if confirmed. (4) Housekeeping, done: `scripts/run_logged.sh` exports `OMP_NUM_THREADS=MKL_NUM_THREADS=OPENBLAS_NUM_THREADS=1`; `tests/conftest.py` sets the same variables before any numeric import and pins loaded BLAS pools (threadpoolctl) and torch to one thread for the whole session (closes D85). The round-1 "Selected configurations" table (R1.9) reads a round-1 snapshot (`tables/r1_selected_configs.csv`): C-MAPSS counts ×5, not ×10. The 4c gate (seed 81) R1 and R2 are strict-xfail historical records (as D64/D76/D84). | Owner instruction |
-| D87 | **Pre-registration: Step 1, Revision 4d** (registered 2026-10-18, before any 4d fit) | ADOPTED | **Mechanism:** `min_epochs` burn-in: no early stopping before epoch min_epochs; validation-NLL-based selection (two_checkpoint risk state; head refit) only over epochs ≥ min_epochs. Tests BI-2..BI-4 pass; BI-1: with min_epochs = 0 the pre-change single-thread fit is reproduced exactly. **Search** (`scripts/learnability_search_fa4d.py`; seed-21 train/validation only; single-threaded): base = fa compact, 17 freqs, r 12, α 1, Adam, wd 1e-4, head_wd 1e-2, fa_balance, clip 1.0, joint run stopped on the objective (3000 / patience 100), H 32, hidden 64. **Candidates (full factorial, 8, in this order for ties):** es_mode {two_checkpoint, two_state_refit} × min_epochs {300, 500} × lr {3e-3, 1e-3}; single-state NLL stopping is not a candidate. **Every candidate on training seeds 0, 1, 2** (24 fits). **Eligible iff** on all 3 seeds zero training-NLL jumps > 0.2 after epoch 300, mean (over seeds) validation probe mean ≥ 0.80, every seed's probe mean ≥ 0.78, and every seed's ω probe ≥ 0.80. **Select** the eligible candidate with the highest mean validation C over seeds 0–2. **Step 1 PASSES iff an eligible candidate exists**; otherwise Step 1 FAILS, Step 2 is not run, and the failure is reported (no fallback). Information only: fae_linear and fae_kan with the selection (seed 0). | Owner decision D86 |
-| D88 | **Pre-registration: Step 2, Revision 4d gate and confirmation** (registered 2026-10-18, before any gate data are generated) | ADOPTED | **Seed check:** the owner-proposed gate seed 91 had been generated before (CEIL-2 in round 5: `SynthConfig(n=60, seed=91)`, i.e. the first 60 individuals of a seed-91 data set; no model was trained or evaluated on it). Following the owner's instruction to use never-generated seeds, the gate uses **seed 92** (verified never referenced); confirmation seeds **141–145** verified never used. `tests/test_learnability_fa4d.py` (runs only if Step 1 PASSED): **R1-A** gating (C ≥ C_oracle − 0.02; training-set profile σ̂ within ±0.05; original R1 reported); **R2** gating: (i) test C ≥ min(C_oracle − 0.03, C_ceiling − 0.020), with the 0.015 margin reported side by side; (ii) mean probe ≥ 0.78 and ω probe ≥ 0.80; **R3** unchanged. **Margin justification (owner):** C_ceiling applies the exact nonlinear risk formula 1.5·tanh(2b) − 0.8A² + 0.5·a·ω to noisy parameter estimates, whereas fae_mlp uses a linear AFT head wᵀz + b; a 0.020 margin matches R1's 0.020 margin for learning the risk mapping and accounts for the linear-head approximation gap seen on seeds 132–133 (−0.0198, −0.0209). **Confirmation:** seeds 141–145 (`confirm_learnability.py --amended --ceiling-margin 0.02 --threads 1`). **CONFIRMED iff** R1-A, R2 and R3 pass on seed 92 and R2 passes on ≥ 4 of 5 confirmation seeds (`revised_gate_verdict.py fa4d`). If confirmed: Step 3 as specified (H1, H2, H3, controls, AB1–AB8; KAN-FAE pruning with uncentred and centred scores and symbolic extraction; D31 check for D ≥ 6). | Owner decision D86 |
-| D89 | **Step-1 outcome, Revision 4d: FAILED** (2026-10-18) | ADOPTED | No candidate met the pre-registered multi-seed eligibility (D87); per the registered rule there is no fallback, so **Step 2 (gate seed 92, confirmations 141–145) and Step 3 were not run**, and seeds 92 and 141–145 remain unused. Closest: two_checkpoint, lr 1e-3, burn-in 300 or 500 (identical latents): zero jumps, mean probe 0.816 ≥ 0.80, minimum ω 0.813 ≥ 0.80, but **training seed 1's probe mean 0.779 < 0.78** (b 0.676, A 0.725). **Findings:** (i) mean validation C 0.842–0.849 for every candidate (survival side stable across seeds); (ii) within a learning rate, all stopping modes and burn-ins give *identical* latent probes (the latent comes from the joint-objective minimum, which these settings do not change), so the binding constraint is the representation's linear encoding of b and A, not the stopping rule; (iii) lr 1e-3 improves the latent over 3e-3 (minimum seed probe 0.753 → 0.779; minimum ω 0.666 → 0.813). The 0.001 shortfall is not waived: relaxing the threshold after seeing the result would be a post-hoc change. | Pre-registered rule applied as written |
-| D90 | **Reporting fixes after the round-6 suite** (2026-10-18) | ADOPTED | (i) `final_full_suite_round6` recorded 223 tests while pytest counted 224: the module-level skip of `tests/test_learnability_fa4d.py` (Step 1 failed, D89) produces no test items, so the `pytest_runtest_logreport` hook never saw it. `tests/conftest.py` gains a `pytest_collectreport` hook that records each skipped module once (phase `collect`). The suite was re-run as `final_full_suite_round6_rerun`, which is the round-6 final run; the first run stays in the records unchanged. No test, threshold or model code changed. (ii) The PDF contents list (depth 2, six parts) overflowed onto an almost empty page 2, which the blank-page check flagged; `reports/report.css` now sets the contents list in two columns so it fits on one page. The blank-page check is unchanged. | Exact totals; honest fix of the layout rather than of the check |
 
 ## R2.14 Reproducibility
 
@@ -3186,6 +3739,20 @@ KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_sui
     .venv/bin/python -m pytest -v -rA -s tests/                                          # final suite (D90)
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round6.py           # report revision 6
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
@@ -3306,7 +3873,7 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 | E2 | 4 | age | library | `-0.617361*gaussian(0.998016*x + -2.11707) + 0.193193` | 5 | 0.9967 | 0.9966 | 0.9959 | 0.0087 | 0.0523 | [-2.10, 2.76] |
 | E2 | 4 | sex(f=1) | linear | `0.0955712*x + 0.0403551` | 1 | 1.0000 | 1.0000 | 0.4907 | 0.0000 | 0.2197 | [-2.97, 0.34] |
 
-# Part F: round-1 report (2026-10-16), historical record
+# Part G: round-1 report (2026-10-16), historical record
 
 The text below is the round-1 report, regenerated from the same records. Its gate and baseline sections are
 unchanged history. Its "unfinished work" items are now tracked in the ledger (I.12), and its R2 conclusion is
@@ -3314,7 +3881,7 @@ superseded by I.1.
 
 
 <p class="small">Research prototype report · generated 2026-10-16 from saved results by <code>scripts/build_report.py</code> ·
-git <code>29ad9e7</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
+git <code>0d8c37a</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
 <b>research prototype, not publication-ready</b> · no novelty claim is made.</p>
 
 ## R1.1 Executive summary (plain English)

@@ -73,7 +73,7 @@ def suite_table():
 
 
 def decisions_r6():
-    rows = [l for l in (ROOT / "docs/decisions.md").read_text().splitlines() if re.match(r"\| D(8[6-9]|9\d) \|", l)]
+    rows = [l for l in (ROOT / "docs/decisions.md").read_text().splitlines() if re.match(r"\| D(8[6-9]|90) \|", l)]
     return "| ID | Decision | Status | Content | Rationale |\n|---|---|---|---|---|\n" + "\n".join(rows)
 
 

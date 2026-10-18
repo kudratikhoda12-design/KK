@@ -188,7 +188,7 @@ def cm_bands(ds):
 
 def decisions_r3():
     lines = (ROOT / "docs/decisions.md").read_text().splitlines()
-    rows = [l for l in lines if re.match(r"\| D(5[7-9]|[6-9]\d) \|", l)]
+    rows = [l for l in lines if re.match(r"\| D(5[7-9]|6[0-6]) \|", l)]
     return "| ID | Decision | Status | Content | Rationale |\n|---|---|---|---|---|\n" + "\n".join(rows)
 
 

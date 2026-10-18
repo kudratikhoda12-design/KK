@@ -1,4 +1,31 @@
-# Final status: KAN-FAE research prototype, round 6 (2026-10-18)
+# Final status: KAN-FAE research prototype, round 7 (2026-10-18)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (Part A = round 7; Parts B–G = rounds 6–1, each from its own
+snapshot); deliverable verification passes. Status: **research prototype; no successful KAN-FAE model; not
+publication-ready; no novelty claim.**
+
+| Step | Result |
+|---|---|
+| Owner decisions (D91) | Revision 4e; two-tier Step-1 rule; R2 probe part re-referenced to 0.75/0.75 (fact-checked; disclosed as set after rounds 4–6) |
+| Step 1: Revision 4e (D92, D94) | **PASSED via Tier 1**: r 16, patience 100, α 1 (`A7-fae_mlp-94415d4f`); 6/8 candidates Tier-1 eligible; 4d cand1 reproduced bit for bit; patience 300 identical to 100 |
+| Step 2: gate, fresh seed 92 (D93, D95) | R1-A PASS; R2 probe part PASS (0.884, ω 0.903; passes every definition); **R2 concordance part FAIL** (0.8384 < 0.8406, by 0.0022); **R3 FAIL** (\|C − C_R2\| 0.0254; censored-data C higher) |
+| Confirmations 141–145 | **4/5** (seed 143 short by 0.0019 on concordance) |
+| Verdict | **NOT CONFIRMED**; guard refuses; **Step 3 not run** |
+| Diagnostic (D96, D97; seed-92 train/validation) | Training-seed SD of validation C 0.0026 > 0.0022 shortfall; systematic C − C_ceiling ≈ −0.016 (linear head vs nonlinear risk) |
+| Tests | `final_full_suite_round7`: 216 passed, 3 failed (4e gate R1, R2, R3: live, real), 7 expected failures, 2 skipped (228). The 4e gate reproduces exactly inside the suite |
+| Report fixes (D98) | Pipe-split R3 cells; per-round decision filters; gate-reproduction comparison |
+
+## Decision requested
+
+1. (Recommended) Revision 4f: keep the 4e representation; pre-register a Step-1 search over the risk head (linear vs
+   small nonlinear) and averaging over training seeds 0–2; new fresh gate and confirmation seeds.
+2. Decide prospectively whether R3 stays two-sided.
+3. Or accept the verdict (MLP not gate-qualified; H1 blocked).
+
+---
+
+# Round 6 status (2026-10-18), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (106 pages; Part A = round 6; Parts B–F = rounds 5, 4, 3, 2, 1,

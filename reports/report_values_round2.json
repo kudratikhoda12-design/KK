@@ -23,7 +23,7 @@
  "latest_skipped": "1",
  "n_test_records": "1191",
  "n_test_runs": "37",
- "git_head": "29ad9e7",
+ "git_head": "0d8c37a",
  "sym_acc": "34/47",
  "pbc_acc": "41/80"
 }

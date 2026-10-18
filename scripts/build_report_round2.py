@@ -249,7 +249,7 @@ def test_run_history():
 
 def decisions_round2():
     lines = (ROOT / "docs/decisions.md").read_text().splitlines()
-    rows = [l for l in lines if re.match(r"\| D(3[8-9]|[4-9]\d) \|", l)]
+    rows = [l for l in lines if re.match(r"\| D(3[8-9]|4\d|5[0-6]) \|", l)]
     return "| ID | Decision | Status | Content | Rationale |\n|---|---|---|---|---|\n" + "\n".join(rows)
 
 

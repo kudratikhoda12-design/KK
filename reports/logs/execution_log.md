@@ -155,3 +155,12 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   conftest collection hook added (D90); `final_full_suite_round6_rerun`: 215 passed, 0 failed, 2 skipped, 7 xfailed (224).
 - First round-6 verification flagged a near-blank PDF page 2 (contents overflow); contents set in two columns (D90).
   Report revision 6 (106 pages); deliverable verification ALL_CHECKS_PASS.
+- Round 7 (owner D91). Owner rationale fact-checked against the records (all cited numbers correct; 0.824 is not an
+  upper bound). Pre-registration D92/D93 committed (514d011) before any 4e fit; seeds 92 and 141–145 re-verified unused.
+- Step 1 (24 + 2 fits): PASSED via Tier 1, r 16 / patience 100 / α 1 (D94); 4d cand1 reproduced bit for bit;
+  selection committed (3387903) right after the gate and confirmation processes were started; neither had produced a
+  result yet.
+- Gate seed 92: R1-A pass, R2 probe pass, R2 concordance fail (0.0022), R3 fail (0.0254); confirmations 141–145
+  4/5; verdict NOT CONFIRMED (D95); guard refuses; Step 3 not run. D96/D97 diagnostic on seed-92 train/validation.
+- `final_full_suite_round7`: 216 passed, 3 failed (4e gate), 2 skipped, 7 xfailed (228). Report fixes D98.
+  Report revision 7; deliverable verification ALL_CHECKS_PASS.
