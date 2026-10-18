@@ -1,0 +1,9 @@
+/home/user/KK/src/kanfae/models/pipelines.py:154: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+seed 141: C=0.8503 (oracle 0.8878, threshold 0.8422, C_ceiling 0.8622) probe=[0.928 0.798 0.837 0.921] mean=0.871 pass=True [21.6s]
+seed 142: C=0.8400 (oracle 0.8814, threshold 0.8287, C_ceiling 0.8487) probe=[0.916 0.787 0.82  0.881] mean=0.851 pass=True [20.4s]
+seed 143: C=0.8597 (oracle 0.9012, threshold 0.8616, C_ceiling 0.8816) probe=[0.922 0.782 0.769 0.854] mean=0.832 pass=False [22.9s]
+seed 144: C=0.8550 (oracle 0.8987, threshold 0.8463, C_ceiling 0.8663) probe=[0.915 0.726 0.852 0.905] mean=0.850 pass=True [19.8s]
+seed 145: C=0.8462 (oracle 0.8859, threshold 0.8342, C_ceiling 0.8542) probe=[0.903 0.726 0.818 0.887] mean=0.834 pass=True [19.3s]
+CONFIRMATION (fae_mlp): 4/5 replications pass -> CONFIRMED

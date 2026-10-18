@@ -1,0 +1,111 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 4 items
+
+tests/test_learnability_fa4e.py::test_R1_oracle_features_head R1: C = 0.8903, oracle C = 0.8917, sigma = 0.6082 (truth 0.5)
+FAILED
+tests/test_learnability_fa4e.py::test_R1A_profile_sigma R1-A: C = 0.8903, oracle C = 0.8917, profile sigma (train, eta fixed) = 0.4983; early-stopped sigma = 0.6082 (truth 0.5)
+PASSED
+tests/test_learnability_fa4e.py::test_R2_fae_mlp_end_to_end R2: C = 0.8384, oracle C = 0.8917; probe R2 (a,b,A,omega) = [0.93  0.832 0.87  0.903], mean 0.884; epochs [1052]
+R2-amended: C_ceiling = 0.8606; threshold = min(0.8617, 0.8406) = 0.8406; C = 0.8384; probe mean 0.884 (>= 0.75), omega 0.903 (>= 0.75)
+R2 concordance with the 0.015 margin (reported only): threshold 0.8456; pass False
+R2 probe part under the three definitions: 4e (mean >= 0.75, omega >= 0.75) True; D82 (mean >= 0.78, omega >= 0.80) True; original (mean >= 0.80) True
+FAILED
+tests/test_learnability_fa4e.py::test_R3_censoring_awareness R3: survival-curve error aware [0.0822, 0.0837, 0.0813] naive [0.1544, 0.1514, 0.1554] ; C (aware, seed 0) = 0.8638
+R3: |C - C_R2| = 0.0254
+FAILED
+
+=================================== FAILURES ===================================
+_________________________ test_R1_oracle_features_head _________________________
+
+    @pytest.mark.criterion("R1")
+    def test_R1_oracle_features_head():
+        r = _r1_fit()
+        print(f"R1: C = {r['c']:.4f}, oracle C = {r['c_or']:.4f}, sigma = {r['sigma']:.4f} (truth 0.5)")
+>       assert r["c"] >= r["c_or"] - 0.02 and abs(r["sigma"] - 0.5) <= 0.05
+E       assert (np.float64(0.8903258145363409) >= (np.float64(0.8917042606516291) - 0.02) and 0.10815883371586221 <= 0.05)
+E        +  where 0.10815883371586221 = abs((0.6081588337158622 - 0.5))
+
+tests/test_learnability_fa4e.py:104: AssertionError
+__________________________ test_R2_fae_mlp_end_to_end __________________________
+
+    @pytest.mark.criterion("R2")
+    def test_R2_fae_mlp_end_to_end():
+        """R2 (D93): C >= min(C_oracle - 0.03, C_ceiling - 0.020) on the test split (0.015 reported), where C_ceiling is the
+        per-individual parametric plug-in (kanfae.evaluation.ceiling, D75 definition) on the SAME test split; and mean
+        linear-probe R^2 >= 0.75 with the omega probe >= 0.75 (D91; 0.78/0.80 and 0.80 reported side by side)."""
+        from kanfae.evaluation.ceiling import ceiling_C
+        obs, ora, tr, va, te = _data(0.05, 0.0)
+        m = NeuralAFT("fae_mlp", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)
+        risk = m.predict_risk(obs.subset(te))
+        c = harrell_c(obs.y_obs[te], obs.delta[te], risk)
+        c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
+        c_ceil = ceiling_C(obs, te)
+        Ztr, Zte = m.latent(obs.subset(tr)), m.latent(obs.subset(te))
+        A = np.column_stack([np.ones(len(Ztr)), Ztr])
+        r2 = []
+        for j in range(4):
+            tgt = ora.theta[tr, j]
+            coef = np.linalg.solve(A.T @ A + 1e-3 * np.eye(A.shape[1]), A.T @ tgt)
+            pred = np.column_stack([np.ones(len(Zte)), Zte]) @ coef
+            yt = ora.theta[te, j]
+            r2.append(1 - np.sum((yt - pred) ** 2) / np.sum((yt - yt.mean()) ** 2))
+        thr = min(c_or - 0.03, c_ceil - 0.020)
+        thr15 = min(c_or - 0.03, c_ceil - 0.015)
+        GATE["R2_C"] = c
+        print(f"R2: C = {c:.4f}, oracle C = {c_or:.4f}; probe R2 (a,b,A,omega) = {np.round(r2, 3)}, mean {np.mean(r2):.3f}; "
+              f"epochs {[r['epochs'] for r in m.info['runs']]}")
+        print(f"R2-amended: C_ceiling = {c_ceil:.4f}; threshold = min({c_or - 0.03:.4f}, {c_ceil - 0.020:.4f}) = {thr:.4f}; "
+              f"C = {c:.4f}; probe mean {np.mean(r2):.3f} (>= 0.75), omega {r2[3]:.3f} (>= 0.75)")
+        print(f"R2 concordance with the 0.015 margin (reported only): threshold {thr15:.4f}; pass {c >= thr15}")
+        print(f"R2 probe part under the three definitions: 4e (mean >= 0.75, omega >= 0.75) "
+              f"{bool(np.mean(r2) >= 0.75 and r2[3] >= 0.75)}; D82 (mean >= 0.78, omega >= 0.80) "
+              f"{bool(np.mean(r2) >= 0.78 and r2[3] >= 0.80)}; original (mean >= 0.80) {bool(np.mean(r2) >= 0.80)}")
+>       assert c >= thr
+E       assert np.float64(0.838421052631579) >= np.float64(0.84062656641604)
+
+tests/test_learnability_fa4e.py:147: AssertionError
+_________________________ test_R3_censoring_awareness __________________________
+
+    @pytest.mark.criterion("R3")
+    def test_R3_censoring_awareness():
+        obs, ora, tr, va, te = _data(0.1, 0.3)
+        grid = np.linspace(0, ora.t_max, 101)
+        S_true = ora.subset(te).survival(grid)
+        errs = {}
+        cs = []
+        for naive in (False, True):
+            for seed in (0, 1, 2):
+                m = NeuralAFT("fae_mlp", naive=naive, **CFG).fit(obs.subset(tr), obs.subset(va), seed=seed)
+                errs[(naive, seed)] = survival_curve_error(m.predict_survival(obs.subset(te), grid), S_true, grid)
+                if not naive and seed == 0:
+                    cs.append(harrell_c(obs.y_obs[te], obs.delta[te], m.predict_risk(obs.subset(te))))
+        print("R3: survival-curve error aware", [round(errs[(False, s)], 4) for s in (0, 1, 2)],
+              "naive", [round(errs[(True, s)], 4) for s in (0, 1, 2)], f"; C (aware, seed 0) = {cs[0]:.4f}")
+        r2_c = GATE.get("R2_C")
+        assert r2_c is not None, "R2 must run first in the same session"
+        print(f"R3: |C - C_R2| = {abs(cs[0] - r2_c):.4f}")
+>       assert abs(cs[0] - r2_c) <= 0.02
+E       assert np.float64(0.02542003368194623) <= 0.02
+E        +  where np.float64(0.02542003368194623) = abs((np.float64(0.8638410863135252) - np.float64(0.838421052631579)))
+
+tests/test_learnability_fa4e.py:169: AssertionError
+=============================== warnings summary ===============================
+tests/test_learnability_fa4e.py::test_R1_oracle_features_head
+  /home/user/KK/tests/test_learnability_fa4e.py:78: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_learnability_fa4e.py::test_R1A_profile_sigma
+FAILED tests/test_learnability_fa4e.py::test_R1_oracle_features_head - assert...
+FAILED tests/test_learnability_fa4e.py::test_R2_fae_mlp_end_to_end - assert n...
+FAILED tests/test_learnability_fa4e.py::test_R3_censoring_awareness - assert ...
+============== 3 failed, 1 passed, 1 warning in 151.30s (0:02:31) ==============
