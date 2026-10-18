@@ -1,0 +1,4 @@
+variant,stage,harrell_c_mean,harrell_c_std,harrell_c_count,uno_c_mean,uno_c_std,uno_c_count,ibs_mean,ibs_std,ibs_count,curve_error_mean,curve_error_std,curve_error_count,reconstruction_test_mean,reconstruction_test_std,reconstruction_test_count,enc_active_risk_mean,enc_active_risk_std,enc_active_risk_count
+plain,before,0.8584219738790898,,1,0.8423569643482589,,1,0.11282360126400061,,1,0.11785295259994795,,1,0.28988467272257407,,1,512.0,,1
+plain,pruned_centred,0.8581526861451461,,1,0.8420547718737972,,1,0.11288206628496926,,1,0.11794516278176306,,1,0.31196882861938535,,1,499.0,,1
+plain,pruned_uncentred,0.8583546519456039,,1,0.8423064647466456,,1,0.11282244358525481,,1,0.11784512215543692,,1,0.31744560849335207,,1,511.0,,1

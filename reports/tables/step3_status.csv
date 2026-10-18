@@ -1,0 +1,10 @@
+analysis,phase,status,n
+neural4f_H1,ensemble,ok,10
+neural4f_H1,final,ok,30
+neural4f_H1,tune,ok,40
+neural4f_H2,ensemble,ok,18
+neural4f_H2,final,ok,56
+neural4f_H2,tune,ok,19
+neural4f_H3,ensemble,ok,15
+neural4f_H3,final,ok,45
+neural4f_H3,tune,ok,60

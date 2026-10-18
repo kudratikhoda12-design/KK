@@ -181,7 +181,7 @@ def fpca_reconstruction(m, P):
 
 
 def tune_fit_evaluate_ensemble(name, obs_tr, obs_va, obs_te, base_record, oracle_te=None, curve_grid=None, grid=None,
-                               k=3, extra_cfg=None, holdout_test=True, skip_done=True):
+                               k=3, extra_cfg=None, holdout_test=True, skip_done=True, extra_eval=None):
     """D104 (Step 3, Revision 4f): protocol 2.1 tuning at seed 0 (validation IBS of the single seed-0 fit), then seeds
     1..k-1 of the selected configuration; the PRIMARY record is the k-seed ensemble (mean risk and survival over the
     members) on the test split, phase "ensemble"; per-seed records (phase "final") are secondary. grid=None -> [{}]."""
@@ -225,6 +225,8 @@ def tune_fit_evaluate_ensemble(name, obs_tr, obs_va, obs_te, base_record, oracle
             ev = evaluate(m, obs_tr, obs_te, m.prepare(obs_te, holdout=holdout_test), oracle_te, curve_grid)
             rec.update(status="ok" if np.isfinite(ev["ibs"]) else "diverged", n_params=m.n_params,
                        fit_seconds=m.fit_seconds, fit_info=json.dumps(m.info, default=str)[:500], **ev)
+            if extra_eval is not None:
+                rec.update(extra_eval(m, s))
         except Exception as exc:
             rec.update(status="failed", error=f"{type(exc).__name__}: {exc}", traceback=traceback.format_exc()[-1500:])
         if rid not in have:
@@ -238,6 +240,8 @@ def tune_fit_evaluate_ensemble(name, obs_tr, obs_va, obs_te, base_record, oracle
             ens = SeedEnsembleAFT.from_members(members)
             ev = evaluate(ens, obs_tr, obs_te, ens.prepare(obs_te, holdout=holdout_test), oracle_te, curve_grid)
             rec.update(status="ok" if np.isfinite(ev["ibs"]) else "diverged", n_params=members[0].n_params, **ev)
+            if extra_eval is not None:
+                rec.update(extra_eval(ens, "ensemble"))
         except Exception as exc:
             rec.update(status="failed", error=f"{type(exc).__name__}: {exc}", traceback=traceback.format_exc()[-1500:])
     else:
