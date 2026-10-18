@@ -96,9 +96,15 @@ class KANBlock(nn.Module):
 
     def forward(self, x):
         x = self.norm(x)
+        self._ins = []                       # D104: per-layer inputs of the last forward pass (for regularisation)
         for layer in self.layers:
+            self._ins.append(x)
             x = layer(x)
         return x
+
+    def cached_regularization(self, lam_ent=2.0, lam_coef=1.0):
+        """Regularisation on the inputs of the last forward pass, so BatchNorm statistics are not updated twice."""
+        return sum(l.regularization(xi, lam_ent, lam_coef)[0] for l, xi in zip(self.layers, self._ins))
 
     def layer_inputs(self, x):
         """Inputs to each KAN layer (after normalisation), for regularisation, pruning and symbolic fitting."""

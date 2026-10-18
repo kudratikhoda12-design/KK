@@ -53,6 +53,9 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64
                 # objective-minimum state, with validation-NLL early stopping (BatchNorm frozen, as in the D81 refit);
                 # it replaces the two_checkpoint risk state.
                 head_refit=None,
+                # Step 3 (D104; default 0 reproduces the earlier behaviour): KAN-AFT-style sparsity regularisation of
+                # the KAN encoder/decoder blocks, kan_lam * (|Phi|_1 + 2 S(Phi) + |C|_1) per layer (KAN-AFT defaults).
+                kan_lam=0.0,
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
@@ -126,6 +129,9 @@ class NeuralAFT(BaseModel):
         nll = aft_nll(T["y"], d, eta, sigma, self.cfg["family"])
         rec = _ind_weighted_rec(self.model.reconstruct_at(out, T["design"]), T["values"], T["mask"])
         pen = self.cfg["lam_beta"] * self.model.roughness_penalty()
+        if self.cfg["kan_lam"] > 0:
+            pen = pen + self.cfg["kan_lam"] * sum(b.cached_regularization() for b in (self.model.encoder, self.model.decoder)
+                                                  if hasattr(b, "cached_regularization"))
         a = self.cfg["alpha"]
         return {"nll": nll + pen, "rec": rec + pen, "joint": nll + a * rec + pen}[parts], (nll, rec)
 

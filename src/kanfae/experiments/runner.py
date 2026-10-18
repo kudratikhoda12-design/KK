@@ -178,3 +178,71 @@ def fpca_reconstruction(m, P):
         out[f"rec_rmse_ind_{tag}"] = float(np.sqrt(individual_weighted_mse(err2, P.eval_mask)))
         out[f"rec_rmse_obs_{tag}"] = float(np.sqrt(observation_weighted_mse(err2, P.eval_mask)))
     return out
+
+
+def tune_fit_evaluate_ensemble(name, obs_tr, obs_va, obs_te, base_record, oracle_te=None, curve_grid=None, grid=None,
+                               k=3, extra_cfg=None, holdout_test=True, skip_done=True):
+    """D104 (Step 3, Revision 4f): protocol 2.1 tuning at seed 0 (validation IBS of the single seed-0 fit), then seeds
+    1..k-1 of the selected configuration; the PRIMARY record is the k-seed ensemble (mean risk and survival over the
+    members) on the test split, phase "ensemble"; per-seed records (phase "final") are secondary. grid=None -> [{}]."""
+    from ..models.ensemble import SeedEnsembleAFT
+    grid = grid if grid is not None else [{}]
+    extra_cfg = extra_cfg or {}
+    have = done_ids() if skip_done else set()
+    tuning = []
+    for cfg in grid:
+        rid = run_id(**base_record, model=name, cfg=cfg, seed=0, phase="tune")
+        rec = dict(base_record, run_id=rid, model=name, config=json.dumps({**extra_cfg, **cfg}), seed=0, phase="tune")
+        try:
+            t0 = time.time()
+            m = make_model(name, **{**extra_cfg, **cfg}).fit(obs_tr, obs_va, seed=0)
+            P_va = m.prepare(obs_va)
+            tv = M.ibs_time_grid(obs_va.y_obs, obs_tr.y_obs)
+            val_ibs = M.ibs_marginal(m.predict_survival(obs_va, tv, P=P_va), tv, obs_va.y_obs, obs_va.delta,
+                                     obs_tr.y_obs, obs_tr.delta)[0]
+            rec.update(status="ok" if np.isfinite(val_ibs) else "diverged", val_ibs=val_ibs,
+                       val_harrell_c=M.harrell_c(obs_va.y_obs, obs_va.delta, m.predict_risk(obs_va, P=P_va)),
+                       fit_seconds=getattr(m, "fit_seconds", time.time() - t0), n_params=getattr(m, "n_params", None),
+                       block_params=json.dumps(getattr(m, "info", {}).get("block_params")),
+                       fit_info=json.dumps(getattr(m, "info", {}), default=str)[:500])
+            tuning.append((val_ibs, cfg, m))
+        except Exception as exc:                                   # failed runs are recorded, never dropped
+            rec.update(status="failed", error=f"{type(exc).__name__}: {exc}", traceback=traceback.format_exc()[-1500:])
+        if rid not in have:
+            append_record(rec)
+    ok = [t for t in tuning if np.isfinite(t[0])]
+    if not ok:
+        return None
+    best_ibs, best_cfg, best_model = min(ok, key=lambda t: t[0])
+    members, results = [], []
+    for s in range(k):
+        rid = run_id(**base_record, model=name, cfg=best_cfg, seed=s, phase="final")
+        rec = dict(base_record, run_id=rid, model=name, config=json.dumps({**extra_cfg, **best_cfg}), seed=s,
+                   phase="final", selected_val_ibs=best_ibs)
+        try:
+            m = best_model if s == 0 else make_model(name, **{**extra_cfg, **best_cfg}).fit(obs_tr, obs_va, seed=s)
+            members.append(m)
+            ev = evaluate(m, obs_tr, obs_te, m.prepare(obs_te, holdout=holdout_test), oracle_te, curve_grid)
+            rec.update(status="ok" if np.isfinite(ev["ibs"]) else "diverged", n_params=m.n_params,
+                       fit_seconds=m.fit_seconds, fit_info=json.dumps(m.info, default=str)[:500], **ev)
+        except Exception as exc:
+            rec.update(status="failed", error=f"{type(exc).__name__}: {exc}", traceback=traceback.format_exc()[-1500:])
+        if rid not in have:
+            append_record(rec)
+        results.append(rec)
+    rid = run_id(**base_record, model=name, cfg=best_cfg, seed=f"ens0-{k - 1}", phase="ensemble")
+    rec = dict(base_record, run_id=rid, model=name, config=json.dumps({**extra_cfg, **best_cfg}), seed=f"ens0-{k - 1}",
+               phase="ensemble", selected_val_ibs=best_ibs, ensemble_seeds=k)
+    if len(members) == k:
+        try:
+            ens = SeedEnsembleAFT.from_members(members)
+            ev = evaluate(ens, obs_tr, obs_te, ens.prepare(obs_te, holdout=holdout_test), oracle_te, curve_grid)
+            rec.update(status="ok" if np.isfinite(ev["ibs"]) else "diverged", n_params=members[0].n_params, **ev)
+        except Exception as exc:
+            rec.update(status="failed", error=f"{type(exc).__name__}: {exc}", traceback=traceback.format_exc()[-1500:])
+    else:
+        rec.update(status="failed", error=f"only {len(members)} of {k} members fitted")
+    if rid not in have:
+        append_record(rec)
+    results.append(rec)
+    return results
