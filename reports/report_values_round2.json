@@ -21,9 +21,9 @@
  "latest_passed": "185",
  "latest_failed": "1",
  "latest_skipped": "1",
- "n_test_records": "1443",
- "n_test_runs": "44",
- "git_head": "396100c",
+ "n_test_records": "1872",
+ "n_test_runs": "49",
+ "git_head": "63da837",
  "sym_acc": "34/47",
  "pbc_acc": "41/80"
 }

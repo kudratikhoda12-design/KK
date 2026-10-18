@@ -209,7 +209,8 @@ def values():
     out = {"verdict": v["verdict"], "r4_C": f(v["gate_R2_C"]), "r4_thr": f(v["gate_R2_threshold"]),
            "r4_probe_mean": f(v["gate_probe_mean"], 3), "r4_omega": f(v["gate_probe"][3], 3),
            "r4_conf": f"{v['confirmations_passed']}/{v['confirmations_total']}"}
-    TL = R1.TL
+    TL = R1.TA[R1.TA.run_id == "final_full_suite_round3"]       # round-3 text quotes ITS final suite run (round 4)
+    TL = TL if len(TL) else R1.TL
     out["n_tests_latest"] = str(len(TL))
     for o in ("passed", "failed", "skipped", "xfailed"):
         out[f"latest_{o}"] = str(int((TL.outcome == o).sum()))

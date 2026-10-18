@@ -143,8 +143,6 @@ class FlatAE(nn.Module):
         self.encoder = mlp([D * n_grid, hidden, r])
         self.decoder = mlp([r, hidden, D * n_grid])
         self.head = AFTHead(r + p_u, head)
-        # Revision 4b (D71): dropout on the survival path only (latent -> head); the decoder sees the undropped z.
-        self.head_drop = nn.Dropout(head_dropout) if head_dropout > 0 else nn.Identity()
 
     def encode(self, grid):
         return self.encoder(grid.reshape(len(grid), -1))

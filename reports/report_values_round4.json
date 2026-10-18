@@ -1,0 +1,16 @@
+{
+ "verdict": "NOT CONFIRMED",
+ "C": "0.8372",
+ "thr": "0.8662",
+ "probe": "0.755",
+ "omega": "0.874",
+ "conf": "0/5",
+ "sel_id": "A5-fae_mlp-8e531fd3",
+ "git_head": "63da837",
+ "n_tests": "209",
+ "passed": "203",
+ "failed": "2",
+ "skipped": "1",
+ "xfailed": "3",
+ "ceiling_below": "9"
+}

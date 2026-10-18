@@ -10,9 +10,9 @@
  "latest_failed": "2",
  "latest_skipped": "1",
  "latest_xfailed": "1",
- "n_test_records": "1443",
- "n_test_runs": "44",
+ "n_test_records": "1872",
+ "n_test_runs": "49",
  "r4_sel_id": "A5-fae_mlp-b36715d7",
  "r4_sel": "front=fa, r=12, alpha=1.0, optimizer=adam, lr=0.003, es_target=objective, max_epochs=3000, patience=100, H=32, hidden=64, fa_nfreq=17",
- "git_head": "396100c"
+ "git_head": "63da837"
 }

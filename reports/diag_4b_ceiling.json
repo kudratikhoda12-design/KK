@@ -1,0 +1,15 @@
+{
+ "oracle_val_C": 0.8903884711779448,
+ "revision 4b selection": {
+  "model_val_C": 0.8283834586466166,
+  "linear_head_refit_val_C": 0.826140350877193,
+  "mlp_head_val_C": 0.8231077694235589,
+  "plugin_true_function_val_C": 0.8207894736842105
+ },
+ "A3 reference": {
+  "model_val_C": 0.8439223057644111,
+  "linear_head_refit_val_C": 0.843734335839599,
+  "mlp_head_val_C": 0.843859649122807,
+  "plugin_true_function_val_C": 0.8308771929824561
+ }
+}

@@ -32,6 +32,8 @@ def _data(sigma_y, censoring):
 
 
 @pytest.mark.criterion("R1")
+@pytest.mark.xfail(strict=True, reason="historical: revision-4 gate (seed 41), R1 sigma failed as registered (D61); "
+                                       "superseded by revision 4b (D71); kept as a record (D76)")
 def test_R1_oracle_features_head():
     obs, ora, tr, va, te = _data(0.1, 0.0)
     X = ora.theta[:, :4]
@@ -67,6 +69,8 @@ def test_R1_oracle_features_head():
 
 
 @pytest.mark.criterion("R2")
+@pytest.mark.xfail(strict=True, reason="historical: revision 4 failed R2 under D61 (C 0.8189 < 0.8656); superseded by "
+                                       "revision 4b (D71); kept as a record (D76)")
 def test_R2_fae_mlp_end_to_end():
     obs, ora, tr, va, te = _data(0.05, 0.0)
     m = NeuralAFT("fae_mlp", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)

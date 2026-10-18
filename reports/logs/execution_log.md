@@ -130,3 +130,12 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - C-MAPSS Option B v3 with engine-cluster bootstrap (FD001, FD003); point estimates reproduce earlier runs.
 - Historical A3 gate pinned and marked strict xfail (D64). Final suite: 198 passed, 2 failed (revised gate),
   1 xfailed, 1 skipped. Report revision 3 (59 pages); deliverable verification ALL_CHECKS_PASS.
+- Round 4 (owner decisions D67–D69). D70 overfitting curves (survival part peaks at ~360 epochs, objective at
+  ~2250; latent generalises). Survival-path options + HR-1..3. Pre-registration D71 committed (63da837) before any
+  4b fit. Search (11 + 2 fits); D73 corrected the round-2 wording of the D41 rule (no rule change).
+- 4b gate, fresh seed 61: R1 original FAIL, R1-A PASS, R2 FAIL (C 0.8372), R3 PASS; confirmations 121–125 0/5;
+  NOT CONFIRMED; neural analyses blocked.
+- R1-A on fresh seeds 601–610: original 0/10, amended 10/10 (D72). Diagnoses D74 (latent ceiling), D75 (data
+  ceiling; 9/10 fresh seeds below the threshold even for near-optimal estimates), D77 (training instability).
+- Revision-4 gate marked historical strict xfail (D76). First round-4 suite found a FlatAE regression (D78), fixed;
+  rerun: 203 passed, 2 failed (4b gate R1/R2), 3 xfailed, 1 skipped. Report revision 4 (80 pages); verification passes.

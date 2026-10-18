@@ -1,0 +1,67 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 4 items
+
+tests/test_learnability_fa4b.py::test_R1_oracle_features_head R1: C = 0.8933, oracle C = 0.8962, sigma = 0.5808 (truth 0.5)
+FAILED
+tests/test_learnability_fa4b.py::test_R1A_profile_sigma R1-A: C = 0.8933, oracle C = 0.8962, profile sigma (train, eta fixed) = 0.4924; early-stopped sigma = 0.5808 (truth 0.5)
+PASSED
+tests/test_learnability_fa4b.py::test_R2_fae_mlp_end_to_end R2: C = 0.8372, oracle C = 0.8962; probe R2 (a,b,A,omega) = [0.893 0.592 0.661 0.874], mean 0.755; epochs [1056]
+FAILED
+tests/test_learnability_fa4b.py::test_R3_censoring_awareness R3: survival-curve error aware [0.0969, 0.1005, 0.0971] naive [0.1339, 0.1294, 0.1315] ; C (aware, seed 0) = 0.8438
+R3: |C - C_R2| = 0.0066
+PASSED
+
+=================================== FAILURES ===================================
+_________________________ test_R1_oracle_features_head _________________________
+
+    @pytest.mark.criterion("R1")
+    def test_R1_oracle_features_head():
+        r = _r1_fit()
+        print(f"R1: C = {r['c']:.4f}, oracle C = {r['c_or']:.4f}, sigma = {r['sigma']:.4f} (truth 0.5)")
+>       assert r["c"] >= r["c_or"] - 0.02 and abs(r["sigma"] - 0.5) <= 0.05
+E       assert (np.float64(0.8932581453634085) >= (np.float64(0.896203007518797) - 0.02) and 0.08079356974469654 <= 0.05)
+E        +  where 0.08079356974469654 = abs((0.5807935697446965 - 0.5))
+
+tests/test_learnability_fa4b.py:90: AssertionError
+__________________________ test_R2_fae_mlp_end_to_end __________________________
+
+    @pytest.mark.criterion("R2")
+    def test_R2_fae_mlp_end_to_end():
+        obs, ora, tr, va, te = _data(0.05, 0.0)
+        m = NeuralAFT("fae_mlp", **CFG).fit(obs.subset(tr), obs.subset(va), seed=0)
+        risk = m.predict_risk(obs.subset(te))
+        c = harrell_c(obs.y_obs[te], obs.delta[te], risk)
+        c_or = harrell_c(obs.y_obs[te], obs.delta[te], -ora.eta_true[te])
+        Ztr, Zte = m.latent(obs.subset(tr)), m.latent(obs.subset(te))
+        A = np.column_stack([np.ones(len(Ztr)), Ztr])
+        r2 = []
+        for j in range(4):
+            tgt = ora.theta[tr, j]
+            coef = np.linalg.solve(A.T @ A + 1e-3 * np.eye(A.shape[1]), A.T @ tgt)
+            pred = np.column_stack([np.ones(len(Zte)), Zte]) @ coef
+            yt = ora.theta[te, j]
+            r2.append(1 - np.sum((yt - pred) ** 2) / np.sum((yt - yt.mean()) ** 2))
+        GATE["R2_C"] = c
+        print(f"R2: C = {c:.4f}, oracle C = {c_or:.4f}; probe R2 (a,b,A,omega) = {np.round(r2, 3)}, mean {np.mean(r2):.3f}; "
+              f"epochs {[r['epochs'] for r in m.info['runs']]}")
+>       assert c >= c_or - 0.03
+E       assert np.float64(0.8371804511278196) >= (np.float64(0.896203007518797) - 0.03)
+
+tests/test_learnability_fa4b.py:120: AssertionError
+=============================== warnings summary ===============================
+tests/test_learnability_fa4b.py::test_R1_oracle_features_head
+  /home/user/KK/tests/test_learnability_fa4b.py:64: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    best, state, bad = v, (copy.deepcopy(net.state_dict()), float(rho)), 0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_learnability_fa4b.py::test_R1_oracle_features_head - assert...
+FAILED tests/test_learnability_fa4b.py::test_R2_fae_mlp_end_to_end - assert n...
+============== 2 failed, 2 passed, 1 warning in 75.57s (0:01:15) ===============

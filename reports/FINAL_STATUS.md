@@ -1,4 +1,29 @@
-# Final status: KAN-FAE research prototype, round 3 (2026-10-17)
+# Final status: KAN-FAE research prototype, round 4 (2026-10-18)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (80 pages; Part A = round 4; Parts B–D = rounds 3, 2, 1);
+deliverable verification passes. Status: **research prototype; no successful KAN-FAE model; not publication-ready;
+no novelty claim.**
+
+| Item | Result |
+|---|---|
+| Revision 4b (pre-registered D71) | Compact frequency-aware front + head weight decay 1e-2 (`A5-fae_mlp-8e531fd3`) |
+| Revised gate, fresh seed 61 | R1 original FAIL (σ̂ 0.581, reported as is); R1-A PASS (profile σ̂ 0.492); **R2 FAIL** (C 0.8372 < 0.8662; probe 0.755); R3 PASS |
+| Confirmations 121–125 | **0/5** → **NOT CONFIRMED**; H1/H2/H3/controls/symbolic extraction for KAN-FAE remain BLOCKED (guard verified) |
+| Why (D70, D74, D75, D77) | Survival-path overfitting after ~360 epochs; the frozen latent lacks risk information (an MLP head and the true risk formula do not help); **R2's concordance criterion is at the data's information limit**: near-optimal estimates + true risk formula fall below oracle − 0.03 on 9/10 fresh seeds (b, blurred by GP noise, is limiting); frequency-aware variants train unstably |
+| R1 amendment (D68/D72) | Fresh seeds 601–610: original check 0/10, R1-A 10/10 (two different procedures; nothing relabelled) |
+| PBC (D69) | E2 provisional primary, E1 sensitivity; justification for the professor: `docs/pbc_endpoint_justification.md`; no competing-risk claims |
+| Tests | Final suite `final_full_suite_round4_rerun`: 203 passed, 2 failed (4b gate original R1 and R2), 3 expected failures (historical gates), 1 skipped. A regression found by the first round-4 suite run (D78) was fixed; both runs kept |
+
+## Decisions requested
+
+1. Re-reference R2's concordance criterion to a data-attainable benchmark (or change the simulator noise), prospectively, with fresh seeds.
+2. Approve a training-stability study of the frequency-aware front.
+3. Confirm the PBC endpoint (E2) with the professor.
+
+---
+
+# Round 3 status (2026-10-17), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction). Report:
 `reports/final_research_prototype_report.pdf` (59 pages; Part A = round 3; Parts B/C = rounds 2/1, historical);

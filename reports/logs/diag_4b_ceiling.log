@@ -1,0 +1,2 @@
+revision 4b selection {'model_val_C': np.float64(0.8284), 'linear_head_refit_val_C': np.float64(0.8261), 'mlp_head_val_C': np.float64(0.8231), 'plugin_true_function_val_C': np.float64(0.8208)} | oracle 0.8904 | R2 threshold 0.8604
+A3 reference {'model_val_C': np.float64(0.8439), 'linear_head_refit_val_C': np.float64(0.8437), 'mlp_head_val_C': np.float64(0.8439), 'plugin_true_function_val_C': np.float64(0.8309)} | oracle 0.8904 | R2 threshold 0.8604

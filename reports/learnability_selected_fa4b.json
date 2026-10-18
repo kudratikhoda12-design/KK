@@ -1,0 +1,19 @@
+{
+ "kind": "fae_mlp",
+ "config": {
+  "front": "fa",
+  "r": 12,
+  "alpha": 1.0,
+  "optimizer": "adam",
+  "lr": 0.003,
+  "es_target": "objective",
+  "max_epochs": 3000,
+  "patience": 100,
+  "H": 32,
+  "hidden": 64,
+  "fa_compact": true,
+  "fa_nfreq": 17,
+  "head_wd": 0.01
+ },
+ "config_id": "A5-fae_mlp-8e531fd3"
+}

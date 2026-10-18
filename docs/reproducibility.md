@@ -43,6 +43,19 @@ KANFAE_RUN_ID=revised_gate_fa .venv/bin/python -m pytest -v -s tests/test_learna
 .venv/bin/python scripts/diag_r1_seeds.py                  # D66
 .venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3   # D62
 .venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3
+# round 4 (2026-10-18): Revision 4b, pre-registered in D71 before these runs
+.venv/bin/python scripts/diag_overfit_curves.py            # D70 (seed-21 train/validation only)
+.venv/bin/python -m pytest -v tests/test_survival_regularisation.py   # HR-1..HR-3
+.venv/bin/python scripts/learnability_search_fa4b.py       # -> reports/learnability_selected_fa4b.json
+KANFAE_RUN_ID=revised_gate_fa4b .venv/bin/python -m pytest -v -s tests/test_learnability_fa4b.py   # fresh seed 61
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4b.json \
+    --seeds 121,122,123,124,125 --tag _fa4b
+.venv/bin/python scripts/revised_gate_verdict.py fa4b     # -> reports/revised_gate_verdict_fa4b.json (D71 rule)
+.venv/bin/python scripts/diag_r1_seeds.py --seeds 601,602,603,604,605,606,607,608,609,610 --out reports/r1a_fresh_seeds.jsonl
+.venv/bin/python scripts/diag_4b_ceiling.py               # D74
+.venv/bin/python scripts/diag_data_ceiling.py             # D75 (seed 21 validation)
+.venv/bin/python scripts/diag_data_ceiling_seeds.py       # D75 (fresh seeds 701-710)
+.venv/bin/python scripts/make_figures_round4.py && .venv/bin/python scripts/build_report_round4.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)

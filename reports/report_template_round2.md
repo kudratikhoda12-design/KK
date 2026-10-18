@@ -102,8 +102,10 @@ design iteration; this is disclosed, and it is why fresh replication seeds decid
 
 ### I.1.2 Controlled search (validation data only; D41 steps S1–S7, D46 steps S8–S10)
 
-- **Selection rule (fixed in D41 before any fit).** A configuration passing both validation criteria is preferred.
-  Otherwise the score is validation C + 0.1 × probe mean. Ties keep the simpler configuration.
+- **Selection rule (fixed in D41 before any fit).** Maximise validation C among configurations whose mean
+  validation probe R² ≥ 0.8; if none qualifies, maximise validation C + 0.1 × probe mean. Ties keep the simpler
+  configuration. *(Wording corrected 2026-10-18, D73: an earlier version of this sentence said "passing both
+  validation criteria", which misdescribed the registered rule; the code always implemented the registered rule.)*
 - **Search order.** Greedy, one factor at a time:
   - S1 front end: A0 linear (Wu et al.), A1 pointwise-MLP NFL, A2 energy `∫γx²`, A3 tensor spline `∫F(x(t), t)dt`;
   - S2 latent size;
