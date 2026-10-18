@@ -1,0 +1,9 @@
+/home/user/KK/src/kanfae/models/pipelines.py:154: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+training seed 0: val C 0.8415 (ceiling 0.8566, oracle 0.8880; C - ceiling -0.0151) probe [0.916 0.787 0.852 0.891] epochs 951/627
+training seed 1: val C 0.8361 (ceiling 0.8566, oracle 0.8880; C - ceiling -0.0205) probe [0.923 0.762 0.805 0.898] epochs 981/610
+training seed 2: val C 0.8429 (ceiling 0.8566, oracle 0.8880; C - ceiling -0.0137) probe [0.906 0.707 0.837 0.894] epochs 1018/608
+training seed 3: val C 0.8411 (ceiling 0.8566, oracle 0.8880; C - ceiling -0.0155) probe [0.92  0.728 0.749 0.872] epochs 957/579
+training seed 4: val C 0.8410 (ceiling 0.8566, oracle 0.8880; C - ceiling -0.0156) probe [0.919 0.737 0.813 0.906] epochs 970/656
+val C mean 0.8405 sd 0.0026 range 0.0068
