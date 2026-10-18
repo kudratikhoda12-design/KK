@@ -36,6 +36,8 @@ def main():
                                                             "probe mean >= 0.78 and omega probe >= 0.80")
     ap.add_argument("--threads", type=int, default=None, help="torch threads (D79: 1 for deterministic fits)")
     ap.add_argument("--ceiling-margin", type=float, default=0.015, help="C_ceiling margin (D82: 0.015; D88: 0.020)")
+    ap.add_argument("--probe-rule", choices=("4c", "4e"), default="4c",
+                    help="amended probe part: 4c = mean >= 0.78 and omega >= 0.80 (D82); 4e = mean >= 0.75 and omega >= 0.75 (D93)")
     a = ap.parse_args()
     if a.threads:
         torch.set_num_threads(a.threads)
@@ -62,7 +64,11 @@ def main():
                        threshold=min(c_or - 0.03, c_ceil - a.ceiling_margin),
                        pass_C_margin015=bool(c >= min(c_or - 0.03, c_ceil - 0.015)))
             rec["pass_C"] = bool(c >= rec["threshold"])
-            rec["pass_probe"] = bool(np.mean(pr) >= 0.78 and pr[3] >= 0.80)
+            rec["pass_probe_078_080"] = bool(np.mean(pr) >= 0.78 and pr[3] >= 0.80)
+            rec["pass_probe_075_075"] = bool(np.mean(pr) >= 0.75 and pr[3] >= 0.75)
+            rec["pass_probe_original_080"] = bool(np.mean(pr) >= 0.80)
+            rec["probe_rule"] = a.probe_rule
+            rec["pass_probe"] = rec["pass_probe_075_075"] if a.probe_rule == "4e" else rec["pass_probe_078_080"]
         rec["pass"] = rec["pass_C"] and rec["pass_probe"]
         recs.append(rec)
         with open(out, "a") as fh:
