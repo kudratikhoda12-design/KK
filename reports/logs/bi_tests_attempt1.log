@@ -1,0 +1,25 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 7 items
+
+tests/test_burn_in.py::test_BI2_two_checkpoint_risk_state_respects_burn_in PASSED [ 14%]
+tests/test_burn_in.py::test_BI3_nll_selection_ignores_pre_burn_in_minimum PASSED [ 28%]
+tests/test_burn_in.py::test_BI4_refit_head_respects_burn_in PASSED       [ 42%]
+tests/test_training_stability.py::test_RS2_balance_matches_a3_rms_on_training_data PASSED [ 57%]
+tests/test_training_stability.py::test_RS3_gradient_clipping_is_applied PASSED [ 71%]
+tests/test_training_stability.py::test_RS4_two_checkpoint_risk_comes_from_the_validation_nll_minimum PASSED [ 85%]
+tests/test_training_stability.py::test_RS5_two_state_refit_changes_only_the_head PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_burn_in.py::test_BI2_two_checkpoint_risk_state_respects_burn_in
+  /home/user/KK/src/kanfae/models/pipelines.py:154: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    tr_nll.append(float(tn)); va_nll.append(float(vn))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 7 passed, 1 warning in 10.09s =========================

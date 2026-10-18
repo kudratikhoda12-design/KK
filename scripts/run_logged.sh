@@ -3,6 +3,9 @@
 # Runs the command from the repo root, saves full stdout+stderr to reports/logs/<log-name>.log
 # and appends a JSON record (command, exit code, timings, git HEAD) to reports/logs/commands.jsonl.
 set -u
+# Round 6 (owner housekeeping, D86): every logged command runs single-threaded so numpy/BLAS and torch results are
+# bit-for-bit reproducible between standalone runs and the full test suite (closes D85).
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 NAME="$1"; shift
 LOG="$ROOT/reports/logs/$NAME.log"

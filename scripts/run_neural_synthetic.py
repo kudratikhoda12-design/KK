@@ -38,7 +38,8 @@ def main():
     # the verdict that belongs to the selected configuration (D61: fa; D71: fa4b)
     verdict = ROOT / "reports" / {"reports/learnability_selected_fa.json": "revised_gate_verdict.json",
                                   "reports/learnability_selected_fa4b.json": "revised_gate_verdict_fa4b.json",
-                                  "reports/learnability_selected_fa4c.json": "revised_gate_verdict_fa4c.json"}.get(
+                                  "reports/learnability_selected_fa4c.json": "revised_gate_verdict_fa4c.json",
+                                  "reports/learnability_selected_fa4d.json": "revised_gate_verdict_fa4d.json"}.get(
         args.selected, "no_verdict_for_this_selection.json")
     if not verdict.exists() or json.loads(verdict.read_text()).get("verdict") != "CONFIRMED":
         sys.exit("BLOCKED (D57/D61): the conventional MLP has not passed the revised gate; no neural hypothesis runs.")

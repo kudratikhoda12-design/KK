@@ -35,6 +35,7 @@ def main():
     ap.add_argument("--amended", action="store_true", help="D80/D82 criteria: C >= min(oracle-0.03, C_ceiling-0.015), "
                                                             "probe mean >= 0.78 and omega probe >= 0.80")
     ap.add_argument("--threads", type=int, default=None, help="torch threads (D79: 1 for deterministic fits)")
+    ap.add_argument("--ceiling-margin", type=float, default=0.015, help="C_ceiling margin (D82: 0.015; D88: 0.020)")
     a = ap.parse_args()
     if a.threads:
         torch.set_num_threads(a.threads)
@@ -57,7 +58,9 @@ def main():
         if a.amended:
             from kanfae.evaluation.ceiling import ceiling_C
             c_ceil = ceiling_C(obs, te)
-            rec.update(criteria="amended D80/D82", C_ceiling=c_ceil, threshold=min(c_or - 0.03, c_ceil - 0.015))
+            rec.update(criteria=f"amended, C_ceiling margin {a.ceiling_margin}", C_ceiling=c_ceil, ceiling_margin=a.ceiling_margin,
+                       threshold=min(c_or - 0.03, c_ceil - a.ceiling_margin),
+                       pass_C_margin015=bool(c >= min(c_or - 0.03, c_ceil - 0.015)))
             rec["pass_C"] = bool(c >= rec["threshold"])
             rec["pass_probe"] = bool(np.mean(pr) >= 0.78 and pr[3] >= 0.80)
         rec["pass"] = rec["pass_C"] and rec["pass_probe"]

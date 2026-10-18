@@ -166,7 +166,9 @@ def recon_table():
 
 
 def selected_table():
-    sel = pd.read_csv(REP / "tables/selected_configs.csv")
+    f = "tables/r1_selected_configs.csv" if EXP_ROUND1 and (REP / "tables/r1_selected_configs.csv").exists() \
+        else "tables/selected_configs.csv"                                   # round 6: round-1 snapshot
+    sel = pd.read_csv(REP / f)
     def clean(c):
         c = re.sub(r"np\.int64\((\d+)\)", r"\1", str(c))
         items = re.findall(r"'(\{[^']*\})': (\d+)", c)

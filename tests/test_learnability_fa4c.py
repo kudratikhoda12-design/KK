@@ -96,6 +96,8 @@ def _r1_fit():
 
 
 @pytest.mark.criterion("R1")
+@pytest.mark.xfail(strict=True, reason="historical: revision-4c gate (seed 81), original R1 sigma failed (D84); "
+                                       "superseded by revision 4d (D87/D88); kept as a record (D86)")
 def test_R1_oracle_features_head():
     r = _r1_fit()
     print(f"R1: C = {r['c']:.4f}, oracle C = {r['c_or']:.4f}, sigma = {r['sigma']:.4f} (truth 0.5)")
@@ -111,6 +113,8 @@ def test_R1A_profile_sigma():
 
 
 @pytest.mark.criterion("R2")
+@pytest.mark.xfail(strict=True, reason="historical: revision 4c failed the amended R2 (probe part; D84); superseded "
+                                       "by revision 4d (D87/D88); kept as a record (D86)")
 def test_R2_fae_mlp_end_to_end():
     """Amended R2 (D80/D82): C >= min(C_oracle - 0.03, C_ceiling - 0.015) on the test split, where C_ceiling is the
     per-individual parametric plug-in (kanfae.evaluation.ceiling, D75 definition) on the SAME test split; and mean

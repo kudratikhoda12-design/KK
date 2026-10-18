@@ -70,4 +70,7 @@ pr1 = f1.groupby(["dataset", "analysis", "setting", "model", "replicate"])[metri
 a1 = pr1.groupby(["dataset", "analysis", "setting", "model"])[metric_cols].agg(["mean", "std", "count"])
 a1.columns = [f"{a}__{b}" for a, b in a1.columns]
 a1.reset_index().to_csv(OUT / "r1_summary_by_model.csv", index=False)
+r1f = r1[(r1.phase == "final") & r1.used_in_summary]
+r1f[r1f.seed == 0].groupby(["analysis", "setting", "model"])["config"].agg(lambda s: dict(s.value_counts())) \
+    .reset_index().to_csv(OUT / "r1_selected_configs.csv", index=False)       # round 6: R1.9 from the snapshot
 print(f"round-1 snapshot: {len(r1)} records ({int((r1.status != 'ok').sum())} not ok)")

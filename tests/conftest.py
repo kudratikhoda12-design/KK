@@ -8,6 +8,22 @@ import os
 import time
 from pathlib import Path
 
+# Round 6 (owner housekeeping, D86): single-threaded numerics for the whole test session, set before numpy/scipy/torch
+# are imported by any test module, so suite results match standalone single-threaded runs bit for bit (closes D85).
+for _v in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
+    os.environ[_v] = "1"
+_THREAD_LIMITS = None
+
+
+def pytest_configure(config):
+    global _THREAD_LIMITS
+    import numpy  # noqa: F401  (load BLAS so the limit below applies to it)
+    import scipy.linalg  # noqa: F401
+    import torch
+    from threadpoolctl import threadpool_limits
+    _THREAD_LIMITS = threadpool_limits(1)        # kept alive for the whole session
+    torch.set_num_threads(1)
+
 ROOT = Path(__file__).resolve().parents[1]
 RECORD = Path(os.environ.get("KANFAE_TEST_RECORD", ROOT / "reports" / "logs" / "test_records.jsonl"))
 RUN_ID = os.environ.get("KANFAE_RUN_ID", time.strftime("%Y%m%dT%H%M%S"))

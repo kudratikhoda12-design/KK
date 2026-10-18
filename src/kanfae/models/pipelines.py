@@ -44,6 +44,10 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64
                 # validation-NLL early stopping), "two_checkpoint" (latent/decoder from the validation-objective
                 # minimum; risk predictions from the full-model state at the validation-NLL minimum).
                 fa_balance=False, clip=None, es_mode="single",
+                # Revision 4d (D87; default 0 reproduces the earlier behaviour): burn-in. No early stopping before epoch
+                # min_epochs, and validation-NLL-based state selection (two_checkpoint risk state, NLL early stopping,
+                # head refit) considers only epochs >= min_epochs.
+                min_epochs=0,
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
@@ -131,6 +135,8 @@ class NeuralAFT(BaseModel):
         flat = [p for g in params for p in (g["params"] if isinstance(g, dict) else [g])]
         tr_nll, va_nll = [], []
         best_nll, best_nll_state, best_nll_ep = np.inf, None, -1
+        me = int(self.cfg["min_epochs"])
+        nll_sel = self.cfg["es_target"] == "nll" and parts != "rec"        # selection by validation NLL
         for ep in range(self.cfg["max_epochs"]):
             self.model.train()
             if getattr(self, "_freeze_non_head", False):      # D81 refit: frozen parts stay in eval mode (BatchNorm
@@ -146,22 +152,23 @@ class NeuralAFT(BaseModel):
             with torch.no_grad():
                 vl, (vn, vr) = self._objective(Tva, parts)
             tr_nll.append(float(tn)); va_nll.append(float(vn))
-            if track_nll_state and float(vn) < best_nll - 1e-6:
+            if track_nll_state and ep >= me and float(vn) < best_nll - 1e-6:
                 best_nll, best_nll_state, best_nll_ep = float(vn), copy.deepcopy(self.model.state_dict()), ep
             vl = float(vn) if (self.cfg["es_target"] == "nll" and parts != "rec") else float(vl)
             hist.append((ep, float(loss.detach()), vl))
             if not np.isfinite(vl):
                 break
-            if vl < best - 1e-6:
+            if vl < best - 1e-6 and (ep >= me or not nll_sel):
                 best, best_state, bad = vl, copy.deepcopy(self.model.state_dict()), 0
             else:
                 bad += 1
-                if bad >= self.cfg["patience"]:
+                if bad >= self.cfg["patience"] and ep >= me:
                     break
         if best_state is not None:
             self.model.load_state_dict(best_state)
         tn = np.asarray(tr_nll)
-        stop_ep = int(np.argmin([h[2] for h in hist])) if hist else -1
+        lo = me if nll_sel else 0
+        stop_ep = (lo + int(np.argmin([h[2] for h in hist[lo:]]))) if len(hist) > lo else -1
         out = {"parts": parts, "epochs": len(hist), "best_val": best, "diverged": not np.isfinite(best),
                # D81 stability diagnostics (training NLL, per epoch): jumps > 0.2 after epoch 300
                "nll_jumps_gt02_after300": int((np.diff(tn)[300:] > 0.2).sum()) if len(tn) > 301 else 0,
