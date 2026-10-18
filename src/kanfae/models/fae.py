@@ -93,7 +93,7 @@ class AFTHead(nn.Module):
 class FunctionalAE(nn.Module):
     def __init__(self, D, basis: BSplineBasis, n_beta=8, H=16, r=4, block="mlp", hidden=32, kan_grid=5,
                  kan_hidden=(None, None), head="linear", p_u=0, seed=0, front="linear", n_maps=5, pw_width=16,
-                 fa_nfreq=33, fa_fourier=False, fa_windows=False, fa_compact=False):
+                 fa_nfreq=33, fa_fourier=False, fa_windows=False, fa_compact=False, head_dropout=0.0):
         super().__init__()
         torch.manual_seed(seed)
         self.D, self.K = D, basis.K
@@ -113,6 +113,8 @@ class FunctionalAE(nn.Module):
         self.encoder = make_block(block, H, r, hidden, kan_grid, kan_hidden[0], seed=seed)
         self.decoder = make_block(block, r, D * basis.K, hidden, kan_grid, kan_hidden[1], seed=seed + 100)
         self.head = AFTHead(r + p_u, head)
+        # Revision 4b (D71): dropout on the survival path only (latent -> head); the decoder sees the undropped z.
+        self.head_drop = nn.Dropout(head_dropout) if head_dropout > 0 else nn.Identity()
 
     def encode(self, c):
         return self.encoder(self.flin(c))
@@ -120,7 +122,7 @@ class FunctionalAE(nn.Module):
     def forward(self, c, u):
         z = self.encode(c)
         c_hat = self.decoder(z).view(-1, self.D, self.K)
-        eta, sigma = self.head(torch.cat([z, u], dim=1))
+        eta, sigma = self.head(torch.cat([self.head_drop(z), u], dim=1))
         return z, c_hat, eta, sigma
 
     def reconstruct_at(self, c_hat, Phi):           # (B, D, K), (B, L, K) -> (B, L, D)
@@ -141,6 +143,8 @@ class FlatAE(nn.Module):
         self.encoder = mlp([D * n_grid, hidden, r])
         self.decoder = mlp([r, hidden, D * n_grid])
         self.head = AFTHead(r + p_u, head)
+        # Revision 4b (D71): dropout on the survival path only (latent -> head); the decoder sees the undropped z.
+        self.head_drop = nn.Dropout(head_dropout) if head_dropout > 0 else nn.Identity()
 
     def encode(self, grid):
         return self.encoder(grid.reshape(len(grid), -1))

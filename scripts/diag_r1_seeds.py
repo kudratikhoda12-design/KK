@@ -65,13 +65,19 @@ def r1(seed):
 
 
 if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seeds", default="21,41," + ",".join(str(s) for s in range(501, 511)))
+    ap.add_argument("--out", default="reports/diag_r1_seeds.jsonl")       # D68 R1-A fresh seeds: reports/r1a_fresh_seeds.jsonl
+    args = ap.parse_args()
+    SEEDS = [int(x) for x in args.seeds.split(",")]
     torch.set_default_dtype(torch.float64)
-    out = ROOT / "reports" / "diag_r1_seeds.jsonl"
+    out = ROOT / args.out
     # resumable (the first profile run hit the background time limit): completed seeds with the profile field are kept
     keep = [json.loads(l) for l in out.read_text().splitlines()] if out.exists() else []
     keep = [r for r in keep if "sigma_profile_train" in r]
     out.write_text("".join(json.dumps(r) + "\n" for r in keep))
-    for s in [21, 41] + list(range(501, 511)):
+    for s in SEEDS:
         if s in {r["seed"] for r in keep}:
             continue
         r = r1(s)

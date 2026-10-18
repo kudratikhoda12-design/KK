@@ -35,7 +35,10 @@ def main():
     ap.add_argument("--reps", type=int, default=5)
     ap.add_argument("--selected", default="reports/learnability_selected_fa.json")
     args = ap.parse_args()
-    verdict = ROOT / "reports" / "revised_gate_verdict.json"
+    # the verdict that belongs to the selected configuration (D61: fa; D71: fa4b)
+    verdict = ROOT / "reports" / {"reports/learnability_selected_fa.json": "revised_gate_verdict.json",
+                                  "reports/learnability_selected_fa4b.json": "revised_gate_verdict_fa4b.json"}.get(
+        args.selected, "no_verdict_for_this_selection.json")
     if not verdict.exists() or json.loads(verdict.read_text()).get("verdict") != "CONFIRMED":
         sys.exit("BLOCKED (D57/D61): the conventional MLP has not passed the revised gate; no neural hypothesis runs.")
     torch.set_default_dtype(torch.float64)

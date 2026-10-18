@@ -1,0 +1,9 @@
+/home/user/KK/scripts/diag_overfit_curves.py:99: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  res["head_weight_norm"] = float(m.model.head.net.weight.norm()) if hasattr(m.model.head, "net") and \
+A3_reference: min val objective at epoch 2987, min val NLL at epoch 2989; val NLL at objective stop 1.2342 vs min 1.2342; best val C 0.8442 at epoch 2975 (train C 0.8546); final train/val C 0.8546/0.8442; paths train/val A3 0.379/0.378 spectral nan/nan
+   probe (train in-sample, val): {'a': (0.939, 0.945), 'b': (0.858, 0.849), 'A': (0.848, 0.853), 'omega': (0.013, -0.01)}
+fa_J17_r12 (revision-4 selection): min val objective at epoch 2285, min val NLL at epoch 363; val NLL at objective stop 1.6758 vs min 1.3693; best val C 0.8256 at epoch 500 (train C 0.8643); final train/val C 0.8796/0.8078; paths train/val A3 0.452/0.449 spectral 1.869/1.822
+   probe (train in-sample, val): {'a': (0.844, 0.836), 'b': (0.583, 0.544), 'A': (0.738, 0.7), 'omega': (0.814, 0.795)}
+fa_compact_J17_r12: min val objective at epoch 2227, min val NLL at epoch 356; val NLL at objective stop 1.3507 vs min 1.2237; best val C 0.8461 at epoch 450 (train C 0.8607); final train/val C 0.8844/0.8225; paths train/val A3 0.378/0.376 spectral 1.135/1.132
+   probe (train in-sample, val): {'a': (0.906, 0.901), 'b': (0.707, 0.639), 'A': (0.755, 0.719), 'omega': (0.887, 0.876)}

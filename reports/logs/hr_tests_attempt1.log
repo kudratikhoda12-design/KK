@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 3 items
+
+tests/test_survival_regularisation.py::test_HR1_head_param_group_with_same_decay_is_identical PASSED
+tests/test_survival_regularisation.py::test_HR2_head_dropout_touches_only_the_survival_path PASSED
+tests/test_survival_regularisation.py::test_HR3_head_weight_decay_shrinks_only_head_weights head weight norm: default 0.8718 head_wd=1 0.3918
+PASSED
+
+============================== 3 passed in 6.79s ===============================

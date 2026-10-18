@@ -28,11 +28,13 @@ BASE = dict(front="tspline", r=8, alpha=1.0, optimizer="adam", lr=3e-3, es_targe
             patience=100, H=32, hidden=64)
 
 
-def main():
+def main(steps=None, selected=None):
+    """steps(run, best) -> selected config; default: the D61 steps below (revision 4). Revision 4b reuses this."""
     torch.set_default_dtype(torch.float64)
     obs, ora = generate(SynthConfig(n=2000, censoring=0.0, sigma_y=0.05, seed=21))
     tr, va, te = split_groups(obs.ids, 21, strata=obs.delta)          # te is NOT used anywhere in this script
     done = {}
+    OUT = globals()["OUT"]
     if OUT.exists():
         for l in OUT.read_text().splitlines():
             r = json.loads(l)
@@ -41,7 +43,7 @@ def main():
 
     def run(step, kind, cfg, seed=0):
         cid = L.cfg_id(kind, cfg)
-        if (cid, seed) in done:
+        if (cid, seed) in done:                                    # OUT is read at call time (4b reuses main)
             return done[(cid, seed)]
         t0 = time.time()
         rec = dict(step=step, config_id=cid, kind=kind, config=cfg, seed=seed)
@@ -68,10 +70,17 @@ def main():
     def best(step, cfgs, restrict_fa=True):
         recs = [(run(step, "fae_mlp", c), c) for c in cfgs]
         ok = [(r, c) for r, c in recs if r["status"] == "ok" and (not restrict_fa or c["front"] == "fa")]
+        if not ok:
+            raise RuntimeError(f"{step}: no successful fit")
         r, c = max(ok, key=lambda rc: L.score(rc[0]))
         print(f"== {step} selected {r['config_id']} {c}", flush=True)
         return c
 
+    if steps is not None:
+        c = steps(run, best)
+        (selected).write_text(json.dumps({"kind": "fae_mlp", "config": c, "config_id": L.cfg_id("fae_mlp", c)}, indent=1))
+        print("SELECTED", json.dumps(c), flush=True)
+        return
     c = best("F1-front", [dict(BASE), dict(BASE, front="fa")])
     c = best("F2-options", [dict(c), dict(c, fa_fourier=True), dict(c, fa_windows=True)])
     c = best("F3-nfreq", [dict(c, fa_nfreq=17), dict(c, fa_nfreq=33)])

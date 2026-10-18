@@ -34,6 +34,9 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64
                 front="tspline", n_maps=5, pw_width=16,
                 # Revision 4 (D61): options of the frequency-aware front "fa" (used only when front == "fa").
                 fa_nfreq=33, fa_fourier=False, fa_windows=False, fa_compact=False,
+                # Revision 4b (D71): survival-path regularisation (defaults reproduce the earlier behaviour exactly):
+                # dropout between latent and AFT head; separate L2 (coupled, as Adam's wd) on the head weights.
+                head_dropout=0.0, head_wd=None,
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
@@ -99,7 +102,7 @@ class NeuralAFT(BaseModel):
             kh = (c["kan_hidden"] or w, c["kan_hidden"] or w)
         return FunctionalAE(D, self.pre.basis, c["n_beta"], c["H"], c["r"], block, c["hidden"], c["kan_grid"],
                             kh, c["head"], p_u, seed, c["front"], c["n_maps"], c["pw_width"], c["fa_nfreq"],
-                            c["fa_fourier"], c["fa_windows"], c["fa_compact"])
+                            c["fa_fourier"], c["fa_windows"], c["fa_compact"], c["head_dropout"])
 
     def _objective(self, T, parts):
         z, out, eta, sigma = self.model(T["inp"], T["u"])
@@ -112,6 +115,10 @@ class NeuralAFT(BaseModel):
 
     def _run(self, Ttr, Tva, parts, params):
         Opt = torch.optim.AdamW if self.cfg["optimizer"] == "adamw" else torch.optim.Adam
+        if self.cfg["head_wd"] is not None and hasattr(self.model, "head"):
+            hw = {id(p) for n, p in self.model.named_parameters() if n == "head.net.weight"}
+            params = [{"params": [p for p in params if id(p) not in hw]},
+                      {"params": [p for p in params if id(p) in hw], "weight_decay": self.cfg["head_wd"]}]
         opt = Opt(params, lr=self.cfg["lr"], weight_decay=self.cfg["wd"])
         best, best_state, bad, hist = np.inf, None, 0, []
         for ep in range(self.cfg["max_epochs"]):
