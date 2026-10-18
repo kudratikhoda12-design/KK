@@ -1,2 +1,8 @@
 variant,stages,member,edges,accepted,stage_counts
 plain,1-2,0,511,259,"{""library"": 257, ""linear"": 2}"
+plain,1-2,1,512,305,"{""library"": 305}"
+plain,1-2,2,506,288,"{""library"": 287, ""linear"": 1}"
+plain,1-3,0,10,7,"{""pysr"": 7}"
+reg,1-2,0,499,254,"{""library"": 254}"
+reg,1-2,1,489,283,"{""library"": 283}"
+reg,1-2,2,493,268,"{""library"": 267, ""linear"": 1}"

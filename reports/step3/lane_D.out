@@ -1,0 +1,2 @@
+[run_logged] step3_prune_plain exit=0 elapsed=2571.9s log=reports/logs/step3_prune_plain.log
+[run_logged] step3_prune_reg exit=0 elapsed=3370.7s log=reports/logs/step3_prune_reg.log

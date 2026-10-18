@@ -21,3 +21,23 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
 [H2 P0 fae_kan {} rep 2] 72s
 [H2 P0 fae_kan {} rep 3] 74s
 [H2 P0 fae_kan {} rep 4] 70s
+[CONTROLS P0 fae_mlp {"strategy": "S1"} rep 0] 148s
+[CONTROLS P0 fae_mlp {"strategy": "S1"} rep 1] 241s
+[CONTROLS P0 fae_mlp {"strategy": "S1"} rep 2] 224s
+[CONTROLS P0 fae_mlp {"strategy": "S1"} rep 3] 207s
+[CONTROLS P0 fae_mlp {"strategy": "S1"} rep 4] 189s
+[CONTROLS P0 fae_mlp {"strategy": "S3"} rep 0] 168s
+[CONTROLS P0 fae_mlp {"strategy": "S3"} rep 1] 109s
+[CONTROLS P0 fae_mlp {"strategy": "S3"} rep 2] 121s
+[CONTROLS P0 fae_mlp {"strategy": "S3"} rep 3] 131s
+[CONTROLS P0 fae_mlp {"strategy": "S3"} rep 4] 116s
+[CONTROLS P0 fae_kan {"strategy": "S1"} rep 0] 430s
+[CONTROLS P0 fae_kan {"strategy": "S1"} rep 1] 523s
+[CONTROLS P0 fae_kan {"strategy": "S1"} rep 2] 966s
+[CONTROLS P0 fae_kan {"strategy": "S1"} rep 3] 632s
+[CONTROLS P0 fae_kan {"strategy": "S1"} rep 4] 296s
+[CONTROLS P0 fae_kan {"strategy": "S3"} rep 0] 180s
+[CONTROLS P0 fae_kan {"strategy": "S3"} rep 1] 178s
+[CONTROLS P0 fae_kan {"strategy": "S3"} rep 2] 182s
+[CONTROLS P0 fae_kan {"strategy": "S3"} rep 3] 165s
+[CONTROLS P0 fae_kan {"strategy": "S3"} rep 4] 169s

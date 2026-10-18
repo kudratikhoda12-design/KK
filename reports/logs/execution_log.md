@@ -164,3 +164,15 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   4/5; verdict NOT CONFIRMED (D95); guard refuses; Step 3 not run. D96/D97 diagnostic on seed-92 train/validation.
 - `final_full_suite_round7`: 216 passed, 3 failed (4e gate), 2 skipped, 7 xfailed (228). Report fixes D98.
   Report revision 7; deliverable verification ALL_CHECKS_PASS.
+- Round 8 (owner D99). Fact check: two corrections (no 0.025 ceiling tolerance in the protocol; RSF averaged metrics,
+  not predictions); disclosed that the round-7 model passes the round-8 criteria. head_refit, SeedEnsembleAFT, head_wd
+  for nonlinear heads; NF-1..4. Pre-registration D100/D101 committed (1ca8092) before any 4f fit.
+- Step 1 PASSED (D102; nonlinear joint head, k 3), committed (53646ba) before the gate. Gate seed 93 + confirmations
+  151–155: CONFIRMED (D103), also under round-7 criteria. Guard opened.
+- Step 3 pre-registered (D104, e6f5572) and run in parallel lanes, 20:03–21:48 UTC. Lane B's wrapper was stopped after
+  CONTROLS so that AB1/AB3 and AB4 ran as separate processes (no cell changed). Real data pre-registered (D105, 5a7b218),
+  run 20:19–21:22. All runs ok. Outcome D106.
+- Analysis fixes before reporting: the C-MAPSS comparator summary restricted to FD001; replicate-1000 symbolic rows
+  shown against that replicate's own stages.
+- `final_full_suite_round8`: 226 passed, 1 failed (4f original R1), 2 skipped, 10 xfailed (239). Report revision 8
+  (144 pages); deliverable verification ALL_CHECKS_PASS.

@@ -1,0 +1,33 @@
+/home/user/KK/src/kanfae/models/pipelines.py:166: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+[AB4 P0 fae_mlp {"r": 2} rep 0] 44s
+[AB4 P0 fae_mlp {"r": 2} rep 1] 38s
+[AB4 P0 fae_mlp {"r": 2} rep 2] 39s
+[AB4 P0 fae_mlp {"r": 2} rep 3] 41s
+[AB4 P0 fae_mlp {"r": 2} rep 4] 42s
+[AB4 P0 fae_mlp {"r": 4} rep 0] 43s
+[AB4 P0 fae_mlp {"r": 4} rep 1] 37s
+[AB4 P0 fae_mlp {"r": 4} rep 2] 39s
+[AB4 P0 fae_mlp {"r": 4} rep 3] 42s
+[AB4 P0 fae_mlp {"r": 4} rep 4] 44s
+[AB4 P0 fae_mlp {"r": 8} rep 0] 45s
+[AB4 P0 fae_mlp {"r": 8} rep 1] 45s
+[AB4 P0 fae_mlp {"r": 8} rep 2] 39s
+[AB4 P0 fae_mlp {"r": 8} rep 3] 45s
+[AB4 P0 fae_mlp {"r": 8} rep 4] 47s
+[AB4 P0 fae_kan {"r": 2} rep 0] 103s
+[AB4 P0 fae_kan {"r": 2} rep 1] 92s
+[AB4 P0 fae_kan {"r": 2} rep 2] 96s
+[AB4 P0 fae_kan {"r": 2} rep 3] 94s
+[AB4 P0 fae_kan {"r": 2} rep 4] 99s
+[AB4 P0 fae_kan {"r": 4} rep 0] 95s
+[AB4 P0 fae_kan {"r": 4} rep 1] 95s
+[AB4 P0 fae_kan {"r": 4} rep 2] 83s
+[AB4 P0 fae_kan {"r": 4} rep 3] 69s
+[AB4 P0 fae_kan {"r": 4} rep 4] 68s
+[AB4 P0 fae_kan {"r": 8} rep 0] 67s
+[AB4 P0 fae_kan {"r": 8} rep 1] 66s
+[AB4 P0 fae_kan {"r": 8} rep 2] 67s
+[AB4 P0 fae_kan {"r": 8} rep 3] 71s
+[AB4 P0 fae_kan {"r": 8} rep 4] 64s

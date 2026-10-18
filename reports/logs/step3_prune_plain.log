@@ -3,3 +3,12 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
   tr_nll.append(float(tn)); va_nll.append(float(vn))
 [plain rep 0] fitted + pruned in 83s
 [plain rep 0 member 0] symbolic 1-2: 259/511 accepted in 453s
+[plain rep 0 member 1] symbolic 1-2: 305/512 accepted in 457s
+[plain rep 0 member 2] symbolic 1-2: 288/506 accepted in 968s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[plain rep 0] PySR on 10 edges: 7 accepted in 134s
+[plain rep 1] fitted + pruned in 118s
+[plain rep 2] fitted + pruned in 120s
+[plain rep 3] fitted + pruned in 115s
+[plain rep 4] fitted + pruned in 110s

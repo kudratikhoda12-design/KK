@@ -1,0 +1,11 @@
+/home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+[reg rep 0] fitted + pruned in 223s
+[reg rep 0 member 0] symbolic 1-2: 254/499 accepted in 727s
+[reg rep 0 member 1] symbolic 1-2: 283/489 accepted in 1250s
+[reg rep 0 member 2] symbolic 1-2: 268/493 accepted in 613s
+[reg rep 1] fitted + pruned in 140s
+[reg rep 2] fitted + pruned in 135s
+[reg rep 3] fitted + pruned in 136s
+[reg rep 4] fitted + pruned in 139s

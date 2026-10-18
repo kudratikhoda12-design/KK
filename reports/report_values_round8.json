@@ -1,0 +1,21 @@
+{
+ "step1": "PASSED",
+ "head_mode": "nonlinear_joint",
+ "k": "3",
+ "verdict": "CONFIRMED",
+ "C": "0.8405",
+ "thr": "0.8322",
+ "probe": "0.865",
+ "omega": "0.908",
+ "conf": "5/5",
+ "git_head": "5a7b218",
+ "h1_diff": "+0.0078",
+ "h1_ci": "[+0.0002, +0.0155]",
+ "h1_p": "0.047",
+ "h1_sign": "5 / 0",
+ "n_tests": "239",
+ "passed": "226",
+ "failed": "1",
+ "skipped": "2",
+ "xfailed": "10"
+}

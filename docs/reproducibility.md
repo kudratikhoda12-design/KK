@@ -89,6 +89,23 @@ KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_rou
     .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round7.py           # report revision 7
+# round 8 (2026-10-18; owner D99)
+.venv/bin/python -m pytest -v tests/test_revision_4f.py tests/test_step3_tools.py              # NF-1..4, ST-1..3
+scripts/run_logged.sh search_fa4f .venv/bin/python scripts/learnability_search_fa4f.py      # Step 1 (D100)
+KANFAE_RUN_ID=revised_gate_fa4f scripts/run_logged.sh revised_gate_fa4f \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4f.py                       # gate, seed 93 (D101)
+scripts/run_logged.sh confirm_fa4f .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4f.json --seeds 151,152,153,154,155 --tag _fa4f \
+    --amended --ceiling-margin 0.025 --probe-rule 4f --ensemble 3 --threads 1                 # confirmations
+scripts/run_logged.sh verdict_fa4f .venv/bin/python scripts/revised_gate_verdict.py fa4f  # -> CONFIRMED (D103)
+reports/step3/lanes.sh A|B|C|D        # Step 3 (D104): KANFAE_RESULTS=reports/step3/<group>.jsonl scripts/run_neural_synthetic.py
+                                      #   --analyses H1 | H2,CONTROLS | H3 | SECONDARY | AB1,AB3 | AB4 | AB5,AB6,AB7,AB8;
+                                      #   scripts/kanfae_prune_symbolic.py --variant plain | reg
+KANFAE_RESULTS=reports/step3/real_pbc.jsonl .venv/bin/python scripts/run_neural_real.py --data pbc        # D105
+KANFAE_RESULTS=reports/step3/real_cmapss.jsonl .venv/bin/python scripts/run_neural_real.py --data cmapss
+.venv/bin/python scripts/analyse_step3.py                 # -> reports/step3_summary.json, reports/tables/step3_*.csv
+KANFAE_RUN_ID=final_full_suite_round8 scripts/run_logged.sh final_full_suite_round8 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/build_report_round8.py           # report revision 8
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py

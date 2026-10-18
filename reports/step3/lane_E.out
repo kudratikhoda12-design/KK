@@ -1,0 +1,2 @@
+[run_logged] step3_real_pbc exit=0 elapsed=692.3s log=reports/logs/step3_real_pbc.log
+[run_logged] step3_real_cmapss exit=0 elapsed=3068.8s log=reports/logs/step3_real_cmapss.log

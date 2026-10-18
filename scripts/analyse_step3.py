@@ -87,12 +87,61 @@ def main():
             for mt in METRICS:
                 rows.append(dict(contrast=name, metric=mt, **c[mt]))
     pd.DataFrame(rows).to_csv(REP / "tables/step3_contrasts.csv", index=False)
+    # real data (D105): Nadeau-Bengio corrected resampled t-interval for fae_kan - fae_mlp over the 5 outer splits
+    RM = {"neural4f_pbc_E2": ["ibs", "ibs_conditional_ipcw", "uno_c", "harrell_c", "dcal_p"],
+          "neural4f_pbc_E1": ["ibs", "ibs_conditional_ipcw", "uno_c", "harrell_c", "dcal_p"],
+          "neural4f_cmapss_B": ["ibs", "uno_c", "harrell_c", "rul_test_rmse", "rul_official_rmse"]}
+    rrows, rcells = [], []
+    for an, mts in RM.items():
+        A = E[(E.analysis == an) & (E.model == "fae_mlp")].set_index("replicate")
+        B = E[(E.analysis == an) & (E.model == "fae_kan")].set_index("replicate")
+        for mname, X in (("fae_mlp", A), ("fae_kan", B)):
+            if len(X):
+                rcells.append(dict(analysis=an, model=mname, n=len(X), **{f"{m}_mean": float(X[m].mean()) for m in mts if m in X},
+                                   **{f"{m}_sd": float(X[m].std(ddof=1)) for m in mts if m in X}))
+        reps = sorted(set(A.index) & set(B.index))
+        if not reps:
+            continue
+        frac = float(np.mean(A.loc[reps, "n_test"] / A.loc[reps, "n_train"]))
+        for m in mts:
+            if m not in A or m not in B:
+                continue
+            d = (B.loc[reps, m] - A.loc[reps, m]).to_numpy(float)
+            J = len(d)
+            se = np.sqrt((1 / J + frac) * d.var(ddof=1)) if J > 1 else float("nan")
+            h = stats.t.ppf(0.975, J - 1) * se if J > 1 else float("nan")
+            rrows.append(dict(analysis=an, metric=m, n_splits=J, mean_diff=float(d.mean()), ci_lo=float(d.mean() - h),
+                              ci_hi=float(d.mean() + h), n_pos=int((d > 0).sum()), n_neg=int((d < 0).sum()),
+                              nb_factor=1 / J + frac))
+    if rrows:
+        pd.DataFrame(rrows).to_csv(REP / "tables/step3_real_contrasts.csv", index=False)
+        pd.DataFrame(rcells).to_csv(REP / "tables/step3_real_cells.csv", index=False)
+        out["real"] = rrows
+    r1 = REP / "experiment_results.jsonl"
+    if r1.exists():
+        R = pd.DataFrame([json.loads(l) for l in r1.read_text().splitlines() if l.strip()])
+        R = R[R.analysis.isin(["pbc_E2", "pbc_E1", "cmapss_B"]) & (R.phase == "final") & (R.status == "ok")
+              & R.dataset.isin(["pbc", "cmapss_FD001"])]
+        if "code_version" in R:      # C-MAPSS: the latest code version only (round 1-3 records)
+            latest = R[R.analysis == "cmapss_B"].code_version.dropna().max()
+            R = R[(R.analysis != "cmapss_B") | (R.code_version == latest)]
+        cols = [c for c in ("ibs", "uno_c", "harrell_c", "rul_test_rmse") if c in R]
+        comp = R.groupby(["analysis", "model", "replicate"])[cols].mean().groupby(["analysis", "model"])[cols].mean().reset_index()
+        comp.to_csv(REP / "tables/step3_real_round1_comparators.csv", index=False)
     # KAN-FAE pruning / symbolic
     p = REP / "step3/kanfae_prune_symbolic.jsonl"
     if p.exists():
         K = pd.DataFrame([json.loads(l) for l in p.read_text().splitlines() if l.strip()])
         K["enc_active_risk"] = K.apply(lambda r: r["prune_info"][0]["risk_encoder_active_after"]       # member 0
                                        if isinstance(r.get("prune_info"), list) else r["active_edges"]["risk_encoder"], axis=1)
+        # symbolic rows exist for replicate 1000 only: report them against that replicate's own earlier stages
+        unc = K[K.stage == "pruned_uncentred"].set_index(["variant", "replicate"])["enc_active_risk"]
+        sym = K.stage.str.startswith("symbolic")
+        K.loc[sym, "enc_active_risk"] = [unc.get((v, r), np.nan) for v, r in zip(K.loc[sym, "variant"], K.loc[sym, "replicate"])]
+        r0 = K[K.replicate == 0][["variant", "stage", "harrell_c", "uno_c", "ibs", "curve_error", "reconstruction_test",
+                                  "enc_active_risk", "edges_accepted", "edges_fitted", "pysr_accepted"]]
+        r0.to_csv(REP / "tables/step3_kanfae_rep1000.csv", index=False)
+        K = K[~sym]
         ks = (K.groupby(["variant", "stage"])[["harrell_c", "uno_c", "ibs", "curve_error", "reconstruction_test",
                                                "enc_active_risk"]].agg(["mean", "std", "count"]).reset_index())
         ks.columns = ["_".join(c).strip("_") for c in ks.columns]

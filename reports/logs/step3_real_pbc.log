@@ -1,0 +1,17 @@
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/src/kanfae/models/pipelines.py:166: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+[pbc E2 split 0] 62s
+[pbc E2 split 1] 68s
+[pbc E2 split 2] 72s
+[pbc E2 split 3] 67s
+[pbc E2 split 4] 69s
+[pbc E1 split 0] 69s
+[pbc E1 split 1] 66s
+[pbc E1 split 2] 73s
+[pbc E1 split 3] 72s
+[pbc E1 split 4] 69s

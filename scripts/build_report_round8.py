@@ -64,7 +64,7 @@ def gate_4f():
     v = json.loads((REP / "revised_gate_verdict_fa4f.json").read_text())
     r1 = re.search(r"R1: C = ([0-9.]+), oracle C = ([0-9.]+), sigma = ([0-9.]+)", log)
     r1a = re.search(r"R1-A: C = ([0-9.]+), oracle C = ([0-9.]+), profile sigma \(train, eta fixed\) = ([0-9.]+)", log)
-    m = D.GATE_RE.search(log)
+    m = re.search(r"R2: C = ([0-9.]+), oracle C = ([0-9.]+); probe R2 \(a,b,A,omega\) = \[([^\]]+)\], mean ([0-9.]+);", log)
     am = re.search(r"R2-amended: C_ceiling = ([0-9.]+); threshold = min\(([0-9.]+), ([0-9.]+)\) = ([0-9.]+); C = ([0-9.]+)", log)
     ens = re.search(r"member C \[([^\]]+)\]; member-averaged probe \[([^\]]+)\], mean ([0-9.]+)", log)
     mc = [float(x) for x in re.findall(r"np\.float64\(([0-9.]+)\)", ens.group(1))] or [float(x) for x in ens.group(1).split(",")]
@@ -228,7 +228,7 @@ def prune_table():
     if not p.exists():
         return "_Not run._"
     k = pd.read_csv(p)
-    order = {"before": 0, "pruned_uncentred": 1, "pruned_centred": 2, "symbolic_1_2": 3, "symbolic_1_3": 4}
+    order = {"before": 0, "pruned_uncentred": 1, "pruned_centred": 2}
     k = k.assign(o=k.stage.map(order)).sort_values(["variant", "o"])
     ms = lambda r, m, d=4: (f"{r[m + '_mean']:.{d}f} ± {r[m + '_std']:.{d}f}" if r[m + "_count"] > 1  # noqa: E731
                             else f"{r[m + '_mean']:.{d}f}")
@@ -238,6 +238,22 @@ def prune_table():
                      "Active risk-encoder edges (member 0)"], rows)
 
 
+def prune_rep1000():
+    p = REP / "tables/step3_kanfae_rep1000.csv"
+    if not p.exists():
+        return ""
+    k = pd.read_csv(p)
+    order = {"before": 0, "pruned_uncentred": 1, "pruned_centred": 2, "symbolic_1_2": 3, "symbolic_1_3": 4}
+    k = k.assign(o=k.stage.map(order)).sort_values(["variant", "o"])
+    g = lambda v, d=4: "–" if pd.isna(v) else f"{v:.{d}f}"  # noqa: E731
+    return md_table(["Variant", "Stage (replicate 1000)", "Harrell C", "Uno C", "IBS", "Curve error", "Reconstruction (test)",
+                     "Active risk-encoder edges (member 0)", "Edges accepted (all members)"],
+                    [[r.variant, r.stage, g(r.harrell_c), g(r.uno_c), g(r.ibs), g(r.curve_error), g(r.reconstruction_test),
+                      g(r.enc_active_risk, 0), "–" if pd.isna(r.edges_accepted) and pd.isna(r.pysr_accepted)
+                      else (f"{int(r.edges_accepted)} / {int(r.edges_fitted)}" if not pd.isna(r.edges_accepted)
+                            else f"+{int(r.pysr_accepted)} by PySR")] for r in k.itertuples()])
+
+
 def symbolic_table():
     p = REP / "tables/step3_symbolic.csv"
     if not p.exists():
@@ -245,6 +261,32 @@ def symbolic_table():
     s = pd.read_csv(p)
     return md_table(["Variant", "Stages", "Member", "Edges fitted", "Accepted (R² > 0.99)", "Accepted by stage"],
                     [[r.variant, r.stages, r.member, r.edges, r.accepted, esc(r.stage_counts)] for r in s.itertuples()])
+
+
+def real_table():
+    p, q = REP / "tables/step3_real_contrasts.csv", REP / "tables/step3_real_cells.csv"
+    if not p.exists():
+        return "_Not run._"
+    c, cells_ = pd.read_csv(p), pd.read_csv(q)
+    lab = {"neural4f_pbc_E2": "PBC E2 (provisional primary)", "neural4f_pbc_E1": "PBC E1 (sensitivity)",
+           "neural4f_cmapss_B": "C-MAPSS FD001 Option B"}
+    rows = []
+    for r in c.itertuples():
+        a = cells_[(cells_.analysis == r.analysis) & (cells_.model == "fae_mlp")].iloc[0]
+        b = cells_[(cells_.analysis == r.analysis) & (cells_.model == "fae_kan")].iloc[0]
+        rows.append([lab.get(r.analysis, r.analysis), r.metric, f"{a[r.metric + '_mean']:.4f} ± {a[r.metric + '_sd']:.4f}",
+                     f"{b[r.metric + '_mean']:.4f} ± {b[r.metric + '_sd']:.4f}", f"{r.mean_diff:+.4f}",
+                     f"[{r.ci_lo:+.4f}, {r.ci_hi:+.4f}]", f"{r.n_pos} / {r.n_neg}", r.n_splits])
+    t = md_table(["Data", "Metric", "fae_mlp", "fae_kan", "Difference (KAN − MLP)", "95% CI (Nadeau–Bengio)",
+                  "Splits + / −", "Splits"], rows)
+    r1 = REP / "tables/step3_real_round1_comparators.csv"
+    if r1.exists():
+        k = pd.read_csv(r1)
+        cols = [x for x in ("ibs", "uno_c", "harrell_c", "rul_test_rmse") if x in k]
+        t += "\n\n**Round-1 comparators on the same splits** (mean over splits; descriptive):\n\n" + md_table(
+            ["Analysis", "Model"] + cols, [[r["analysis"], r["model"]] + [f"{r[x]:.4f}" if pd.notna(r[x]) else "–" for x in cols]
+                                           for _, r in k.iterrows()])
+    return t
 
 
 def gate_overview():
@@ -309,7 +351,7 @@ TABLES = {"step1_candidates": step1_candidates, "step1_seeds": step1_seeds, "rep
           "h1_table": h1_table, "h1_reps": h1_reps, "contrasts": contrasts,
           "cells_main": lambda: cells(["H1", "H2", "H3", "CONTROLS"]), "cells_secondary": lambda: cells(["SECONDARY"]),
           "cells_ab": lambda: cells(["AB1", "AB3", "AB4", "AB5", "AB6", "AB7", "AB8"]), "prune": prune_table,
-          "symbolic": symbolic_table, "gate_overview": gate_overview, "new_tests": new_tests, "suite_table": suite_table,
+          "symbolic": symbolic_table, "prune_rep1000": prune_rep1000, "real": real_table, "gate_overview": gate_overview, "new_tests": new_tests, "suite_table": suite_table,
           "gate_repro": gate_repro, "decisions_r8": decisions_r8, "test_runs": R2.test_run_history,
           "pbc_E2": lambda: R1.pbc_table("pbc_E2"), "pbc_E1": lambda: R1.pbc_table("pbc_E1")}
 

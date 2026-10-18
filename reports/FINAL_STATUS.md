@@ -1,4 +1,28 @@
-# Final status: KAN-FAE research prototype, round 7 (2026-10-18)
+# Final status: KAN-FAE research prototype, round 8 (2026-10-18)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (144 pages; Part A = round 8; Parts B–H = rounds 7–1, each from
+its own snapshot); deliverable verification passes. Status: **research prototype; not publication-ready; no novelty
+claim.**
+
+| Step | Result |
+|---|---|
+| Owner decisions (D99) | Revision 4f; R2 margin 0.025; one-sided R3-A; probe 0.78/0.80. Fact check: two statements corrected; disclosed that the round-7 model would have passed the round-8 criteria |
+| Step 1 (D100, D102) | **PASSED**: nonlinear joint head + 3-seed ensemble (val C 0.8510); 4e fits reproduced bit for bit; NF-1..4 pass |
+| Step 2 (D101, D103) | Gate seed 93: R1-A, R2 (C 0.8405 ≥ 0.8322; probe 0.865 / ω 0.908), R3-A all PASS; confirmations 151–155 **5/5** → **CONFIRMED**. Also confirmed under round-7 criteria |
+| Step 3 (D104–D106) | All pre-registered analyses run; no failures. **H1:** fae_kan − fae_mlp curve error +0.0078 [+0.0002, +0.0155], 5/5 KAN worse: no KAN advantage. **H2:** no effect of α. **H3:** reversed (flat_ae better under sparse sampling). **Controls:** S3 best; KAN gap vanishes under S3. **Pruning:** removes ≈ 0 edges at θ 1e-2; **symbolic:** 56% of edges accepted, metrics unchanged, formulas not interpretable at the parameter level. **Real data:** PBC no KAN–MLP difference; C-MAPSS KAN worse; neural arms not better than round-1 comparators |
+| Tests | `final_full_suite_round8`: 226 passed, 1 failed (4f original R1; not gating), 10 expected failures, 2 skipped (239). Gate reproduces exactly in the suite |
+
+## Decision requested (L32)
+
+1. Whether to run a pre-registered KAN-favourable fairness check (e.g. S3 training for both arms, a KAN decoder without
+   a sub-r bottleneck), given that H1 is conditional on the MLP-selected configuration.
+2. Whether to write up H1–H3 as exploratory evidence (no novelty claim).
+3. PBC endpoint confirmation with the professor.
+
+---
+
+# Round 7 status (2026-10-18), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (Part A = round 7; Parts B–G = rounds 6–1, each from its own

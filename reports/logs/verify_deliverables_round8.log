@@ -1,0 +1,47 @@
+{
+ "pdf_exists": true,
+ "pdf_opens": true,
+ "pdf_pages": 144,
+ "pdf_text_chars": 1057707,
+ "pdf_no_placeholders": true,
+ "pdf_has_part1_sections": true,
+ "pdf_has_all_17_sections": true,
+ "page_renders": 144,
+ "blank_pages": [],
+ "md_3dp_numbers": 613,
+ "md_numbers_missing_in_pdf": [],
+ "report_values_used": 31,
+ "report_values_missing_in_pdf": [],
+ "round2_values_missing_in_pdf": [],
+ "report_template_round2.md_values_used": 24,
+ "report_template_round3.md_values_used": 15,
+ "report_template_round4.md_values_used": 14,
+ "report_template_round5.md_values_used": 14,
+ "report_template_round6.md_values_used": 7,
+ "report_template_round7.md_values_used": 15,
+ "report_template_round8.md_values_used": 19,
+ "P0_summary_values_in_pdf": "21/21",
+ "tests_reported": 240,
+ "tests_without_log_evidence": [],
+ "final_suite_counts_round1": {
+  "passed": 148,
+  "failed": 1,
+  "skipped": 1
+ },
+ "final_suite_run": "final_full_suite_round8",
+ "final_suite_counts": {
+  "passed": 226,
+  "failed": 1,
+  "skipped": 2,
+  "xfailed": 10
+ },
+ "final_suite_failures": [
+  "tests/test_learnability_fa4f.py::test_R1_oracle_features_head"
+ ],
+ "final_suite_only_failure_is_R2": true,
+ "commands_logged": 165,
+ "commands_missing_log_file": [],
+ "experiment_csv_rows_equal_jsonl": true,
+ "experiment_records": 2393,
+ "ALL_CHECKS_PASS": true
+}

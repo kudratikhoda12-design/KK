@@ -1,1 +1,2 @@
 [run_logged] step3_H1 exit=0 elapsed=874.2s log=reports/logs/step3_H1.log
+[run_logged] step3_SECONDARY exit=0 elapsed=4085.8s log=reports/logs/step3_SECONDARY.log
