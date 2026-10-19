@@ -56,6 +56,11 @@ DEFAULTS = dict(lr=3e-3, wd=1e-4, alpha=1.0, strategy="S2", r=8, H=32, hidden=64
                 # Step 3 (D104; default 0 reproduces the earlier behaviour): KAN-AFT-style sparsity regularisation of
                 # the KAN encoder/decoder blocks, kan_lam * (|Phi|_1 + 2 S(Phi) + |C|_1) per layer (KAN-AFT defaults).
                 kan_lam=0.0,
+                # Round 9 (D108; defaults reproduce the earlier behaviour): KAN-fairness decoders for fae_kan.
+                # dec_block="mlp" (Mode B): the KAN encoder with fae_mlp's MLP decoder [r, hidden, D*K];
+                # kan_dec="single" (Mode A): a single-layer KAN decoder [r, D*K] (no hidden width below r);
+                # kan_dec="match": the D31 kan_match choice.
+                dec_block=None, kan_dec="match",
                 # D41 search controls: optimiser (adam = coupled L2 weight decay; adamw = decoupled) and
                 # early-stopping target ("objective" = the stage objective; "nll" = validation NLL only).
                 optimizer="adam", es_target="objective")
@@ -115,13 +120,14 @@ class NeuralAFT(BaseModel):
         kh = (None, None)
         if self.kind == "fae_kan":           # parameter matching to the MLP blocks (D31)
             he, hd, self.match_info = kan_match(D, self.pre.basis.K, c["H"], c["r"], c["hidden"], c["kan_grid"])
-            kh = (he, hd)
+            kh = (he, None if c["kan_dec"] == "single" else hd)
         elif self.kind == "fae_kan2":        # depth-2 ablation (D30), common hidden width matched to the MLP
             w, self.match_info = kan2_match(D, self.pre.basis.K, c["H"], c["r"], c["hidden"], c["kan_grid"])
             kh = (c["kan_hidden"] or w, c["kan_hidden"] or w)
         return FunctionalAE(D, self.pre.basis, c["n_beta"], c["H"], c["r"], block, c["hidden"], c["kan_grid"],
                             kh, c["head"], p_u, seed, c["front"], c["n_maps"], c["pw_width"], c["fa_nfreq"],
-                            c["fa_fourier"], c["fa_windows"], c["fa_compact"], c["head_dropout"])
+                            c["fa_fourier"], c["fa_windows"], c["fa_compact"], c["head_dropout"],
+                            c["dec_block"] if self.kind == "fae_kan" else None)
 
     def _objective(self, T, parts):
         z, out, eta, sigma = self.model(T["inp"], T["u"])

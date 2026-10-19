@@ -1,0 +1,62 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 5 items
+
+tests/test_kan_fairness.py::test_FC1_default_fae_kan_is_the_D31_design PASSED [ 20%]
+tests/test_kan_fairness.py::test_FC2_mode_B_shares_the_mlp_decoder_and_keeps_the_kan_encoder FAILED [ 40%]
+tests/test_kan_fairness.py::test_FC3_mode_A_single_layer_kan_decoder_has_no_bottleneck PASSED [ 60%]
+tests/test_kan_fairness.py::test_FC4_wide_mlp_is_parameter_matched_to_mode_A PASSED [ 80%]
+tests/test_kan_fairness.py::test_FC5_reconstruction_eval_is_the_member_mean PASSED [100%]
+
+=================================== FAILURES ===================================
+_______ test_FC2_mode_B_shares_the_mlp_decoder_and_keeps_the_kan_encoder _______
+
+    @pytest.mark.criterion("FC-2")
+    def test_FC2_mode_B_shares_the_mlp_decoder_and_keeps_the_kan_encoder():
+        base, _, _ = _fit("fae_kan")
+        b, _, _ = _fit("fae_kan", dec_block="mlp")
+        mlp, _, _ = _fit("fae_mlp")
+        assert isinstance(b.model.encoder, KANBlock) and _np(b.model.encoder) == 5136
+        assert [p.shape for p in b.model.decoder.parameters()] == [p.shape for p in mlp.model.decoder.parameters()]
+        assert _np(b.model.decoder) == _np(mlp.model.decoder) == 3428 and b.model.block_params() == 8564
+>       fresh_b = NeuralAFT("fae_kan", **{**CFG, "dec_block": "mlp"})._build(3, 0, 0)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_kan_fairness.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <kanfae.models.pipelines.NeuralAFT object at 0x7fd5e85a7490>, D = 3
+p_u = 0, seed = 0
+
+    def _build(self, D, p_u, seed):
+        c = self.cfg
+        if self.kind == "flat_ae":
+            return FlatAE(D, self.pre.n_grid, c["r"], c["hidden"], c["head"], p_u, seed)
+        block = {"fae_mlp": "mlp", "fae_kan": "kan", "fae_kan2": "kan", "fae_linear": "linear"}[self.kind]
+        kh = (None, None)
+        if self.kind == "fae_kan":           # parameter matching to the MLP blocks (D31)
+>           he, hd, self.match_info = kan_match(D, self.pre.basis.K, c["H"], c["r"], c["hidden"], c["kan_grid"])
+                                                   ^^^^^^^^
+E           AttributeError: 'NeuralAFT' object has no attribute 'pre'
+
+src/kanfae/models/pipelines.py:122: AttributeError
+=============================== warnings summary ===============================
+tests/test_kan_fairness.py::test_FC1_default_fae_kan_is_the_D31_design
+  /home/user/KK/src/kanfae/models/pipelines.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    tr_nll.append(float(tn)); va_nll.append(float(vn))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_kan_fairness.py::test_FC1_default_fae_kan_is_the_D31_design
+PASSED tests/test_kan_fairness.py::test_FC3_mode_A_single_layer_kan_decoder_has_no_bottleneck
+PASSED tests/test_kan_fairness.py::test_FC4_wide_mlp_is_parameter_matched_to_mode_A
+PASSED tests/test_kan_fairness.py::test_FC5_reconstruction_eval_is_the_member_mean
+FAILED tests/test_kan_fairness.py::test_FC2_mode_B_shares_the_mlp_decoder_and_keeps_the_kan_encoder
+=================== 1 failed, 4 passed, 1 warning in 17.20s ====================

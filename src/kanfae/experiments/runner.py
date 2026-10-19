@@ -250,3 +250,19 @@ def tune_fit_evaluate_ensemble(name, obs_tr, obs_va, obs_te, base_record, oracle
         append_record(rec)
     results.append(rec)
     return results
+
+
+def reconstruction_eval(model, obs):
+    """D108: test reconstruction error, the individual-weighted MSE of the objective-state model on the observed
+    points (standardised scale; the training objective's reconstruction term without penalties). For a seed ensemble,
+    the mean over its members (each reconstructs with its own decoder)."""
+    import torch
+    members = getattr(model, "members", None) or [model]
+    out = []
+    for m in members:
+        T = m._tensors(m.prepare(obs))
+        m.model.eval()
+        with torch.no_grad():
+            _, (_, rec) = m._objective(T, "rec")
+        out.append(float(rec))
+    return {"reconstruction_test": float(np.mean(out)), "reconstruction_test_members": out}
