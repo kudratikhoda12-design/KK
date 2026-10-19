@@ -115,6 +115,13 @@ cd scripts && ../.venv/bin/python analyse_round9.py && cd ..   # -> reports/roun
 KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_round9 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round9.py           # report revision 9
+# round 10 (2026-10-19; owner D110): documents only. The literature review (docs/literature_review_round10.md) and the
+# design note / pre-registration of Rounds 11-13 (docs/design_note_round10.md; D111-D114). No model code changed,
+# no data acquired.
+KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round10.py          # report revision 10
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
