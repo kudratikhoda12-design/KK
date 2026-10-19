@@ -1,4 +1,24 @@
-# Final status: KAN-FAE research prototype, round 9 (2026-10-19)
+# Final status: KAN-FAE research prototype, round 10 (2026-10-19)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (Part A = round 10; Parts B–J = rounds 9–1); deliverable
+verification passes. Status: **research prototype; not publication-ready; no novelty claim.**
+
+| Item | Result |
+|---|---|
+| Owner decisions (D110) | Rounds 10–14 roadmap: functional CoxKAN / KAN-AFT (B1, B2, B3) as the main study; KAN-FAE as the motivating negative result |
+| Literature review (D111) | Targeted, documented (`docs/literature_review_round10.md`). Single-layer functional CoxKAN = AFCM's model form (Cui et al. 2021); published KAN survival models use static covariates; JM-KAN and F-KAN checked only at abstract level. **No novelty claim** |
+| Pre-registration (D112–D114) | `docs/design_note_round10.md`: Round 11 implementation + acceptance tests CK-1..CK-12; Round 12 simulation (5 scenarios × N 20, fresh seeds 3000–3419, confirmatory H-R12: B2-S vs AFCM shape recovery); Round 13 real data (PBC, prothro, aids, C-MAPSS) with fixed interpretability measures |
+| Rendering fix (D115) | Bounded decision filters for the round-7/8/9 parts |
+| Tests | `final_full_suite_round10`: 231 passed, 1 failed (4f original R1; not gating), 10 expected failures, 2 skipped (244). No model code changed |
+
+## Next
+
+Round 11 (implementation and acceptance tests), on the owner's go-ahead.
+
+---
+
+# Round 9 status (2026-10-19), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (Part A = round 9; Parts B–I = rounds 8–1, each from its own

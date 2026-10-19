@@ -185,7 +185,7 @@ def gate_repro():
 
 
 def decisions_r7():
-    rows = [l for l in (ROOT / "docs/decisions.md").read_text().splitlines() if re.match(r"\| D(9[1-9]|1\d\d) \|", l)]
+    rows = [l for l in (ROOT / "docs/decisions.md").read_text().splitlines() if re.match(r"\| D(9[1-8]) \|", l)]
     return "| ID | Decision | Status | Content | Rationale |\n|---|---|---|---|---|\n" + "\n".join(rows)
 
 

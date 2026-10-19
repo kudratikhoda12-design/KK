@@ -1,0 +1,8 @@
+{
+ "git_head": "a7ff68b",
+ "n_tests": "244",
+ "passed": "231",
+ "failed": "1",
+ "skipped": "2",
+ "xfailed": "10"
+}

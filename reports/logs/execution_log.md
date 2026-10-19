@@ -182,3 +182,10 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - Fairness lanes 07:28–08:58 UTC, 400 runs, all ok; S2 repeats bit-identical to H1. Outcome D109. L32 closed.
 - `final_full_suite_round9` (run in parallel with the lanes): 231 passed, 1 failed (4f original R1), 2 skipped,
   10 xfailed (244). Report revision 9; deliverable verification below.
+- Round 10 (owner D110). Literature review: web searches, landing-page / arXiv / Crossref verification
+  (`docs/literature_review_round10.md`); gap analysis and claim policy D111. Design note and pre-registration of Rounds
+  11–13 (`docs/design_note_round10.md`; D112–D114), committed (a7ff68b) before any Round-11 code. Seeds 3000–3419
+  verified unused. R not installed (AFCM and the joint-model baseline will be re-implemented); JM 1.5-2 reachable on
+  CRAN (not downloaded).
+- Report rendering fix D115. `final_full_suite_round10`: 231 passed, 1 failed (4f original R1), 2 skipped, 10 xfailed
+  (244). Report revision 10.
