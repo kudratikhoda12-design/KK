@@ -1,0 +1,18 @@
+/home/user/KK/src/kanfae/models/pipelines.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+[kan_unb S2 rep 0] 265s
+[kan_unb S2 rep 1] 264s
+[kan_unb S2 rep 2] 233s
+[kan_unb S2 rep 3] 266s
+[kan_unb S2 rep 4] 256s
+[kan_unb S3 rep 0] 691s
+[kan_unb S3 rep 1] 622s
+[kan_unb S3 rep 2] 484s
+[kan_unb S3 rep 3] 517s
+[kan_unb S3 rep 4] 558s
+[mlp_wide S3 rep 0] 220s
+[mlp_wide S3 rep 1] 227s
+[mlp_wide S3 rep 2] 267s
+[mlp_wide S3 rep 3] 234s
+[mlp_wide S3 rep 4] 278s

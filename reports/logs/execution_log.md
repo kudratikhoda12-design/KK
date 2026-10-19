@@ -176,3 +176,9 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   shown against that replicate's own stages.
 - `final_full_suite_round8`: 226 passed, 1 failed (4f original R1), 2 skipped, 10 xfailed (239). Report revision 8
   (144 pages); deliverable verification ALL_CHECKS_PASS.
+- Round 9 (owner D107, closing L32). Fact check (parameter counts and controls correct; PBC invariance qualified to
+  the conclusion level). Mode A / Mode B decoders, fae_mlp_wide, reconstruction metric; FC-1..FC-5 (one dev-run
+  failure from a test construction error, fixed, kept). Pre-registration D108 committed (1b4b740) before any fit.
+- Fairness lanes 07:28–08:58 UTC, 400 runs, all ok; S2 repeats bit-identical to H1. Outcome D109. L32 closed.
+- `final_full_suite_round9` (run in parallel with the lanes): 231 passed, 1 failed (4f original R1), 2 skipped,
+  10 xfailed (244). Report revision 9; deliverable verification below.

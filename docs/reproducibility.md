@@ -106,6 +106,16 @@ KANFAE_RESULTS=reports/step3/real_cmapss.jsonl .venv/bin/python scripts/run_neur
 .venv/bin/python scripts/analyse_step3.py                 # -> reports/step3_summary.json, reports/tables/step3_*.csv
 KANFAE_RUN_ID=final_full_suite_round8 scripts/run_logged.sh final_full_suite_round8 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/build_report_round8.py           # report revision 8
+# round 9 (2026-10-19; owner D107)
+.venv/bin/python -m pytest -v tests/test_kan_fairness.py                                     # FC-1..FC-5
+reports/round9/lanes.sh 1|2|3|4       # D108: KANFAE_RESULTS=reports/round9/laneN.jsonl scripts/run_kan_fairness.py --cells
+                                      #   mlp:S2,mlp:S3,mlp_wide:S2 | kan:S2,kan:S3 | kan_shared:S2,kan_shared:S3 |
+                                      #   kan_unb:S2,kan_unb:S3,mlp_wide:S3
+cd scripts && ../.venv/bin/python analyse_round9.py && cd ..   # -> reports/round9_summary.json, reports/tables/r9_*.csv
+KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_round9 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round9.py           # report revision 9
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py

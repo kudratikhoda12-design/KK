@@ -1,4 +1,23 @@
-# Final status: KAN-FAE research prototype, round 8 (2026-10-18)
+# Final status: KAN-FAE research prototype, round 9 (2026-10-19)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (Part A = round 9; Parts B–I = rounds 8–1, each from its own
+snapshot); deliverable verification passes. Status: **research prototype; not publication-ready; no novelty claim.**
+Ledger L32 closed.
+
+| Item | Result |
+|---|---|
+| Owner decisions (D107) | Fairness study; H1 the only confirmatory test (others exploratory); PBC E2 primary / E1 sensitivity. Fact check: parameter counts and controls correct; PBC invariance holds for conclusions, not point estimates |
+| Fairness design (D108) | Mode B (KAN encoder + fae_mlp's MLP decoder), Mode A (single-layer KAN decoder 16→36) vs fae_mlp_wide (hidden 107, +0.3%); S2 and S3, tuned, 3-seed ensembles; FC-1..FC-5 pass |
+| Outcome (D109) | 400 runs, all ok; S2 repeats bit-identical to H1. **F1** (S3): KAN ≈ MLP on survival (curve −0.0001 [−0.0030, +0.0028]). **F2:** shared MLP decoder fixes reconstruction, not survival (S3 +0.0061, 5/5 worse). **F3:** unbottlenecked KAN vs wide MLP: S2 +0.0055 (5/5 worse, CI includes 0), S3 −0.0020 (no difference). S3 helps every arm. **KAN never better than the MLP on survival** |
+| Tests | `final_full_suite_round9`: 231 passed, 1 failed (4f original R1; not gating), 10 expected failures, 2 skipped (244) |
+
+No open decision is required for the research question as pre-registered. H1 is not supported, the fairness
+sensitivity study explains the deficit as a training-strategy effect, and no configuration shows a KAN advantage.
+
+---
+
+# Round 8 status (2026-10-18), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (144 pages; Part A = round 8; Parts B–H = rounds 7–1, each from

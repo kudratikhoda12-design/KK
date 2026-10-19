@@ -3,7 +3,7 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "5a7b21836dc1b82602830abcb44f57083806a843",
+  "head": "1b4b7408960b7f39aea4dbacf10ada560de68f28",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
@@ -1787,6 +1787,116 @@
    "elapsed_s": 19.008,
    "git_head": "5a7b218",
    "log": "reports/logs/build_pdf_round8.log"
+  },
+  {
+   "name": "build_manifest_round8",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-18T21:52:29Z",
+   "end_utc": "2026-10-18T21:52:29Z",
+   "elapsed_s": 0.108,
+   "git_head": "5a7b218",
+   "log": "reports/logs/build_manifest_round8.log"
+  },
+  {
+   "name": "verify_deliverables_round8",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-18T21:52:29Z",
+   "end_utc": "2026-10-18T21:52:32Z",
+   "elapsed_s": 2.727,
+   "git_head": "5a7b218",
+   "log": "reports/logs/verify_deliverables_round8.log"
+  },
+  {
+   "name": "fc_tests_dev",
+   "command": ".venv/bin/python -m pytest -v -rA tests/test_kan_fairness.py",
+   "exit_code": 1,
+   "start_utc": "2026-10-19T07:25:44Z",
+   "end_utc": "2026-10-19T07:26:08Z",
+   "elapsed_s": 24.227,
+   "git_head": "ab7c74e",
+   "log": "reports/logs/fc_tests_dev.log"
+  },
+  {
+   "name": "fc_tests_dev2",
+   "command": ".venv/bin/python -m pytest -v -rA tests/test_kan_fairness.py tests/test_revision_4f.py tests/test_step3_tools.py tests/test_burn_in.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-19T07:26:19Z",
+   "end_utc": "2026-10-19T07:26:47Z",
+   "elapsed_s": 27.937,
+   "git_head": "ab7c74e",
+   "log": "reports/logs/fc_tests_dev2.log"
+  },
+  {
+   "name": "final_full_suite_round9",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-19T07:28:15Z",
+   "end_utc": "2026-10-19T07:58:23Z",
+   "elapsed_s": 1808.431,
+   "git_head": "1b4b740",
+   "log": "reports/logs/final_full_suite_round9.log"
+  },
+  {
+   "name": "r9_lane1",
+   "command": ".venv/bin/python scripts/run_kan_fairness.py --cells mlp:S2,mlp:S3,mlp_wide:S2",
+   "exit_code": 0,
+   "start_utc": "2026-10-19T07:28:09Z",
+   "end_utc": "2026-10-19T08:12:47Z",
+   "elapsed_s": 2678.196,
+   "git_head": "1b4b740",
+   "log": "reports/logs/r9_lane1.log"
+  },
+  {
+   "name": "r9_lane3",
+   "command": ".venv/bin/python scripts/run_kan_fairness.py --cells kan_shared:S2,kan_shared:S3",
+   "exit_code": 0,
+   "start_utc": "2026-10-19T07:28:09Z",
+   "end_utc": "2026-10-19T08:34:48Z",
+   "elapsed_s": 3999.682,
+   "git_head": "1b4b740",
+   "log": "reports/logs/r9_lane3.log"
+  },
+  {
+   "name": "r9_lane2",
+   "command": ".venv/bin/python scripts/run_kan_fairness.py --cells kan:S2,kan:S3",
+   "exit_code": 0,
+   "start_utc": "2026-10-19T07:28:09Z",
+   "end_utc": "2026-10-19T08:37:29Z",
+   "elapsed_s": 4160.148,
+   "git_head": "1b4b740",
+   "log": "reports/logs/r9_lane2.log"
+  },
+  {
+   "name": "r9_lane4",
+   "command": ".venv/bin/python scripts/run_kan_fairness.py --cells kan_unb:S2,kan_unb:S3,mlp_wide:S3",
+   "exit_code": 0,
+   "start_utc": "2026-10-19T07:28:09Z",
+   "end_utc": "2026-10-19T08:57:54Z",
+   "elapsed_s": 5385.114,
+   "git_head": "1b4b740",
+   "log": "reports/logs/r9_lane4.log"
+  },
+  {
+   "name": "build_report_round9",
+   "command": ".venv/bin/python scripts/build_report_round9.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-19T08:59:19Z",
+   "end_utc": "2026-10-19T08:59:22Z",
+   "elapsed_s": 3.503,
+   "git_head": "1b4b740",
+   "log": "reports/logs/build_report_round9.log"
+  },
+  {
+   "name": "build_pdf_round9",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-19T08:59:22Z",
+   "end_utc": "2026-10-19T08:59:58Z",
+   "elapsed_s": 35.389,
+   "git_head": "1b4b740",
+   "log": "reports/logs/build_pdf_round9.log"
   }
  ],
  "deliverables": {

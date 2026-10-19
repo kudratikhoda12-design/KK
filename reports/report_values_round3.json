@@ -14,5 +14,5 @@
  "n_test_runs": "44",
  "r4_sel_id": "A5-fae_mlp-b36715d7",
  "r4_sel": "front=fa, r=12, alpha=1.0, optimizer=adam, lr=0.003, es_target=objective, max_epochs=3000, patience=100, H=32, hidden=64, fa_nfreq=17",
- "git_head": "5a7b218"
+ "git_head": "1b4b740"
 }

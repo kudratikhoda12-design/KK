@@ -1,0 +1,5 @@
+arm,phase,n_h1,n_r9,bit_identical
+mlp,ensemble,5,5,True
+mlp,final,15,15,True
+kan,ensemble,5,5,True
+kan,final,15,15,True
