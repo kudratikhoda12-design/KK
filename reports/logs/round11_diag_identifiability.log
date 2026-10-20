@@ -1,0 +1,2 @@
+channel 1: tensor rank (1e-2/1e-3/1e-4) 53/70/78 of 100; homogeneous 8/8/8 of 10; SD of int X dt 1.42e-16 vs SD of int phi_true 0.228
+channel 2: tensor rank (1e-2/1e-3/1e-4) 48/66/75 of 100; homogeneous 8/8/8 of 10; SD of int X dt 1.72e-16 vs SD of int phi_true 0.173

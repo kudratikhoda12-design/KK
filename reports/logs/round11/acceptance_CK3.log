@@ -1,0 +1,37 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_CK3_linear_coxkan_recovers_lifelines_coefficients ____________
+
+    @pytest.mark.criterion("CK-3")
+    @pytest.mark.kind("STAT")
+    def test_CK3_linear_coxkan_recovers_lifelines_coefficients():
+        rng = np.random.default_rng(11)
+        n, beta = 2000, np.array([0.8, -0.5, 0.3])
+        Z = rng.normal(size=(n, 3))
+        T = (-np.log(rng.random(n)) / np.exp(Z @ beta)) ** (1 / 1.5)
+        C = rng.uniform(0, 3, n)
+        y, d = np.minimum(T, C), (T <= C).astype(float)
+        tr, va = np.split(rng.permutation(n), [1600])
+        pk = lambda i: dict(xg=None, z=Z[i], y=y[i], d=d[i])  # noqa: E731
+        m = FKANSurv(kind="static", loss="cox", lam=0.0, lr=3e-3, wd=1e-4, seed=0, edge="linear").fit(pk(tr), pk(va))
+        slopes = np.array([float(e.p[2] * e.p[0]) for _, e in sorted(m.net.stat.symbolic.items())])
+        df = pd.DataFrame(Z[tr], columns=["a", "b", "c"]).assign(T=y[tr], E=d[tr].astype(int))
+        ref = CoxPHFitter().fit(df, "T", "E").params_.values
+        err = float(np.max(np.abs(slopes - ref)))
+        _record("CK-3", slopes=slopes.tolist(), lifelines=ref.tolist(), max_abs_err=err, epochs=len(m.history),
+                threshold=0.05)
+>       assert err < 0.05, f"slopes {slopes}, lifelines {ref}"
+E       AssertionError: slopes [ 0.75903353 -0.45378774  0.32222133], lifelines [ 0.84270087 -0.47948861  0.33905539]
+E       assert 0.08366733764115375 < 0.05
+
+tests/test_round11.py:237: AssertionError
+=============================== warnings summary ===============================
+tests/test_round11.py::test_CK3_linear_coxkan_recovers_lifelines_coefficients
+  /home/user/KK/tests/test_round11.py:231: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    slopes = np.array([float(e.p[2] * e.p[0]) for _, e in sorted(m.net.stat.symbolic.items())])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_round11.py::test_CK3_linear_coxkan_recovers_lifelines_coefficients
+1 failed, 14 deselected, 1 warning in 8.91s

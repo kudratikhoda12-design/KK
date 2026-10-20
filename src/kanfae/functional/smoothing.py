@@ -84,3 +84,24 @@ def select_lambda(times, values, mask, n_obs, basis, grid=(1e-6, 1e-5, 1e-4, 1e-
         scores[lam] = individual_weighted_mse(err2, eval_mask)
     best = min(scores, key=scores.get)
     return best, scores
+
+
+def pad_ragged(times, values):
+    """Lists of (m_i,) times and (m_i, D) values -> times (N, L), values (N, L, D), mask (N, L, D), n_obs (N,)."""
+    N, L = len(times), max(len(t) for t in times)
+    D = np.asarray(values[0]).reshape(len(times[0]), -1).shape[1]
+    T, V, M = np.zeros((N, L)), np.zeros((N, L, D)), np.zeros((N, L, D), bool)
+    for i, (t, v) in enumerate(zip(times, values)):
+        m = len(t)
+        T[i, :m] = t
+        T[i, m:] = t[-1] if m else 0.0
+        V[i, :m] = np.asarray(v, float).reshape(m, D)
+        M[i, :m] = True
+    return T, V, M, np.array([len(t) for t in times])
+
+
+def curves_on_grid(times, values, grid, basis: BSplineBasis, lam):
+    """Per-subject penalised B-spline smoothing of ragged data, evaluated on `grid`: (N, len(grid), D)."""
+    T, V, M, _ = pad_ragged(times, values)
+    c = smooth(T, V, M, basis, lam=lam)
+    return np.einsum("ndk,gk->ngd", c, basis(np.asarray(grid, float)))

@@ -1,0 +1,32 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________________ test_CK8_pruning_selects_active_channels ___________________
+
+    @pytest.mark.criterion("CK-8")
+    @pytest.mark.kind("STAT")
+    def test_CK8_pruning_selects_active_channels():
+        dat = fsim.generate("S-Add", n=2000, seed=15)
+        tr, va, te = _split(2000, 15)
+        xg, lam = _smoothed(dat, tr)
+        best, recs = select_lambda_theta(lambda l: FKANSurv(kind="b2s", loss="cox", lam=l, lr=3e-3, wd=1e-4, seed=0),
+                                         _pack(dat, xg, tr), _pack(dat, xg, va))
+        sel = best.selected_channels()
+        _record("CK-8", selected=sel, grid=recs, smoothing_lambda=lam)
+>       assert sel == [1, 1, 0], f"selected channels {sel}"
+E       AssertionError: selected channels [1, 1, 1]
+E       assert [1, 1, 1] == [1, 1, 0]
+E         
+E         At index 2 diff: 1 != 0
+E         Use -v to get more diff
+
+tests/test_round11.py:319: AssertionError
+=============================== warnings summary ===============================
+tests/test_round11.py::test_CK8_pruning_selects_active_channels
+  /home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_round11.py::test_CK8_pruning_selects_active_channels - Asse...
+1 failed, 14 deselected, 1 warning in 1250.66s (0:20:50)

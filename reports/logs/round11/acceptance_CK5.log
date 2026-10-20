@@ -1,0 +1,23 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________________ test_CK5_b2s_cox_recovers_s_add_shapes ____________________
+
+    @pytest.mark.criterion("CK-5")
+    @pytest.mark.kind("STAT")
+    def test_CK5_b2s_cox_recovers_s_add_shapes():
+        dat = fsim.generate("S-Add", n=2000, seed=12)
+        tr, va, te = _split(2000, 12)
+        xg, lam = _smoothed(dat, tr)
+        e = FKANEnsemble(kind="b2s", loss="cox").fit(_pack(dat, xg, tr), _pack(dat, xg, va))
+        r = _rises(e, dat.x_true_grid[te])
+        member = [_rises(m, dat.x_true_grid[te]) for m in e.members]
+        _record("CK-5", rise_phi1=r[0], rise_phi2=r[1], member_rise=member, tuning=e.tuning, lr=e.lr, wd=e.wd,
+                smoothing_lambda=lam, threshold=0.10)
+>       assert r[0] < 0.10 and r[1] < 0.10, f"RISE phi1 {r[0]:.3f}, phi2 {r[1]:.3f}"
+E       AssertionError: RISE phi1 0.146, phi2 0.686
+E       assert (0.1464188341621293 < 0.1)
+
+tests/test_round11.py:269: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_round11.py::test_CK5_b2s_cox_recovers_s_add_shapes - Assert...
+1 failed, 14 deselected in 326.85s (0:05:26)

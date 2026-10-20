@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________________ test_CK6_afcm_recovers_known_surface _____________________
+
+    @pytest.mark.criterion("CK-6")
+    @pytest.mark.kind("STAT")
+    def test_CK6_afcm_recovers_known_surface():
+        dat = fsim.generate("S-Add", n=2000, seed=13)
+        tr, va, te = _split(2000, 13)
+        xg, lam = _smoothed(dat, tr)
+        m, recs = fit_afcm(_pack(dat, xg, tr), _pack(dat, xg, va))
+        r = _rises(m, dat.x_true_grid[te])
+        _record("CK-6", rise_phi1=r[0], rise_phi2=r[1], lam_x=m.lam_x, lam_t=m.lam_t, grid=recs, smoothing_lambda=lam,
+                threshold=0.10)
+>       assert r[0] < 0.10 and r[1] < 0.10, f"RISE phi1 {r[0]:.3f}, phi2 {r[1]:.3f}"
+E       AssertionError: RISE phi1 0.615, phi2 1.095
+E       assert (0.6152624723258583 < 0.1)
+
+tests/test_round11.py:282: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_round11.py::test_CK6_afcm_recovers_known_surface - Assertio...
+1 failed, 14 deselected in 82.45s (0:01:22)

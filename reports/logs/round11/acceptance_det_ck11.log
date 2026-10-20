@@ -1,0 +1,36 @@
+.........F                                                               [100%]
+=================================== FAILURES ===================================
+_____________ test_CK11_residual_calibrated_kan_aft_d_calibration ______________
+
+    @pytest.mark.criterion("CK-11")
+    @pytest.mark.kind("STAT")
+    def test_CK11_residual_calibrated_kan_aft_d_calibration():
+        dat = fsim.generate("S-Misspec-lognormal", n=2000, seed=16)
+        tr, va, te = _split(2000, 16)
+        xg, lam = _smoothed(dat, tr)
+        m = FKANSurv(kind="b2s", loss="aft", lr=3e-3, wd=1e-4, seed=0).fit(_pack(dat, xg, tr), _pack(dat, xg, va))
+        yt, dt = dat.y[te], dat.delta[te]
+    
+        def s_at_y(model):
+            return np.array([model.predict_survival(xg[te][i:i + 1], dat.z[te][i:i + 1], [yt[i]])[0, 0] for i in range(len(te))])
+    
+        p_w = d_calibration(s_at_y(m), dt)[1]
+        m.cfg["residual_calibration"] = True
+        m._finalise(m.train_)
+        p_rc = d_calibration(s_at_y(m), dt)[1]
+        _record("CK-11", p_weibull=p_w, p_residual_calibrated=p_rc, sigma=m.sigma, smoothing_lambda=lam)
+>       assert p_rc > 0.05 and p_w < 0.05, f"D-cal p: residual-calibrated {p_rc:.3g}, Weibull {p_w:.3g}"
+E       AssertionError: D-cal p: residual-calibrated 0.471, Weibull 0.0515
+E       assert (0.47072825808554397 > 0.05 and 0.05147053785973146 < 0.05)
+
+tests/test_round11.py:339: AssertionError
+=============================== warnings summary ===============================
+tests/test_round11.py::test_CK11_residual_calibrated_kan_aft_d_calibration
+  /home/user/KK/src/kanfae/models/fkan.py:245: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_round11.py::test_CK11_residual_calibrated_kan_aft_d_calibration
+1 failed, 9 passed, 5 deselected, 1 warning in 106.10s (0:01:46)
