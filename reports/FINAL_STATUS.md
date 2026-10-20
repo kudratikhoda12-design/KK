@@ -1,4 +1,24 @@
-# Final status: KAN-FAE research prototype, round 10 (2026-10-19)
+# Final status: KAN-FAE research prototype, round 11 (2026-10-20)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (Part A = round 11; Parts B–K = rounds 10–1); deliverable
+verification passes. Status: **research prototype; not publication-ready; no novelty claim.**
+
+| Item | Result |
+|---|---|
+| Implementation (D116) | Exact Efron/Breslow Cox loss and Breslow baseline; Round-12 simulator; PACE; functional KAN (B2-H, B2-S, B2-deep) and static CoxKAN / KAN-AFT heads; pruning grid; symbolic extraction and substitution; residual-calibrated KAN-AFT; AFCM, LME2 + Cox, landmark Cox, B1 features; B3 landmark builder. Deviations disclosed |
+| Acceptance tests (D117) | Pass: CK-1, 2, 4, 7, 9, 10, 12. **FAIL (recorded, not converted):** CK-3 (slopes off by 0.084 after early stopping), CK-5 (B2-S RISE 0.146 / 0.686), CK-6 (AFCM RISE 0.615 / 1.095), CK-8 (null channel not pruned), CK-11 (Weibull D-cal p 0.0515, not < 0.05) |
+| Finding (D118) | In S-Add, ∫X_d dt is the same for every subject, so the linear-in-x part of each effect is unidentified, but the registered RISE counts it; this affects CK-5/CK-6 and H-R12 |
+| Round 12 | **Not started**; owner decisions needed (ledger L38) |
+| Tests | `final_full_suite_round11`: 241 passed, 6 failed (CK-3, CK-5, CK-6, CK-8, CK-11; 4f original R1, not gating), 10 expected failures, 2 skipped (259). Every CK record reproduced the formal run bit for bit. Report revision 11 (188 pages); deliverable verification ALL_CHECKS_PASS |
+
+## Next
+
+Owner decisions on L38 (D118 options; CK-3, CK-8, CK-11), then Round 12.
+
+---
+
+# Round 10 status (2026-10-19), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (Part A = round 10; Parts B–J = rounds 9–1); deliverable

@@ -189,3 +189,12 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   CRAN (not downloaded).
 - Report rendering fix D115. `final_full_suite_round10`: 231 passed, 1 failed (4f original R1), 2 skipped, 10 xfailed
   (244). Report revision 10.
+- Round 11 (owner "start round 11"; D112). Implemented the Cox loss (exact ties), simulator, PACE, functional KAN,
+  AFCM, LME2, landmark builder, B1 features, symbolic substitution (D116). Development checks on seeds 901-907/99
+  (one PACE check on reserved seed 14, disclosed). PACE σ² fix before any CK run. CK-3 operationalisation revised
+  before its formal run (D116). A test filter accidentally ran CK-11 at seed 16 early (disclosed; reproduced exactly).
+- Formal acceptance run `round11_acceptance`: CK-1, 2, 4, 7, 9, 10, 12 pass; CK-3, 5, 6, 8, 11 FAIL (D117).
+  Identifiability diagnostic and exploratory RISE-aff (D118). Round 12 not started; owner decisions L38.
+- Code committed (101ba49) before the final suite. `final_full_suite_round11` run; report revision 11 (D119).
+- `final_full_suite_round11`: 241 passed, 6 failed (5 CK + 4f original R1), 2 skipped, 10 xfailed (259); CK records
+  identical to the formal run. Report revision 11 (188 pages); deliverable verification ALL_CHECKS_PASS.

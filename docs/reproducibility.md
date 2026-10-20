@@ -121,6 +121,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+# round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+# Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+#   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+#   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py

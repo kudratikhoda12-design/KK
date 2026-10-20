@@ -1,13 +1,472 @@
-<p class="small">Research prototype report, revision 10 · generated from saved records by
-<code>scripts/build_report_round10.py</code> · git <code>a7ff68b</code> (local branch
+<p class="small">Research prototype report, revision 11 · generated from saved records by
+<code>scripts/build_report_round11.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part A is round 10 (owner decisions D110): the literature review, the design
-note and the pre-registration of Rounds 11–13. No model was fitted and no data were acquired in this round. Parts B–J
-are the round-9 to round-1 reports, each regenerated from its own round's records.</p>
+publication-ready; no novelty claim</b>. Part A is round 11 (implementation and acceptance tests CK-1..CK-12, D112):
+code was written and tested; no Round-12 or Round-13 seed was used and no real data were acquired. Parts B–K are the
+round-10 to round-1 reports, each regenerated from its own round's records.</p>
 
-## 0. Round-10 summary (plain English)
+## 0. Round-11 summary (plain English)
 
 ### 0.1 Outcome
+
+| Item | Result |
+|---|---|
+| Implementation (D116) | Done: exact Efron/Breslow Cox loss and Breslow baseline; Round-12 simulator; PACE; functional KAN (B2-H, B2-S, B2-deep) and static CoxKAN/KAN-AFT heads for B1; scale-aware pruning; symbolic extraction and substitution; residual-calibrated KAN-AFT; AFCM, two-stage LME + Cox, landmark Cox and B1 feature builders; B3 stacked-landmark builder |
+| Acceptance tests (D117) | **7 of 12 criteria pass** (CK-1, 2, 4, 7, 9, 10, 12). **5 fail and are recorded as FAIL, not converted:** CK-3, CK-5, CK-6, CK-8, CK-11 |
+| Main finding (D118) | **The registered S-Add design leaves part of each effect unidentified.** ∫X_d(t)dt is the same for every subject, so any part of φ that is linear in x does not change any subject's risk. The registered RISE still counts that part. This affects CK-5, CK-6 and the confirmatory test H-R12 |
+| Round 12 | **Not started.** Per D112 the failures go to the owner first. Decisions needed: §0.3 |
+| Tests | Final suite: 259 tests: 241 passed, 6 failed (the five CK failures and the 4f gate's original R1), 10 expected failures, 2 skipped |
+
+### 0.2 The acceptance tests in one table
+
+| ID | Type | Criterion | Formal run | Final suite | Key numbers |
+|---|---|---|---|---|---|
+| CK-1 | DET | Breslow/Efron NLPL vs lifelines and direct formulas, < 1e-8 | PASS | PASS | – |
+| CK-2 | DET | Breslow baseline vs lifelines, < 1e-6 | PASS | PASS | – |
+| CK-3 | STAT | linear-edge CoxKAN slopes vs lifelines within 0.05 (seed 11) | FAIL | FAIL | max \|slope − lifelines\| 0.084 (slopes 0.759, -0.454, 0.322; lifelines 0.843, -0.479, 0.339) |
+| CK-4 | DET | functional quadrature with φ(x) = x, < 1e-3 | PASS | PASS | – |
+| CK-5 | STAT | B2-S Cox recovers S-Add φ₁, φ₂ with RISE < 0.10 (seed 12) | FAIL | FAIL | RISE φ₁ 0.146, φ₂ 0.686 |
+| CK-6 | STAT | AFCM recovers a known F with RISE < 0.10 (seed 13) | FAIL | FAIL | RISE φ₁ 0.615, φ₂ 1.095 |
+| CK-7 | STAT | PACE sparse: \|cos\| > 0.95 and lower ISE than per-subject smoothing (seed 14) | PASS | PASS | \|cos\| 0.989, 0.997, 0.993; mean ISE PACE 0.200 vs smoothing 2.256 |
+| CK-8 | STAT | pruning removes the null channel, keeps both active (seed 15) | FAIL | FAIL | selected channels [1, 1, 1] (required [1, 1, 0]) |
+| CK-9 | DET | landmark builder: no future data, at-risk only, censored at t_L + w | PASS | PASS | – |
+| CK-10 | DET | symbolic stages 1–2 recover sin, tanh, x² (R² > 0.99) | PASS | PASS | – |
+| CK-11 | STAT | residual-calibrated AFT D-cal p > 0.05 where Weibull p < 0.05 (seed 16) | FAIL | FAIL | D-cal p: residual-calibrated 0.4707, Weibull 0.0515 |
+| CK-12 | DET | LME BLUPs vs closed form, < 1e-8 | PASS | PASS | – |
+
+### 0.3 Decisions needed from the owner before Round 12
+
+1. **S-Add identifiability (affects H-R12).** Options, none taken:
+   - (a) keep the registration and report H-R12 with the caveat;
+   - (b) re-register RISE as error modulo the unidentified subspace;
+   - (c) re-register the DGP so that ∫X dt varies across subjects (for example, a random level per channel), and
+     re-check identifiability before any Round-12 seed is used.
+2. **CK-3.** The early-stopped linear-edge CoxKAN shrinks its slopes (max error 0.084 > 0.05). Decide whether the
+   Cox-machinery check should compare at convergence (no early stopping), or whether this shrinkage is accepted as
+   the training protocol's property.
+3. **CK-8.** With θ_rel ≤ 0.10 nothing was pruned from the null channel. Decide whether the θ_rel grid, the
+   functional edge score, or the expectation of the test should change.
+4. **CK-11.** The residual-calibrated model is calibrated (p 0.471). The Weibull model was only borderline
+   miscalibrated (p 0.0515), so the contrast the test needs did not occur at this seed and n.
+
+## R11.1 Owner decision and scope
+
+- **Owner instruction:** "start round 11." Scope fixed by D112: the design note §§1–3 (models and baselines) and §6
+  (acceptance tests with registered thresholds and seeds 11–16).
+- **Rules followed:**
+  - thresholds unchanged;
+  - a STAT failure at its registered seed is recorded as FAIL;
+  - Round-12 seeds 3000–3419 unused;
+  - development checks on seeds 901–907 and 99 only, with the exceptions disclosed in D116.
+
+## R11.2 What was implemented
+
+| Module | Content |
+|---|---|
+| `kanfae.survival.cox` | Exact Breslow and Efron negative log partial likelihood (vectorised, differentiable, optional strata); Breslow baseline; S(t \| x) |
+| `kanfae.data.fsim` | Round-12 simulator: S-Add, S-Int, S-Misspec (log-normal, log-logistic); dense or sparse (3–8 visits) curves; censoring calibrated to about 30% |
+| `kanfae.functional.pace` | PACE (local linear mean and covariance, leave-one-subject-out bandwidths, σ² by a local quadratic perpendicular to the diagonal, conditional-expectation scores) |
+| `kanfae.models.fkan` | B2-H, B2-S (rank 2), B2-deep; static heads (B1, static CoxKAN / KAN-AFT); Cox or AFT loss; residual calibration; pruning grid; 3-seed ensemble with lr × weight-decay tuning; symbolic stages 1–3 per edge in original units, substitution and refit |
+| `kanfae.models.afcm` | Additive functional Cox model (10 × 10 tensor cubic B-splines, second-order difference penalties, 5 × 5 validation grid) |
+| `kanfae.models.lme` | Random-intercept-and-slope LME by EM, BLUPs, two-stage LME + Cox |
+| `kanfae.models.fbaselines` | B1-SUM summaries, last values, dense grid FPCA, linear Cox for fpca_cox / sum_cox / landmark_cox |
+| `kanfae.data.landmark` | B3 stacked landmark data set (history window, at-risk set, administrative censoring at the horizon) |
+
+The deviations from the reference software and the operational choices are listed in D116 (R11.6).
+
+## R11.3 Acceptance-test details
+
+The registered criteria are in the design note §6 (Part B, R10.4). The operational details (splits, curve smoothing,
+where RISE is evaluated) were fixed in `tests/test_round11.py` before the formal runs. Formal run: `round11_acceptance`
+(logs in `reports/logs/round11/`); the final suite reproduced every outcome.
+
+| ID | Details from the records |
+|---|---|
+| CK-5 | tuning: lr 0.003, wd 0.001 selected; members' RISE φ₁ 0.131, 0.181, 0.154; φ₂ 0.569, 0.826, 0.684; curve smoothing λ 1e-06 |
+| CK-6 | selected λ_x 0.0001, λ_t 0.0001 (5 × 5 grid); curve smoothing λ 1e-06 |
+| CK-7 | per-channel ISE PACE 0.201, 0.211, 0.190; smoothing 2.242, 2.335, 2.192 (λ 0.001) |
+| CK-8 | selected λ 0.0001, θ_rel 0.1 (validation NLPL 4.9656); maximum edges pruned per λ: 0: 0, 0.0001: 0, 0.001: 0, 0.01: 3 |
+| CK-11 | σ̂ 0.447; curve smoothing λ 1e-06 |
+
+## R11.4 Why the failing tests failed
+
+**CK-5 and CK-6 (shape recovery): an identifiability defect in the design, plus estimation error.**
+- In S-Add, X_d(t) = 0.5·d·t + Σ_k ξ_dk ψ_k(t), and every Fourier ψ_k integrates to 0 over [0, 1]. So ∫X_d(t)dt is
+  the same number for every subject.
+- Consequence: adding c·x to φ_d (homogeneous case) adds the same constant to every subject's η. The Cox likelihood
+  cannot see that. In the bivariate case the same holds for x·c(t) whenever c(t) lies outside the span of the curves'
+  variation.
+- The registered RISE removes per-t constants but not these linear-in-x parts, so it penalises a direction that the
+  data cannot determine.
+
+Development seed 902, n 2,000 (`scripts/diag_round11_identifiability.py`). Rank = number of singular values of the column-centred design above 1e-2 / 1e-3 / 1e-4 of the largest.
+
+| S-Add | SD over subjects of ∫X_d dt | SD of the true ∫φ_d term | AFCM 10 × 10 design rank | Homogeneous design rank |
+|---|---|---|---|---|
+| channel 1 | 1.4e-16 | 0.228 | 53 / 70 / 78 of 100 | 8 / 8 / 8 of 10 |
+| channel 2 | 1.7e-16 | 0.173 | 48 / 66 / 75 of 100 | 8 / 8 / 8 of 10 |
+
+**Exploratory check (not a registered test; determinism check: the registered RISE values were reproduced exactly).**
+"RISE-aff" removes the best per-t affine function of x from the error. That removes more than the unidentified part,
+so it is optimistic.
+
+| Model (data) | φ₁ RISE (registered) | φ₁ RISE-aff | φ₂ RISE (registered) | φ₂ RISE-aff |
+|---|---|---|---|---|
+| B2-S Cox ensemble (CK-5 data, seed 12) | 0.146 | 0.139 | 0.686 | 0.059 |
+| AFCM (CK-6 data, seed 13) | 0.615 | 0.538 | 1.095 | 0.050 |
+
+- For φ₂, almost all of the registered RISE is the linear-in-x part.
+- For φ₁, it is not: B2-S still has RISE-aff 0.139 and AFCM 0.538.
+- The two rows come from different seeds (12 and 13), so they are **not** a comparison between the methods.
+
+**CK-3.**
+- The slopes stopped at epoch 294, when validation patience ran out, short of the partial-likelihood maximum.
+- Early stopping acts as shrinkage: all three slopes are smaller in absolute value than lifelines'.
+- On development seeds 905 and 907 the same training loop ran until patience as well and came within 0.0003 of
+  lifelines. So the outcome depends on the data seed.
+
+**CK-8.**
+- At λ ≤ 1e-3 no edge scored below θ_rel 0.10, the largest value in the registered grid, so nothing was pruned.
+- At λ 1e-2, three edges were pruned, but every channel kept at least one edge.
+- Selection picked λ 1e-4 with nothing pruned (validation losses tied across θ; the tie rule takes the largest θ).
+
+**CK-11.** The test needs both "residual-calibrated p > 0.05" and "Weibull p < 0.05". The first held (0.471); the
+second did not (0.0515).
+
+## R11.5 Before Round 12
+
+- **No Round-12 seed was used and nothing was run on real data.**
+- The decisions listed in §0.3 are the owner's.
+- Until then, the code is ready for Round 12 except for these open items, and the identifiability finding (D118)
+  should be resolved before H-R12 is computed.
+
+## R11.6 Decisions in round 11 (D116–D119)
+
+| ID | Decision | Status | Content | Rationale |
+|---|---|---|---|---|
+| D116 | **Round 11 implementation (owner: "start round 11"; 2026-10-20) and deviations from the D112 specification** | ADOPTED | **Modules:** `kanfae.survival.cox` (exact Breslow and Efron NLPL, vectorised, optional strata; Breslow baseline; S(t \| x)); `kanfae.data.fsim` (Round-12 simulator, D113 DGPs; censoring c_max calibrated once per scenario on seed 99); `kanfae.functional.pace` (PACE); `kanfae.models.fkan` (B2-H, B2-S rank 2, B2-deep, static CoxKAN / KAN-AFT heads for B1; standardised inputs; Cox/AFT losses; residual-calibrated KAN-AFT; scale-aware pruning and `select_lambda_theta`; `FKANEnsemble` = lr {1e-3, 3e-3} × wd {1e-4, 1e-3} tuning on seed 0 then seeds 0–2; symbolic stages 1–3 per edge in original units, substitution with trainable affine parameters, L-BFGS refit; `edge="linear"` option); `kanfae.models.afcm` (AFCM); `kanfae.models.lme` (LME by EM, BLUPs, `LME2Cox`); `kanfae.data.landmark` (B3 stacked builder); `kanfae.models.fbaselines` (B1-SUM summaries, last values, dense grid FPCA, `LinearCox` for fpca_cox / sum_cox / landmark_cox); `smoothing.pad_ragged`, `curves_on_grid`. Existing modules and defaults unchanged. **Deviations / operational choices (disclosed):** (1) PACE covariance bandwidth by leave-one-subject-out CV on a fixed random subsample of 2,000 raw-covariance targets (computational shortcut); σ² from a local fit quadratic perpendicular to the diagonal (Yao et al. 2003), averaged over t ∈ [0.25, 0.75]; the first version (smoothed raw diagonal minus the linear-smoother diagonal) overestimated σ² (0.288 vs 0.04 on a development check) and was replaced before any CK run. (2) AFCM: x basis on the training range of X_d with constant extrapolation; smoothing grid λ_x, λ_t ∈ {1e-4, 1e-3, 1e-2, 1e-1, 1} on the mean NLPL scale; ridge 1e-6; L-BFGS. (3) LME and AFCM are Python re-implementations (no R). (4) Pruning: every θ_rel, including 0, gets the same 200-epoch fine-tune, so that θ is compared at equal training (a pruned edge outputs 0; its mean is absorbed by the baseline (Cox) or μ (AFT) in the fine-tune). (5) B3 builder: subjects with no observation in the window are excluded (`min_obs` 1; counts reported). (6) B3 supermodel *training* and real-data runs are Round 13 work: the builder (tested, CK-9) and the stratified Cox loss and baseline (implemented; no registered acceptance test covers strata) are in place, and the supermodel is the static or functional head with t_L as an extra input. (7) CK operationalisation written in `tests/test_round11.py` before the formal runs (splits 60/20/20; dense curves by penalised B-spline smoothing with held-out-point λ; RISE at the true test curves; CK-7 on all three channels; CK-10 families with exact identities sin~cos, tanh~sigmoid). **CK-3 revision before its formal run:** the first operationalisation required stage-1 symbolic acceptance of every spline edge; on development seed 905 two of three linear effects were *not* accepted as linear (validation R² 0.9918 library, and none), so the test measured the symbolic stage rather than the Cox machinery. Revised to a CoxKAN whose edges are linear in original units, trained by the standard loop (this finding is itself reported). **Seed disclosures:** development checks used seeds 901–907 and 99; PACE was checked once on reserved unit-test seed 14 during development, before the formal CK-7 run (disclosed; CK-7's code was not changed after that check except the σ² fix above, which was made on seed 901 evidence). **Accidental formal run:** a `-k "CK1 or ..."` filter also matched CK-11, which therefore ran at its registered seed 16 during a deterministic-test session (record in `reports/logs/round11_ck.jsonl`, run id 20261020T123953); the formal run reproduced it exactly. One deterministic-test session failed on a test construction error (CK-10 called `.numpy()` on a tensor requiring grad); fixed, recorded here. | D110, D112 |
+| D117 | **Round 11 acceptance-test outcome (CK-1..CK-12)** (2026-10-20; formal run `round11_acceptance`, logs `reports/logs/round11/`; reproduced in `final_full_suite_round11`) | ADOPTED | **PASS (DET):** CK-1 (Breslow vs direct formula, Efron vs lifelines and a direct formula, < 1e-8), CK-2 (baseline vs lifelines < 1e-6), CK-4 (quadrature < 1e-3), CK-9 (landmark builder), CK-10 (sin, tanh, x² recovered by stages 1–2 with validation R² > 0.99; plus a plumbing test of model-level extraction/substitution/refit), CK-12 (BLUPs vs Henderson equations < 1e-8). **PASS (STAT):** CK-7 (PACE, seed 14: \|cos\| 0.989 / 0.997 / 0.993; mean ISE 0.200 vs 2.256 for per-subject B-spline smoothing). **FAIL (STAT), recorded, not converted:** **CK-3** (seed 11): early-stopped linear-edge CoxKAN slopes 0.759 / −0.454 / 0.322 vs lifelines 0.843 / −0.479 / 0.339, max error 0.084 > 0.05 (training stopped at epoch 294 by validation patience, before the slopes reached the partial-likelihood maximum: early stopping shrinks). **CK-5** (seed 12): B2-S Cox ensemble RISE φ₁ 0.146, φ₂ 0.686 (threshold 0.10). **CK-6** (seed 13): AFCM RISE φ₁ 0.615, φ₂ 1.095. **CK-8** (seed 15): selected channels [1, 1, 1], not [1, 1, 0]: no channel edge fell below θ_rel 0.10 at any λ; selection picked λ 1e-4, θ 0.10 (tie rule) with nothing pruned. **CK-11** (seed 16): the residual-calibrated KAN-AFT is calibrated (D-cal p 0.471 > 0.05), but the Weibull-loss AFT was not miscalibrated at the registered level (p 0.0515, not < 0.05), so the comparison the test requires did not occur. **Per D112, Round 12 does not start: these failures are reported to the owner (D118).** | Registered thresholds; never converted (D11) |
+| D118 | **Finding for the owner before Round 12: an identifiability defect in the registered S-Add design/metric** (2026-10-20; exploratory, development seed 902 and the CK-5/CK-6 seeds; `scripts/diag_round11_identifiability.py`, `scripts/explore_round11_rise.py`) | ADOPTED (finding); OWNER DECISION NEEDED | The S-Add curves are X_d(t) = 0.5 d t + Σ_k ξ_dk ψ_k(t) with Fourier ψ_k that integrate to 0 on [0, 1], so **∫X_d(t)dt is identical for every subject** (across-subject SD 1.4e-16 and 1.7e-16 vs 0.228 and 0.173 for the true ∫φ terms). Hence any component of φ_d linear in x (homogeneous case), and x·c(t) for c outside the span of the curves' variation (bivariate case), has no effect on any subject's η: the likelihood cannot see it, and only the penalty or architecture decides it. The 10 × 10 AFCM design has numerical rank 53 / 48 of 100 at relative tolerance 1e-2 (78 / 75 at 1e-4); the homogeneous 10-function design has rank 8 of 10 (partition of unity and the linear function). The registered RISE removes per-t constants but not this unidentified linear-in-x part. **Exploratory evidence (not a test; determinism check: the registered RISE values were reproduced exactly):** RISE after removing the best per-t affine function of x ("RISE-aff", which removes more than the unidentified part, so optimistic) is B2-S φ₁ 0.139, φ₂ 0.059 (seed 12); AFCM φ₁ 0.538, φ₂ 0.050 (seed 13). So φ₂'s large registered RISE is almost entirely the unidentified linear part; φ₁'s is not. **Consequence:** H-R12 (D113), which compares mean RISE on S-Add, would partly compare how the two methods fill an unidentified direction. **Options for the owner (none taken):** (a) keep the registration and report H-R12 with this caveat; (b) re-register the RISE as error modulo the unidentified subspace (for example, project out per-t affine functions of x, or the exact null space of the population design); (c) re-register the DGP so ∫X dt varies across subjects (for example, a random level ξ_d0 with a constant basis function), then re-check identifiability before any Round-12 seed is used. Also for decision: CK-3 (early stopping vs MLE), CK-8 (θ_rel grid max 0.10 never reached the null channel), CK-11 (Weibull p 0.0515). | Owner rule: report failures before Round 12; no threshold or design change without owner approval |
+| D119 | **Report revision 11 and verification (Round 11)** (2026-10-20) | ADOPTED | Report revision 11: Part A = round 11 (`reports/report_template_round11.md`, `scripts/build_report_round11.py`), Parts B–K = rounds 10–1. `scripts/verify_deliverables.py`: final run `final_full_suite_round11`; Part-A summary subsections 0.1–0.3 and sections R11.1–R11.9 required; the round-10 template values are checked as well; **the allowed final-suite failures are exactly the 4f gate's original R1 (D103) and the five registered CK failures of D117** (CK-3, CK-5, CK-6, CK-8, CK-11), so that a recorded FAIL is never hidden by an xfail marker and any other failure still fails verification. | Recorded failures stay visible |
+
+## R11.7 Tests
+
+| Full-suite run | Passed | Failed | Skipped | Expected failures (xfail) | Total | Failed tests |
+|---|---|---|---|---|---|---|
+| final_full_suite | 148 | 1 | 1 | 0 | 150 | test_R2_fae_mlp_end_to_end (test_learnability.py) |
+| final_full_suite_round2_v3 | 185 | 1 | 1 | 0 | 187 | test_R2_fae_mlp_end_to_end (test_learnability.py) |
+| final_full_suite_round3 | 198 | 2 | 1 | 1 | 202 | test_R1_oracle_features_head (test_learnability_fa.py); test_R2_fae_mlp_end_to_end (test_learnability_fa.py) |
+| final_full_suite_round4_rerun | 203 | 2 | 1 | 3 | 209 | test_R1_oracle_features_head (test_learnability_fa4b.py); test_R2_fae_mlp_end_to_end (test_learnability_fa4b.py) |
+| final_full_suite_round5 | 212 | 2 | 1 | 5 | 220 | test_R1_oracle_features_head (test_learnability_fa4c.py); test_R2_fae_mlp_end_to_end (test_learnability_fa4c.py) |
+| final_full_suite_round6 | 215 | 0 | 1 | 7 | 223 | – |
+| final_full_suite_round6_rerun | 215 | 0 | 2 | 7 | 224 | – |
+| final_full_suite_round7 | 216 | 3 | 2 | 7 | 228 | test_R1_oracle_features_head (test_learnability_fa4e.py); test_R2_fae_mlp_end_to_end (test_learnability_fa4e.py); test_R3_censoring_awareness (test_learnability_fa4e.py) |
+| final_full_suite_round8 | 226 | 1 | 2 | 10 | 239 | test_R1_oracle_features_head (test_learnability_fa4f.py) |
+| final_full_suite_round9 | 231 | 1 | 2 | 10 | 244 | test_R1_oracle_features_head (test_learnability_fa4f.py) |
+| final_full_suite_round10 | 231 | 1 | 2 | 10 | 244 | test_R1_oracle_features_head (test_learnability_fa4f.py) |
+| final_full_suite_round11 | 241 | 6 | 2 | 10 | 259 | test_R1_oracle_features_head (test_learnability_fa4f.py); test_CK3_linear_coxkan_recovers_lifelines_coefficients (test_round11.py); test_CK5_b2s_cox_recovers_s_add_shapes (test_round11.py); test_CK6_afcm_recovers_known_surface (test_round11.py); test_CK8_pruning_selects_active_channels (test_round11.py); test_CK11_residual_calibrated_kan_aft_d_calibration (test_round11.py) |
+
+**All test runs, in chronological order** (every failure is kept; `reports/test_results.csv` has every record; the
+development-session records, including a test-construction error and the accidental early CK-11 run, are in
+`reports/logs/round11/dev_session_test_records.jsonl`)
+
+| Test run (chronological) | Passed | Failed | Skipped | Expected failures (xfail) | Total |
+|---|---|---|---|---|---|
+| stageA_attempt1 | 41 | 4 | 0 | 0 | 45 |
+| stageA_attempt2 | 41 | 4 | 0 | 0 | 45 |
+| stageA_attempt3 | 45 | 0 | 0 | 0 | 45 |
+| stageB_attempt1 | 40 | 0 | 0 | 0 | 40 |
+| stageC_attempt1 | 19 | 0 | 0 | 0 | 19 |
+| stageD_attempt1 | 54 | 1 | 1 | 0 | 56 |
+| stageD_attempt2 | 7 | 1 | 0 | 0 | 8 |
+| stageD_attempt3 | 8 | 0 | 0 | 0 | 8 |
+| stageD_gate_attempt1 | 1 | 2 | 0 | 0 | 3 |
+| stageD_gate_attempt2 | 1 | 2 | 0 | 0 | 3 |
+| stageD_gate_attempt3 | 2 | 1 | 0 | 0 | 3 |
+| stageCDE_final | 55 | 0 | 1 | 0 | 56 |
+| stageF_attempt1 | 2 | 0 | 0 | 0 | 2 |
+| regress_after_penalty_fix | 73 | 0 | 1 | 0 | 74 |
+| stageG_attempt1 | 4 | 0 | 0 | 0 | 4 |
+| final_full_suite | 148 | 1 | 1 | 0 | 150 |
+| rev3_unit_attempt1 | 50 | 0 | 1 | 0 | 51 |
+| rev3_gate_attempt1 | 2 | 1 | 0 | 0 | 3 |
+| audit_attempt1 | 9 | 0 | 0 | 0 | 9 |
+| censored_ls_attempt1 | 5 | 0 | 0 | 0 | 5 |
+| kan_regress_after_pruning | 12 | 0 | 0 | 0 | 12 |
+| kreg_sym_attempt1 | 10 | 1 | 0 | 0 | 11 |
+| kreg_sym_attempt2 | 1 | 0 | 0 | 0 | 1 |
+| f7f8_attempt1 | 5 | 0 | 0 | 0 | 5 |
+| f8_after_cache | 5 | 0 | 0 | 0 | 5 |
+| d41_gate_selected | 2 | 1 | 0 | 0 | 3 |
+| f9_attempt1 | 6 | 0 | 0 | 0 | 6 |
+| interval_attempt1 | 3 | 2 | 0 | 0 | 5 |
+| interval_attempt2 | 5 | 0 | 0 | 0 | 5 |
+| gate_ext | 2 | 1 | 0 | 0 | 3 |
+| cache_regression_oldcode | 0 | 1 | 0 | 0 | 1 |
+| cache_regression_fixed | 7 | 0 | 0 | 0 | 7 |
+| gate_D53_recompute | 2 | 1 | 0 | 0 | 3 |
+| final_full_suite_round2 | 90 | 2 | 0 | 0 | 92 |
+| final_full_suite_round2_rerun | 178 | 8 | 1 | 0 | 187 |
+| models_repair_D56 | 28 | 0 | 1 | 0 | 29 |
+| final_full_suite_round2_v3 | 185 | 1 | 1 | 0 | 187 |
+| fq_attempt1 | 7 | 4 | 0 | 0 | 11 |
+| fq_attempt2 | 9 | 2 | 0 | 0 | 11 |
+| fq_attempt3 | 10 | 1 | 0 | 0 | 11 |
+| fq_attempt4 | 11 | 0 | 0 | 0 | 11 |
+| revised_gate_fa | 1 | 2 | 0 | 0 | 3 |
+| fq10 | 3 | 0 | 0 | 0 | 3 |
+| final_full_suite_round3 | 198 | 2 | 1 | 1 | 202 |
+| hr_attempt1 | 3 | 0 | 0 | 0 | 3 |
+| revised_gate_fa4b | 2 | 2 | 0 | 0 | 4 |
+| final_full_suite_round4 | 200 | 5 | 1 | 3 | 209 |
+| flat_ae_fix_D78 | 4 | 0 | 0 | 0 | 4 |
+| final_full_suite_round4_rerun | 203 | 2 | 1 | 3 | 209 |
+| rs_attempt1 | 3 | 1 | 0 | 0 | 4 |
+| rs_attempt2 | 4 | 0 | 0 | 0 | 4 |
+| ceil_attempt1 | 3 | 0 | 0 | 0 | 3 |
+| revised_gate_fa4c | 2 | 2 | 0 | 0 | 4 |
+| final_full_suite_round5 | 212 | 2 | 1 | 5 | 220 |
+| gate_fa4c_reproduction | 2 | 2 | 0 | 0 | 4 |
+| bi_attempt1 | 7 | 0 | 0 | 0 | 7 |
+| final_full_suite_round6 | 215 | 0 | 1 | 7 | 223 |
+| final_full_suite_round6_rerun | 215 | 0 | 2 | 7 | 224 |
+| 20261018T175917 | 0 | 0 | 1 | 0 | 1 |
+| revised_gate_fa4e | 1 | 3 | 0 | 0 | 4 |
+| final_full_suite_round7 | 216 | 3 | 2 | 7 | 228 |
+| nf_tests_dev | 4 | 0 | 0 | 0 | 4 |
+| regression_4f_dev | 35 | 0 | 1 | 0 | 36 |
+| revised_gate_fa4f | 3 | 1 | 0 | 0 | 4 |
+| st_tests_dev | 7 | 0 | 0 | 0 | 7 |
+| final_full_suite_round8 | 226 | 1 | 2 | 10 | 239 |
+| fc_tests_dev | 4 | 1 | 0 | 0 | 5 |
+| fc_tests_dev2 | 15 | 0 | 0 | 0 | 15 |
+| final_full_suite_round9 | 231 | 1 | 2 | 10 | 244 |
+| final_full_suite_round10 | 231 | 1 | 2 | 10 | 244 |
+| round11_acceptance | 10 | 5 | 0 | 0 | 15 |
+| final_full_suite_round11 | 241 | 6 | 2 | 10 | 259 |
+
+## R11.8 Task ledger
+
+### Task ledger: originally failed, blocked, skipped or unrun items (opened 2026-10-17)
+
+Each row is updated as work proceeds. The final column points to the supporting log or record. Original
+statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-run of revision 3.
+
+| # | Item | Original status / reason | Blocking dependency | Alternatives considered | Experiments / tests | Final outcome | Evidence | Remaining limitation |
+|---|---|---|---|---|---|---|---|---|
+| L1 | Learnability gate R2 (functional MLP AE) | FAILED (original design, 2 repairs: C 0.8361); FAILED again with revision 3 NFL front (C 0.8461) | – | Fronts A0–A4 (linear, pointwise-MLP NFL, energy, tensor spline, tensor spline + derivative energy); latent size 4/8; α 1/0.1/0; Adam 1e-3/3e-3, AdamW; early stopping on objective/NLL; linear/MLP/KAN encoders; 3000/10000 epochs; capacity 32/64 and 64/128 | D41 + D46 controlled search (validation only; 17 fits after deduplication); official gate; fresh replications on seeds 101–110; D53 defect found, fixed and all affected results recomputed | **FAILED (final, pre-registered):** gate C 0.8497 < 0.8636 (probe mean 0.663 < 0.8; ω probe ≈ 0); replications 0/5 (D41) and 0/5 (D46). No further extension (D46) | `reports/learnability_search.jsonl`, `reports/learnability_confirmation_*.jsonl`, `reports/logs/stageD_gate_D53.log` | The frequency parameter ω is not linearly decodable from a reconstruction-driven latent; next steps need an owner decision (report I.15) Round 3 (owner option (c), D57/D61): frequency-aware representation; validation-only search (11 fits); revised gate on fresh seed 41: **R2 FAILED** (C 0.8189 < 0.8656; ω probe 0.865); fresh confirmations 111–115: 0/5. Diagnosis D65 (overfitting of the spectral block; a compact summary meets the probe criterion on validation but not C) and D66 (R1's σ check not robust) Round 4 (owner D67, pre-registered D71): Revision 4b (compact front + head weight decay): fresh seed 61 R2 FAILED (C 0.8372 < 0.8662); confirmations 121–125: 0/5. Diagnosis D74/D75: the R2 concordance criterion is at or beyond the information limit of the data (near-optimal estimates + true risk function below the threshold on 9/10 fresh seeds) Round 5 (owner D80): Revision 4c Step 1 PASSED (instability and stopping conflict fixed on validation); Step 2 amended gate (seed 81) NOT CONFIRMED: concordance part passed, probe part failed (0.772 < 0.78); confirmations 131–135: 1/5 (D84) Round 6 (owner D86): Revision 4d Step 1 FAILED (no candidate met the multi-seed eligibility; closest short by 0.001 on one seed's probe); gate not run (D89) |
+| L2 | H1 primary: KAN vs MLP functional AE | NOT RUN (blocked by L1, D33) | L1 | – | – | **BLOCKED** (L1 failed; `scripts/run_neural_synthetic.py` ready but deliberately not run) | – | No evidence for or against KAN |
+| L3 | H2: α > 0 vs α = 0 | NOT RUN (blocked by L1) | L1 | (α was varied inside the search, on validation only; not a test of H2) | – | **BLOCKED** | – | |
+| L4 | H3: functional vs flattened under sparse sampling | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L5 | Training controls S1/S2/S3/survival-only on the revised design | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L6 | Ablations AB1–AB8 | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L7 | Neural models on C-MAPSS and PBC | NOT RUN (blocked by L1) | L1, L2 | KAN-AFT (non-functional, reference method) was run on PBC instead (D52) | – | **BLOCKED** for KAN-FAE; KAN-AFT on PBC DONE | `reports/kanaft_pbc.jsonl` | |
+| L8 | KAN regularisation and pruning | NOT IMPLEMENTED (audit finding A-KAN-REG) | – | CoxKAN Eqs. 5–8 / KAN-AFT L_R; edge and node pruning (θ = 1e-2) | KREG-1..4 (pass); KAN-AFT synthetic (12 fits) and PBC (10 fits) with before/after metrics; D54 threshold diagnostic | **DONE (implemented, tested, applied to KAN-AFT).** At θ = 1e-2 an edge was pruned in only 1 of 22 fits (seed 203 IPCW, λ = 1e-2: the true null z₄); D54 explains why (offset-inclusive score; scale dependence) | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl`, `reports/pruning_threshold_diag.jsonl` | Not applied to KAN-FAE (blocked by L1). θ = 1e-2 does not remove the true null edge at the λ chosen on validation |
+| L9 | Symbolic formula extraction (R² > 0.99) | NOT IMPLEMENTED (audit finding A-SYM) | L8 | Stage 1 linear → stage 2 library (15 functions, affine form) → stage 3 PySR 2.7.0 | SYM-1..4 (pass); KAN-AFT synthetic with known truth (3 seeds × 4 losses); PBC (2 endpoints × 5 splits) | **DONE for KAN-AFT.** Synthetic: true shapes (tanh, quadratic, sine) recovered with validation R² > 0.99; rejected fits keep the spline; substitution changes test C by ≤ 0.002. PBC: formulas accepted for some covariates, but the accepted family is not stable across splits | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl` | **KAN-FAE symbolic extraction BLOCKED by L1.** Real-data formula forms are not stable across resamples (interpret edge shapes, not formula identity) |
+| L10 | Censoring-adjusted least-squares estimators (BJ, IPCW, transform) | NOT IMPLEMENTED (new requirement) | – | KAN-AFT Appendix A; BJ log scale (Efron tail) and time-scale variant; IPCW with G(T−); Fan–Gijbels transform | LS-1..5 (pass); KAN-AFT synthetic per loss; L16 study (D50) | **DONE** as separate validated variants (Cox partial likelihood not inserted into the AFT model). Transform biased on the log scale (A-TRANSFORM); marginal IPCW biased under CA-1-only censoring | `src/kanfae/survival/censored_ls.py`, `reports/censoring_variants.jsonl` | Not combined with KAN-FAE joint training (blocked by L1; BJ needs an outer loop) |
+| L11 | M2 for the linear autoencoder | SKIPPED: rank-limited, not applicable (D32) | – | none needed; a mathematical impossibility, not a defect | – | remains NOT APPLICABLE | `reports/logs/stageCDE_unit_final.log` | |
+| L12 | PBC endpoint choice (E1 / E2 / competing risks) | UNRESOLVED owner decision (D9-R) | owner | – | E1 and E2 both run as labelled sensitivity analyses (baselines and KAN-AFT) | **DECIDED (D58, provisional):** E2 primary, E1 sensitivity; to be confirmed with the owner's professor | `docs/design.md` §9.1 | E3 (competing risks) future work |
+| L13 | C-MAPSS landmark design (A / B) | UNRESOLVED owner decision (D3b-R) | owner | – | Both options run (FD001, FD003); Option B re-run with engine-cluster bootstrap (v3, D62) | **DECIDED (D59):** Option B primary, Option A secondary | `docs/design.md` §9.2 | |
+| L14 | Interval likelihood for integer cycles | NOT IMPLEMENTED (D25) | – | `log[S(y−1) − S(y)]` for events; stable log-difference form | INT-1..3; INT-1 failed once (test-reference cancellation, D48), then passed | **DONE (implemented and tested)** | `src/kanfae/survival/aft.py`, `tests/test_interval_likelihood.py` | Not yet used in a C-MAPSS experiment (would only matter for neural/AFT models on integer cycles; deferred) |
+| L15 | C-MAPSS FD002–FD004 | NOT RUN (budget) | – | FD003 shares FD001's single operating condition; FD002/FD004 need per-condition normalisation | FD003: baselines, 3 analyses × 5 splits (D51) | **FD003 DONE (baselines). FD002/FD004 NOT RUN** (new preprocessing design needed; not improvised) | `reports/experiment_results.jsonl` (dataset `cmapss_FD003`) | FD002/FD004 remain unrun |
+| L16 | Informative-censoring and misspecification synthetic variants | NOT RUN | – | CA2 / CA1 (covariate-dependent censoring) / MIS (skewed mixture errors) | D50 study: 20 replicates × 3 scenarios × 6 estimators | **DONE.** Parametric log-normal and BJ unbiased in all three; marginal-G IPCW biased under CA1 (β₁ bias −0.07); transform biased everywhere (−0.14 to −0.82); oracle conditional-G IPCW reduces but does not remove the CA1 bias (practical positivity) | `reports/censoring_variants.jsonl` | Linear estimators only; not repeated with neural models |
+| L17 | Literature review / bibliographic verification | NOT DONE (D27) | – | Targeted search; arXiv versions of uploaded references with checksums | `docs/literature_review.md` | **DONE (targeted).** Closely related prior work found (FunKAN, Wu et al.); **no novelty claim** is made | `docs/literature_review.md` | Not a systematic review; discrepancies recorded, not resolved |
+| L18 | Diagnostic run `diag_rev3_R2` (NFL variants) | STOPPED by me after 1 of 5 configurations, to free CPU; superseded by the controlled search in L1 | – | – | – | STOPPED (partial log kept) | `reports/logs/diag_rev3_R2.log` | |
+| L19 | Feature-cache defect (D53) | NEW (found 2026-10-17 via replication seed 110) | – | – | Regression test F8b; recomputation of the search, gate and confirmations | **FIXED**; all affected results recomputed; superseded records kept | `reports/superseded_D53/`, `reports/logs/diag_seed110*.log` | |
+| L20 | Revision 4b (compact frequency summary + survival-generalisation fix) | NEW (round 3 diagnosis D65) | owner approval + new pre-registration | survival-path regularisation (early stopping, head dropout, head weight decay, weight decay, latent size) | D70 diagnosis; D71 search (11 + 2 fits), gate seed 61, confirmations 121–125 | **DONE: FAILED R2** (NOT CONFIRMED) | `reports/revised_gate_verdict_fa4b.json` | Recommendation: re-reference R2's concordance criterion (L23) |
+| L21 | Robustness of the R1 σ criterion | NEW (round 3 diagnosis D66) | owner decision | prospective amendment R1-A (owner D68) | fresh seeds 601–610 and gate seed 61: original check 0/11 pass, R1-A 11/11 pass | **DONE (amendment adopted prospectively; original results unchanged)** | `reports/r1a_fresh_seeds.jsonl` | |
+| L22 | H1 / H2 / H3 / controls / ablations AB1–AB8 / KAN-FAE pruning (uncentred + centred) and symbolic extraction / D31 check for D ≥ 6 | BLOCKED (D57) | L1 | – | guard verified for the revision-4, 4b and 4c selections | **BLOCKED / NOT RUN** (no design has passed the gate) | `reports/revised_gate_verdict_fa4c.json` | |
+| L23 | Attainable reference for R2's concordance criterion | NEW (round 4, D75) | owner decision | – | owner amendment D80/D82 (C_ceiling − 0.015) | **DONE (amended prospectively; used for the 4c gate)** | `src/kanfae/evaluation/ceiling.py` | |
+| L24 | Training stability of the frequency-aware front | NEW (round 4, D77) | owner decision | spectral balance, clipping, lr, AdamW | Step-1 search D81; full-budget diagnostic D83 | **DONE: fixed** (jumps 12 → 0; thread spread 0.013 → 0.0006) | `reports/diag_4c_stability.json` | |
+| L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
+| L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
+| L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **APPROVED as Revision 4f (D99)**: nonlinear head / seed ensemble; R2 margin 0.025; one-sided R3-A; see L31 | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
+| L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
+| L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
+| L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
+| L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
+| L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
+
+
+
+## R11.9 Reproducibility
+
+### Reproducibility
+
+Project instructions (the repository README.md is intentionally left unchanged, D28).
+
+
+```bash
+### environment (project-local; never touches the global Python)
+bash scripts/setup_env.sh                          # or: KANFAE_FROM_LOCK=1 bash scripts/setup_env.sh
+bash scripts/verify_env.sh                         # E-1 / E-5 evidence
+### tests (every attempt is appended to reports/logs/test_records.jsonl)
+KANFAE_RUN_ID=rerun .venv/bin/python -m pytest -v -rA tests/
+### data (public sources; checksums in reports/run_manifest.json)
+###   C-MAPSS: https://phm-datasets.s3.amazonaws.com/NASA/6.+Turbofan+Engine+Degradation+Simulation+Data+Set.zip
+###            -> extract inner CMAPSSData.zip into data/raw/cmapss/
+###   PBC:     https://cran.r-project.org/src/contrib/survival_3.8-12.tar.gz -> data/raw/pbc/{DESCRIPTION,data/pbc.rda}
+### experiments (resumable; completed run IDs are skipped)
+bash scripts/run_all_experiments.sh                # synthetic (5 replicates x 6 settings) + C-MAPSS (5 splits)
+.venv/bin/python scripts/run_cmapss.py --splits 5 --analyses cmapss_A,cmapss_A_artificial --models sum_cox --code-version D37
+.venv/bin/python scripts/run_pbc.py --splits 5
+### round 2 (2026-10-17): learnability recovery (validation-only search, then gate and fresh-seed confirmations)
+.venv/bin/python scripts/learnability_search.py            # D41 steps S1-S7 -> reports/learnability_search.jsonl
+.venv/bin/python scripts/learnability_search_ext.py        # D46 steps S8-S11 -> reports/learnability_selected_ext.json
+KANFAE_RUN_ID=gate .venv/bin/python -m pytest -v -s tests/test_learnability.py
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --seeds 101,102,103,104,105
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_ext.json \
+    --seeds 106,107,108,109,110 --tag _ext
+### round 2: estimators, KAN-AFT, symbolic extraction, censoring variants, pruning diagnostic, FD003
+.venv/bin/python scripts/run_kanaft_symbolic.py             # synthetic known-truth KAN-AFT (resumable; --fresh)
+.venv/bin/python scripts/run_censoring_variants.py          # L16 / D50
+.venv/bin/python scripts/diag_pruning_threshold.py          # D54
+.venv/bin/python scripts/run_kanaft_pbc.py                  # D52
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --code-version v2   # D51
+### round 3 (2026-10-17): revision 4 (frequency-aware front), pre-registered in D61 before these runs
+.venv/bin/python scripts/diag_frequency_information.py     # D60 (seed-21 training split only)
+.venv/bin/python -m pytest -v tests/test_frequency_front.py # FQ-1..FQ-10
+.venv/bin/python scripts/learnability_search_fa.py         # validation-only search -> reports/learnability_selected_fa.json
+KANFAE_RUN_ID=revised_gate_fa .venv/bin/python -m pytest -v -s tests/test_learnability_fa.py   # fresh seed 41
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa.json \
+    --seeds 111,112,113,114,115 --tag _fa
+.venv/bin/python scripts/revised_gate_verdict.py           # -> reports/revised_gate_verdict.json (D61 rule)
+.venv/bin/python scripts/run_neural_synthetic.py           # refuses to run unless the verdict is CONFIRMED (D57)
+.venv/bin/python scripts/diag_fa_overfitting.py            # D65 (validation only)
+.venv/bin/python scripts/diag_r1_seeds.py                  # D66
+.venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3   # D62
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3
+### round 4 (2026-10-18): Revision 4b, pre-registered in D71 before these runs
+.venv/bin/python scripts/diag_overfit_curves.py            # D70 (seed-21 train/validation only)
+.venv/bin/python -m pytest -v tests/test_survival_regularisation.py   # HR-1..HR-3
+.venv/bin/python scripts/learnability_search_fa4b.py       # -> reports/learnability_selected_fa4b.json
+KANFAE_RUN_ID=revised_gate_fa4b .venv/bin/python -m pytest -v -s tests/test_learnability_fa4b.py   # fresh seed 61
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4b.json \
+    --seeds 121,122,123,124,125 --tag _fa4b
+.venv/bin/python scripts/revised_gate_verdict.py fa4b     # -> reports/revised_gate_verdict_fa4b.json (D71 rule)
+.venv/bin/python scripts/diag_r1_seeds.py --seeds 601,602,603,604,605,606,607,608,609,610 --out reports/r1a_fresh_seeds.jsonl
+.venv/bin/python scripts/diag_4b_ceiling.py               # D74
+.venv/bin/python scripts/diag_data_ceiling.py             # D75 (seed 21 validation)
+.venv/bin/python scripts/diag_data_ceiling_seeds.py       # D75 (fresh seeds 701-710)
+.venv/bin/python scripts/make_figures_round4.py && .venv/bin/python scripts/build_report_round4.py
+### round 5 (2026-10-18): Revision 4c, pre-registered in D81/D82 before these runs; all fits single-threaded (D79)
+OMP_NUM_THREADS=1 .venv/bin/python -m pytest -v tests/test_training_stability.py tests/test_ceiling.py   # RS, CEIL
+OMP_NUM_THREADS=1 .venv/bin/python scripts/learnability_search_fa4c.py        # Step 1 -> reports/learnability_selected_fa4c.json
+OMP_NUM_THREADS=1 KANFAE_RUN_ID=revised_gate_fa4c .venv/bin/python -m pytest -v -s tests/test_learnability_fa4c.py  # seed 81
+OMP_NUM_THREADS=1 .venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4c.json \
+    --seeds 131,132,133,134,135 --tag _fa4c --amended --threads 1
+.venv/bin/python scripts/revised_gate_verdict.py fa4c     # -> reports/revised_gate_verdict_fa4c.json (D82 rule)
+.venv/bin/python scripts/diag_4c_stability.py             # D83 diagnostics
+.venv/bin/python scripts/build_report_round5.py           # report revision 5 (all parts, per-round snapshots)
+### round 6 (2026-10-18): every run_logged command and the pytest session are single-threaded (D86)
+scripts/run_logged.sh bi_tests .venv/bin/python -m pytest -v tests/test_burn_in.py          # BI-2..BI-4
+scripts/run_logged.sh search_fa4d .venv/bin/python scripts/learnability_search_fa4d.py      # Step 1 (D87)
+### Step 2 would be: tests/test_learnability_fa4d.py (seed 92) and
+###   confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4d.json --seeds 141,142,143,144,145 \
+###   --tag _fa4d --amended --ceiling-margin 0.02 --threads 1 ; revised_gate_verdict.py fa4d   (not run: Step 1 failed)
+KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_suite_round6_rerun \
+    .venv/bin/python -m pytest -v -rA -s tests/                                          # final suite (D90)
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round6.py           # report revision 6
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
+### round 8 (2026-10-18; owner D99)
+.venv/bin/python -m pytest -v tests/test_revision_4f.py tests/test_step3_tools.py              # NF-1..4, ST-1..3
+scripts/run_logged.sh search_fa4f .venv/bin/python scripts/learnability_search_fa4f.py      # Step 1 (D100)
+KANFAE_RUN_ID=revised_gate_fa4f scripts/run_logged.sh revised_gate_fa4f \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4f.py                       # gate, seed 93 (D101)
+scripts/run_logged.sh confirm_fa4f .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4f.json --seeds 151,152,153,154,155 --tag _fa4f \
+    --amended --ceiling-margin 0.025 --probe-rule 4f --ensemble 3 --threads 1                 # confirmations
+scripts/run_logged.sh verdict_fa4f .venv/bin/python scripts/revised_gate_verdict.py fa4f  # -> CONFIRMED (D103)
+reports/step3/lanes.sh A|B|C|D        # Step 3 (D104): KANFAE_RESULTS=reports/step3/<group>.jsonl scripts/run_neural_synthetic.py
+                                      #   --analyses H1 | H2,CONTROLS | H3 | SECONDARY | AB1,AB3 | AB4 | AB5,AB6,AB7,AB8;
+                                      #   scripts/kanfae_prune_symbolic.py --variant plain | reg
+KANFAE_RESULTS=reports/step3/real_pbc.jsonl .venv/bin/python scripts/run_neural_real.py --data pbc        # D105
+KANFAE_RESULTS=reports/step3/real_cmapss.jsonl .venv/bin/python scripts/run_neural_real.py --data cmapss
+.venv/bin/python scripts/analyse_step3.py                 # -> reports/step3_summary.json, reports/tables/step3_*.csv
+KANFAE_RUN_ID=final_full_suite_round8 scripts/run_logged.sh final_full_suite_round8 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/build_report_round8.py           # report revision 8
+### round 9 (2026-10-19; owner D107)
+.venv/bin/python -m pytest -v tests/test_kan_fairness.py                                     # FC-1..FC-5
+reports/round9/lanes.sh 1|2|3|4       # D108: KANFAE_RESULTS=reports/round9/laneN.jsonl scripts/run_kan_fairness.py --cells
+                                      #   mlp:S2,mlp:S3,mlp_wide:S2 | kan:S2,kan:S3 | kan_shared:S2,kan_shared:S3 |
+                                      #   kan_unb:S2,kan_unb:S3,mlp_wide:S3
+cd scripts && ../.venv/bin/python analyse_round9.py && cd ..   # -> reports/round9_summary.json, reports/tables/r9_*.csv
+KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_round9 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round9.py           # report revision 9
+### round 10 (2026-10-19; owner D110): documents only. The literature review (docs/literature_review_round10.md) and the
+### design note / pre-registration of Rounds 11-13 (docs/design_note_round10.md; D111-D114). No model code changed,
+### no data acquired.
+KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
+.venv/bin/python scripts/build_report_round3.py
+### report (round 2 part + round 1 part)
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/aggregate_results.py
+.venv/bin/python scripts/make_figures.py && .venv/bin/python scripts/make_figures_round2.py
+.venv/bin/python scripts/build_report_round2.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py
+```
+
+Every executed command, with its exit code and timing, is in `reports/logs/commands.jsonl`. The full outputs
+are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execution_log.md`.
+
+
+
+# Parts B–K: historical records
+
+Part B (round 10), Part C (round 9), Part D (round 8), Part E (round 7), Part F (round 6), Part G (round 5), Part H
+(round 4), Part I (round 3), Part J (round 2) and Part K (round 1) are regenerated from the same records. Each part
+renders from the test records up to its own round's final suite run. Their numbers are unchanged history. Embedded
+living documents (audit, ledger, decision rows, reproducibility) show their current version.
+
+
+# Part B: round-10 report (2026-10-19), historical record
+
+<p class="small">Research prototype report, revision 10 · generated from saved records by
+<code>scripts/build_report_round10.py</code> · git <code>101ba49</code> (local branch
+<code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
+publication-ready; no novelty claim</b>. Part B is round 10 (owner decisions D110): the literature review, the design
+note and the pre-registration of Rounds 11–13. No model was fitted and no data were acquired in this round. Parts C–K
+are the round-9 to round-1 reports, each regenerated from its own round's records.</p>
+
+## R10-0. Round-10 summary (plain English)
+
+### R10-0.1 Outcome
 
 | Item | Result |
 |---|---|
@@ -18,7 +477,7 @@ are the round-9 to round-1 reports, each regenerated from its own round's record
 | Pre-registration | Round 11 (D112: implementation and 12 acceptance tests), Round 12 (D113: 5 scenarios × 20 fresh-seed replicates; single confirmatory test H-R12), Round 13 (D114: PBC, prothro, aids, C-MAPSS; interpretability measures fixed). Committed (`a7ff68b`) before any Round-11 code |
 | Tests | Final suite: 244 tests: 231 passed, 1 failed (the 4f gate's original R1, not gating), 10 expected failures, 2 skipped. No model code changed in this round |
 
-### 0.2 What the review changed in the plan
+### R10-0.2 What the review changed in the plan
 
 1. **The direct competitor is AFCM, not a strawman.**
    - Cui et al.'s model already uses ∫F(X(s), s)ds with penalised tensor-product splines under the Cox loss.
@@ -33,7 +492,7 @@ are the round-9 to round-1 reports, each regenerated from its own round's record
 4. **No R in this environment.** AFCM and the joint-model-style baseline will be Python re-implementations with their
    own acceptance tests (CK-6, CK-12), disclosed as deviations from `mgcv`/`JM`.
 
-### 0.3 Roadmap (Rounds 11–14)
+### R10-0.3 Roadmap (Rounds 11–14)
 
 | Round | Content | Gate to the next round |
 |---|---|---|
@@ -439,7 +898,7 @@ Unit-test seeds 11–16 are training/data seeds for tests only (never used for R
 
 | ID | Decision | Status | Content | Rationale |
 |---|---|---|---|---|
-| D110 | **Owner decisions, Round 10 (2026-10-19): Rounds 10–14 roadmap** | ADOPTED (owner) | (1) **Framing (a) + (b):** primary focus is a methods and interpretability study of **Functional CoxKAN and Functional KAN-AFT** (B1, B2, plus the stacked multi-landmark B3 on real data), evaluated against existing functional survival methods, with no novelty claim where classical functional additive models exist. Rounds 1–9 (KAN-FAE) become the motivating architectural section. (2) **Scope:** a real CoxKAN (Efron/Breslow ties, Breslow baseline, validation-tuned scale-aware pruning, 3-stage symbolic); B1 (FPCA/PACE → CoxKAN/KAN-AFT; trajectory summaries → CoxKAN/KAN-AFT); B2 (∫φ_d(X_d(t), t)dt and the homogeneous case, under the Cox and AFT losses); B3 (stacked landmark supermodel). (3) **Baselines:** fpca_cox, sum_cox/sum_aft, the additive functional Cox model of Cui, Crainiceanu & Leroux, two-stage mixed-effects + Cox and landmark Cox, sum_rsf, static CoxKAN/KAN-AFT, locked MLP-/KAN-FAE (S2, S3, Mode A). (4) **Simulation (Round 12, N ≥ 20):** S-Add (shape recovery, selection, symbolic R², survival metrics), S-Int (interaction, plus a fresh-seed re-confirmation of the frozen S3 autoencoder comparison), S-Sparse (3–8 visits; PACE vs fixed B-splines), S-Misspec (CoxKAN vs KAN-AFT with and without residual calibration). (5) **Real data (Round 13):** PBC `pbcseq` (single 730-day landmark E2/E1, and multi-landmark B3), `prothro` and/or `aids` (R package JM), C-MAPSS FD001 secondary with an AFT calibration fix; measured interpretability (split/bootstrap stability, effect plots, clinical alignment, symbolic formulas in clinical units). (6) **Round 10 itself:** literature review, design note and pre-registration of Rounds 11–13; report revision 10 (Part A = Round 10; Parts B–J = Rounds 9–1); local commits only. **Fact check:** every cited work exists as named (`docs/literature_review_round10.md`). The AFCM form ∫F(X(s), s)ds with penalised tensor-product splines is correct. `aids` and `prothro` are in JM 1.5-2 (CRAN tarball reachable); the prothro documentation is internally inconsistent (488 vs 467 patients), to be checked on acquisition. CoxKAN's published loss uses a fast approximation under ties, so the exact Efron/Breslow implementation is a deviation (an improvement) to disclose. R is not installed, so AFCM and the joint-model-style baseline will be Python re-implementations (D112). | Owner decision; facts verified |
+| D110 | **Owner decisions, Round 10 (2026-10-19): Rounds 10–14 roadmap** | ADOPTED (owner) | (1) **Framing (a) + (b):** primary focus is a methods and interpretability study of **Functional CoxKAN and Functional KAN-AFT** (B1, B2, plus the stacked multi-landmark B3 on real data), evaluated against existing functional survival methods, with no novelty claim where classical functional additive models exist. Rounds 1–9 (KAN-FAE) become the motivating architectural section. (2) **Scope:** a real CoxKAN (Efron/Breslow ties, Breslow baseline, validation-tuned scale-aware pruning, 3-stage symbolic); B1 (FPCA/PACE → CoxKAN/KAN-AFT; trajectory summaries → CoxKAN/KAN-AFT); B2 (∫φ_d(X_d(t), t)dt and the homogeneous case, under the Cox and AFT losses); B3 (stacked landmark supermodel). (3) **Baselines:** fpca_cox, sum_cox/sum_aft, the additive functional Cox model of Cui, Crainiceanu & Leroux, two-stage mixed-effects + Cox and landmark Cox, sum_rsf, static CoxKAN/KAN-AFT, locked MLP-/KAN-FAE (S2, S3, Mode A). (4) **Simulation (Round 12, N ≥ 20):** S-Add (shape recovery, selection, symbolic R², survival metrics), S-Int (interaction, plus a fresh-seed re-confirmation of the frozen S3 autoencoder comparison), S-Sparse (3–8 visits; PACE vs fixed B-splines), S-Misspec (CoxKAN vs KAN-AFT with and without residual calibration). (5) **Real data (Round 13):** PBC `pbcseq` (single 730-day landmark E2/E1, and multi-landmark B3), `prothro` and/or `aids` (R package JM), C-MAPSS FD001 secondary with an AFT calibration fix; measured interpretability (split/bootstrap stability, effect plots, clinical alignment, symbolic formulas in clinical units). (6) **Round 10 itself:** literature review, design note and pre-registration of Rounds 11–13; report revision 10 (Part A = Round 10; Parts C–K = Rounds 9–1); local commits only. **Fact check:** every cited work exists as named (`docs/literature_review_round10.md`). The AFCM form ∫F(X(s), s)ds with penalised tensor-product splines is correct. `aids` and `prothro` are in JM 1.5-2 (CRAN tarball reachable); the prothro documentation is internally inconsistent (488 vs 467 patients), to be checked on acquisition. CoxKAN's published loss uses a fast approximation under ties, so the exact Efron/Breslow implementation is a deviation (an improvement) to disclose. R is not installed, so AFCM and the joint-model-style baseline will be Python re-implementations (D112). | Owner decision; facts verified |
 | D111 | **Literature review, Round 10 (2026-10-19): result and claim policy** | ADOPTED | Targeted (not systematic) review: 14 search strings and per-item verification (`docs/literature_review_round10.md`). **Findings:** (i) Functional-covariate survival: functional linear Cox (Gellar et al. 2015; FLCRM, Kong et al. 2018), the **additive functional Cox model** (Cui, Crainiceanu & Leroux 2021: ∫F(X(s), s)ds, penalised tensor-product splines), FGAM (McLean et al. 2014), the time-varying functional Cox (Du & Leroux 2024 preprint), PACE for sparse data (Yao, Müller & Wang 2005). (ii) Dynamic prediction: joint models (Wulfsohn & Tsiatis 1997; Tsiatis & Davidian 2004; JM, Rizopoulos 2010), landmarking (van Houwelingen 2007) and the landmark supermodel (van Houwelingen & Putter 2012), Landmarking 2.0 (Putter & van Houwelingen 2022), Dynamic-DeepHit (Lee et al. 2020), DeepONet hazard (Hu & Nan 2025 preprint), FCRN (Gao et al. 2025 preprint). (iii) KAN survival models (CoxKAN 2025; KAN-AFT 2025/26; SurvKAN 2026; KAPLAN 2026) all use **static** covariates; JM-KAN (Lundin et al. 2025, conference abstract) combines KAN, longitudinal data and yearly landmarks, but its method details are unavailable. (iv) KAN functional regression: F-KAN (Qin & Li 2026, Computational Statistics; FPC scores → KAN, scalar response); FunKAN (thesis). **Gap assessment:** the real CoxKAN is not new; B1 is a composition of published components (FLCRM/F-KAN + CoxKAN/KAN-AFT); **single-layer B2 under the Cox loss has the same model form as AFCM** and differs only in parametrisation, training, pruning, symbolic extraction and composability; an additive functional *AFT* model was not found (not proof of absence); B3 is partly covered by JM-KAN. **Claim policy:** no novelty claim. The contributions are to be stated as a pre-registered empirical comparison with AFCM and other functional methods, shape-recovery/selection/symbolic evaluation, the KAN-FAE negative result and a reproducible benchmark. "First"-type wording requires a systematic review including the full texts of JM-KAN, F-KAN, FunKAN and KAPLAN. | Owner rule: no novelty claim without a documented review |
 | D112 | **Pre-registration: Round 11, implementation and acceptance tests** (registered 2026-10-19, before any Round-11 code) | ADOPTED | Specification: `docs/design_note_round10.md` §§1–3 and §6. **New modules:** Cox partial likelihood (exact Breslow and Efron) and Breslow baseline, a CoxKAN head, scale-aware pruning (centred, layer-normalised edge scores; the grid λ {0, 1e-4, 1e-3, 1e-2} × θ_rel {0, 0.01, 0.02, 0.05, 0.10} selected by validation loss with 200-epoch masked fine-tuning), symbolic stages 1–3 (PySR on at most 10 edges carrying ≥ 5% of the score, 60 s), `kanfae.functional.pace` (PACE), `kanfae.models.fkan` (B2-H, B2-S rank 2, B2-deep), B1 heads (FPCA-1, FPCA-2, SUM), residual-calibrated KAN-AFT, the B3 stacked-landmark builder and supermodel, and baselines `afcm` (10 × 10 tensor-product cubic B-splines with difference penalties; smoothing by validation partial likelihood on a 5 × 5 grid, **instead of mgcv REML**, because R is unavailable), `lme2_cox` (random intercept + slope LME by EM, BLUPs → Cox), `landmark_cox`, static CoxKAN/KAN-AFT. **Acceptance tests CK-1..CK-12** with fixed thresholds and seeds 11–16 (design note §6); a STAT failure is recorded as FAIL, never converted. Round 12 starts only after CK-1..CK-12 have run, with any failure reported to the owner. Existing modules keep their defaults: the rounds 1–9 tests must still pass. | Owner decision D110 |
 | D113 | **Pre-registration: Round 12, simulation study** (registered 2026-10-19) | ADOPTED | Design note §4. DGPs: S-Add (φ₁(x) = sin(πx/2) homogeneous; φ₂(x, t) = tanh(x)(1 + t); channel 3 null; z effects ±0.3; Weibull PH shape 1.5), S-Int (+0.8 × a product of channel-1 and channel-2 functional summaries), S-Int/P0 (round-1 P0; fae_kan_s3 vs fae_mlp_s3), S-Sparse (S-Add with 3–8 visits), S-Misspec (AFT log-normal / log-logistic with the same additive location). n 1,000; D 3; 4-term Fourier curves with noise 0.2; about 30% censoring. **N = 20 replicates per scenario; fresh seeds** S-Add 3000–3019, S-Int 3100–3119, S-Sparse 3200–3219, S-Misspec 3300–3319, S-Int/P0 3400–3419 (verified unused in all records and code, 2026-10-19). Training ensembles of seeds 0–2. **Metrics:** survival-curve error, IBS, Harrell C, Uno C, D-calibration; RISE (density-weighted, centred) per active channel; selection recall/FDR; symbolic acceptance and R². **Single confirmatory test H-R12:** S-Add, B2-S (Cox) − afcm in mean RISE over the active channels; two-sided paired t, α 0.05, N 20. Interpretation fixed: CI < 0 means better, CI > 0 worse, CI within ±0.05 equivalent (TOST), otherwise inconclusive. **Secondary (exploratory, no multiplicity correction):** as in design note §4, including the **S-Int/P0 TOST equivalence of fae_kan_s3 vs fae_mlp_s3 in curve error, margin ±0.005**. Budget 12 h with a pre-registered drop order (B2 quantile sensitivity, S-Misspec log-logistic, flat_ae, sum_rsf); the H-R12 cells are never dropped. Every run reported. | Owner decision D110 |
@@ -579,10 +1038,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -711,6 +1171,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -728,20 +1198,20 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts B–J: historical records
+# Parts C–K: historical records
 
-Part B (round 9), Part C (round 8), Part D (round 7), Part E (round 6), Part F (round 5), Part G (round 4), Part H
-(round 3), Part I (round 2) and Part J (round 1) are regenerated from the same records. Each part renders from the test
+Part C (round 9), Part D (round 8), Part E (round 7), Part F (round 6), Part G (round 5), Part H (round 4), Part I
+(round 3), Part J (round 2) and Part K (round 1) are regenerated from the same records. Each part renders from the test
 records up to its own round's final suite run. Their numbers are unchanged history. Embedded living documents (audit,
 ledger, decision rows, reproducibility) show their current version.
 
 
-# Part B: round-9 report (2026-10-19), historical record
+# Part C: round-9 report (2026-10-19), historical record
 
 <p class="small">Research prototype report, revision 9 · generated from saved records by
-<code>scripts/build_report_round9.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round9.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part B is round 9 (owner decisions D107, closing L32). Parts C–J are the
+publication-ready; no novelty claim</b>. Part C is round 9 (owner decisions D107, closing L32). Parts D–K are the
 round-8 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R9-0. Round-9 summary (plain English)
@@ -781,7 +1251,7 @@ round-8 to round-1 reports, each regenerated from its own round's records.</p>
 | The conventional MLP functional autoencoder learns the synthetic representation and survival structure (gate) | **Confirmed** under pre-registered criteria on fresh seeds (Revision 4f, round 8) |
 | **H1 (primary, confirmatory): KAN-FAE improves on a parameter-matched MLP-FAE** | **Not supported.** Under C4F the KAN arm had higher survival-curve error (R8.8, repeated below); this is the protocol's single confirmatory test |
 | KAN-fairness contrasts F1–F3 (round 9) | Exploratory, without multiplicity correction (R9.3–R9.6) |
-| H2, H3, controls, secondary settings, AB1–AB8, pruning and symbolic extraction, real data | Exploratory (Part C) |
+| H2, H3, controls, secondary settings, AB1–AB8, pruning and symbolic extraction, real data | Exploratory (Part D) |
 | Novelty | **No claim** |
 
 ### R9-0.4 Evidence, kept separate by kind
@@ -1048,7 +1518,7 @@ the conclusions only.
 
 | ID | Decision | Status | Content | Rationale |
 |---|---|---|---|---|
-| D107 | **Owner decisions, Round 9 (2026-10-19): closing L32** | ADOPTED (owner) | (1) **KAN-fairness sensitivity study** on P0 (D108). (2) **Reporting scope:** H1 under C4F (R8.8) stays the single pre-registered primary confirmatory test. The round-9 fairness contrasts F1–F3, H2, H3, controls, secondary settings, AB1–AB8, KAN-FAE pruning/symbolic extraction and the real-data runs are secondary/exploratory evidence without multiplicity correction. **No novelty claim.** (3) **PBC endpoint:** E2 (death or transplantation) stays the primary reported endpoint and E1 (death; transplantation censored) the sensitivity analysis; final clinical sign-off with the supervising professor is external to the codebase. (4) Same discipline: pre-registration committed before any fit; single-threaded; Rounds 1–8 intact; `build_report_round9.py` (Round 9 = Part A, Rounds 8–1 = Parts C–J); full suite; PDF verified; local commits only. **Fact check:** (i) fae_mlp encoder 32·64 + 64 + 64·16 + 16 = 3,152 and decoder 16·64 + 64 + 64·36 + 36 = 3,428, total 6,580; the single KAN encoder layer 32 → 16 (grid 5, order 3) has 5,136; the D31 decoder 16 → 3 → 36 has 1,599, total 6,735 (+2.4%). All correct (`kan_match`, `mlp_block_params`). (ii) R8.9 controls (untuned C4F): S3 KAN/MLP C 0.8656 / 0.8669, curve error 0.0922 / 0.0933; S1 KAN 0.7438 vs MLP 0.8274. Correct. The bottleneck explanation for S1 is the owner's hypothesis; round 9 tests it only indirectly (Mode B). (iii) **PBC invariance, qualified:** the *conclusions* are the same under E1 and E2. KAN-AFT vs linear AFT: \|ΔC\| ≤ 0.003, with no consistent sign (`reports/kanaft_pbc.jsonl`). fae_kan vs fae_mlp: every Nadeau–Bengio CI includes 0 (D106). The *point estimates* are not invariant: KAN-AFT − linear Harrell C is −0.0031 (E1) vs +0.0004 (E2), and IBS +0.0017 vs −0.0005. The ledger records invariance at the conclusion level only. | Owner decision; facts verified, one qualified |
+| D107 | **Owner decisions, Round 9 (2026-10-19): closing L32** | ADOPTED (owner) | (1) **KAN-fairness sensitivity study** on P0 (D108). (2) **Reporting scope:** H1 under C4F (R8.8) stays the single pre-registered primary confirmatory test. The round-9 fairness contrasts F1–F3, H2, H3, controls, secondary settings, AB1–AB8, KAN-FAE pruning/symbolic extraction and the real-data runs are secondary/exploratory evidence without multiplicity correction. **No novelty claim.** (3) **PBC endpoint:** E2 (death or transplantation) stays the primary reported endpoint and E1 (death; transplantation censored) the sensitivity analysis; final clinical sign-off with the supervising professor is external to the codebase. (4) Same discipline: pre-registration committed before any fit; single-threaded; Rounds 1–8 intact; `build_report_round9.py` (Round 9 = Part A, Rounds 8–1 = Parts D–K); full suite; PDF verified; local commits only. **Fact check:** (i) fae_mlp encoder 32·64 + 64 + 64·16 + 16 = 3,152 and decoder 16·64 + 64 + 64·36 + 36 = 3,428, total 6,580; the single KAN encoder layer 32 → 16 (grid 5, order 3) has 5,136; the D31 decoder 16 → 3 → 36 has 1,599, total 6,735 (+2.4%). All correct (`kan_match`, `mlp_block_params`). (ii) R8.9 controls (untuned C4F): S3 KAN/MLP C 0.8656 / 0.8669, curve error 0.0922 / 0.0933; S1 KAN 0.7438 vs MLP 0.8274. Correct. The bottleneck explanation for S1 is the owner's hypothesis; round 9 tests it only indirectly (Mode B). (iii) **PBC invariance, qualified:** the *conclusions* are the same under E1 and E2. KAN-AFT vs linear AFT: \|ΔC\| ≤ 0.003, with no consistent sign (`reports/kanaft_pbc.jsonl`). fae_kan vs fae_mlp: every Nadeau–Bengio CI includes 0 (D106). The *point estimates* are not invariant: KAN-AFT − linear Harrell C is −0.0031 (E1) vs +0.0004 (E2), and IBS +0.0017 vs −0.0005. The ledger records invariance at the conclusion level only. | Owner decision; facts verified, one qualified |
 | D108 | **Pre-registration: KAN-fairness sensitivity study (Round 9)** (registered 2026-10-19, before any fairness fit) | ADOPTED | **Mechanisms** (defaults unchanged): `dec_block="mlp"` (**Mode B**) gives fae_kan the MLP decoder [16, 64, 36] (3,428 parameters, the same architecture as fae_mlp's) and keeps the C4F single-layer KAN encoder (5,136; its initialisation is bit-identical to C4F fae_kan's); encoder + decoder 8,564, i.e. +30% vs fae_mlp, so Mode B is decoder-matched, not total-matched (disclosed). `kan_dec="single"` (**Mode A**) gives fae_kan a single-layer KAN decoder 16 → 36 (5,796; no hidden width below r), total 10,932. **fae_mlp_wide** = fae_mlp with hidden width 107 (encoder + decoder 10,966, +0.3% vs Mode A; widths 100–110 span 10,252–11,272, and 107 is the closest). Tests FC-1..FC-5 pass (`reports/logs/fc_tests_dev2.log`; a first run failed on a construction error in FC-2's setup, `fc_tests_dev.log`, kept). `runner.reconstruction_eval`: test reconstruction error = individual-weighted MSE of the objective-state model on the observed test points (standardised scale), averaged over ensemble members. **Cells** (`scripts/run_kan_fairness.py`; P0, replicates 1000–1004, n 1000; C4F; protocol 2.1 tuning lr {1e-3, 3e-3} × wd {1e-4, 1e-3} at seed 0 by validation IBS; seeds 1–2 of the selected configuration; primary = 3-seed ensemble on test; single-threaded): arms mlp, kan, kan_shared (Mode B), kan_unb (Mode A), mlp_wide, each under **S2** and **S3** (10 cells). The mlp/kan S2 cells repeat H1 exactly (same data, configuration and tuning) in order to add reconstruction error. Their survival metrics must be bit-identical to the H1 records (a determinism check); if they are not, the H1 records are used for the survival metrics and the discrepancy is reported. **Contrasts** (paired over the 5 replicates; mean, SD, 95% t-CI df 4, paired-t p, exact Wilcoxon p, sign counts; metrics curve error, IBS, Harrell C, Uno C, D-calibration p, test reconstruction): **F1** kan(S3) − mlp(S3). **F2** kan_shared − mlp under S2 and S3, and kan_shared − kan under S2 and S3 (bottleneck effect within KAN). **F3** kan_unb − mlp_wide under S2 and S3. Supplementary: S3 − S2 within each arm. All are exploratory, without multiplicity correction (D107); H1 stays the only confirmatory test. Results in `reports/round9/*.jsonl`; analysis `scripts/analyse_round9.py`. | Owner decision D107 |
 | D109 | **Outcome: KAN-fairness sensitivity study (Round 9)** (2026-10-19; lanes 07:28–08:58 UTC; 400 runs, all ok) | ADOPTED | **Determinism:** the repeated mlp/kan S2 cells reproduce the round-8 H1 records bit for bit (survival metrics, ensembles and all per-seed records). **F1** (tuned S3, D31 matching), kan − mlp: curve error −0.0001 [−0.0030, +0.0028], Harrell C +0.0005 [−0.0032, +0.0042], IBS −0.0023 [−0.0069, +0.0023]. **No survival difference: the H1 deficit vanishes under S3.** KAN's test reconstruction is much worse: 0.532 vs 0.102, +0.429 [+0.136, +0.723], 5/5. **F2** (Mode B, shared MLP decoder): kan_shared − mlp curve error +0.0050 [−0.0008, +0.0108] (S2) and **+0.0061 [+0.0018, +0.0105] (S3, 5/5)**. kan_shared − kan: −0.0028 [−0.0064, +0.0008] (S2) and **+0.0062 [+0.0032, +0.0092] (S3, 5/5)**. Reconstruction improves strongly with the MLP decoder (−0.162 S2, −0.398 S3, 5/5 each). So removing the bottleneck fixes reconstruction but does not make the KAN encoder match the MLP on survival; under S3 it makes survival slightly worse. **F3** (Mode A, single-layer KAN decoder vs wide MLP, parameter-matched): curve error +0.0055 [−0.0004, +0.0114] (S2; KAN worse 5/5, exact Wilcoxon p 0.0625) and −0.0020 [−0.0070, +0.0031] (S3); Harrell C −0.0048 (S2) and +0.0012 (S3), CIs include 0. Under S3, reconstruction is worse for KAN (+0.085 [+0.050, +0.120]) and its D-calibration p lower (−0.306 [−0.544, −0.068]). **S3 − S2** lowers curve error in every arm: −0.0077 mlp, −0.0156 kan, −0.0066 kan_shared, −0.0130 kan_unb, −0.0056 mlp_wide; the CI excludes 0 in all but kan_shared. **Reading:** (i) the round-8 H1 deficit is a training-strategy effect, not a decoder-bottleneck effect. Removing the bottleneck under S2 narrows the curve-error gap from +0.0078 to +0.0050/+0.0055 without closing it, while S3 closes it with or without the bottleneck. (ii) In no arm or strategy is KAN better than the MLP on survival with a CI excluding 0. (iii) The bottleneck severely limits reconstruction (KAN D31 decoder 0.31–0.53 vs 0.12–0.16 for the unbottlenecked KAN decoders), consistent with the owner's S1 hypothesis (D107) for the reconstruction path. All exploratory, without multiplicity correction; H1 (R8.8) remains the only confirmatory test (D107). | Results as obtained; none omitted |
 
@@ -1179,10 +1649,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -1309,6 +1780,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -1326,20 +1807,20 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts C–J: historical records
+# Parts D–K: historical records
 
-Part C (round 8), Part D (round 7), Part E (round 6), Part F (round 5), Part G (round 4), Part H (round 3), Part I
-(round 2) and Part J (round 1) are regenerated from the same records. Each part renders from the test records up to
+Part D (round 8), Part E (round 7), Part F (round 6), Part G (round 5), Part H (round 4), Part I (round 3), Part J
+(round 2) and Part K (round 1) are regenerated from the same records. Each part renders from the test records up to
 its own round's final suite run. Their numbers are unchanged history. Embedded living documents (audit, ledger,
 decision rows, reproducibility) show their current version.
 
 
-# Part C: round-8 report (2026-10-18), historical record
+# Part D: round-8 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 8 · generated from saved records by
-<code>scripts/build_report_round8.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round8.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part C is round 8 (owner decisions D99). Parts D–J are the round-7 to round-1
+publication-ready; no novelty claim</b>. Part D is round 8 (owner decisions D99). Parts E–K are the round-7 to round-1
 reports, each regenerated from its own round's records.</p>
 
 ## R8-0. Round-8 summary (plain English)
@@ -1993,10 +2474,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -2125,6 +2607,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -2142,21 +2634,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts D–J: historical records
+# Parts E–K: historical records
 
-Part D (round 7), Part E (round 6), Part F (round 5), Part G (round 4), Part H (round 3), Part I (round 2) and Part J
+Part E (round 7), Part F (round 6), Part G (round 5), Part H (round 4), Part I (round 3), Part J (round 2) and Part K
 (round 1) are regenerated from the same records. Each part renders from the test records up to its own round's final
 suite run. Their numbers are unchanged history. Embedded living documents (audit, ledger, decision rows,
 reproducibility) show their current version.
 
 
-# Part D: round-7 report (2026-10-18), historical record
+# Part E: round-7 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 7 · generated from saved records by
-<code>scripts/build_report_round7.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round7.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part D is round 7 (owner decisions D91).
-Parts E–J are the round-6 to round-1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part E is round 7 (owner decisions D91).
+Parts F–K are the round-6 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R7-0. Round-7 summary (plain English)
 
@@ -2597,10 +3089,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -2729,6 +3222,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -2746,21 +3249,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts E–J: historical records
+# Parts F–K: historical records
 
-Part E (round 6), Part F (round 5), Part G (round 4), Part H (round 3), Part I (round 2) and Part J (round 1) are
+Part F (round 6), Part G (round 5), Part H (round 4), Part I (round 3), Part J (round 2) and Part K (round 1) are
 regenerated from the same records. Each part renders from the test records up to its own round's final suite run.
 Their numbers are unchanged history; their conclusions on R2 are superseded by Part A. Embedded living documents
 (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part E: round-6 report (2026-10-18), historical record
+# Part F: round-6 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 6 · generated from saved records by
-<code>scripts/build_report_round6.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round6.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part E is round 6 (owner decisions D86).
-Parts F–J are the round-5 to round-1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part F is round 6 (owner decisions D86).
+Parts G–K are the round-5 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R6-0. Round-6 summary (plain English)
 
@@ -3083,10 +3586,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -3215,6 +3719,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -3232,21 +3746,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts F–J: historical records
+# Parts G–K: historical records
 
-Part F (round 5), Part G (round 4), Part H (round 3), Part I (round 2) and Part J (round 1) are regenerated from the
+Part G (round 5), Part H (round 4), Part I (round 3), Part J (round 2) and Part K (round 1) are regenerated from the
 same records. Each part renders from the test records up to its own round's final suite run. Their numbers are
 unchanged history; their conclusions on R2 are superseded by Part A. Embedded living documents (audit, ledger,
 decision rows, reproducibility) show their current version.
 
 
-# Part F: round-5 report (2026-10-18), historical record
+# Part G: round-5 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 5 · generated from saved records by
-<code>scripts/build_report_round5.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round5.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part F is round 5 (owner decisions D80).
-Parts G–J are the round-4, 3, 2 and 1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part G is round 5 (owner decisions D80).
+Parts H–K are the round-4, 3, 2 and 1 reports, each regenerated from its own round's records.</p>
 
 ## R5-0. Round-5 summary (plain English)
 
@@ -3641,10 +4155,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -3773,6 +4288,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -3790,21 +4315,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts G–J: historical records
+# Parts H–K: historical records
 
-Part G (round 4), Part H (round 3), Part I (round 2) and Part J (round 1) are regenerated from the same records. Each
+Part H (round 4), Part I (round 3), Part J (round 2) and Part K (round 1) are regenerated from the same records. Each
 part renders from the test records up to its own round's final suite run. Their numbers are unchanged history;
 their conclusions on R2 are superseded by Part A. Embedded living documents (audit, ledger, decision rows,
 reproducibility) show their current version.
 
 
-# Part G: round-4 report (2026-10-18), historical record
+# Part H: round-4 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 4 · generated from saved records by
-<code>scripts/build_report_round4.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round4.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part G is round 4 (owner decisions D67–D69).
-Parts H–J are the round-3, round-2 and round-1 reports, kept unchanged as historical records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part H is round 4 (owner decisions D67–D69).
+Parts I–K are the round-3, round-2 and round-1 reports, kept unchanged as historical records.</p>
 
 ## R4-0. Round-4 summary (plain English)
 
@@ -4279,10 +4804,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -4411,6 +4937,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -4428,21 +4964,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts H–J: historical records (round 3, 2, 1)
+# Parts I–K: historical records (round 3, 2, 1)
 
-Part H (round 3), Part I (round 2) and Part J (round 1) are regenerated from the same records, with their sections
+Part I (round 3), Part J (round 2) and Part K (round 1) are regenerated from the same records, with their sections
 numbered R3.x, R2.x and R1.x. Their numbers are unchanged history; their conclusions on R2 are superseded by Part A.
 Test counts quoted in their summaries are those of each round's own final suite run. Embedded living documents
 (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part H: round-3 report (2026-10-17), historical record
+# Part I: round-3 report (2026-10-17), historical record
 
 <p class="small">Research prototype report, revision 3 · generated from saved records by
-<code>scripts/build_report_round3.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round3.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready</b> · <b>no novelty claim</b>. Part H is round 3 (owner decisions D57–D59, frequency-aware
-representation, revised gate). Parts I and J are the round-2 and round-1 reports, kept as historical records;
+publication-ready</b> · <b>no novelty claim</b>. Part I is round 3 (owner decisions D57–D59, frequency-aware
+representation, revised gate). Parts J and K are the round-2 and round-1 reports, kept as historical records;
 where they disagree, Part A supersedes them.</p>
 
 ## R3-0. Round-3 summary (plain English)
@@ -5031,10 +5567,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -5163,6 +5700,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -5180,22 +5727,22 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts I and J: historical records (round 2, round 1)
+# Parts J and K: historical records (round 2, round 1)
 
-In this revision, Part I is the round-2 report and Part J, nested at its end, is the round-1 report. Both are regenerated from the
+In this revision, Part J is the round-2 report and Part K, nested at its end, is the round-1 report. Both are regenerated from the
 same records, with their sections renumbered R2.x and R1.x. Their conclusions on R2 are superseded by Part A; their
 tables and numbers are unchanged history. Test counts quoted in their summaries are those of each round's own final
 full-suite run. Embedded living documents (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part I: round-2 report (2026-10-17), historical record
+# Part J: round-2 report (2026-10-17), historical record
 
 <p class="small">Research prototype report, revision 2 · generated from saved records by
-<code>scripts/build_report_round2.py</code> · git <code>a7ff68b</code> (local branch
+<code>scripts/build_report_round2.py</code> · git <code>101ba49</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready</b> · <b>no novelty claim</b> (see I.3). Part I (sections R2.x) covers round 2 (reference-based audit, failure
-recovery, symbolic extraction). Part J (sections R1.x) is the round-1 report, kept as the historical record; where the two
-disagree, Part J supersedes it.</p>
+publication-ready</b> · <b>no novelty claim</b> (see I.3). Part J (sections R2.x) covers round 2 (reference-based audit, failure
+recovery, symbolic extraction). Part K (sections R1.x) is the round-1 report, kept as the historical record; where the two
+disagree, Part K supersedes it.</p>
 
 ## R2-0. Final summary (plain English)
 
@@ -5791,7 +6338,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 - With 5 splits and 22 (E1) or 27 (E2) test events per split, the KAN-AFT and linear AFT cannot be told apart. The
   sign of the difference varies between splits.
 - No superiority is claimed in either direction.
-- The round-1 baselines (Part JJ, §II.10.4) used different (summary) features, so they are not a like-for-like
+- The round-1 baselines (Part KK, §II.10.4) used different (summary) features, so they are not a like-for-like
   comparison.
 
 ## R2.8 C-MAPSS FD003 (real simulated turbofan data; RUL benchmark; baselines; D51)
@@ -5835,7 +6382,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 | KM null (reference) | 0.382 ± 0.203 | 0.500 ± 0.000 | 105.3 ± 36.7 | 103.5 ± 7.6 | 53 ± 2 | 5 |
 
 Summary + AFT diverged in all 15 of its records under artificial censoring (recorded with status "diverged"), as it
-did on FD001 (Part JJ, §II.10.3.3), so it has no row above. Every failed and diverged record is kept in
+did on FD001 (Part KK, §II.10.3.3), so it has no row above. Every failed and diverged record is kept in
 `reports/experiment_results.csv`.
 
 ## R2.9 Interval (integer-cycle) likelihood (L14)
@@ -6001,10 +6548,11 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
 | L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
 | L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
-| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | – | – | PENDING (next round) | – | |
-| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run | – | – | PENDING | – | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
 
 
 
@@ -6157,6 +6705,16 @@ KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_rou
 KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
@@ -6279,7 +6837,7 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 | E2 | 4 | age | library | `-0.617361*gaussian(0.998016*x + -2.11707) + 0.193193` | 5 | 0.9967 | 0.9966 | 0.9959 | 0.0087 | 0.0523 | [-2.10, 2.76] |
 | E2 | 4 | sex(f=1) | linear | `0.0955712*x + 0.0403551` | 1 | 1.0000 | 1.0000 | 0.4907 | 0.0000 | 0.2197 | [-2.97, 0.34] |
 
-# Part J: round-1 report (2026-10-16), historical record
+# Part K: round-1 report (2026-10-16), historical record
 
 The text below is the round-1 report, regenerated from the same records. Its gate and baseline sections are
 unchanged history. Its "unfinished work" items are now tracked in the ledger (I.12), and its R2 conclusion is
@@ -6287,7 +6845,7 @@ superseded by I.1.
 
 
 <p class="small">Research prototype report · generated 2026-10-16 from saved results by <code>scripts/build_report.py</code> ·
-git <code>a7ff68b</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
+git <code>101ba49</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
 <b>research prototype, not publication-ready</b> · no novelty claim is made.</p>
 
 ## R1.1 Executive summary (plain English)
