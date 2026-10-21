@@ -6,7 +6,7 @@ Penalised partial likelihood (Efron):
   mean NLPL + lam_x sum_d theta_d' (D2x'D2x (x) I) theta_d + lam_t sum_d theta_d' (I (x) D2t'D2t) theta_d
               + ridge ||theta||^2,
 second-order difference penalties (P-splines). (lam_x, lam_t) chosen by validation partial likelihood on a 5 x 5 grid
-instead of REML in mgcv (R not available); ridge = 1e-6 removes the direction that the baseline absorbs (any F that is
+instead of REML in mgcv (R not available; lambda_t grid widened to 1e-4..1e4 by D120); ridge = 1e-6 removes the direction that the baseline absorbs (any F that is
 a function of t only). The objective is convex; fitted by L-BFGS with strong-Wolfe line search.
 Curves enter on the 50-point grid with trapezoid quadrature, the same quadrature as the functional KAN.
 """
@@ -19,7 +19,8 @@ from ..functional.basis import BSplineBasis
 from ..survival.cox import breslow_baseline, cox_nll, cox_survival
 
 GRID = np.linspace(0.0, 1.0, 50)
-LAM_GRID = (1e-4, 1e-3, 1e-2, 1e-1, 1.0)
+LAM_GRID = (1e-4, 1e-3, 1e-2, 1e-1, 1.0)                  # lambda_x (and lambda_t in Round 11)
+LAM_T_GRID = (1e-4, 1e-2, 1.0, 1e2, 1e4)                  # lambda_t from D120: lets AFCM shrink dF/dt towards 0
 
 
 def _trap_w(grid):
@@ -126,7 +127,7 @@ class AFCM:
         return np.einsum("nj,jk,nk->n", Bx, self.theta[d], Bt).reshape(x.shape)
 
 
-def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_GRID, **kw):
+def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, **kw):
     """5 x 5 grid over (lam_x, lam_t), selected by validation Efron NLPL. train/val: dicts xg, z, y, d.
     Returns (best model, records)."""
     torch.set_default_dtype(torch.float64)

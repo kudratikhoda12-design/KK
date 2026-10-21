@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "tests"))
 import test_round11 as T  # noqa: E402
 from kanfae.data import fsim  # noqa: E402
-from kanfae.models.afcm import fit_afcm  # noqa: E402
+from kanfae.models.afcm import LAM_GRID, fit_afcm  # noqa: E402
 from kanfae.models.fkan import FKANEnsemble  # noqa: E402
 
 torch.set_num_threads(1)
@@ -49,15 +49,15 @@ def both(model, X):
 
 def main():
     res = {}
-    dat = fsim.generate("S-Add", n=2000, seed=12)
+    dat = fsim.generate("S-Add", n=2000, seed=12, dgp="v1")
     tr, va, te = T._split(2000, 12)
     xg, _ = T._smoothed(dat, tr)
     e = FKANEnsemble(kind="b2s", loss="cox").fit(T._pack(dat, xg, tr), T._pack(dat, xg, va))
     res["CK5_b2s_cox_seed12"] = both(e, dat.x_true_grid[te])
-    dat = fsim.generate("S-Add", n=2000, seed=13)
+    dat = fsim.generate("S-Add", n=2000, seed=13, dgp="v1")
     tr, va, te = T._split(2000, 13)
     xg, _ = T._smoothed(dat, tr)
-    m, _ = fit_afcm(T._pack(dat, xg, tr), T._pack(dat, xg, va))
+    m, _ = fit_afcm(T._pack(dat, xg, tr), T._pack(dat, xg, va), lams_t=LAM_GRID)
     res["CK6_afcm_seed13"] = both(m, dat.x_true_grid[te])
     (ROOT / "reports/round11/explore_rise.json").write_text(json.dumps(res, indent=1))
     print(json.dumps(res, indent=1))

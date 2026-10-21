@@ -1,0 +1,6 @@
+v1 channel1: SD int X 1.42e-16, SD int tX 0.229; tensor rank 53/70/78; homogeneous 8/8/8; unidentified dirs n400 9, n2000 7
+v1 channel2: SD int X 1.72e-16, SD int tX 0.231; tensor rank 48/66/75; homogeneous 8/8/8; unidentified dirs n400 16, n2000 7
+v1 channel3: SD int X 1.96e-16, SD int tX 0.23; tensor rank 43/63/68; homogeneous 7/8/8; unidentified dirs n400 14, n2000 9
+v2 channel1: SD int X 0.692, SD int tX 0.431; tensor rank 46/63/70; homogeneous 7/9/9; unidentified dirs n400 7, n2000 8
+v2 channel2: SD int X 0.708, SD int tX 0.434; tensor rank 46/64/71; homogeneous 8/9/9; unidentified dirs n400 8, n2000 8
+v2 channel3: SD int X 0.729, SD int tX 0.455; tensor rank 44/63/70; homogeneous 7/9/9; unidentified dirs n400 4, n2000 7

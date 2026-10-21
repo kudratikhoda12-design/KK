@@ -9,6 +9,13 @@ Scalars z1 ~ N(0,1), z2 ~ Bernoulli(.5). Channel 3 is null.
   S-Int:     S-Add's eta + 0.8 [int phi1(X1) dt][int tanh(X2) dt];  Weibull PH, shape 1.5
   S-Misspec: log T = 1 - eta/1.5 + 0.5 eps, eps ~ N(0,1) ("lognormal") or logistic ("loglogistic")
 Censoring C ~ U(0, c_max), c_max calibrated once per scenario to ~30% on a fixed calibration sample (seed 99).
+
+DGP versions (D120). "v1" (Round 11, kept for the historical CK tests) is the design above. "v2" (default; Round 12
+and the CK-*b tests) adds a random level xi_d0 * 1 (variance 0.5) and a random linear trend xi_dlin * sqrt(12)(t - 0.5)
+(variance 0.5) and scales the Fourier variances by 7/15 so that the time-averaged marginal variance stays 1.875; then
+int X_d dt and int t X_d dt vary across subjects (in v1, int X_d dt was the same for every subject: D118).
+"S-Misspec-mixture" (test-only, CK-11b): log T = 1 - eta/1.5 + eps, eps the Round-2 MIS skewed two-component normal
+mixture (0.7 N(-0.6, 0.5^2) + 0.3 N(1.4, 1)) standardised to SD 0.5.
 """
 from __future__ import annotations
 
@@ -20,9 +27,13 @@ from scipy.stats import norm
 GRID = np.linspace(0.0, 1.0, 50)             # model grid G
 FINE = np.linspace(0.0, 1.0, 401)            # truth quadrature
 LAM = np.array([1.0, 0.5, 0.25, 0.125])
+LAM_V2 = np.r_[0.5, 0.5, LAM * 7.0 / 15.0]               # level, linear trend, Fourier (D120)
 D = 3
 SHAPE = 1.5
-SCENARIOS = ("S-Add", "S-Int", "S-Misspec-lognormal", "S-Misspec-loglogistic")
+SCENARIOS = ("S-Add", "S-Int", "S-Misspec-lognormal", "S-Misspec-loglogistic", "S-Misspec-mixture")
+DGPS = ("v1", "v2")
+_MIS_MU = 0.7 * -0.6 + 0.3 * 1.4
+_MIS_SD = float(np.sqrt(0.7 * (0.25 + 0.36) + 0.3 * (1.0 + 1.96) - _MIS_MU ** 2))
 
 
 def psi(t):
@@ -30,6 +41,12 @@ def psi(t):
     r2 = np.sqrt(2.0)
     return np.stack([r2 * np.sin(2 * np.pi * t), r2 * np.cos(2 * np.pi * t), r2 * np.sin(4 * np.pi * t),
                      r2 * np.cos(4 * np.pi * t)], -1)
+
+
+def basis_v2(t):
+    """(T, 6): 1, sqrt(12)(t - 0.5), then the four Fourier functions."""
+    t = np.asarray(t, float)
+    return np.concatenate([np.ones(t.shape + (1,)), (np.sqrt(12.0) * (t - 0.5))[..., None], psi(t)], -1)
 
 
 def mu(d, t):
@@ -77,19 +94,26 @@ class FSimData:
         if self.scenario.startswith("S-Misspec"):
             loc = 1.0 - self.eta / SHAPE
             w = (np.log(np.maximum(g, 1e-300))[None, :] - loc[:, None]) / 0.5
-            S = norm.sf(w) if self.scenario.endswith("lognormal") else 1.0 / (1.0 + np.exp(w))
+            if self.scenario.endswith("lognormal"):
+                S = norm.sf(w)
+            elif self.scenario.endswith("loglogistic"):
+                S = 1.0 / (1.0 + np.exp(w))
+            else:                                         # mixture: eps = 0.5 (e - mu) / sd, so e = mu + sd * w
+                e = _MIS_MU + _MIS_SD * w
+                S = 0.7 * norm.sf((e + 0.6) / 0.5) + 0.3 * norm.sf(e - 1.4)
             return np.where(g[None, :] <= 0, 1.0, S)
         return np.exp(-np.exp(self.eta)[:, None] * g[None, :] ** SHAPE)
 
 
-def _latent(n, rng):
-    xi = rng.normal(size=(n, D, 4)) * np.sqrt(LAM)
-    return xi
+def _latent(n, rng, dgp="v1"):
+    if dgp == "v1":
+        return rng.normal(size=(n, D, 4)) * np.sqrt(LAM)
+    return rng.normal(size=(n, D, 6)) * np.sqrt(LAM_V2)
 
 
 def _curves(xi, t):
-    """xi (n, D, 4), t (T,) -> (n, T, D)."""
-    P = psi(t)                                               # (T, 4)
+    """xi (n, D, 4) [v1] or (n, D, 6) [v2], t (T,) -> (n, T, D)."""
+    P = psi(t) if xi.shape[2] == 4 else basis_v2(t)
     return np.einsum("ndk,tk->ntd", xi, P) + np.stack([mu(d, t) for d in range(D)], -1)[None]
 
 
@@ -104,6 +128,11 @@ def _eta(scenario, xi, z):
 
 
 def _event_times(scenario, eta, rng):
+    if scenario == "S-Misspec-mixture":
+        n = len(eta)
+        comp = rng.random(n) < 0.7
+        e = np.where(comp, rng.normal(-0.6, 0.5, n), rng.normal(1.4, 1.0, n))
+        return np.exp(1.0 - eta / SHAPE + 0.5 * (e - _MIS_MU) / _MIS_SD)
     if scenario.startswith("S-Misspec"):
         eps = rng.normal(size=len(eta)) if scenario.endswith("lognormal") else rng.logistic(size=len(eta))
         return np.exp(1.0 - eta / SHAPE + 0.5 * eps)
@@ -114,12 +143,12 @@ def _event_times(scenario, eta, rng):
 _CMAX = {}
 
 
-def censoring_cmax(scenario, target=0.30):
+def censoring_cmax(scenario, target=0.30, dgp="v1"):
     """c_max such that P(C < T) ~= target for C ~ U(0, c_max); fixed calibration sample (seed 99, n 20000)."""
-    if scenario in _CMAX:
-        return _CMAX[scenario]
+    if (scenario, dgp) in _CMAX:
+        return _CMAX[(scenario, dgp)]
     rng = np.random.default_rng(99)
-    xi = _latent(20000, rng)
+    xi = _latent(20000, rng, dgp)
     z = np.column_stack([rng.normal(size=20000), rng.random(20000) < 0.5]).astype(float)
     T = _event_times(scenario, _eta(scenario, xi, z), rng)
     lo, hi = 1e-3, 1e3
@@ -127,8 +156,8 @@ def censoring_cmax(scenario, target=0.30):
         c = np.sqrt(lo * hi)
         frac = np.mean(_pcens(T, c))
         lo, hi = (c, hi) if frac > target else (lo, c)
-    _CMAX[scenario] = float(np.sqrt(lo * hi))
-    return _CMAX[scenario]
+    _CMAX[(scenario, dgp)] = float(np.sqrt(lo * hi))
+    return _CMAX[(scenario, dgp)]
 
 
 def _pcens(T, c):
@@ -136,15 +165,15 @@ def _pcens(T, c):
     return np.minimum(T, c) / c
 
 
-def generate(scenario, n=1000, seed=0, sparse=False, n_dense=40, noise=0.2):
-    if scenario not in SCENARIOS:
-        raise ValueError(scenario)
+def generate(scenario, n=1000, seed=0, sparse=False, n_dense=40, noise=0.2, dgp="v2"):
+    if scenario not in SCENARIOS or dgp not in DGPS:
+        raise ValueError((scenario, dgp))
     rng = np.random.default_rng(seed)
-    xi = _latent(n, rng)
+    xi = _latent(n, rng, dgp)
     z = np.column_stack([rng.normal(size=n), rng.random(n) < 0.5]).astype(float)
     eta = _eta(scenario, xi, z)
     T = _event_times(scenario, eta, rng)
-    C = rng.random(n) * censoring_cmax(scenario)
+    C = rng.random(n) * censoring_cmax(scenario, dgp=dgp)
     y, delta = np.minimum(T, C), (T <= C)
     times, values = [], []
     for i in range(n):
@@ -157,7 +186,7 @@ def generate(scenario, n=1000, seed=0, sparse=False, n_dense=40, noise=0.2):
         times.append(t)
         values.append(x + noise * rng.normal(size=x.shape))
     return FSimData(scenario, times, values, _curves(xi, GRID), z, y, delta, eta, T, C,
-                    dict(seed=seed, sparse=sparse, xi=xi, c_max=censoring_cmax(scenario)))
+                    dict(seed=seed, sparse=sparse, xi=xi, c_max=censoring_cmax(scenario, dgp=dgp), dgp=dgp))
 
 
 def true_effect(d, x, t):
@@ -174,3 +203,56 @@ def rise(phi_hat, phi_true, X, t=GRID):
     b = b - b.mean(0, keepdims=True)
     den = np.mean(b ** 2)
     return float(np.mean((a - b) ** 2) / den) if den > 0 else float("nan")
+
+
+def rise_1d(phi_hat, phi_true, X, t=GRID):
+    """Homogeneous estimate and truth (D120): RISE over x at the pooled test values X (n, G), one global centring."""
+    tt = np.broadcast_to(t[None, :], X.shape)
+    a, b = np.asarray(phi_hat(X, tt), float).ravel(), np.asarray(phi_true(X, tt), float).ravel()
+    a, b = a - a.mean(), b - b.mean()
+    return float(np.mean((a - b) ** 2) / np.mean(b ** 2))
+
+
+ID_TOL = 3e-8          # D120 (inside the gap of the ratio spectrum on development seed 902): a direction is unidentified if Var_i(int f(X_i(t), t) dt) <= ID_TOL * mean-square(f)
+ID_BASIS = (10, 10)    # tensor cubic B-spline basis in (x, t) used to represent candidate null directions
+
+
+def unidentified_directions(X, t=GRID, tol=ID_TOL, basis=ID_BASIS):
+    """Orthonormal (in the mean over the n*G evaluation points) vectors spanning the per-t-centred functions
+    f(x, t) = sum_jk v_jk B_j(x) B_k(t) whose functional int f(X_i(t), t) dt has (relative) zero variance across the
+    curves X (n, G). Returns (F (n*G, r), ratios of all directions, sorted ascending)."""
+    from ..functional.basis import BSplineBasis
+    n, G = X.shape
+    bx = BSplineBasis(basis[0], 3, (float(X.min()), float(X.max())))
+    bt = BSplineBasis(basis[1], 3, (float(t[0]), float(t[-1])))
+    Bx = bx(np.clip(X, X.min(), X.max()))                        # (n, G, nx)
+    Bt = bt(t)                                                   # (G, nt)
+    M = np.einsum("ngj,gk->ngjk", Bx, Bt).reshape(n, G, -1)      # (n, G, P)
+    w = np.full(G, t[1] - t[0]); w[[0, -1]] *= 0.5
+    W = np.einsum("ngp,g->np", M, w)
+    Wc = W - W.mean(0)
+    Mc = (M - M.mean(0, keepdims=True)).reshape(n * G, -1)       # per-t centring
+    A = Wc.T @ Wc / n
+    B = Mc.T @ Mc / (n * G)
+    lam, Q = np.linalg.eigh(B)
+    keep = lam > 1e-12 * lam.max()
+    T_ = Q[:, keep] / np.sqrt(lam[keep])                         # whitening: v = T_ u has unit mean square
+    r, U = np.linalg.eigh(T_.T @ A @ T_)
+    F = Mc @ (T_ @ U[:, r <= tol])
+    return F, np.sort(r)
+
+
+def rise_identifiable(phi_hat, phi_true, X, t=GRID, tol=ID_TOL, basis=ID_BASIS):
+    """D120 primary shape metric: RISE after per-t centring and after projecting the error and the truth orthogonal
+    to the unidentified directions of the empirical trajectory operator on the test curves X (n, G)."""
+    n, G = X.shape
+    tt = np.broadcast_to(t[None, :], X.shape)
+    a, b = np.asarray(phi_hat(X, tt), float), np.asarray(phi_true(X, tt), float)
+    a = (a - a.mean(0, keepdims=True)).ravel()
+    b = (b - b.mean(0, keepdims=True)).ravel()
+    F, _ = unidentified_directions(X, t, tol, basis)
+    N = n * G
+    e = a - b
+    e = e - F @ (F.T @ e) / N
+    b = b - F @ (F.T @ b) / N
+    return float(np.mean(e ** 2) / np.mean(b ** 2))

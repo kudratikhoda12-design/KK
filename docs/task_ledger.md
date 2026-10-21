@@ -42,5 +42,5 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38 | – | – | PENDING | – | |
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
-| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **OPEN (owner)** | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **DECIDED (D120)**; repaired tests CK-3b/5b/6b/8b/11b registered | – | |
 

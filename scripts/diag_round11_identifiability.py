@@ -31,7 +31,7 @@ def summary(W):
 
 
 def main():
-    dat = fsim.generate("S-Add", n=2000, seed=902)
+    dat = fsim.generate("S-Add", n=2000, seed=902, dgp="v1")          # D120: Round-11 DGP pinned
     xg = dat.x_true_grid
     m = AFCM()
     m._set_ranges(xg)

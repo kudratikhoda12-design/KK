@@ -23,6 +23,11 @@ Operational details fixed in this file before any CK run (recorded in D116):
   * CK-11: S-Misspec-lognormal, B2-S KAN-AFT (Weibull loss; lr 3e-3, wd 1e-4, seed 0); D-calibration (10 bins) on the
     test split with and without residual calibration of the same fitted network.
 STAT results are also written to reports/logs/round11_ck.jsonl for the report.
+
+Round 12 owner decisions (D120): the five failed tests (CK-3, CK-5, CK-6, CK-8, CK-11) are kept unchanged as strict
+expected failures (historical records); their data and settings are pinned to the Round-11 versions (DGP "v1", the
+D112 AFCM lambda_t grid and pruning rule), which reproduce the Round-11 records exactly. CK-7 is pinned to DGP v1 too.
+The live checks are CK-3b, CK-5b, CK-6b, CK-8b, CK-11b in tests/test_round12_ck.py.
 """
 import json
 import os
@@ -40,8 +45,9 @@ from kanfae.data.landmark import build_stacked
 from kanfae.functional.basis import BSplineBasis
 from kanfae.functional.pace import PACE
 from kanfae.functional.smoothing import curves_on_grid, pad_ragged, select_lambda
-from kanfae.models.afcm import fit_afcm
-from kanfae.models.fkan import FKANEnsemble, FKANNet, FKANSurv, select_lambda_theta, substitute_symbolic, symbolic_edges
+from kanfae.models.afcm import LAM_GRID, fit_afcm
+from kanfae.models.fkan import (LAMS_D112, THETAS_D112, FKANEnsemble, FKANNet, FKANSurv, select_lambda_theta,
+                                substitute_symbolic, symbolic_edges)
 from kanfae.models.kan import KANLayer
 from kanfae.models.lme import blup
 from kanfae.survival.cox import breslow_baseline, cox_nll
@@ -218,6 +224,7 @@ def test_CK12_lme_blup_closed_form():
 # --------------------------------------------------------------------------------------------------------------- STAT
 @pytest.mark.criterion("CK-3")
 @pytest.mark.kind("STAT")
+@pytest.mark.xfail(strict=True, reason="historical record, D117: early-stopped slopes off by 0.084 (seed 11); live check CK-3b (D120)")
 def test_CK3_linear_coxkan_recovers_lifelines_coefficients():
     rng = np.random.default_rng(11)
     n, beta = 2000, np.array([0.8, -0.5, 0.3])
@@ -257,8 +264,9 @@ def test_CK10b_symbolic_extraction_and_substitution_on_a_coxkan():
 
 @pytest.mark.criterion("CK-5")
 @pytest.mark.kind("STAT")
+@pytest.mark.xfail(strict=True, reason="historical record, D117: RISE 0.146 / 0.686 on DGP v1 (seed 12); live check CK-5b (D120)")
 def test_CK5_b2s_cox_recovers_s_add_shapes():
-    dat = fsim.generate("S-Add", n=2000, seed=12)
+    dat = fsim.generate("S-Add", n=2000, seed=12, dgp="v1")
     tr, va, te = _split(2000, 12)
     xg, lam = _smoothed(dat, tr)
     e = FKANEnsemble(kind="b2s", loss="cox").fit(_pack(dat, xg, tr), _pack(dat, xg, va))
@@ -271,11 +279,12 @@ def test_CK5_b2s_cox_recovers_s_add_shapes():
 
 @pytest.mark.criterion("CK-6")
 @pytest.mark.kind("STAT")
+@pytest.mark.xfail(strict=True, reason="historical record, D117: RISE 0.615 / 1.095 on DGP v1 (seed 13); live check CK-6b (D120)")
 def test_CK6_afcm_recovers_known_surface():
-    dat = fsim.generate("S-Add", n=2000, seed=13)
+    dat = fsim.generate("S-Add", n=2000, seed=13, dgp="v1")
     tr, va, te = _split(2000, 13)
     xg, lam = _smoothed(dat, tr)
-    m, recs = fit_afcm(_pack(dat, xg, tr), _pack(dat, xg, va))
+    m, recs = fit_afcm(_pack(dat, xg, tr), _pack(dat, xg, va), lams_t=LAM_GRID)
     r = _rises(m, dat.x_true_grid[te])
     _record("CK-6", rise_phi1=r[0], rise_phi2=r[1], lam_x=m.lam_x, lam_t=m.lam_t, grid=recs, smoothing_lambda=lam,
             threshold=0.10)
@@ -285,7 +294,7 @@ def test_CK6_afcm_recovers_known_surface():
 @pytest.mark.criterion("CK-7")
 @pytest.mark.kind("STAT")
 def test_CK7_pace_sparse_eigenfunction_and_reconstruction():
-    dat = fsim.generate("S-Add", n=1000, seed=14, sparse=True)
+    dat = fsim.generate("S-Add", n=1000, seed=14, sparse=True, dgp="v1")
     G = fsim.GRID
     w = np.full(len(G), G[1] - G[0]); w[[0, -1]] *= 0.5
     psi1 = np.sqrt(2) * np.sin(2 * np.pi * G)
@@ -308,12 +317,14 @@ def test_CK7_pace_sparse_eigenfunction_and_reconstruction():
 
 @pytest.mark.criterion("CK-8")
 @pytest.mark.kind("STAT")
+@pytest.mark.xfail(strict=True, reason="historical record, D117: selected [1, 1, 1] (seed 15); live check CK-8b (D120)")
 def test_CK8_pruning_selects_active_channels():
-    dat = fsim.generate("S-Add", n=2000, seed=15)
+    dat = fsim.generate("S-Add", n=2000, seed=15, dgp="v1")
     tr, va, te = _split(2000, 15)
     xg, lam = _smoothed(dat, tr)
     best, recs = select_lambda_theta(lambda l: FKANSurv(kind="b2s", loss="cox", lam=l, lr=3e-3, wd=1e-4, seed=0),
-                                     _pack(dat, xg, tr), _pack(dat, xg, va))
+                                     _pack(dat, xg, tr), _pack(dat, xg, va), lams=LAMS_D112, thetas=THETAS_D112,
+                                     rule="min", channel_score="edge")
     sel = best.selected_channels()
     _record("CK-8", selected=sel, grid=recs, smoothing_lambda=lam)
     assert sel == [1, 1, 0], f"selected channels {sel}"
@@ -321,8 +332,9 @@ def test_CK8_pruning_selects_active_channels():
 
 @pytest.mark.criterion("CK-11")
 @pytest.mark.kind("STAT")
+@pytest.mark.xfail(strict=True, reason="historical record, D117: Weibull D-cal p 0.0515, not < 0.05 (seed 16); live check CK-11b (D120)")
 def test_CK11_residual_calibrated_kan_aft_d_calibration():
-    dat = fsim.generate("S-Misspec-lognormal", n=2000, seed=16)
+    dat = fsim.generate("S-Misspec-lognormal", n=2000, seed=16, dgp="v1")
     tr, va, te = _split(2000, 16)
     xg, lam = _smoothed(dat, tr)
     m = FKANSurv(kind="b2s", loss="aft", lr=3e-3, wd=1e-4, seed=0).fit(_pack(dat, xg, tr), _pack(dat, xg, va))

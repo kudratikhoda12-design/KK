@@ -1,0 +1,2 @@
+{"run_id": "20261021T115458", "nodeid": "tests/test_round12_ck.py::test_ID1_identifiable_rise_ignores_unidentified_directions", "outcome": "passed", "phase": "call", "duration_s": 5.8956, "criterion": "ID-1", "kind": "DET", "stage": "R12", "message": ""}
+{"run_id": "20261021T115458", "nodeid": "tests/test_round12_ck.py::test_ID2_v2_curves_identify_level_and_trend", "outcome": "passed", "phase": "call", "duration_s": 0.468, "criterion": "ID-2", "kind": "DET", "stage": "R12", "message": ""}

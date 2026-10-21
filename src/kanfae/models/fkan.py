@@ -100,10 +100,11 @@ class FKANSurv:
     """Fit/predict wrapper: standardisation, Cox/AFT loss, training with early stopping, pruning, symbolic."""
 
     def __init__(self, kind="b2s", loss="cox", ties="efron", M=2, hidden=0, lr=3e-3, wd=1e-4, lam=0.0,
-                 max_epochs=3000, patience=100, residual_calibration=False, seed=0, family="weibull", edge="spline"):
+                 max_epochs=3000, patience=100, residual_calibration=False, seed=0, family="weibull", edge="spline",
+                 early_stopping=True):
         self.cfg = dict(kind=kind, loss=loss, ties=ties, M=M, hidden=hidden, lr=lr, wd=wd, lam=lam,
                         max_epochs=max_epochs, patience=patience, residual_calibration=residual_calibration,
-                        seed=seed, family=family, edge=edge)
+                        seed=seed, family=family, edge=edge, early_stopping=early_stopping)
 
     # ---- data ----------------------------------------------------------------------------------------------------
     def _std_fit(self, xg, z):
@@ -133,9 +134,14 @@ class FKANSurv:
 
     # ---- training ------------------------------------------------------------------------------------------------
     def fit(self, train, val, strata_tr=None, strata_va=None):
-        """train/val: dicts with keys xg (n, G, D) or None, z (n, p), y, d."""
+        """train/val: dicts with keys xg (n, G, D) or None, z (n, p), y, d. val None (with early_stopping False):
+        train on the whole training set for max_epochs; the monitored loss is then the training loss."""
         torch.set_default_dtype(torch.float64)
         c = self.cfg
+        if val is None:
+            if c["early_stopping"]:
+                raise ValueError("early stopping needs a validation split")
+            val, strata_va = train, strata_tr
         self._std_fit(train["xg"], train["z"])
         Xtr, Ztr = self._tensors(train["xg"], train["z"])
         Xva, Zva = self._tensors(val["xg"], val["z"])
@@ -169,6 +175,9 @@ class FKANSurv:
             return loss
 
         opt.step(closure)
+        loss = closure()
+        self.refit_grad_norm = float(torch.sqrt(sum((q.grad ** 2).sum() for q in params if q.grad is not None)))
+        self.refit_train_loss = float(loss)
         with torch.no_grad():
             self.val_loss = float(self._loss(self.net(dd["Xva"], dd["Zva"]), dd["yva"], dd["dva"], dd["sva"]))
         self._finalise(self.train_)
@@ -193,6 +202,9 @@ class FKANSurv:
             hist.append(vl)
             if not np.isfinite(vl):
                 break
+            if not c["early_stopping"]:
+                best = vl
+                continue
             if vl < best - 1e-7:
                 best, bad = vl, 0
                 best_state = (copy.deepcopy(self.net.state_dict()), float(self.mu.detach()), float(self.log_sigma.detach()),
@@ -201,7 +213,7 @@ class FKANSurv:
                 bad += 1
                 if bad >= patience:
                     break
-        if best_state is not None:
+        if best_state is not None and c["early_stopping"]:
             self.net.load_state_dict(best_state[0])
             with torch.no_grad():
                 self.mu.fill_(best_state[1]); self.log_sigma.fill_(best_state[2])
@@ -297,10 +309,25 @@ class FKANSurv:
         return out
 
     @torch.no_grad()
-    def prune(self, theta_rel):
+    def channel_scores(self):
+        """D120: S_d = mean_i |eta_id - mean eta_d| of each channel's integrated functional effect
+        eta_id = int phi_d(X_id(t), t) dt (summed over the rank-M terms), normalised by max_d S_d."""
+        c = self.net.channel_terms(self.data["Xtr"])
+        c = c.sum(2) if c.dim() == 3 else c                          # (n, D)
+        s = (c - c.mean(0)).abs().mean(0)
+        return s / max(float(s.max()), 1e-12)
+
+    @torch.no_grad()
+    def prune(self, theta_rel, channel_score="edge"):
+        """channel_score "edge" (Round 11): every edge/term against theta_rel with layer-normalised scores.
+        "integrated" (D120): functional channels as wholes by channel_scores(); other layers as in "edge"."""
         n_pruned = 0
         for name, (layer, s) in self.edge_scores().items():
-            sel = (s < theta_rel) & (layer.mask > 0)
+            if channel_score == "integrated" and name in ("phi", "g"):
+                cs = self.channel_scores()
+                sel = (cs[:, None] < theta_rel).expand_as(layer.mask) & (layer.mask > 0)
+            else:
+                sel = (s < theta_rel) & (layer.mask > 0)
             layer.mask[sel] = 0.0
             n_pruned += int(sel.sum())
         return n_pruned
@@ -310,24 +337,35 @@ class FKANSurv:
         return self
 
 
-def select_lambda_theta(make, train, val, lams=(0.0, 1e-4, 1e-3, 1e-2), thetas=(0.0, 0.01, 0.02, 0.05, 0.10),
-                        fine_tune_epochs=200, strata_tr=None, strata_va=None):
-    """D112 grid: train at each lambda, prune at each theta_rel, fine-tune with the mask fixed; select by validation
-    loss (ties: larger theta, then larger lambda). make(lam) -> unfitted FKANSurv. Returns (best model, records)."""
-    recs, best = [], None
+LAMS_D112, THETAS_D112 = (0.0, 1e-4, 1e-3, 1e-2), (0.0, 0.01, 0.02, 0.05, 0.10)
+LAMS_D120, THETAS_D120 = (0.0, 1e-4, 1e-3, 1e-2, 3e-2), (0.0, 0.01, 0.02, 0.05, 0.10, 0.15, 0.20, 0.25)
+
+
+def select_lambda_theta(make, train, val, lams=LAMS_D120, thetas=THETAS_D120, fine_tune_epochs=200, strata_tr=None,
+                        strata_va=None, rule="parsimonious", tol=0.01, channel_score="integrated"):
+    """Train at each lambda, prune at each theta_rel, fine-tune with the mask fixed (every theta, including 0).
+    rule "min" (D112): smallest validation loss (ties: larger theta, then larger lambda), with lams/thetas D112 and
+    channel_score "edge". rule "parsimonious" (D120, default): among grid points whose validation loss is within `tol`
+    of the minimum, the largest theta, then the largest lambda. make(lam) -> unfitted FKANSurv.
+    Returns (selected model, records)."""
+    recs, models = [], []
     for lam in lams:
         base = make(lam).fit(train, val, strata_tr, strata_va)
         for th in thetas:
             m = copy.deepcopy(base)
-            n_pr = m.prune(th) if th > 0 else 0
-            m.fine_tune(fine_tune_epochs)                 # every theta, including 0, gets the same fine-tuning
+            n_pr = m.prune(th, channel_score) if th > 0 else 0
+            m.fine_tune(fine_tune_epochs)
             m._finalise(train)
-            rec = dict(lam=lam, theta=th, val_loss=float(m.val_loss), pruned=n_pr, selected=m.selected_channels())
-            recs.append(rec)
-            key = (round(rec["val_loss"], 10), -th, -lam)
-            if best is None or key < best[0]:
-                best = (key, m)
-    return best[1], recs
+            recs.append(dict(lam=lam, theta=th, val_loss=float(m.val_loss), pruned=n_pr, selected=m.selected_channels()))
+            models.append(m)
+    if rule == "min":
+        k = min(range(len(recs)), key=lambda i: (round(recs[i]["val_loss"], 10), -recs[i]["theta"], -recs[i]["lam"]))
+    else:
+        vmin = min(r["val_loss"] for r in recs)
+        ok = [i for i, r in enumerate(recs) if r["val_loss"] <= vmin + tol]
+        k = max(ok, key=lambda i: (recs[i]["theta"], recs[i]["lam"]))
+    recs[k]["chosen"] = True
+    return models[k], recs
 
 
 class FKANEnsemble:
