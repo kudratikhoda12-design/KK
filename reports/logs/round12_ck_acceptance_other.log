@@ -1,0 +1,21 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 7 items / 3 deselected / 4 selected
+
+tests/test_round12_ck.py::test_ID1_identifiable_rise_ignores_unidentified_directions PASSED [ 25%]
+tests/test_round12_ck.py::test_ID2_v2_curves_identify_level_and_trend PASSED [ 50%]
+tests/test_round12_ck.py::test_CK3b_converged_linear_coxkan_matches_lifelines PASSED [ 75%]
+tests/test_round12_ck.py::test_CK11b_residual_calibration_on_mixture_errors PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/test_round12_ck.py::test_CK3b_converged_linear_coxkan_matches_lifelines
+  /home/user/KK/src/kanfae/models/fkan.py:180: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    self.refit_train_loss = float(loss)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 4 passed, 3 deselected, 1 warning in 54.13s ==================

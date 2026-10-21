@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 7 items / 6 deselected / 1 selected
+
+tests/test_round12_ck.py::test_CK5b_b2s_cox_identifiable_rise PASSED     [100%]
+
+================= 1 passed, 6 deselected in 456.71s (0:07:36) ==================
