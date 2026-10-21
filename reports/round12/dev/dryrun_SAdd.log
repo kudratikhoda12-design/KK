@@ -1,0 +1,20 @@
+[S-Add rep 0 b2s_cox/bspline] ok 133.1s
+[S-Add rep 0 afcm_v3/bspline] ok 58.2s
+[S-Add rep 0 afcm_v0/bspline] ok 31.9s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Add rep 0 b2s_aft/bspline] ok 165.4s
+[S-Add rep 0 b2h_cox/bspline] ok 205.2s
+[S-Add rep 0 b2h_aft/bspline] ok 211.6s
+[S-Add rep 0 b1_fpca1_cox/bspline] ok 9.8s
+[S-Add rep 0 b1_fpca1_aft/bspline] ok 9.4s
+[S-Add rep 0 fpca_cox/bspline] ok 0.3s
+[S-Add rep 0 b1_sum_cox/raw] ok 10.2s
+[S-Add rep 0 b1_sum_aft/raw] ok 10.1s
+[S-Add rep 0 static_coxkan/raw] ok 5.1s
+[S-Add rep 0 sum_cox/raw] ok 0.1s
+[S-Add rep 0 sum_rsf/raw] ok 2.9s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[S-Add rep 0 prune_symbolic/bspline] ok 717.2s

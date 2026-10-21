@@ -1,0 +1,6 @@
+[S-Misspec/lognormal rep 0 b2s_cox/bspline] ok 352.3s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Misspec/lognormal rep 0 b2s_aft/bspline] ok 173.3s
+[S-Misspec/lognormal rep 0 afcm_v3/bspline] ok 56.7s

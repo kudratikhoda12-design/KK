@@ -1,0 +1,27 @@
+[S-Sparse rep 0 b2s_cox/bspline] ok 170.3s
+[S-Sparse rep 0 afcm_v3/bspline] ok 59.9s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Sparse rep 0 b2s_aft/bspline] ok 181.5s
+[S-Sparse rep 0 b2h_cox/bspline] ok 233.0s
+[S-Sparse rep 0 b2h_aft/bspline] ok 576.3s
+[S-Sparse rep 0 b1_fpca1_cox/bspline] ok 7.4s
+[S-Sparse rep 0 b1_fpca1_aft/bspline] ok 6.1s
+[S-Sparse rep 0 fpca_cox/bspline] ok 0.2s
+[S-Sparse rep 0 b2s_cox/pace] ok 227.7s
+[S-Sparse rep 0 afcm_v3/pace] ok 58.9s
+[S-Sparse rep 0 b2s_aft/pace] ok 456.5s
+[S-Sparse rep 0 b2h_cox/pace] ok 408.7s
+[S-Sparse rep 0 b2h_aft/pace] ok 576.8s
+[S-Sparse rep 0 b1_fpca1_cox/pace] ok 11.0s
+[S-Sparse rep 0 b1_fpca1_aft/pace] ok 10.6s
+[S-Sparse rep 0 fpca_cox/pace] ok 0.1s
+[S-Sparse rep 0 b1_sum_cox/raw] ok 9.2s
+[S-Sparse rep 0 b1_sum_aft/raw] ok 11.4s
+[S-Sparse rep 0 static_coxkan/raw] ok 12.1s
+[S-Sparse rep 0 sum_cox/raw] ok 0.1s
+[S-Sparse rep 0 sum_rsf/raw] ok 2.8s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[S-Sparse rep 0 prune_symbolic/bspline] ok 798.9s

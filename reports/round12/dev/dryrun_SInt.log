@@ -1,0 +1,18 @@
+[S-Int rep 0 b2s_cox/bspline] ok 477.9s
+[S-Int rep 0 afcm_v3/bspline] ok 58.5s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Int rep 0 b2s_aft/bspline] ok 242.2s
+[S-Int rep 0 b2h_cox/bspline] ok 249.6s
+[S-Int rep 0 b2h_aft/bspline] ok 446.6s
+[S-Int rep 0 b1_fpca1_cox/bspline] ok 11.0s
+[S-Int rep 0 b1_fpca1_aft/bspline] ok 8.4s
+[S-Int rep 0 fpca_cox/bspline] ok 0.2s
+[S-Int rep 0 b1_sum_cox/raw] ok 11.2s
+[S-Int rep 0 b1_sum_aft/raw] ok 10.9s
+[S-Int rep 0 static_coxkan/raw] ok 6.4s
+[S-Int rep 0 sum_cox/raw] ok 0.1s
+[S-Int rep 0 sum_rsf/raw] ok 3.5s
+[S-Int rep 0 b1_fpca2_cox/bspline] ok 8.4s
+[S-Int rep 0 b2deep_cox/bspline] ok 94.7s
