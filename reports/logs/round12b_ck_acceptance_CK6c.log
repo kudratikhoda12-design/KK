@@ -1,0 +1,28 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 2 items / 1 deselected / 1 selected
+
+tests/test_round12b_ck.py::test_CK6c_repaired_afcm_identifiable_rise FAILED [100%]
+
+=================================== FAILURES ===================================
+__________________ test_CK6c_repaired_afcm_identifiable_rise ___________________
+
+    @pytest.mark.criterion("CK-6c")
+    @pytest.mark.kind("STAT")
+    def test_CK6c_repaired_afcm_identifiable_rise():
+        r = ck6c(SEEDS["CK-6c"])
+        s = r["shapes"]
+        _record("CK-6c", seed=SEEDS["CK-6c"], threshold_phi1=0.15, threshold_phi2=0.10,
+                phi1_below_010=bool(s["phi1"]["rise_id"] < 0.10), phi2_below_010=bool(s["phi2"]["rise_id"] < 0.10), **r)
+>       assert s["phi1"]["rise_id"] < 0.15 and s["phi2"]["rise_id"] < 0.10, f"identifiable RISE {s}"
+E       AssertionError: identifiable RISE {'phi1': {'rise_id': 0.2474518768396834, 'rise_raw': 0.24768760470262532}, 'phi2': {'rise_id': 0.05300287710120117, 'rise_raw': 0.052770166325684674}}
+E       assert (0.2474518768396834 < 0.15)
+
+tests/test_round12b_ck.py:79: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_round12b_ck.py::test_CK6c_repaired_afcm_identifiable_rise
+================== 1 failed, 1 deselected in 73.99s (0:01:13) ==================
