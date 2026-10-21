@@ -205,3 +205,10 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   closed; seeds 3000–3419 unused. Exploratory AFCM basis floor 0.002. L39 open. D121 committed (abebea6).
 - `final_full_suite_round12`: 247 passed, 2 failed (CK-6b, 4f original R1), 2 skipped, 15 xfailed (266); CK records
   reproduced. Report revision 12 (199 pages); deliverable verification ALL_CHECKS_PASS. Round 12 not run (gate).
+- L39 decisions (owner D123). AFCM options added (defaults unchanged). Diagnosis on development seed 914 in 4 lanes
+  (a first launch writing one shared JSON was stopped after seconds and relaunched): V3 adopted (φ₁ 0.023). Seeds 22/23
+  verified unused; seed 21 found used in Rounds 4–6 for the Round-1 simulator (correction to D120). CK-7b mechanics on
+  seed 916. D123 committed (08292df).
+- Formal run `round12b_ck_acceptance`: CK-7b PASS; CK-6c FAIL (φ₁ 0.247). Gate closed; Round 12 not run (D124). L40.
+- `final_full_suite_round12b`: 248 passed, 2 failed (CK-6c, 4f original R1), 2 skipped, 16 xfailed (268); all CK
+  records reproduced. Report revision 13 (206 pages; contents type reduced, D125); verification ALL_CHECKS_PASS.

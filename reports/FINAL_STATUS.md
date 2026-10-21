@@ -1,4 +1,20 @@
-# Final status: KAN-FAE research prototype, L38 decisions and repaired tests (2026-10-21)
+# Final status: KAN-FAE research prototype, L39 decisions (2026-10-21)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (revision 13: Part A = L39 decisions and the Round-12 gate;
+Part B = L38; Parts C–M = rounds 11–1). Status: **research prototype; not publication-ready; no novelty claim.**
+
+| Item | Result |
+|---|---|
+| AFCM diagnosis (D123, development seed 914) | Adopted V3 (λ_x grid 1e-7..1e1, normalised penalties, D1 + D2 in t): φ₁ 0.473 → 0.023 on seed 914 |
+| CK-7b (seed 23) | PASS: PACE under DGP v2 (\|cos\| ≥ 0.985; ISE below smoothing on all channels) |
+| CK-6c (seed 22) | **FAIL**: repaired AFCM φ₁ identifiable RISE 0.247 (> 0.15); φ₂ 0.053 |
+| Round 12 | **Not started** (owner gate); seeds 3000–3419 unused. Owner decision needed: L40 |
+| Tests | `final_full_suite_round12b`: 248 passed, 2 failed (CK-6c; 4f original R1, not gating), 16 expected failures, 2 skipped (268). All CK records reproduced. Report revision 13 (206 pages); deliverable verification ALL_CHECKS_PASS |
+
+---
+
+# L38 status (2026-10-21), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (Part A = L38 decisions, repaired tests and the Round-12 gate;

@@ -14,7 +14,8 @@ pre { background: #f6f5f2; padding: 6pt; border-radius: 4px; white-space: pre-wr
 img { max-width: 100%; display: block; margin: 6pt auto; page-break-inside: avoid; }
 blockquote { border-left: 3px solid var(--accent); margin: 6pt 0; padding: 2pt 10pt; color: var(--ink2); }
 .small { font-size: 8pt; color: var(--ink2); }
-nav#TOC { font-size: 8.6pt; page-break-after: always; }
+nav#TOC { font-size: 7.4pt; line-height: 1.2; page-break-after: always; }
+/* D125: with thirteen parts the two-column list again spilled onto an almost empty page; smaller type keeps it on one. */
 nav#TOC ul { list-style: none; padding-left: 12pt; }
 /* Round 6 (D90): the contents list grew past one page with six parts; set it in two columns so it fits on one page
    instead of spilling a few lines onto an almost empty second page. */

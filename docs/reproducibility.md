@@ -139,6 +139,14 @@ scripts/run_logged.sh round12_explore_afcm_floor .venv/bin/python scripts/explor
 KANFAE_RUN_ID=final_full_suite_round12 scripts/run_logged.sh final_full_suite_round12 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round12.py          # report revision 12
+# L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b
+scripts/run_logged.sh round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx
+#   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes
+KANFAE_RUN_ID=round12b_ck_acceptance scripts/run_logged.sh round12b_ck_acceptance_CK6c .venv/bin/python -m pytest tests/test_round12b_ck.py -v -k "test_CK6c_"
+KANFAE_RUN_ID=round12b_ck_acceptance scripts/run_logged.sh round12b_ck_acceptance_CK7b .venv/bin/python -m pytest tests/test_round12b_ck.py -v -k "test_CK7b_"
+KANFAE_RUN_ID=final_full_suite_round12b scripts/run_logged.sh final_full_suite_round12b .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round12b.py         # report revision 13
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py

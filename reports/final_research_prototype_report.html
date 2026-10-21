@@ -101,7 +101,8 @@ pre { background: #f6f5f2; padding: 6pt; border-radius: 4px; white-space: pre-wr
 img { max-width: 100%; display: block; margin: 6pt auto; page-break-inside: avoid; }
 blockquote { border-left: 3px solid var(--accent); margin: 6pt 0; padding: 2pt 10pt; color: var(--ink2); }
 .small { font-size: 8pt; color: var(--ink2); }
-nav#TOC { font-size: 8.6pt; page-break-after: always; }
+nav#TOC { font-size: 7.4pt; line-height: 1.2; page-break-after: always; }
+
 nav#TOC ul { list-style: none; padding-left: 12pt; }
 
 nav#TOC > ul { columns: 2; column-gap: 16pt; padding-left: 0; }
@@ -116,6 +117,26 @@ nav#TOC ul ul li { break-inside: avoid; }
 <ul>
 <li><a href="#summary-plain-english" id="toc-summary-plain-english">0.
 Summary (plain English)</a></li>
+<li><a href="#r12b.1-owner-decisions-d123-and-fact-check" id="toc-r12b.1-owner-decisions-d123-and-fact-check">R12b.1 Owner
+decisions (D123) and fact check</a></li>
+<li><a href="#r12b.2-afcm-diagnosis-on-development-seed-914" id="toc-r12b.2-afcm-diagnosis-on-development-seed-914">R12b.2 AFCM
+diagnosis on development seed 914</a></li>
+<li><a href="#r12b.3-repaired-tests" id="toc-r12b.3-repaired-tests">R12b.3 Repaired tests</a></li>
+<li><a href="#r12b.4-why-ck-6c-failed-from-the-recorded-validation-grid-no-new-fit" id="toc-r12b.4-why-ck-6c-failed-from-the-recorded-validation-grid-no-new-fit">R12b.4
+Why CK-6c failed (from the recorded validation grid; no new
+fit)</a></li>
+<li><a href="#r12b.5-gate-decision" id="toc-r12b.5-gate-decision">R12b.5
+Gate decision</a></li>
+<li><a href="#r12b.6-decisions-d123d125" id="toc-r12b.6-decisions-d123d125">R12b.6 Decisions (D123–D125)</a></li>
+<li><a href="#r12b.7-tests" id="toc-r12b.7-tests">R12b.7 Tests</a></li>
+<li><a href="#parts-bm-historical-records" id="toc-parts-bm-historical-records">Parts B–M: historical
+records</a></li>
+<li><a href="#part-b-revision-12-l38-decisions-and-repaired-tests-2026-10-21-historical-record" id="toc-part-b-revision-12-l38-decisions-and-repaired-tests-2026-10-21-historical-record">Part
+B: revision 12 (L38 decisions and repaired tests, 2026-10-21),
+historical record</a>
+<ul>
+<li><a href="#r12-0.-summary-plain-english" id="toc-r12-0.-summary-plain-english">R12-0. Summary (plain
+English)</a></li>
 <li><a href="#r12.1-owner-decisions-d120-and-fact-check" id="toc-r12.1-owner-decisions-d120-and-fact-check">R12.1 Owner decisions
 (D120) and fact check</a></li>
 <li><a href="#r12.2-what-changed-in-the-code" id="toc-r12.2-what-changed-in-the-code">R12.2 What changed in the
@@ -132,9 +153,10 @@ Gate decision</a></li>
 <li><a href="#r12.8-tests" id="toc-r12.8-tests">R12.8 Tests</a></li>
 <li><a href="#r12.9-task-ledger-and-reproducibility" id="toc-r12.9-task-ledger-and-reproducibility">R12.9 Task ledger and
 reproducibility</a></li>
-<li><a href="#parts-bl-historical-records" id="toc-parts-bl-historical-records">Parts B–L: historical
+</ul></li>
+<li><a href="#parts-cm-historical-records" id="toc-parts-cm-historical-records">Parts C–M: historical
 records</a></li>
-<li><a href="#part-b-round-11-report-2026-10-20-historical-record" id="toc-part-b-round-11-report-2026-10-20-historical-record">Part B:
+<li><a href="#part-c-round-11-report-2026-10-20-historical-record" id="toc-part-c-round-11-report-2026-10-20-historical-record">Part C:
 round-11 report (2026-10-20), historical record</a>
 <ul>
 <li><a href="#r11-0.-round-11-summary-plain-english" id="toc-r11-0.-round-11-summary-plain-english">R11-0. Round-11 summary
@@ -154,9 +176,9 @@ failed</a></li>
 ledger</a></li>
 <li><a href="#r11.9-reproducibility" id="toc-r11.9-reproducibility">R11.9 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-cl-historical-records" id="toc-parts-cl-historical-records">Parts C–L: historical
+<li><a href="#parts-dm-historical-records" id="toc-parts-dm-historical-records">Parts D–M: historical
 records</a></li>
-<li><a href="#part-c-round-10-report-2026-10-19-historical-record" id="toc-part-c-round-10-report-2026-10-19-historical-record">Part C:
+<li><a href="#part-d-round-10-report-2026-10-19-historical-record" id="toc-part-d-round-10-report-2026-10-19-historical-record">Part D:
 round-10 report (2026-10-19), historical record</a>
 <ul>
 <li><a href="#r10-0.-round-10-summary-plain-english" id="toc-r10-0.-round-10-summary-plain-english">R10-0. Round-10 summary
@@ -175,9 +197,9 @@ Design note and pre-registration of Rounds 11–13</a></li>
 ledger</a></li>
 <li><a href="#r10.8-reproducibility" id="toc-r10.8-reproducibility">R10.8 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-dl-historical-records" id="toc-parts-dl-historical-records">Parts D–L: historical
+<li><a href="#parts-em-historical-records" id="toc-parts-em-historical-records">Parts E–M: historical
 records</a></li>
-<li><a href="#part-d-round-9-report-2026-10-19-historical-record" id="toc-part-d-round-9-report-2026-10-19-historical-record">Part D:
+<li><a href="#part-e-round-9-report-2026-10-19-historical-record" id="toc-part-e-round-9-report-2026-10-19-historical-record">Part E:
 round-9 report (2026-10-19), historical record</a>
 <ul>
 <li><a href="#r9-0.-round-9-summary-plain-english" id="toc-r9-0.-round-9-summary-plain-english">R9-0. Round-9 summary
@@ -200,9 +222,9 @@ decision 3)</a></li>
 <li><a href="#r9.8-decisions-tests-ledger-and-reproducibility" id="toc-r9.8-decisions-tests-ledger-and-reproducibility">R9.8 Decisions,
 tests, ledger and reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-el-historical-records" id="toc-parts-el-historical-records">Parts E–L: historical
+<li><a href="#parts-fm-historical-records" id="toc-parts-fm-historical-records">Parts F–M: historical
 records</a></li>
-<li><a href="#part-e-round-8-report-2026-10-18-historical-record" id="toc-part-e-round-8-report-2026-10-18-historical-record">Part E:
+<li><a href="#part-f-round-8-report-2026-10-18-historical-record" id="toc-part-f-round-8-report-2026-10-18-historical-record">Part F:
 round-8 report (2026-10-18), historical record</a>
 <ul>
 <li><a href="#r8-0.-round-8-summary-plain-english" id="toc-r8-0.-round-8-summary-plain-english">R8-0. Round-8 summary
@@ -236,9 +258,9 @@ decisions and tests</a></li>
 endpoint</a></li>
 <li><a href="#r8.14-reproducibility" id="toc-r8.14-reproducibility">R8.14 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-fl-historical-records" id="toc-parts-fl-historical-records">Parts F–L: historical
+<li><a href="#parts-gm-historical-records" id="toc-parts-gm-historical-records">Parts G–M: historical
 records</a></li>
-<li><a href="#part-f-round-7-report-2026-10-18-historical-record" id="toc-part-f-round-7-report-2026-10-18-historical-record">Part F:
+<li><a href="#part-g-round-7-report-2026-10-18-historical-record" id="toc-part-g-round-7-report-2026-10-18-historical-record">Part G:
 round-7 report (2026-10-18), historical record</a>
 <ul>
 <li><a href="#r7-0.-round-7-summary-plain-english" id="toc-r7-0.-round-7-summary-plain-english">R7-0. Round-7 summary
@@ -266,9 +288,9 @@ The probe re-reference, retrospectively (information only)</a></li>
 ledger</a></li>
 <li><a href="#r7.12-reproducibility" id="toc-r7.12-reproducibility">R7.12 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-gl-historical-records" id="toc-parts-gl-historical-records">Parts G–L: historical
+<li><a href="#parts-hm-historical-records" id="toc-parts-hm-historical-records">Parts H–M: historical
 records</a></li>
-<li><a href="#part-g-round-6-report-2026-10-18-historical-record" id="toc-part-g-round-6-report-2026-10-18-historical-record">Part G:
+<li><a href="#part-h-round-6-report-2026-10-18-historical-record" id="toc-part-h-round-6-report-2026-10-18-historical-record">Part H:
 round-6 report (2026-10-18), historical record</a>
 <ul>
 <li><a href="#r6-0.-round-6-summary-plain-english" id="toc-r6-0.-round-6-summary-plain-english">R6-0. Round-6 summary
@@ -289,9 +311,9 @@ pre-registered multi-seed search (D87)</a></li>
 ledger</a></li>
 <li><a href="#r6.10-reproducibility" id="toc-r6.10-reproducibility">R6.10 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-hl-historical-records" id="toc-parts-hl-historical-records">Parts H–L: historical
+<li><a href="#parts-im-historical-records" id="toc-parts-im-historical-records">Parts I–M: historical
 records</a></li>
-<li><a href="#part-h-round-5-report-2026-10-18-historical-record" id="toc-part-h-round-5-report-2026-10-18-historical-record">Part H:
+<li><a href="#part-i-round-5-report-2026-10-18-historical-record" id="toc-part-i-round-5-report-2026-10-18-historical-record">Part I:
 round-5 report (2026-10-18), historical record</a>
 <ul>
 <li><a href="#r5-0.-round-5-summary-plain-english" id="toc-r5-0.-round-5-summary-plain-english">R5-0. Round-5 summary
@@ -316,9 +338,9 @@ amended gate and confirmations (D82)</a></li>
 ledger</a></li>
 <li><a href="#r5.11-reproducibility" id="toc-r5.11-reproducibility">R5.11 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-il-historical-records" id="toc-parts-il-historical-records">Parts I–L: historical
+<li><a href="#parts-jm-historical-records" id="toc-parts-jm-historical-records">Parts J–M: historical
 records</a></li>
-<li><a href="#part-i-round-4-report-2026-10-18-historical-record" id="toc-part-i-round-4-report-2026-10-18-historical-record">Part I:
+<li><a href="#part-j-round-4-report-2026-10-18-historical-record" id="toc-part-j-round-4-report-2026-10-18-historical-record">Part J:
 round-4 report (2026-10-18), historical record</a>
 <ul>
 <li><a href="#r4-0.-round-4-summary-plain-english" id="toc-r4-0.-round-4-summary-plain-english">R4-0. Round-4 summary
@@ -346,9 +368,9 @@ provisional</a></li>
 ledger</a></li>
 <li><a href="#r4.11-reproducibility" id="toc-r4.11-reproducibility">R4.11 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-jl-historical-records-round-3-2-1" id="toc-parts-jl-historical-records-round-3-2-1">Parts J–L: historical
+<li><a href="#parts-km-historical-records-round-3-2-1" id="toc-parts-km-historical-records-round-3-2-1">Parts K–M: historical
 records (round 3, 2, 1)</a></li>
-<li><a href="#part-j-round-3-report-2026-10-17-historical-record" id="toc-part-j-round-3-report-2026-10-17-historical-record">Part J:
+<li><a href="#part-k-round-3-report-2026-10-17-historical-record" id="toc-part-k-round-3-report-2026-10-17-historical-record">Part K:
 round-3 report (2026-10-17), historical record</a>
 <ul>
 <li><a href="#r3-0.-round-3-summary-plain-english" id="toc-r3-0.-round-3-summary-plain-english">R3-0. Round-3 summary
@@ -375,9 +397,9 @@ items and decisions requested</a></li>
 ledger</a></li>
 <li><a href="#r3.11-reproducibility" id="toc-r3.11-reproducibility">R3.11 Reproducibility</a></li>
 </ul></li>
-<li><a href="#parts-k-and-l-historical-records-round-2-round-1" id="toc-parts-k-and-l-historical-records-round-2-round-1">Parts K and L:
+<li><a href="#parts-l-and-m-historical-records-round-2-round-1" id="toc-parts-l-and-m-historical-records-round-2-round-1">Parts L and M:
 historical records (round 2, round 1)</a></li>
-<li><a href="#part-k-round-2-report-2026-10-17-historical-record" id="toc-part-k-round-2-report-2026-10-17-historical-record">Part K:
+<li><a href="#part-l-round-2-report-2026-10-17-historical-record" id="toc-part-l-round-2-report-2026-10-17-historical-record">Part L:
 round-2 report (2026-10-17), historical record</a>
 <ul>
 <li><a href="#r2-0.-final-summary-plain-english" id="toc-r2-0.-final-summary-plain-english">R2-0. Final summary (plain
@@ -416,7 +438,7 @@ Limitations and decisions requested from the owner</a></li>
 <li><a href="#appendix-a-pbc-symbolic-fits-all-edges-and-splits" id="toc-appendix-a-pbc-symbolic-fits-all-edges-and-splits">Appendix A:
 PBC symbolic fits, all edges and splits</a></li>
 </ul></li>
-<li><a href="#part-l-round-1-report-2026-10-16-historical-record" id="toc-part-l-round-1-report-2026-10-16-historical-record">Part L:
+<li><a href="#part-m-round-1-report-2026-10-16-historical-record" id="toc-part-m-round-1-report-2026-10-16-historical-record">Part M:
 round-1 report (2026-10-16), historical record</a>
 <ul>
 <li><a href="#r1.1-executive-summary-plain-english" id="toc-r1.1-executive-summary-plain-english">R1.1 Executive summary
@@ -455,17 +477,1231 @@ References</a></li>
 </ul>
 </nav>
 <p class="small">
-Research prototype report, revision 12 · generated from saved records by
-<code>scripts/build_report_round12.py</code> · git <code>abebea6</code>
+Research prototype report, revision 13 · generated from saved records by
+<code>scripts/build_report_round12b.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-novelty claim</b>. Part A covers the owner decisions closing L38 (D120),
-the repaired acceptance tests and the Round-12 gate (D121). <b>Round 12
-was not run</b>: one repaired test failed. Parts B–L are the round-11 to
-round-1 reports, each regenerated from its own round’s records.
+novelty claim</b>. Part A covers the owner decisions closing L39 (D123),
+the AFCM diagnosis, the repaired tests CK-6c and CK-7b, and the Round-12
+gate (D124). <b>Round 12 was not run</b>: CK-6c failed. Part B is
+revision 12’s Part A (L38); Parts C–M are the round-11 to round-1
+reports.
 </p>
 <h2 id="summary-plain-english">0. Summary (plain English)</h2>
 <h3 id="outcome">0.1 Outcome</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AFCM diagnosis (D123)</td>
+<td>On development seed 914, widening the λ_x grid, normalising the
+penalties and adding a first-order t penalty cut AFCM’s φ₁ error from
+0.473 to 0.023. Adopted as the repaired AFCM</td>
+</tr>
+<tr class="even">
+<td>CK-7b (PACE under DGP v2)</td>
+<td><strong>Pass</strong> on seed 23</td>
+</tr>
+<tr class="odd">
+<td>CK-6c (repaired AFCM)</td>
+<td><strong>Fail</strong> on seed 22: φ₁ identifiable RISE 0.247
+(threshold 0.15); φ₂ 0.053 passes</td>
+</tr>
+<tr class="even">
+<td>Round 12</td>
+<td><strong>Not started</strong> (owner gate). Seeds 3000–3419
+unused</td>
+</tr>
+<tr class="odd">
+<td>Tests</td>
+<td>Final suite: 268 tests: 248 passed, 2 failed (CK-6c and the 4f
+gate’s original R1), 16 expected failures, 2 skipped</td>
+</tr>
+</tbody>
+</table>
+<h3 id="acceptance-tests-in-this-part">0.2 Acceptance tests in this
+part</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Seed</th>
+<th>Criterion</th>
+<th>Formal run</th>
+<th>Final suite</th>
+<th>Key numbers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CK-6c</td>
+<td>22</td>
+<td>repaired AFCM (D123): identifiable RISE φ₂ &lt; 0.10 and φ₁ &lt;
+0.15</td>
+<td>FAIL</td>
+<td>FAIL</td>
+<td>identifiable RISE φ₁ 0.247 (&lt; 0.10: no), φ₂ 0.053 (&lt; 0.10:
+yes); raw 0.248, 0.053; λ_x 0.0001, λ_t 0.01</td>
+</tr>
+<tr class="even">
+<td>CK-7b</td>
+<td>23</td>
+<td>PACE under DGP v2: |cos| &gt; 0.90 and ISE below smoothing, every
+channel</td>
+<td>PASS</td>
+<td>PASS</td>
+<td>|cos| 0.999, 0.985, 0.989; ISE PACE 0.547, 0.508, 0.464 vs smoothing
+1.168, 1.247, 1.252</td>
+</tr>
+<tr class="odd">
+<td>CK-3b</td>
+<td>–</td>
+<td>earlier repaired test (D121)</td>
+<td>–</td>
+<td>PASS</td>
+<td>see Part B</td>
+</tr>
+<tr class="even">
+<td>CK-5b</td>
+<td>–</td>
+<td>earlier repaired test (D121)</td>
+<td>–</td>
+<td>PASS</td>
+<td>see Part B</td>
+</tr>
+<tr class="odd">
+<td>CK-8b</td>
+<td>–</td>
+<td>earlier repaired test (D121)</td>
+<td>–</td>
+<td>PASS</td>
+<td>see Part B</td>
+</tr>
+<tr class="even">
+<td>CK-11b</td>
+<td>–</td>
+<td>earlier repaired test (D121)</td>
+<td>–</td>
+<td>PASS</td>
+<td>see Part B</td>
+</tr>
+<tr class="odd">
+<td>CK-6b</td>
+<td>–</td>
+<td>earlier repaired test (D121)</td>
+<td>–</td>
+<td>xfailed</td>
+<td>see Part B</td>
+</tr>
+</tbody>
+</table>
+<h3 id="decision-needed-from-the-owner-ledger-l40">0.3 Decision needed
+from the owner (ledger L40)</h3>
+<ul>
+<li><strong>AFCM, the H-R12 comparator, is still not
+validated.</strong></li>
+<li>The repaired specification worked on the development seed but not on
+the fresh seed. Its validation criterion chose a small λ_t (time-varying
+surface) on seed 22, and φ₁ is then poorly recovered (R12b.4).</li>
+<li>This is a property of single-fit AFCM with validation-chosen
+penalties, not of one setting. Further changes chosen on one development
+seed risk the same outcome.</li>
+<li>Possible routes (none taken):
+<ul>
+<li>evaluate AFCM’s recovery over several development seeds before
+registering;</li>
+<li>fix λ_t large for the comparison (a time-homogeneous prior that
+matches φ₁ but not φ₂);</li>
+<li>average AFCM over bootstrap or seed fits, as B2-S averages
+three;</li>
+<li>or run Round 12 with AFCM flagged as not validated.</li>
+</ul></li>
+</ul>
+<h2 id="r12b.1-owner-decisions-d123-and-fact-check">R12b.1 Owner
+decisions (D123) and fact check</h2>
+<p>The decisions, the seed checks and five fact-check items are in D123
+(R12b.6):</p>
+<ul>
+<li><strong>Penalty normalisation only rescales λ:</strong> it shifts
+the grid by one decade.</li>
+<li><strong>The Kronecker ordering is equivalent</strong> to the one the
+code uses.</li>
+<li><strong>The first-order t penalty puts time-homogeneous surfaces in
+the λ_t → ∞ limit.</strong></li>
+<li><strong>The first launch of the diagnosis lanes was aborted</strong>
+(shared output file) and relaunched.</li>
+<li><strong>Correction to D120:</strong> seed 21 had been used in Rounds
+4–6 as a seed of the Round-1 simulator (not fsim).</li>
+</ul>
+<h2 id="r12b.2-afcm-diagnosis-on-development-seed-914">R12b.2 AFCM
+diagnosis on development seed 914</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variant</th>
+<th>Specification</th>
+<th>φ₁ identifiable RISE</th>
+<th>φ₂ identifiable RISE</th>
+<th>φ₁ raw</th>
+<th>φ₂ raw</th>
+<th>λ_x</th>
+<th>λ_t</th>
+<th>Validation NLPL</th>
+<th>Seconds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>V0</td>
+<td>Round-12a AFCM (CK-6b settings)</td>
+<td>0.473</td>
+<td>0.023</td>
+<td>0.474</td>
+<td>0.023</td>
+<td>0.0001</td>
+<td>10000.0</td>
+<td>4.8856</td>
+<td>51</td>
+</tr>
+<tr class="even">
+<td>V1</td>
+<td>(a) λ_x grid widened to 1e-7..1e1</td>
+<td>0.101</td>
+<td>0.040</td>
+<td>0.102</td>
+<td>0.040</td>
+<td>1e-05</td>
+<td>1.0</td>
+<td>4.8780</td>
+<td>109</td>
+</tr>
+<tr class="odd">
+<td>V2</td>
+<td>(a) + penalties normalised by basis size</td>
+<td>0.077</td>
+<td>0.035</td>
+<td>0.078</td>
+<td>0.035</td>
+<td>0.0001</td>
+<td>10000.0</td>
+<td>4.8775</td>
+<td>87</td>
+</tr>
+<tr class="even">
+<td>V3</td>
+<td>(b) V2 + first-order t differences (adopted)</td>
+<td>0.023</td>
+<td>0.053</td>
+<td>0.024</td>
+<td>0.053</td>
+<td>1e-05</td>
+<td>1.0</td>
+<td>4.8779</td>
+<td>123</td>
+</tr>
+<tr class="odd">
+<td>V4</td>
+<td>(c) V3 + per-channel λ</td>
+<td>0.040</td>
+<td>0.044</td>
+<td>0.040</td>
+<td>0.044</td>
+<td>[1e-06, 0.0001, 1e-07]</td>
+<td>[0.01, 1.0, 0.01]</td>
+<td>4.8750</td>
+<td>500</td>
+</tr>
+<tr class="even">
+<td>V5</td>
+<td>(c) V3 + quantile input</td>
+<td>0.171</td>
+<td>0.100</td>
+<td>0.171</td>
+<td>0.100</td>
+<td>1e-05</td>
+<td>0.01</td>
+<td>4.8707</td>
+<td>76</td>
+</tr>
+<tr class="odd">
+<td>V6</td>
+<td>(c) V4 + quantile input</td>
+<td>0.200</td>
+<td>0.061</td>
+<td>0.200</td>
+<td>0.061</td>
+<td>[1e-06, 0.1, 1e-06]</td>
+<td>[0.01, 1.0, 0.01]</td>
+<td>4.8628</td>
+<td>504</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Adopted: V3.</strong> It is the smallest change that
+resolved φ₁ on this seed.</li>
+<li><strong>Rejected options:</strong>
+<ul>
+<li>per-channel λ cost five times the fits without improving φ₁;</li>
+<li>the quantile input made φ₁ worse.</li>
+</ul></li>
+<li>The validation NLPL did not track shape recovery: V6 had the best
+validation loss and the worst φ₁.</li>
+</ul>
+<h2 id="r12b.3-repaired-tests">R12b.3 Repaired tests</h2>
+<p>CK-6c and CK-7b were registered and committed (08292df) before seeds
+22 and 23 were used. Both are in <code>tests/test_round12b_ck.py</code>.
+The CK-7b mechanics were checked once on development seed 916.</p>
+<h2 id="r12b.4-why-ck-6c-failed-from-the-recorded-validation-grid-no-new-fit">R12b.4
+Why CK-6c failed (from the recorded validation grid; no new fit)</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>λ_t</th>
+<th>Best λ_x at this λ_t</th>
+<th>Validation NLPL</th>
+<th>Difference from the selected point</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.0001</td>
+<td>0.0001</td>
+<td>4.7780</td>
+<td>+0.0058</td>
+</tr>
+<tr class="even">
+<td>0.01</td>
+<td>0.0001</td>
+<td>4.7722</td>
+<td>+0.0000</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>1e-05</td>
+<td>4.7843</td>
+<td>+0.0121</td>
+</tr>
+<tr class="even">
+<td>100</td>
+<td>1e-05</td>
+<td>4.7832</td>
+<td>+0.0110</td>
+</tr>
+<tr class="odd">
+<td>10000</td>
+<td>1e-05</td>
+<td>4.7860</td>
+<td>+0.0137</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The validation criterion preferred λ_t 1e-2 on seed 22 by a clear
+margin.</li>
+<li>With that λ_t the surface may vary in time, and φ₁, which is
+constant in time, is recovered poorly.</li>
+<li>On seed 914 the same procedure had chosen λ_t 1.</li>
+</ul>
+<h2 id="r12b.5-gate-decision">R12b.5 Gate decision</h2>
+<ul>
+<li><strong>Round 12 was not started.</strong> CK-6c failed at its
+registered seed.</li>
+<li>No Round-12 seed (3000–3419) was used.</li>
+</ul>
+<h2 id="r12b.6-decisions-d123d125">R12b.6 Decisions (D123–D125)</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Decision</th>
+<th>Status</th>
+<th>Content</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>D123</td>
+<td><strong>Owner decisions closing L39 (2026-10-21): AFCM repair,
+repaired tests CK-6c (seed 22) and CK-7b (seed 23), Round-12
+gate</strong> (registered before any run on seeds 22, 23)</td>
+<td>ADOPTED (owner)</td>
+<td><strong>(1) Diagnosis on development seed 914 only</strong>
+(<code>scripts/diag_round12_afcm_fix.py</code>; seeds 22 and 3000–3419
+untouched), identifiable RISE: V0 φ₁ 0.473 / φ₂ 0.023; V1 φ₁ 0.101 / φ₂
+0.040; V2 φ₁ 0.077 / φ₂ 0.035; V3 φ₁ 0.023 / φ₂ 0.053; V4 φ₁ 0.040 / φ₂
+0.044; V5 φ₁ 0.171 / φ₂ 0.100; V6 φ₁ 0.200 / φ₂ 0.061 (V0 = Round-12a
+AFCM, reproducing the D120 dry-run 0.473; V1 λ_x widened to {1e-7, …,
+1e1}; V2 + penalties normalised by basis size; V3 + first- plus
+second-order differences in t; V4 + per-channel λ; V5 V3 + quantile
+input; V6 V4 + quantile input). <strong>Adopted: V3</strong>
+(<code>AFCM_D123</code>: λ_x {1e-7, …, 1e1} × λ_t {1e-4, 1e-2, 1, 1e2,
+1e4}, x penalty / n_t and t penalty / n_x, t penalty D1ᵀD1 + D2ᵀD2,
+common λ, raw x input; selected λ_x 1e-5, λ_t 1 on seed 914).
+Per-channel λ cost 4× the fits without improving φ₁, and the quantile
+input made φ₁ worse (0.171, 0.200). <strong>Disclosed
+limitation:</strong> the variant was chosen by truth-based RISE on one
+development seed, which is optimistic; CK-6c on fresh seed 22 is the
+check. The validation NLPL did not track shape recovery (V6 had the best
+validation loss, 4.8628, and the worst φ₁). <code>fit_afcm</code>‘s
+defaults remain the Round-12a model; CK-6 (Round-11 grid) and CK-6b
+(Round-12a grids, now pinned explicitly) are strict expected failures.
+<strong>(2) CK-6c</strong> (seed 22): the CK-6b procedure with
+<code>AFCM_D123</code>; owner criterion identifiable RISE φ₂ &lt; 0.10
+and <strong>φ₁ &lt; 0.15</strong> (an owner-approved relaxation for a
+single fit, D11; the CK-5b members’ φ₁ were 0.120 / 0.107 / 0.147);
+“&lt; 0.10” and the raw RISE are reported beside it.
+<strong>CK-7b</strong> (seed 23): S-Sparse (S-Add, 3–8 visits), DGP v2,
+n 1,000: for every channel |cos(first PACE eigenfunction, first
+eigenfunction of the DGP v2 population covariance)| &gt; 0.90 and PACE
+mean ISE &lt; per-subject smoothing
+(<code>tests/test_round12b_ck.py</code>). Population eigenvalues 0.866,
+0.500, 0.233, 0.173, 0.058, 0.044: the leading one is separated (ratio
+1.7), so its eigenfunction is well defined. Development mechanics check
+(seed 916): |cos| 0.993 on all channels; ISE 0.463–0.473 vs 1.156–1.196.
+<strong>(3) Gate:</strong> Round 12 starts only if CK-6c and CK-7b pass.
+Its operational plan is registered as a separate entry, committed before
+any seed 3000–3419 is used. <strong>Seed checks:</strong> seeds 22 and
+23 appear in no code, test, script or record. <strong>Correction to
+D120:</strong> seed 21 had been used in Rounds 4–6 as a data seed of the
+Round-1 simulator (<code>SynthConfig(seed=21)</code>,
+e.g. <code>scripts/diag_4b_ceiling.py</code>,
+<code>reports/diag_r1_seeds.jsonl</code>), so D120’s “17–21 unused”
+holds for fsim data only. CK-11b’s data come from fsim, so no data
+overlap. <strong>Fact check:</strong> (a) normalising the penalties by
+basis size only rescales λ (here both by 1/10), i.e. it shifts the grid
+by one decade; V2’s gain over V1 comes from reaching smaller effective
+λ_x and λ_t 1e3, not from a new penalty shape. (b) The owner’s Kronecker
+ordering (I_Kt ⊗ D₂ₓᵀD₂ₓ) assumes t-major coefficients; the code uses
+x-major (D₂ₓᵀD₂ₓ ⊗ I_Kt), which is the same penalty. (c) With D1 + D2 in
+t, λ_t → ∞ shrinks F towards a function of x alone, so time-homogeneous
+effects are now in the penalty’s limit (this corrects the D120
+limitation (e)). (d) The first launch of the four diagnosis lanes wrote
+to one shared JSON file; it was stopped after a few seconds, before any
+variant finished, and relaunched with one file per lane.</td>
+<td>Owner decisions D123</td>
+</tr>
+<tr class="even">
+<td>D124</td>
+<td><strong>Outcome of CK-6c and CK-7b and the Round-12 gate
+(2026-10-21; formal run <code>round12b_ck_acceptance</code>, logs
+<code>reports/logs/round12b_ck_acceptance_*.log</code>, numbers in
+<code>reports/logs/round12_ck.jsonl</code>)</strong></td>
+<td>ADOPTED</td>
+<td><strong>CK-7b PASS</strong> (seed 23): |cos| 0.999 / 0.985 / 0.989
+against the DGP v2 population eigenfunction; mean ISE PACE 0.547 / 0.508
+/ 0.464 vs per-subject smoothing 1.168 / 1.247 / 1.252; K 4 / 4 / 5;
+5.46 visits per subject. <strong>CK-6c FAIL (recorded, not
+converted)</strong> (seed 22): repaired AFCM identifiable RISE
+<strong>φ₁ 0.247</strong> (threshold 0.15; not &lt; 0.10 either), φ₂
+0.053 (&lt; 0.10); raw 0.248, 0.053; selected λ_x 1e-4, λ_t 1e-2.
+<strong>From the recorded validation grid (no new fit):</strong>
+validation preferred λ_t 1e-2 clearly; the best larger λ_t values (1,
+1e2, 1e4, which would force a time-homogeneous surface) were 0.012,
+0.011 and 0.014 worse in validation NLPL per event. On development seed
+914 the same procedure had chosen λ_t 1 and reached φ₁ 0.023. So the
+single AFCM fit’s φ₁ recovery depends on how its validation-chosen
+penalties fall on a given data set: the D123 caveat (a variant chosen on
+one development seed) materialised. <strong>Gate (owner rule): CK-6c
+failed, so Round 12 was not started; seeds 3000–3419 remain
+unused.</strong> <strong>Open for the owner (L40):</strong> the AFCM
+comparator is still not validated for H-R12.</td>
+<td>Registered thresholds; owner gate rule</td>
+</tr>
+<tr class="odd">
+<td>D125</td>
+<td><strong>Report revision 13 and verification
+(2026-10-21)</strong></td>
+<td>ADOPTED</td>
+<td>Report revision 13: Part A = the L39 decisions, the AFCM diagnosis,
+CK-6c / CK-7b and the gate
+(<code>reports/report_template_round12b.md</code>,
+<code>scripts/build_report_round12b.py</code>); Part B = revision 12’s
+Part A (L38); Parts C–M = rounds 11–1.
+<code>scripts/verify_deliverables.py</code>: final run
+<code>final_full_suite_round12b</code>; Part-A sections R12b.1–R12b.7
+required; allowed final-suite failures = the 4f gate’s original R1
+(D103) and <strong>CK-6c</strong> (D124). CK-6b is now a strict expected
+failure (D123). The contents list (13 parts) spilled onto an almost
+empty second page, so its type was reduced from 8.6 pt to 7.4 pt
+(<code>reports/report.css</code>; layout only, same fix as D90).</td>
+<td>Recorded failures stay visible</td>
+</tr>
+</tbody>
+</table>
+<h2 id="r12b.7-tests">R12b.7 Tests</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Full-suite run</th>
+<th>Passed</th>
+<th>Failed</th>
+<th>Skipped</th>
+<th>Expected failures (xfail)</th>
+<th>Total</th>
+<th>Failed tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>final_full_suite_round9</td>
+<td>231</td>
+<td>1</td>
+<td>2</td>
+<td>10</td>
+<td>244</td>
+<td>test_R1_oracle_features_head (test_learnability_fa4f.py)</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round10</td>
+<td>231</td>
+<td>1</td>
+<td>2</td>
+<td>10</td>
+<td>244</td>
+<td>test_R1_oracle_features_head (test_learnability_fa4f.py)</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round11</td>
+<td>241</td>
+<td>6</td>
+<td>2</td>
+<td>10</td>
+<td>259</td>
+<td>test_R1_oracle_features_head (test_learnability_fa4f.py);
+test_CK3_linear_coxkan_recovers_lifelines_coefficients
+(test_round11.py); test_CK5_b2s_cox_recovers_s_add_shapes
+(test_round11.py); test_CK6_afcm_recovers_known_surface
+(test_round11.py); test_CK8_pruning_selects_active_channels
+(test_round11.py); test_CK11_residual_calibrated_kan_aft_d_calibration
+(test_round11.py)</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round12</td>
+<td>247</td>
+<td>2</td>
+<td>2</td>
+<td>15</td>
+<td>266</td>
+<td>test_R1_oracle_features_head (test_learnability_fa4f.py);
+test_CK6b_afcm_identifiable_rise (test_round12_ck.py)</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round12b</td>
+<td>248</td>
+<td>2</td>
+<td>2</td>
+<td>16</td>
+<td>268</td>
+<td>test_R1_oracle_features_head (test_learnability_fa4f.py);
+test_CK6c_repaired_afcm_identifiable_rise (test_round12b_ck.py)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>All test runs, in chronological order</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Test run (chronological)</th>
+<th>Passed</th>
+<th>Failed</th>
+<th>Skipped</th>
+<th>Expected failures (xfail)</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stageA_attempt1</td>
+<td>41</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>45</td>
+</tr>
+<tr class="even">
+<td>stageA_attempt2</td>
+<td>41</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>45</td>
+</tr>
+<tr class="odd">
+<td>stageA_attempt3</td>
+<td>45</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>45</td>
+</tr>
+<tr class="even">
+<td>stageB_attempt1</td>
+<td>40</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>40</td>
+</tr>
+<tr class="odd">
+<td>stageC_attempt1</td>
+<td>19</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>19</td>
+</tr>
+<tr class="even">
+<td>stageD_attempt1</td>
+<td>54</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>56</td>
+</tr>
+<tr class="odd">
+<td>stageD_attempt2</td>
+<td>7</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>stageD_attempt3</td>
+<td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>stageD_gate_attempt1</td>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>stageD_gate_attempt2</td>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>stageD_gate_attempt3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>stageCDE_final</td>
+<td>55</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>56</td>
+</tr>
+<tr class="odd">
+<td>stageF_attempt1</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>regress_after_penalty_fix</td>
+<td>73</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>74</td>
+</tr>
+<tr class="odd">
+<td>stageG_attempt1</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>final_full_suite</td>
+<td>148</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>150</td>
+</tr>
+<tr class="odd">
+<td>rev3_unit_attempt1</td>
+<td>50</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>51</td>
+</tr>
+<tr class="even">
+<td>rev3_gate_attempt1</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>audit_attempt1</td>
+<td>9</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>censored_ls_attempt1</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>kan_regress_after_pruning</td>
+<td>12</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>12</td>
+</tr>
+<tr class="even">
+<td>kreg_sym_attempt1</td>
+<td>10</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>11</td>
+</tr>
+<tr class="odd">
+<td>kreg_sym_attempt2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>f7f8_attempt1</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>f8_after_cache</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>d41_gate_selected</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>f9_attempt1</td>
+<td>6</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>6</td>
+</tr>
+<tr class="even">
+<td>interval_attempt1</td>
+<td>3</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>interval_attempt2</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>gate_ext</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>cache_regression_oldcode</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>cache_regression_fixed</td>
+<td>7</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<td>gate_D53_recompute</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round2</td>
+<td>90</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>92</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round2_rerun</td>
+<td>178</td>
+<td>8</td>
+<td>1</td>
+<td>0</td>
+<td>187</td>
+</tr>
+<tr class="even">
+<td>models_repair_D56</td>
+<td>28</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>29</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round2_v3</td>
+<td>185</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>187</td>
+</tr>
+<tr class="even">
+<td>fq_attempt1</td>
+<td>7</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>11</td>
+</tr>
+<tr class="odd">
+<td>fq_attempt2</td>
+<td>9</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>11</td>
+</tr>
+<tr class="even">
+<td>fq_attempt3</td>
+<td>10</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>11</td>
+</tr>
+<tr class="odd">
+<td>fq_attempt4</td>
+<td>11</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>11</td>
+</tr>
+<tr class="even">
+<td>revised_gate_fa</td>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>fq10</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round3</td>
+<td>198</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>202</td>
+</tr>
+<tr class="odd">
+<td>hr_attempt1</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>revised_gate_fa4b</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round4</td>
+<td>200</td>
+<td>5</td>
+<td>1</td>
+<td>3</td>
+<td>209</td>
+</tr>
+<tr class="even">
+<td>flat_ae_fix_D78</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round4_rerun</td>
+<td>203</td>
+<td>2</td>
+<td>1</td>
+<td>3</td>
+<td>209</td>
+</tr>
+<tr class="even">
+<td>rs_attempt1</td>
+<td>3</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>rs_attempt2</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>ceil_attempt1</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>revised_gate_fa4c</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round5</td>
+<td>212</td>
+<td>2</td>
+<td>1</td>
+<td>5</td>
+<td>220</td>
+</tr>
+<tr class="odd">
+<td>gate_fa4c_reproduction</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>bi_attempt1</td>
+<td>7</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round6</td>
+<td>215</td>
+<td>0</td>
+<td>1</td>
+<td>7</td>
+<td>223</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round6_rerun</td>
+<td>215</td>
+<td>0</td>
+<td>2</td>
+<td>7</td>
+<td>224</td>
+</tr>
+<tr class="odd">
+<td>20261018T175917</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>revised_gate_fa4e</td>
+<td>1</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round7</td>
+<td>216</td>
+<td>3</td>
+<td>2</td>
+<td>7</td>
+<td>228</td>
+</tr>
+<tr class="even">
+<td>nf_tests_dev</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>regression_4f_dev</td>
+<td>35</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>36</td>
+</tr>
+<tr class="even">
+<td>revised_gate_fa4f</td>
+<td>3</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>st_tests_dev</td>
+<td>7</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round8</td>
+<td>226</td>
+<td>1</td>
+<td>2</td>
+<td>10</td>
+<td>239</td>
+</tr>
+<tr class="odd">
+<td>fc_tests_dev</td>
+<td>4</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>fc_tests_dev2</td>
+<td>15</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr class="odd">
+<td>final_full_suite_round9</td>
+<td>231</td>
+<td>1</td>
+<td>2</td>
+<td>10</td>
+<td>244</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round10</td>
+<td>231</td>
+<td>1</td>
+<td>2</td>
+<td>10</td>
+<td>244</td>
+</tr>
+<tr class="odd">
+<td>round11_acceptance</td>
+<td>10</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round11</td>
+<td>241</td>
+<td>6</td>
+<td>2</td>
+<td>10</td>
+<td>259</td>
+</tr>
+<tr class="odd">
+<td>round12_ck_acceptance</td>
+<td>6</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round12</td>
+<td>247</td>
+<td>2</td>
+<td>2</td>
+<td>15</td>
+<td>266</td>
+</tr>
+<tr class="odd">
+<td>round12b_ck_acceptance</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>final_full_suite_round12b</td>
+<td>248</td>
+<td>2</td>
+<td>2</td>
+<td>16</td>
+<td>268</td>
+</tr>
+</tbody>
+</table>
+<h1 id="parts-bm-historical-records">Parts B–M: historical records</h1>
+<p>Part B is revision 12’s Part A (L38 decisions, 2026-10-21); Parts C–M
+are the round-11 to round-1 reports, each rendered from its own round’s
+records. Embedded living documents (ledger, decision rows,
+reproducibility) show their current version.</p>
+<h1 id="part-b-revision-12-l38-decisions-and-repaired-tests-2026-10-21-historical-record">Part
+B: revision 12 (L38 decisions and repaired tests, 2026-10-21),
+historical record</h1>
+<p class="small">
+Research prototype report, revision 12 · generated from saved records by
+<code>scripts/build_report_round12.py</code> · git <code>7036c58</code>
+(local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
+pushed</b>) · status: <b>research prototype, not publication-ready; no
+novelty claim</b>. Part B covers the owner decisions closing L38 (D120),
+the repaired acceptance tests and the Round-12 gate (D121). <b>Round 12
+was not run</b>: one repaired test failed. Parts C–M are the round-11 to
+round-1 reports, each regenerated from its own round’s records.
+</p>
+<h2 id="r12-0.-summary-plain-english">R12-0. Summary (plain
+English)</h2>
+<h3 id="r12-0.1-outcome">R12-0.1 Outcome</h3>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -509,8 +1745,8 @@ gate’s original R1), 15 expected failures, 2 skipped</td>
 </tr>
 </tbody>
 </table>
-<h3 id="the-repaired-acceptance-tests">0.2 The repaired acceptance
-tests</h3>
+<h3 id="r12-0.2-the-repaired-acceptance-tests">R12-0.2 The repaired
+acceptance tests</h3>
 <table style="width:100%;">
 <colgroup>
 <col style="width: 14%" />
@@ -589,8 +1825,8 @@ Weibull p all &lt; 1e-16</td>
 </tr>
 </tbody>
 </table>
-<h3 id="decision-needed-from-the-owner-ledger-l39">0.3 Decision needed
-from the owner (ledger L39)</h3>
+<h3 id="r12-0.3-decision-needed-from-the-owner-ledger-l39">R12-0.3
+Decision needed from the owner (ledger L39)</h3>
 <ul>
 <li><strong>The AFCM re-implementation is not validated.</strong> H-R12
 compares B2-S against AFCM.</li>
@@ -989,7 +2225,7 @@ flagged as not validated); none taken.</td>
 <td>ADOPTED</td>
 <td>Report revision 12: Part A = the L38 decisions, repaired tests and
 gate (<code>reports/report_template_round12.md</code>,
-<code>scripts/build_report_round12.py</code>); Parts B–L = rounds 11–1.
+<code>scripts/build_report_round12.py</code>); Parts C–M = rounds 11–1.
 Because Round 12 did not run, this entry (not a Round-12 outcome) takes
 D122. <code>scripts/verify_deliverables.py</code>: final run
 <code>final_full_suite_round12</code>; Part-A sections R12.1–R12.9
@@ -1002,6 +2238,113 @@ passed, strict xfail would fail the suite. Reproduction check in
 CK-3b..CK-11b record is identical to its formal run, except that the
 CK-8 grid record now marks the selected point (<code>chosen</code>,
 added by the D120 code); its numbers and selection are unchanged.</td>
+<td>Recorded failures stay visible</td>
+</tr>
+<tr class="even">
+<td>D123</td>
+<td><strong>Owner decisions closing L39 (2026-10-21): AFCM repair,
+repaired tests CK-6c (seed 22) and CK-7b (seed 23), Round-12
+gate</strong> (registered before any run on seeds 22, 23)</td>
+<td>ADOPTED (owner)</td>
+<td><strong>(1) Diagnosis on development seed 914 only</strong>
+(<code>scripts/diag_round12_afcm_fix.py</code>; seeds 22 and 3000–3419
+untouched), identifiable RISE: V0 φ₁ 0.473 / φ₂ 0.023; V1 φ₁ 0.101 / φ₂
+0.040; V2 φ₁ 0.077 / φ₂ 0.035; V3 φ₁ 0.023 / φ₂ 0.053; V4 φ₁ 0.040 / φ₂
+0.044; V5 φ₁ 0.171 / φ₂ 0.100; V6 φ₁ 0.200 / φ₂ 0.061 (V0 = Round-12a
+AFCM, reproducing the D120 dry-run 0.473; V1 λ_x widened to {1e-7, …,
+1e1}; V2 + penalties normalised by basis size; V3 + first- plus
+second-order differences in t; V4 + per-channel λ; V5 V3 + quantile
+input; V6 V4 + quantile input). <strong>Adopted: V3</strong>
+(<code>AFCM_D123</code>: λ_x {1e-7, …, 1e1} × λ_t {1e-4, 1e-2, 1, 1e2,
+1e4}, x penalty / n_t and t penalty / n_x, t penalty D1ᵀD1 + D2ᵀD2,
+common λ, raw x input; selected λ_x 1e-5, λ_t 1 on seed 914).
+Per-channel λ cost 4× the fits without improving φ₁, and the quantile
+input made φ₁ worse (0.171, 0.200). <strong>Disclosed
+limitation:</strong> the variant was chosen by truth-based RISE on one
+development seed, which is optimistic; CK-6c on fresh seed 22 is the
+check. The validation NLPL did not track shape recovery (V6 had the best
+validation loss, 4.8628, and the worst φ₁). <code>fit_afcm</code>‘s
+defaults remain the Round-12a model; CK-6 (Round-11 grid) and CK-6b
+(Round-12a grids, now pinned explicitly) are strict expected failures.
+<strong>(2) CK-6c</strong> (seed 22): the CK-6b procedure with
+<code>AFCM_D123</code>; owner criterion identifiable RISE φ₂ &lt; 0.10
+and <strong>φ₁ &lt; 0.15</strong> (an owner-approved relaxation for a
+single fit, D11; the CK-5b members’ φ₁ were 0.120 / 0.107 / 0.147);
+“&lt; 0.10” and the raw RISE are reported beside it.
+<strong>CK-7b</strong> (seed 23): S-Sparse (S-Add, 3–8 visits), DGP v2,
+n 1,000: for every channel |cos(first PACE eigenfunction, first
+eigenfunction of the DGP v2 population covariance)| &gt; 0.90 and PACE
+mean ISE &lt; per-subject smoothing
+(<code>tests/test_round12b_ck.py</code>). Population eigenvalues 0.866,
+0.500, 0.233, 0.173, 0.058, 0.044: the leading one is separated (ratio
+1.7), so its eigenfunction is well defined. Development mechanics check
+(seed 916): |cos| 0.993 on all channels; ISE 0.463–0.473 vs 1.156–1.196.
+<strong>(3) Gate:</strong> Round 12 starts only if CK-6c and CK-7b pass.
+Its operational plan is registered as a separate entry, committed before
+any seed 3000–3419 is used. <strong>Seed checks:</strong> seeds 22 and
+23 appear in no code, test, script or record. <strong>Correction to
+D120:</strong> seed 21 had been used in Rounds 4–6 as a data seed of the
+Round-1 simulator (<code>SynthConfig(seed=21)</code>,
+e.g. <code>scripts/diag_4b_ceiling.py</code>,
+<code>reports/diag_r1_seeds.jsonl</code>), so D120’s “17–21 unused”
+holds for fsim data only. CK-11b’s data come from fsim, so no data
+overlap. <strong>Fact check:</strong> (a) normalising the penalties by
+basis size only rescales λ (here both by 1/10), i.e. it shifts the grid
+by one decade; V2’s gain over V1 comes from reaching smaller effective
+λ_x and λ_t 1e3, not from a new penalty shape. (b) The owner’s Kronecker
+ordering (I_Kt ⊗ D₂ₓᵀD₂ₓ) assumes t-major coefficients; the code uses
+x-major (D₂ₓᵀD₂ₓ ⊗ I_Kt), which is the same penalty. (c) With D1 + D2 in
+t, λ_t → ∞ shrinks F towards a function of x alone, so time-homogeneous
+effects are now in the penalty’s limit (this corrects the D120
+limitation (e)). (d) The first launch of the four diagnosis lanes wrote
+to one shared JSON file; it was stopped after a few seconds, before any
+variant finished, and relaunched with one file per lane.</td>
+<td>Owner decisions D123</td>
+</tr>
+<tr class="odd">
+<td>D124</td>
+<td><strong>Outcome of CK-6c and CK-7b and the Round-12 gate
+(2026-10-21; formal run <code>round12b_ck_acceptance</code>, logs
+<code>reports/logs/round12b_ck_acceptance_*.log</code>, numbers in
+<code>reports/logs/round12_ck.jsonl</code>)</strong></td>
+<td>ADOPTED</td>
+<td><strong>CK-7b PASS</strong> (seed 23): |cos| 0.999 / 0.985 / 0.989
+against the DGP v2 population eigenfunction; mean ISE PACE 0.547 / 0.508
+/ 0.464 vs per-subject smoothing 1.168 / 1.247 / 1.252; K 4 / 4 / 5;
+5.46 visits per subject. <strong>CK-6c FAIL (recorded, not
+converted)</strong> (seed 22): repaired AFCM identifiable RISE
+<strong>φ₁ 0.247</strong> (threshold 0.15; not &lt; 0.10 either), φ₂
+0.053 (&lt; 0.10); raw 0.248, 0.053; selected λ_x 1e-4, λ_t 1e-2.
+<strong>From the recorded validation grid (no new fit):</strong>
+validation preferred λ_t 1e-2 clearly; the best larger λ_t values (1,
+1e2, 1e4, which would force a time-homogeneous surface) were 0.012,
+0.011 and 0.014 worse in validation NLPL per event. On development seed
+914 the same procedure had chosen λ_t 1 and reached φ₁ 0.023. So the
+single AFCM fit’s φ₁ recovery depends on how its validation-chosen
+penalties fall on a given data set: the D123 caveat (a variant chosen on
+one development seed) materialised. <strong>Gate (owner rule): CK-6c
+failed, so Round 12 was not started; seeds 3000–3419 remain
+unused.</strong> <strong>Open for the owner (L40):</strong> the AFCM
+comparator is still not validated for H-R12.</td>
+<td>Registered thresholds; owner gate rule</td>
+</tr>
+<tr class="even">
+<td>D125</td>
+<td><strong>Report revision 13 and verification
+(2026-10-21)</strong></td>
+<td>ADOPTED</td>
+<td>Report revision 13: Part A = the L39 decisions, the AFCM diagnosis,
+CK-6c / CK-7b and the gate
+(<code>reports/report_template_round12b.md</code>,
+<code>scripts/build_report_round12b.py</code>); Part C = revision 12’s
+Part A (L38); Parts D–M = rounds 11–1.
+<code>scripts/verify_deliverables.py</code>: final run
+<code>final_full_suite_round12b</code>; Part-A sections R12b.1–R12b.7
+required; allowed final-suite failures = the 4f gate’s original R1
+(D103) and <strong>CK-6c</strong> (D124). CK-6b is now a strict expected
+failure (D123). The contents list (13 parts) spilled onto an almost
+empty second page, so its type was reduced from 8.6 pt to 7.4 pt
+(<code>reports/report.css</code>; layout only, same fix as D90).</td>
 <td>Recorded failures stay visible</td>
 </tr>
 </tbody>
@@ -2307,10 +3650,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -2359,6 +3702,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -2505,38 +3860,46 @@ unchanged, D28).</p>
 <span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-bl-historical-records">Parts B–L: historical records</h1>
-<p>Part B (round 11), Part C (round 10), Part D (round 9), Part E (round
-8), Part F (round 7), Part G (round 6), Part H (round 5), Part I (round
-4), Part J (round 3), Part K (round 2) and Part L (round 1) are
+<h1 id="parts-cm-historical-records">Parts C–M: historical records</h1>
+<p>Part C (round 11), Part D (round 10), Part E (round 9), Part F (round
+8), Part G (round 7), Part H (round 6), Part I (round 5), Part J (round
+4), Part K (round 3), Part L (round 2) and Part M (round 1) are
 regenerated from the same records. Each part renders from the test
 records up to its own round’s final suite run. Their numbers are
 unchanged history. Embedded living documents (audit, ledger, decision
 rows, reproducibility) show their current version.</p>
-<h1 id="part-b-round-11-report-2026-10-20-historical-record">Part B:
+<h1 id="part-c-round-11-report-2026-10-20-historical-record">Part C:
 round-11 report (2026-10-20), historical record</h1>
 <p class="small">
 Research prototype report, revision 11 · generated from saved records by
-<code>scripts/build_report_round11.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round11.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-novelty claim</b>. Part B is round 11 (implementation and acceptance
+novelty claim</b>. Part C is round 11 (implementation and acceptance
 tests CK-1..CK-12, D112): code was written and tested; no Round-12 or
-Round-13 seed was used and no real data were acquired. Parts C–L are the
+Round-13 seed was used and no real data were acquired. Parts D–M are the
 round-10 to round-1 reports, each regenerated from its own round’s
 records.
 </p>
@@ -2823,7 +4186,7 @@ administrative censoring at the horizon)</td>
 choices are listed in D116 (R11.6).</p>
 <h2 id="r11.3-acceptance-test-details">R11.3 Acceptance-test
 details</h2>
-<p>The registered criteria are in the design note §6 (Part C, R10.4).
+<p>The registered criteria are in the design note §6 (Part D, R10.4).
 The operational details (splits, curve smoothing, where RISE is
 evaluated) were fixed in <code>tests/test_round11.py</code> before the
 formal runs. Formal run: <code>round11_acceptance</code> (logs in
@@ -3167,7 +4530,7 @@ change without owner approval</td>
 <td>ADOPTED</td>
 <td>Report revision 11: Part A = round 11
 (<code>reports/report_template_round11.md</code>,
-<code>scripts/build_report_round11.py</code>), Parts C–L = rounds 10–1.
+<code>scripts/build_report_round11.py</code>), Parts D–M = rounds 10–1.
 <code>scripts/verify_deliverables.py</code>: final run
 <code>final_full_suite_round11</code>; Part-A summary subsections
 0.1–0.3 and sections R11.1–R11.9 required; the round-10 template values
@@ -4456,10 +5819,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -4508,6 +5871,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -4655,39 +6030,47 @@ unchanged, D28).</p>
 <span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-cl-historical-records">Parts C–L: historical records</h1>
-<p>Part C (round 10), Part D (round 9), Part E (round 8), Part F (round
-7), Part G (round 6), Part H (round 5), Part I (round 4), Part J (round
-3), Part K (round 2) and Part L (round 1) are regenerated from the same
+<h1 id="parts-dm-historical-records">Parts D–M: historical records</h1>
+<p>Part D (round 10), Part E (round 9), Part F (round 8), Part G (round
+7), Part H (round 6), Part I (round 5), Part J (round 4), Part K (round
+3), Part L (round 2) and Part M (round 1) are regenerated from the same
 records. Each part renders from the test records up to its own round’s
 final suite run. Their numbers are unchanged history. Embedded living
 documents (audit, ledger, decision rows, reproducibility) show their
 current version.</p>
-<h1 id="part-c-round-10-report-2026-10-19-historical-record">Part C:
+<h1 id="part-d-round-10-report-2026-10-19-historical-record">Part D:
 round-10 report (2026-10-19), historical record</h1>
 <p class="small">
 Research prototype report, revision 10 · generated from saved records by
-<code>scripts/build_report_round10.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round10.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-novelty claim</b>. Part C is round 10 (owner decisions D110): the
+novelty claim</b>. Part D is round 10 (owner decisions D110): the
 literature review, the design note and the pre-registration of Rounds
 11–13. No model was fitted and no data were acquired in this round.
-Parts D–L are the round-9 to round-1 reports, each regenerated from its
+Parts E–M are the round-9 to round-1 reports, each regenerated from its
 own round’s records.
 </p>
 <h2 id="r10-0.-round-10-summary-plain-english">R10-0. Round-10 summary
@@ -6014,7 +7397,7 @@ C-MAPSS FD001 secondary with an AFT calibration fix; measured
 interpretability (split/bootstrap stability, effect plots, clinical
 alignment, symbolic formulas in clinical units). (6) <strong>Round 10
 itself:</strong> literature review, design note and pre-registration of
-Rounds 11–13; report revision 10 (Part A = Round 10; Parts D–L = Rounds
+Rounds 11–13; report revision 10 (Part A = Round 10; Parts E–M = Rounds
 9–1); local commits only. <strong>Fact check:</strong> every cited work
 exists as named (<code>docs/literature_review_round10.md</code>). The
 AFCM form ∫F(X(s), s)ds with penalised tensor-product splines is
@@ -7408,10 +8791,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -7460,6 +8843,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -7607,36 +9002,44 @@ unchanged, D28).</p>
 <span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-dl-historical-records">Parts D–L: historical records</h1>
-<p>Part D (round 9), Part E (round 8), Part F (round 7), Part G (round
-6), Part H (round 5), Part I (round 4), Part J (round 3), Part K (round
-2) and Part L (round 1) are regenerated from the same records. Each part
+<h1 id="parts-em-historical-records">Parts E–M: historical records</h1>
+<p>Part E (round 9), Part F (round 8), Part G (round 7), Part H (round
+6), Part I (round 5), Part J (round 4), Part K (round 3), Part L (round
+2) and Part M (round 1) are regenerated from the same records. Each part
 renders from the test records up to its own round’s final suite run.
 Their numbers are unchanged history. Embedded living documents (audit,
 ledger, decision rows, reproducibility) show their current version.</p>
-<h1 id="part-d-round-9-report-2026-10-19-historical-record">Part D:
+<h1 id="part-e-round-9-report-2026-10-19-historical-record">Part E:
 round-9 report (2026-10-19), historical record</h1>
 <p class="small">
 Research prototype report, revision 9 · generated from saved records by
-<code>scripts/build_report_round9.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round9.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-novelty claim</b>. Part D is round 9 (owner decisions D107, closing
-L32). Parts E–L are the round-8 to round-1 reports, each regenerated
+novelty claim</b>. Part E is round 9 (owner decisions D107, closing
+L32). Parts F–M are the round-8 to round-1 reports, each regenerated
 from its own round’s records.
 </p>
 <h2 id="r9-0.-round-9-summary-plain-english">R9-0. Round-9 summary
@@ -7753,7 +9156,7 @@ single confirmatory test</td>
 <tr class="even">
 <td>H2, H3, controls, secondary settings, AB1–AB8, pruning and symbolic
 extraction, real data</td>
-<td>Exploratory (Part E)</td>
+<td>Exploratory (Part F)</td>
 </tr>
 <tr class="odd">
 <td>Novelty</td>
@@ -9505,7 +10908,7 @@ clinical sign-off with the supervising professor is external to the
 codebase. (4) Same discipline: pre-registration committed before any
 fit; single-threaded; Rounds 1–8 intact;
 <code>build_report_round9.py</code> (Round 9 = Part A, Rounds 8–1 =
-Parts E–L); full suite; PDF verified; local commits only. <strong>Fact
+Parts F–M); full suite; PDF verified; local commits only. <strong>Fact
 check:</strong> (i) fae_mlp encoder 32·64 + 64 + 64·16 + 16 = 3,152 and
 decoder 16·64 + 64 + 64·36 + 36 = 3,428, total 6,580; the single KAN
 encoder layer 32 → 16 (grid 5, order 3) has 5,136; the D31 decoder 16 →
@@ -10835,10 +12238,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -10887,6 +12290,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -11033,35 +12448,43 @@ unchanged, D28).</p>
 <span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-el-historical-records">Parts E–L: historical records</h1>
-<p>Part E (round 8), Part F (round 7), Part G (round 6), Part H (round
-5), Part I (round 4), Part J (round 3), Part K (round 2) and Part L
+<h1 id="parts-fm-historical-records">Parts F–M: historical records</h1>
+<p>Part F (round 8), Part G (round 7), Part H (round 6), Part I (round
+5), Part J (round 4), Part K (round 3), Part L (round 2) and Part M
 (round 1) are regenerated from the same records. Each part renders from
 the test records up to its own round’s final suite run. Their numbers
 are unchanged history. Embedded living documents (audit, ledger,
 decision rows, reproducibility) show their current version.</p>
-<h1 id="part-e-round-8-report-2026-10-18-historical-record">Part E:
+<h1 id="part-f-round-8-report-2026-10-18-historical-record">Part F:
 round-8 report (2026-10-18), historical record</h1>
 <p class="small">
 Research prototype report, revision 8 · generated from saved records by
-<code>scripts/build_report_round8.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round8.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-novelty claim</b>. Part E is round 8 (owner decisions D99). Parts F–L
+novelty claim</b>. Part F is round 8 (owner decisions D99). Parts G–M
 are the round-7 to round-1 reports, each regenerated from its own
 round’s records.
 </p>
@@ -15840,10 +17263,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -15892,6 +17315,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -16039,36 +17474,44 @@ unchanged, D28).</p>
 <span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-fl-historical-records">Parts F–L: historical records</h1>
-<p>Part F (round 7), Part G (round 6), Part H (round 5), Part I (round
-4), Part J (round 3), Part K (round 2) and Part L (round 1) are
+<h1 id="parts-gm-historical-records">Parts G–M: historical records</h1>
+<p>Part G (round 7), Part H (round 6), Part I (round 5), Part J (round
+4), Part K (round 3), Part L (round 2) and Part M (round 1) are
 regenerated from the same records. Each part renders from the test
 records up to its own round’s final suite run. Their numbers are
 unchanged history. Embedded living documents (audit, ledger, decision
 rows, reproducibility) show their current version.</p>
-<h1 id="part-f-round-7-report-2026-10-18-historical-record">Part F:
+<h1 id="part-g-round-7-report-2026-10-18-historical-record">Part G:
 round-7 report (2026-10-18), historical record</h1>
 <p class="small">
 Research prototype report, revision 7 · generated from saved records by
-<code>scripts/build_report_round7.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round7.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-successful KAN-FAE model; no novelty claim</b>. Part F is round 7 (owner
-decisions D91). Parts G–L are the round-6 to round-1 reports, each
+successful KAN-FAE model; no novelty claim</b>. Part G is round 7 (owner
+decisions D91). Parts H–M are the round-6 to round-1 reports, each
 regenerated from its own round’s records.
 </p>
 <h2 id="r7-0.-round-7-summary-plain-english">R7-0. Round-7 summary
@@ -19251,10 +20694,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -19303,6 +20746,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -19450,36 +20905,44 @@ unchanged, D28).</p>
 <span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-gl-historical-records">Parts G–L: historical records</h1>
-<p>Part G (round 6), Part H (round 5), Part I (round 4), Part J (round
-3), Part K (round 2) and Part L (round 1) are regenerated from the same
+<h1 id="parts-hm-historical-records">Parts H–M: historical records</h1>
+<p>Part H (round 6), Part I (round 5), Part J (round 4), Part K (round
+3), Part L (round 2) and Part M (round 1) are regenerated from the same
 records. Each part renders from the test records up to its own round’s
 final suite run. Their numbers are unchanged history; their conclusions
 on R2 are superseded by Part A. Embedded living documents (audit,
 ledger, decision rows, reproducibility) show their current version.</p>
-<h1 id="part-g-round-6-report-2026-10-18-historical-record">Part G:
+<h1 id="part-h-round-6-report-2026-10-18-historical-record">Part H:
 round-6 report (2026-10-18), historical record</h1>
 <p class="small">
 Research prototype report, revision 6 · generated from saved records by
-<code>scripts/build_report_round6.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round6.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-successful KAN-FAE model; no novelty claim</b>. Part G is round 6 (owner
-decisions D86). Parts H–L are the round-5 to round-1 reports, each
+successful KAN-FAE model; no novelty claim</b>. Part H is round 6 (owner
+decisions D86). Parts I–M are the round-5 to round-1 reports, each
 regenerated from its own round’s records.
 </p>
 <h2 id="r6-0.-round-6-summary-plain-english">R6-0. Round-6 summary
@@ -21790,10 +23253,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -21842,6 +23305,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -21989,36 +23464,44 @@ unchanged, D28).</p>
 <span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-hl-historical-records">Parts H–L: historical records</h1>
-<p>Part H (round 5), Part I (round 4), Part J (round 3), Part K (round
-2) and Part L (round 1) are regenerated from the same records. Each part
+<h1 id="parts-im-historical-records">Parts I–M: historical records</h1>
+<p>Part I (round 5), Part J (round 4), Part K (round 3), Part L (round
+2) and Part M (round 1) are regenerated from the same records. Each part
 renders from the test records up to its own round’s final suite run.
 Their numbers are unchanged history; their conclusions on R2 are
 superseded by Part A. Embedded living documents (audit, ledger, decision
 rows, reproducibility) show their current version.</p>
-<h1 id="part-h-round-5-report-2026-10-18-historical-record">Part H:
+<h1 id="part-i-round-5-report-2026-10-18-historical-record">Part I:
 round-5 report (2026-10-18), historical record</h1>
 <p class="small">
 Research prototype report, revision 5 · generated from saved records by
-<code>scripts/build_report_round5.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round5.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-successful KAN-FAE model; no novelty claim</b>. Part H is round 5 (owner
-decisions D80). Parts I–L are the round-4, 3, 2 and 1 reports, each
+successful KAN-FAE model; no novelty claim</b>. Part I is round 5 (owner
+decisions D80). Parts J–M are the round-4, 3, 2 and 1 reports, each
 regenerated from its own round’s records.
 </p>
 <h2 id="r5-0.-round-5-summary-plain-english">R5-0. Round-5 summary
@@ -24562,10 +26045,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -24614,6 +26097,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -24761,36 +26256,44 @@ unchanged, D28).</p>
 <span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-il-historical-records">Parts I–L: historical records</h1>
-<p>Part I (round 4), Part J (round 3), Part K (round 2) and Part L
+<h1 id="parts-jm-historical-records">Parts J–M: historical records</h1>
+<p>Part J (round 4), Part K (round 3), Part L (round 2) and Part M
 (round 1) are regenerated from the same records. Each part renders from
 the test records up to its own round’s final suite run. Their numbers
 are unchanged history; their conclusions on R2 are superseded by Part A.
 Embedded living documents (audit, ledger, decision rows,
 reproducibility) show their current version.</p>
-<h1 id="part-i-round-4-report-2026-10-18-historical-record">Part I:
+<h1 id="part-j-round-4-report-2026-10-18-historical-record">Part J:
 round-4 report (2026-10-18), historical record</h1>
 <p class="small">
 Research prototype report, revision 4 · generated from saved records by
-<code>scripts/build_report_round4.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round4.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready; no
-successful KAN-FAE model; no novelty claim</b>. Part I is round 4 (owner
-decisions D67–D69). Parts J–L are the round-3, round-2 and round-1
+successful KAN-FAE model; no novelty claim</b>. Part J is round 4 (owner
+decisions D67–D69). Parts K–M are the round-3, round-2 and round-1
 reports, kept unchanged as historical records.
 </p>
 <h2 id="r4-0.-round-4-summary-plain-english">R4-0. Round-4 summary
@@ -27664,10 +29167,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -27716,6 +29219,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -27863,38 +29378,46 @@ unchanged, D28).</p>
 <span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-jl-historical-records-round-3-2-1">Parts J–L: historical
+<h1 id="parts-km-historical-records-round-3-2-1">Parts K–M: historical
 records (round 3, 2, 1)</h1>
-<p>Part J (round 3), Part K (round 2) and Part L (round 1) are
+<p>Part K (round 3), Part L (round 2) and Part M (round 1) are
 regenerated from the same records, with their sections numbered R3.x,
 R2.x and R1.x. Their numbers are unchanged history; their conclusions on
 R2 are superseded by Part A. Test counts quoted in their summaries are
 those of each round’s own final suite run. Embedded living documents
 (audit, ledger, decision rows, reproducibility) show their current
 version.</p>
-<h1 id="part-j-round-3-report-2026-10-17-historical-record">Part J:
+<h1 id="part-k-round-3-report-2026-10-17-historical-record">Part K:
 round-3 report (2026-10-17), historical record</h1>
 <p class="small">
 Research prototype report, revision 3 · generated from saved records by
-<code>scripts/build_report_round3.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round3.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready</b> ·
-<b>no novelty claim</b>. Part J is round 3 (owner decisions D57–D59,
-frequency-aware representation, revised gate). Parts K and L are the
+<b>no novelty claim</b>. Part K is round 3 (owner decisions D57–D59,
+frequency-aware representation, revised gate). Parts L and M are the
 round-2 and round-1 reports, kept as historical records; where they
 disagree, Part A supersedes them.
 </p>
@@ -31856,10 +33379,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -31908,6 +33431,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -32055,40 +33590,48 @@ unchanged, D28).</p>
 <span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
 <code>reports/logs/execution_log.md</code>.</p>
-<h1 id="parts-k-and-l-historical-records-round-2-round-1">Parts K and L:
+<h1 id="parts-l-and-m-historical-records-round-2-round-1">Parts L and M:
 historical records (round 2, round 1)</h1>
-<p>In this revision, Part K is the round-2 report and Part L, nested at
+<p>In this revision, Part L is the round-2 report and Part M, nested at
 its end, is the round-1 report. Both are regenerated from the same
 records, with their sections renumbered R2.x and R1.x. Their conclusions
 on R2 are superseded by Part A; their tables and numbers are unchanged
 history. Test counts quoted in their summaries are those of each round’s
 own final full-suite run. Embedded living documents (audit, ledger,
 decision rows, reproducibility) show their current version.</p>
-<h1 id="part-k-round-2-report-2026-10-17-historical-record">Part K:
+<h1 id="part-l-round-2-report-2026-10-17-historical-record">Part L:
 round-2 report (2026-10-17), historical record</h1>
 <p class="small">
 Research prototype report, revision 2 · generated from saved records by
-<code>scripts/build_report_round2.py</code> · git <code>abebea6</code>
+<code>scripts/build_report_round2.py</code> · git <code>7036c58</code>
 (local branch <code>claude/blissful-faraday-2unozw</code>, <b>not
 pushed</b>) · status: <b>research prototype, not publication-ready</b> ·
-<b>no novelty claim</b> (see I.3). Part K (sections R2.x) covers round 2
-(reference-based audit, failure recovery, symbolic extraction). Part L
+<b>no novelty claim</b> (see I.3). Part L (sections R2.x) covers round 2
+(reference-based audit, failure recovery, symbolic extraction). Part M
 (sections R1.x) is the round-1 report, kept as the historical record;
-where the two disagree, Part L supersedes it.
+where the two disagree, Part M supersedes it.
 </p>
 <h2 id="r2-0.-final-summary-plain-english">R2-0. Final summary (plain
 English)</h2>
@@ -35596,7 +37139,7 @@ only.</li>
 KAN-AFT and linear AFT cannot be told apart. The sign of the difference
 varies between splits.</li>
 <li>No superiority is claimed in either direction.</li>
-<li>The round-1 baselines (Part LL, §II.10.4) used different (summary)
+<li>The round-1 baselines (Part MM, §II.10.4) used different (summary)
 features, so they are not a like-for-like comparison.</li>
 </ul>
 <h2 id="r2.8-c-mapss-fd003-real-simulated-turbofan-data-rul-benchmark-baselines-d51">R2.8
@@ -35850,7 +37393,7 @@ only)</strong></p>
 </table>
 <p>Summary + AFT diverged in all 15 of its records under artificial
 censoring (recorded with status “diverged”), as it did on FD001 (Part
-LL, §II.10.3.3), so it has no row above. Every failed and diverged
+MM, §II.10.3.3), so it has no row above. Every failed and diverged
 record is kept in <code>reports/experiment_results.csv</code>.</p>
 <h2 id="r2.9-interval-integer-cycle-likelihood-l14">R2.9 Interval
 (integer-cycle) likelihood (L14)</h2>
@@ -37137,10 +38680,10 @@ CK-8, CK-11 FAIL (recorded)</strong></td>
 <td>Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse,
 S-Misspec; N 20; H-R12 confirmatory)</td>
 <td>NEW (D113)</td>
-<td>Round 11 tests run; owner decisions L38, L39</td>
+<td>Round 11 tests run; owner decisions L38, L39, L40</td>
 <td>–</td>
 <td>–</td>
-<td><strong>BLOCKED (gate, D121)</strong></td>
+<td><strong>BLOCKED (gate, D121, D124)</strong></td>
 <td>–</td>
 <td></td>
 </tr>
@@ -37189,6 +38732,18 @@ pass, CK-6b FAIL</td>
 before H-R12 / Round 12</td>
 <td>NEW (D121)</td>
 <td>D121</td>
+<td>–</td>
+<td>–</td>
+<td><strong>DECIDED (D123)</strong>; CK-7b PASS, CK-6c FAIL (D124)</td>
+<td>–</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>L40</td>
+<td>Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁
+0.247; D124) before H-R12 / Round 12</td>
+<td>NEW (D124)</td>
+<td>D124</td>
 <td>–</td>
 <td>–</td>
 <td><strong>OPEN (owner)</strong></td>
@@ -37733,16 +39288,24 @@ unchanged, D28).</p>
 <span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12 <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12 .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
 <span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
 <span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12.py          <span class="co"># report revision 12</span></span>
-<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
-<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
-<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
-<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
-<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
-<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
-<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
-<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
+<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a><span class="co">### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b</span></span>
+<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts/run_logged.sh</span> round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx</span>
+<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a><span class="co">###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes</span></span>
+<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK6c .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK6c_&quot;</span></span>
+<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>round12b_ck_acceptance <span class="ex">scripts/run_logged.sh</span> round12b_ck_acceptance_CK7b .venv/bin/python <span class="at">-m</span> pytest tests/test_round12b_ck.py <span class="at">-v</span> <span class="at">-k</span> <span class="st">&quot;test_CK7b_&quot;</span></span>
+<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a><span class="va">KANFAE_RUN_ID</span><span class="op">=</span>final_full_suite_round12b <span class="ex">scripts/run_logged.sh</span> final_full_suite_round12b .venv/bin/python <span class="at">-m</span> pytest <span class="at">-v</span> <span class="at">-rA</span> <span class="at">-s</span> tests/</span>
+<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py</span>
+<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round12b.py         <span class="co"># report revision 13</span></span>
+<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/verify_deliverables.py</span>
+<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by</span></span>
+<span id="cb11-148"><a href="#cb11-148" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round3.py</span>
+<span id="cb11-149"><a href="#cb11-149" aria-hidden="true" tabindex="-1"></a><span class="co">### report (round 2 part + round 1 part)</span></span>
+<span id="cb11-150"><a href="#cb11-150" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/compile_test_results.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/aggregate_results.py</span>
+<span id="cb11-151"><a href="#cb11-151" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/make_figures.py <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/make_figures_round2.py</span>
+<span id="cb11-152"><a href="#cb11-152" aria-hidden="true" tabindex="-1"></a><span class="ex">.venv/bin/python</span> scripts/build_report_round2.py</span>
+<span id="cb11-153"><a href="#cb11-153" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/build_pdf.sh <span class="kw">&amp;&amp;</span> <span class="ex">.venv/bin/python</span> scripts/build_manifest.py</span></code></pre></div>
 <p>Every executed command, with its exit code and timing, is in
 <code>reports/logs/commands.jsonl</code>. The full outputs are in
 <code>reports/logs/*.log</code>. The resumable narrative log is
@@ -38938,7 +40501,7 @@ PBC symbolic fits, all edges and splits</h2>
 </tr>
 </tbody>
 </table>
-<h1 id="part-l-round-1-report-2026-10-16-historical-record">Part L:
+<h1 id="part-m-round-1-report-2026-10-16-historical-record">Part M:
 round-1 report (2026-10-16), historical record</h1>
 <p>The text below is the round-1 report, regenerated from the same
 records. Its gate and baseline sections are unchanged history. Its
@@ -38946,7 +40509,7 @@ records. Its gate and baseline sections are unchanged history. Its
 conclusion is superseded by I.1.</p>
 <p class="small">
 Research prototype report · generated 2026-10-16 from saved results by
-<code>scripts/build_report.py</code> · git <code>abebea6</code> (local
+<code>scripts/build_report.py</code> · git <code>7036c58</code> (local
 branch <code>claude/blissful-faraday-2unozw</code>, not pushed) ·
 status: <b>research prototype, not publication-ready</b> · no novelty
 claim is made.
