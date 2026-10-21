@@ -1,14 +1,14 @@
 {
  "pdf_exists": true,
  "pdf_opens": true,
- "pdf_pages": 188,
- "pdf_text_chars": 1254826,
+ "pdf_pages": 199,
+ "pdf_text_chars": 1347333,
  "pdf_no_placeholders": true,
  "pdf_has_part1_sections": true,
  "pdf_has_all_17_sections": true,
- "page_renders": 188,
+ "page_renders": 199,
  "blank_pages": [],
- "md_3dp_numbers": 663,
+ "md_3dp_numbers": 683,
  "md_numbers_missing_in_pdf": [],
  "report_values_used": 31,
  "report_values_missing_in_pdf": [],
@@ -23,31 +23,28 @@
  "report_template_round9.md_values_used": 6,
  "report_template_round10.md_values_used": 6,
  "report_template_round11.md_values_used": 6,
+ "report_template_round12.md_values_used": 6,
  "P0_summary_values_in_pdf": "21/21",
- "tests_reported": 260,
+ "tests_reported": 267,
  "tests_without_log_evidence": [],
  "final_suite_counts_round1": {
   "passed": 148,
   "failed": 1,
   "skipped": 1
  },
- "final_suite_run": "final_full_suite_round11",
+ "final_suite_run": "final_full_suite_round12",
  "final_suite_counts": {
-  "passed": 241,
-  "failed": 6,
+  "passed": 247,
+  "failed": 2,
   "skipped": 2,
-  "xfailed": 10
+  "xfailed": 15
  },
  "final_suite_failures": [
   "tests/test_learnability_fa4f.py::test_R1_oracle_features_head",
-  "tests/test_round11.py::test_CK11_residual_calibrated_kan_aft_d_calibration",
-  "tests/test_round11.py::test_CK3_linear_coxkan_recovers_lifelines_coefficients",
-  "tests/test_round11.py::test_CK5_b2s_cox_recovers_s_add_shapes",
-  "tests/test_round11.py::test_CK6_afcm_recovers_known_surface",
-  "tests/test_round11.py::test_CK8_pruning_selects_active_channels"
+  "tests/test_round12_ck.py::test_CK6b_afcm_identifiable_rise"
  ],
  "final_suite_only_failure_is_R2": true,
- "commands_logged": 190,
+ "commands_logged": 202,
  "commands_missing_log_file": [],
  "experiment_csv_rows_equal_jsonl": true,
  "experiment_records": 2393,

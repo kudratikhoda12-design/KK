@@ -18,7 +18,7 @@ REP = ROOT / "reports"
 res = {}
 
 
-FINAL_RUN = "final_full_suite_round11"
+FINAL_RUN = "final_full_suite_round12"
 
 
 def norm(s):
@@ -37,6 +37,7 @@ T = norm(text) + " || " + norm(raw)          # layout and raw extraction (raw ke
 res["pdf_no_placeholders"] = "{{" not in text
 # round 3 (2026-10-17): Part A sections 0.1-0.3 and R3.1-R3.11; round 2 renumbered R2.1-R2.15; round 1 R1.1-R1.17
 res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 4)) and all(
+    re.search(rf"\bR12\.{k}\s", T) for k in range(1, 10)) and all(
     re.search(rf"\bR11\.{k}\s", T) for k in range(1, 10)) and all(
     re.search(rf"\bR10\.{k}\s", T) for k in range(1, 9)) and all(
     re.search(rf"\bR9\.{k}\s", T) for k in range(1, 9)) and all(
@@ -76,7 +77,8 @@ for tpl, vf in (("report_template_round2.md", "report_values_round2.json"),
                 ("report_template_round8.md", "report_values_round8.json"),
                 ("report_template_round9.md", "report_values_round9.json"),
                 ("report_template_round10.md", "report_values_round10.json"),
-                ("report_template_round11.md", "report_values_round11.json")):
+                ("report_template_round11.md", "report_values_round11.json"),
+                ("report_template_round12.md", "report_values_round12.json")):
     vals2 = json.loads((REP / vf).read_text())
     used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / tpl).read_text()))
     res[f"{tpl}_values_used"] = len(used2)
@@ -106,12 +108,8 @@ res["final_suite_counts"] = {o: sum(r["outcome"] == o for r in final2) for o in 
 res["final_suite_failures"] = sorted(r["nodeid"] for r in final2 if r["outcome"] == "failed")
 res["final_suite_only_failure_is_R2"] = set(res["final_suite_failures"]) <= {
     "tests/test_learnability_fa4f.py::test_R1_oracle_features_head",
-    # round 11 (D119): the five registered CK failures of D117 stay visible as failures
-    "tests/test_round11.py::test_CK3_linear_coxkan_recovers_lifelines_coefficients",
-    "tests/test_round11.py::test_CK5_b2s_cox_recovers_s_add_shapes",
-    "tests/test_round11.py::test_CK6_afcm_recovers_known_surface",
-    "tests/test_round11.py::test_CK8_pruning_selects_active_channels",
-    "tests/test_round11.py::test_CK11_residual_calibrated_kan_aft_d_calibration"} and len(final2) > 0   # round 8: the 4f gate's
+    # round 12 (D122): the Round-11 CK failures are strict xfails now (D120); the live failure is CK-6b (D121)
+    "tests/test_round12_ck.py::test_CK6b_afcm_identifiable_rise"} and len(final2) > 0   # round 8: the 4f gate's
                                                                                          # original R1 (not gating, D103)
                                                                                          # (the 4d gate file skips: D89)
 

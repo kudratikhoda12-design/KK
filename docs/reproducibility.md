@@ -131,6 +131,14 @@ scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_roun
 KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round11.py          # report revision 11
+# L38 decisions / repaired tests (2026-10-21; owner D120): DGP v2, identifiable RISE, repaired CK-3b..CK-11b
+scripts/run_logged.sh round12_diag_identifiability_v2 .venv/bin/python scripts/diag_round12_identifiability.py  # seed 902
+KANFAE_RUN_ID=round12_ck_acceptance scripts/run_logged.sh round12_ck_acceptance_CK8b .venv/bin/python -m pytest tests/test_round12_ck.py -v -k "test_CK8b_"
+#   likewise _CK5b (-k test_CK5b_), _CK6b, and _other (-k "test_CK3b_ or test_CK11b_ or ID1 or ID2"); 4 parallel lanes
+scripts/run_logged.sh round12_explore_afcm_floor .venv/bin/python scripts/explore_round12_afcm_floor.py         # D121, exploratory
+KANFAE_RUN_ID=final_full_suite_round12 scripts/run_logged.sh final_full_suite_round12 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round12.py          # report revision 12
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py

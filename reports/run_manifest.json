@@ -3,7 +3,7 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "101ba491f79008a1deceb67e04e1e7add2b2af93",
+  "head": "abebea6e4eb83cfbf28d17364ddcbba99e9d188c",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
@@ -2037,6 +2037,126 @@
    "elapsed_s": 32.817,
    "git_head": "101ba49",
    "log": "reports/logs/round11_build_pdf.log"
+  },
+  {
+   "name": "round11_build_manifest",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-20T13:47:20Z",
+   "end_utc": "2026-10-20T13:47:23Z",
+   "elapsed_s": 2.783,
+   "git_head": "101ba49",
+   "log": "reports/logs/round11_build_manifest.log"
+  },
+  {
+   "name": "round11_verify",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-20T13:47:23Z",
+   "end_utc": "2026-10-20T13:47:27Z",
+   "elapsed_s": 4.177,
+   "git_head": "101ba49",
+   "log": "reports/logs/round11_verify.log"
+  },
+  {
+   "name": "round12_diag_identifiability_v2",
+   "command": ".venv/bin/python scripts/diag_round12_identifiability.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T11:56:05Z",
+   "end_utc": "2026-10-21T11:56:15Z",
+   "elapsed_s": 10.096,
+   "git_head": "a8e55ee",
+   "log": "reports/logs/round12_diag_identifiability_v2.log"
+  },
+  {
+   "name": "round12_ck_acceptance_CK6b",
+   "command": ".venv/bin/python -m pytest tests/test_round12_ck.py -v -p no:cacheprovider -k test_CK6b_",
+   "exit_code": 1,
+   "start_utc": "2026-10-21T12:32:06Z",
+   "end_utc": "2026-10-21T12:33:01Z",
+   "elapsed_s": 55.44,
+   "git_head": "6632a33",
+   "log": "reports/logs/round12_ck_acceptance_CK6b.log"
+  },
+  {
+   "name": "round12_ck_acceptance_other",
+   "command": ".venv/bin/python -m pytest tests/test_round12_ck.py -v -p no:cacheprovider -k test_CK3b_ or test_CK11b_ or ID1 or ID2",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T12:32:06Z",
+   "end_utc": "2026-10-21T12:33:03Z",
+   "elapsed_s": 57.261,
+   "git_head": "6632a33",
+   "log": "reports/logs/round12_ck_acceptance_other.log"
+  },
+  {
+   "name": "round12_ck_acceptance_CK5b",
+   "command": ".venv/bin/python -m pytest tests/test_round12_ck.py -v -p no:cacheprovider -k test_CK5b_",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T12:32:06Z",
+   "end_utc": "2026-10-21T12:39:46Z",
+   "elapsed_s": 459.777,
+   "git_head": "6632a33",
+   "log": "reports/logs/round12_ck_acceptance_CK5b.log"
+  },
+  {
+   "name": "round12_explore_afcm_floor",
+   "command": ".venv/bin/python scripts/explore_round12_afcm_floor.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T12:40:19Z",
+   "end_utc": "2026-10-21T12:40:27Z",
+   "elapsed_s": 7.641,
+   "git_head": "6632a33",
+   "log": "reports/logs/round12_explore_afcm_floor.log"
+  },
+  {
+   "name": "round12_ck_acceptance_CK8b",
+   "command": ".venv/bin/python -m pytest tests/test_round12_ck.py -v -p no:cacheprovider -k test_CK8b_",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T12:32:06Z",
+   "end_utc": "2026-10-21T13:08:34Z",
+   "elapsed_s": 2188.32,
+   "git_head": "6632a33",
+   "log": "reports/logs/round12_ck_acceptance_CK8b.log"
+  },
+  {
+   "name": "final_full_suite_round12",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-21T13:09:14Z",
+   "end_utc": "2026-10-21T14:34:57Z",
+   "elapsed_s": 5142.965,
+   "git_head": "abebea6",
+   "log": "reports/logs/final_full_suite_round12.log"
+  },
+  {
+   "name": "round12_compile_test_results",
+   "command": ".venv/bin/python scripts/compile_test_results.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T14:35:28Z",
+   "end_utc": "2026-10-21T14:35:28Z",
+   "elapsed_s": 0.089,
+   "git_head": "abebea6",
+   "log": "reports/logs/round12_compile_test_results.log"
+  },
+  {
+   "name": "round12_build_report",
+   "command": ".venv/bin/python scripts/build_report_round12.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T14:35:28Z",
+   "end_utc": "2026-10-21T14:35:31Z",
+   "elapsed_s": 3.362,
+   "git_head": "abebea6",
+   "log": "reports/logs/round12_build_report.log"
+  },
+  {
+   "name": "round12_build_pdf",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T14:35:31Z",
+   "end_utc": "2026-10-21T14:36:14Z",
+   "elapsed_s": 43.155,
+   "git_head": "abebea6",
+   "log": "reports/logs/round12_build_pdf.log"
   }
  ],
  "deliverables": {

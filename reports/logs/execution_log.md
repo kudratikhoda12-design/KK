@@ -198,3 +198,10 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - Code committed (101ba49) before the final suite. `final_full_suite_round11` run; report revision 11 (D119).
 - `final_full_suite_round11`: 241 passed, 6 failed (5 CK + 4f original R1), 2 skipped, 10 xfailed (259); CK records
   identical to the formal run. Report revision 11 (188 pages); deliverable verification ALL_CHECKS_PASS.
+- L38 decisions (owner D120, 2026-10-21). DGP v2 (v1 pinned and verified bit-identical), identifiable RISE (tolerance
+  placed in the spectrum gap on seed 902), AFCM λ_t grid, converged CK-3b, integrated channel pruning, mixture CK-11b.
+  Development dry-runs on seeds 908–915 (results stated in D120 before the formal runs). D120 committed (6632a33).
+- Formal repaired tests `round12_ck_acceptance`: CK-3b, CK-5b, CK-8b, CK-11b pass; CK-6b FAIL (D121). Round-12 gate
+  closed; seeds 3000–3419 unused. Exploratory AFCM basis floor 0.002. L39 open. D121 committed (abebea6).
+- `final_full_suite_round12`: 247 passed, 2 failed (CK-6b, 4f original R1), 2 skipped, 15 xfailed (266); CK records
+  reproduced. Report revision 12 (199 pages); deliverable verification ALL_CHECKS_PASS. Round 12 not run (gate).

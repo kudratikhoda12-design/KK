@@ -1,4 +1,19 @@
-# Final status: KAN-FAE research prototype, round 11 (2026-10-20)
+# Final status: KAN-FAE research prototype, L38 decisions and repaired tests (2026-10-21)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (Part A = L38 decisions, repaired tests and the Round-12 gate;
+Parts B–L = rounds 11–1). Status: **research prototype; not publication-ready; no novelty claim.**
+
+| Item | Result |
+|---|---|
+| Owner decisions (D120) | DGP v2 (level + trend), identifiable RISE, AFCM λ_t grid to 1e4, converged CK-3b, integrated channel pruning with parsimonious selection, mixture-error CK-11b; registered before any run on seeds 17–21 |
+| Repaired tests (D121) | Pass: CK-3b (2.1e-6), CK-5b (B2-S identifiable RISE 0.085 / 0.031), CK-8b ([1, 1, 0]), CK-11b (p 0.612 vs Weibull 2.2e-22). **FAIL: CK-6b** (AFCM φ₁ 0.556) |
+| Round 12 | **Not started** (owner gate); seeds 3000–3419 unused. Owner decision needed: L39 (AFCM comparator) |
+| Tests | `final_full_suite_round12`: 247 passed, 2 failed (CK-6b; 4f original R1, not gating), 15 expected failures (incl. the five Round-11 CK records), 2 skipped (266). All CK records reproduced. Report revision 12 (199 pages); deliverable verification ALL_CHECKS_PASS |
+
+---
+
+# Round 11 status (2026-10-20), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (Part A = round 11; Parts B–K = rounds 10–1); deliverable
