@@ -1,0 +1,2 @@
+V5_d1d2_quantile: phi1 id 0.171 raw 0.171 | phi2 id 0.100 raw 0.100 | lam_x 1e-05 lam_t 0.01 | val 4.8707 | 76.1s
+V6_d1d2_perchannel_quantile: phi1 id 0.200 raw 0.200 | phi2 id 0.061 raw 0.061 | lam_x [1e-06, 0.1, 1e-06] lam_t [0.01, 1.0, 0.01] | val 4.8628 | 504.4s

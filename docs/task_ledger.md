@@ -43,5 +43,5 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | PENDING | – | |
 | L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | PENDING | – | |
 | L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **DECIDED (D120)**; repaired tests run (D121): 4 of 5 pass, CK-6b FAIL | – | |
-| L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **OPEN (owner)** | – | |
+| L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-6c / CK-7b registered | – | |
 

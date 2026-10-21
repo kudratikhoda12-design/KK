@@ -21,6 +21,10 @@ from ..survival.cox import breslow_baseline, cox_nll, cox_survival
 GRID = np.linspace(0.0, 1.0, 50)
 LAM_GRID = (1e-4, 1e-3, 1e-2, 1e-1, 1.0)                  # lambda_x (and lambda_t in Round 11)
 LAM_T_GRID = (1e-4, 1e-2, 1.0, 1e2, 1e4)                  # lambda_t from D120: lets AFCM shrink dF/dt towards 0
+LAM_X_WIDE = (1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0, 1e1)
+# D123 (owner, L39): the repaired AFCM adopted from the development diagnosis on seed 914 (variant V3 of
+# scripts/diag_round12_afcm_fix.py). Used by CK-6c and Round 12; the defaults of fit_afcm stay the Round-12a model.
+AFCM_D123 = dict(lams_x=LAM_X_WIDE, lams_t=LAM_T_GRID, pen_norm=True, t_pen="d1d2")
 
 
 def _trap_w(grid):
@@ -34,18 +38,49 @@ def _d2_penalty(K):
     return D2.T @ D2
 
 
+def _d1_penalty(K):
+    D1 = np.diff(np.eye(K), 1, axis=0)
+    return D1.T @ D1
+
+
 class AFCM:
-    def __init__(self, n_x=10, n_t=10, lam_x=1e-2, lam_t=1e-2, ridge=1e-6, ties="efron", max_iter=500):
+    """Options added by D123 (defaults reproduce the Round-11/12a model exactly):
+    pen_norm  divide the x penalty by n_t and the t penalty by n_x (penalty per tensor row/column);
+    t_pen     "d2" (second differences in t) or "d1d2" (first + second differences: a large lam_t then removes
+              linear-in-t tilts b(x) t as well as curvature);
+    lam_x, lam_t  scalars or per-channel sequences;
+    xin       "raw" (x basis on the training range of X_d) or "quantile" (Cui et al. 2021: x~ = F_t(X(t)), the
+              training empirical CDF at each grid time, x basis on [0, 1])."""
+
+    def __init__(self, n_x=10, n_t=10, lam_x=1e-2, lam_t=1e-2, ridge=1e-6, ties="efron", max_iter=500,
+                 pen_norm=False, t_pen="d2", xin="raw"):
         self.n_x, self.n_t, self.lam_x, self.lam_t, self.ridge, self.ties = n_x, n_t, lam_x, lam_t, ridge, ties
-        self.max_iter = max_iter
+        self.max_iter, self.pen_norm, self.t_pen, self.xin = max_iter, pen_norm, t_pen, xin
         self.bt = BSplineBasis(n_t, 3, (0.0, 1.0))
 
     # ---- design --------------------------------------------------------------------------------------------------
     def _set_ranges(self, xg):
-        self.lo, self.hi = xg.min(axis=(0, 1)), xg.max(axis=(0, 1))
+        if self.xin == "quantile":
+            self.qs = np.sort(xg, axis=0)                                  # (n, G, D) training order statistics
+            n = len(xg)
+            self.qp = (np.arange(1, n + 1) - 0.5) / n
+            self.lo, self.hi = np.zeros(xg.shape[2]), np.ones(xg.shape[2])
+        else:
+            self.lo, self.hi = xg.min(axis=(0, 1)), xg.max(axis=(0, 1))
         self.bx = [BSplineBasis(self.n_x, 3, (float(a), float(b))) for a, b in zip(self.lo, self.hi)]
 
-    def _bx(self, d, x):
+    def _q(self, d, x, g):
+        """Empirical CDF of channel d at grid index g (array, broadcast with x), linear between order statistics."""
+        x, g = np.broadcast_arrays(np.asarray(x, float), np.asarray(g))
+        out = np.empty(x.shape)
+        for gi in np.unique(g):
+            m = g == gi
+            out[m] = np.interp(x[m], self.qs[:, gi, d], self.qp)
+        return out
+
+    def _bx(self, d, x, g=None):
+        if self.xin == "quantile":
+            x = self._q(d, x, np.arange(len(GRID))[None, :] if g is None else g)
         return self.bx[d](np.clip(x, self.lo[d], self.hi[d]))           # constant extrapolation outside the range
 
     def design(self, xg):
@@ -60,8 +95,16 @@ class AFCM:
 
     def _penalty_mats(self):
         Px, Pt = _d2_penalty(self.n_x), _d2_penalty(self.n_t)
+        if self.t_pen == "d1d2":
+            Pt = Pt + _d1_penalty(self.n_t)
         It, Ix = np.eye(self.n_t), np.eye(self.n_x)
-        return torch.tensor(np.kron(Px, It)), torch.tensor(np.kron(Ix, Pt))
+        Kx, Kt = np.kron(Px, It), np.kron(Ix, Pt)
+        if self.pen_norm:
+            Kx, Kt = Kx / self.n_t, Kt / self.n_x
+        return torch.tensor(Kx), torch.tensor(Kt)
+
+    def _lam(self, lam, k):
+        return lam[k] if np.ndim(lam) else lam
 
     # ---- fit -----------------------------------------------------------------------------------------------------
     def fit(self, xg, z, y, d, theta0=None):
@@ -86,7 +129,8 @@ class AFCM:
 
         def objective():
             th = theta.reshape(D, P)
-            pen = sum(self.lam_x * th[k] @ Px @ th[k] + self.lam_t * th[k] @ Pt @ th[k] for k in range(D))
+            pen = sum(self._lam(self.lam_x, k) * th[k] @ Px @ th[k] + self._lam(self.lam_t, k) * th[k] @ Pt @ th[k]
+                      for k in range(D))
             return cox_nll(Wt @ theta + Zt @ gamma, yt, dt, self.ties) + pen + self.ridge * (theta @ theta)
 
         def closure():
@@ -122,14 +166,16 @@ class AFCM:
         """Fitted F_d(x, t) on arrays x, t (broadcast)."""
         x = np.asarray(x, float)
         t = np.broadcast_to(np.asarray(t, float), x.shape)
-        Bx = self._bx(d, x.ravel())
+        g = np.clip(np.rint(t.ravel() * (len(GRID) - 1)).astype(int), 0, len(GRID) - 1)    # quantile input: nearest grid t
+        Bx = self._bx(d, x.ravel(), g) if self.xin == "quantile" else self._bx(d, x.ravel())
         Bt = self.bt(t.ravel())
         return np.einsum("nj,jk,nk->n", Bx, self.theta[d], Bt).reshape(x.shape)
 
 
-def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, **kw):
-    """5 x 5 grid over (lam_x, lam_t), selected by validation Efron NLPL. train/val: dicts xg, z, y, d.
-    Returns (best model, records)."""
+def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, **kw):
+    """Grid over (lam_x, lam_t), selected by validation Efron NLPL. train/val: dicts xg, z, y, d.
+    per_channel (D123 option): after the common grid, one coordinate sweep over channels, each choosing its own
+    (lam_x_d, lam_t_d) on the same grid with the others fixed. Returns (best model, records)."""
     torch.set_default_dtype(torch.float64)
     proto = AFCM(**kw)
     proto._set_ranges(train["xg"])
@@ -140,11 +186,31 @@ def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, **kw):
     recs, best = [], None
     for lx in lams_x:
         for lt in lams_t:
-            m = AFCM(**{**kw, "lam_x": lx, "lam_t": lt})
-            m.lo, m.hi, m.bx, m.zm, m.zs = proto.lo, proto.hi, proto.bx, proto.zm, proto.zs
-            m._fit_design(W, Ztr, train["y"], train["d"])
+            m = _fit_one(proto, kw, lx, lt, W, Ztr, train)
             v = m.val_nll(val["xg"], val["z"], val["y"], val["d"])
             recs.append(dict(lam_x=lx, lam_t=lt, val_nll=v))
             if best is None or v < best[0] - 1e-12:
                 best = (v, m)
+    if per_channel:
+        D = W.shape[1]
+        lx_d, lt_d = [best[1].lam_x] * D, [best[1].lam_t] * D
+        for d in range(D):
+            for lx in lams_x:
+                for lt in lams_t:
+                    cx, ct = list(lx_d), list(lt_d)
+                    cx[d], ct[d] = lx, lt
+                    m = _fit_one(proto, kw, cx, ct, W, Ztr, train)
+                    v = m.val_nll(val["xg"], val["z"], val["y"], val["d"])
+                    recs.append(dict(channel=d, lam_x=cx, lam_t=ct, val_nll=v))
+                    if v < best[0] - 1e-12:
+                        best = (v, m)
+            lx_d, lt_d = list(np.broadcast_to(best[1].lam_x, D)), list(np.broadcast_to(best[1].lam_t, D))
     return best[1], recs
+
+
+def _fit_one(proto, kw, lx, lt, W, Ztr, train):
+    m = AFCM(**{**kw, "lam_x": lx, "lam_t": lt})
+    m.lo, m.hi, m.bx, m.zm, m.zs = proto.lo, proto.hi, proto.bx, proto.zm, proto.zs
+    if m.xin == "quantile":
+        m.qs, m.qp = proto.qs, proto.qp
+    return m._fit_design(W, Ztr, train["y"], train["d"])

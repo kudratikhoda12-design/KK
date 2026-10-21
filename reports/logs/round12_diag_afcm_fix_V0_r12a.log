@@ -1,0 +1,2 @@
+V0_r12a: phi1 id 0.473 raw 0.474 | phi2 id 0.023 raw 0.023 | lam_x 0.0001 lam_t 10000.0 | val 4.8856 | 50.9s
+V1_wide_lx: phi1 id 0.101 raw 0.102 | phi2 id 0.040 raw 0.040 | lam_x 1e-05 lam_t 1.0 | val 4.8780 | 109.1s

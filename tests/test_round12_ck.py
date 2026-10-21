@@ -21,6 +21,8 @@ Registered before any run on seeds 17-21 (D120):
     mixture, SD 0.5); B2-S KAN-AFT, Weibull loss (lr 3e-3, wd 1e-4, seed 0); test-split D-calibration (10 bins):
     residual-calibrated p > 0.05 and Weibull p < 0.05.
 STAT results are appended to reports/logs/round12_ck.jsonl.
+D123 (owner, L39): CK-6b failed (D121) and is kept as a strict expected failure with the Round-12a AFCM pinned; the
+live AFCM check is CK-6c in tests/test_round12b_ck.py.
 """
 import json
 import os
@@ -35,7 +37,7 @@ from lifelines import CoxPHFitter
 
 from kanfae.data import fsim
 from kanfae.evaluation.metrics import d_calibration
-from kanfae.models.afcm import fit_afcm
+from kanfae.models.afcm import LAM_GRID, LAM_T_GRID, fit_afcm
 from kanfae.models.fkan import FKANEnsemble, FKANSurv, select_lambda_theta
 
 import test_round11 as R11
@@ -94,7 +96,7 @@ def ck6b(seed):
     dat = fsim.generate("S-Add", n=2000, seed=seed)
     tr, va, te = R11._split(2000, seed)
     xg, lam = R11._smoothed(dat, tr)
-    m, recs = fit_afcm(R11._pack(dat, xg, tr), R11._pack(dat, xg, va))
+    m, recs = fit_afcm(R11._pack(dat, xg, tr), R11._pack(dat, xg, va), lams_x=LAM_GRID, lams_t=LAM_T_GRID)  # 12a, pinned
     return dict(shapes=shapes(m, dat.x_true_grid[te]), lam_x=m.lam_x, lam_t=m.lam_t, grid=recs, smoothing_lambda=lam)
 
 
@@ -183,6 +185,8 @@ def test_CK5b_b2s_cox_identifiable_rise():
 
 @pytest.mark.criterion("CK-6b")
 @pytest.mark.kind("STAT")
+@pytest.mark.xfail(strict=True, reason="historical record, D121: AFCM phi_1 identifiable RISE 0.556 (seed 18, Round-12a "
+                                       "AFCM); live check CK-6c (D123)")
 def test_CK6b_afcm_identifiable_rise():
     r = ck6b(SEEDS["CK-6b"])
     _record("CK-6b", seed=SEEDS["CK-6b"], threshold=0.10, **r)
