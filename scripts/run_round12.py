@@ -338,10 +338,19 @@ def run_prune_symbolic(ctx, rec, xg, lr, wd, use_pysr=True):
     n_sub = substitute_symbolic(sub, recs, stages=("linear", "library"))
     if n_sub:
         sub._finalise(sub.train_)
-        rec["after_substitution_before_refit"] = ev(sub)
+        e0 = sub.eta(te["xg"], te["z"])
+        rec["after_substitution_before_refit"] = ev(sub) if np.all(np.isfinite(e0)) else dict(
+            status="nonfinite", n_nonfinite_eta=int(np.sum(~np.isfinite(e0))))
         sub.refit_symbolic(max_iter=200)
     rec["symbolic"]["n_substituted"] = n_sub
-    rec["after_substitution"] = ev(sub)
+    # D127 harness fix: a substituted formula can leave its domain during the unconstrained refit (e.g. log of a
+    # negative argument), giving non-finite predictions; that outcome is recorded instead of failing the whole cell.
+    eta_te = sub.eta(te["xg"], te["z"])
+    if np.all(np.isfinite(eta_te)) and np.isfinite(getattr(sub, "refit_train_loss", 0.0)):
+        rec["after_substitution"] = ev(sub)
+    else:
+        rec["after_substitution"] = dict(status="refit_nonfinite", refit_train_loss=getattr(sub, "refit_train_loss", None),
+                                         n_nonfinite_eta=int(np.sum(~np.isfinite(eta_te))))
 
 
 # --------------------------------------------------------------------------------------------------------- plans
@@ -440,8 +449,8 @@ def _append(rec):
 
 
 def tuned_lr_wd(ctx, front):
-    if OUT.exists():
-        for l in OUT.read_text().splitlines():
+    for f in sorted(OUT.parent.glob("results_*.jsonl")):
+        for l in f.read_text().splitlines():
             r = json.loads(l)
             if (r.get("status") == "ok" and r["model"] == "b2s_cox" and r["front"] == front and r["scenario"] == ctx.scen
                     and r["replicate"] == ctx.rep and r["seed"] == ctx.seed):
@@ -468,6 +477,7 @@ def main():
     ap.add_argument("--phase", default="core")
     ap.add_argument("--dev-seed", type=int, default=None, help="development dry-run: use this data seed (rep must be 0)")
     ap.add_argument("--deadline-utc", default=None, help="ISO time; phase-2 cells are not started after it (D113 drop)")
+    ap.add_argument("--only", default=None, help="comma list of models to run (D127: rerun of failed cells)")
     a = ap.parse_args()
     lo, hi = map(int, a.reps.split("-"))
     if a.dev_seed is None:
@@ -479,7 +489,7 @@ def main():
         ctx = Ctx(a.scenario, rep, a.sub, a.dev_seed)
         ens_cache = {}
         for model, front in plan(a.scenario, a.phase):
-            if (a.scenario, a.sub, rep, model, front) in have:
+            if (a.scenario, a.sub, rep, model, front) in have or (a.only and model not in a.only.split(",")):
                 continue
             if a.deadline_utc and a.phase == "phase2" and time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()) > a.deadline_utc:
                 _append(dict(round="R12", scenario=a.scenario, sub=a.sub, replicate=rep, seed=ctx.seed, model=model,
