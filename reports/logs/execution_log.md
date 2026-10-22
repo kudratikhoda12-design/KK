@@ -223,3 +223,5 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   dry runs on synthetic data only; plan committed (9380ef7) before any real-data fit. 70 jobs on 4 workers; one failed
   cell (PACE sensitivity, PBC E2 split 1). Analysis D130: no predictive gain; interpretability measures informative.
 
+- `final_full_suite_round13`: 251 passed, 2 failed (CK-6c, 4f R1), 2 skipped, 16 xfailed (271; no XPASS). Report
+  revision 15 (255 pages); verification ALL_CHECKS_PASS.

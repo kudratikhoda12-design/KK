@@ -9,7 +9,7 @@ Status: **research prototype; not publication-ready; no novelty claim.**
 |---|---|
 | D128 (approved by the owner) | L41 closed: H-R12 stays inconclusive; Round 13 exploratory; symbolic primary = substitution without refit |
 | Round 13 (D129, D130) | PBC (E2/E1), prothro, aids × 5 splits; B3; C-MAPSS; 100-fit stability. No predictive gain of functional/KAN models over simple baselines; stable, clinically aligned leading effects (except the prothro index under B2-S); symbolic substitution without refit preserves the model; C-MAPSS miscalibrated for every model |
-| Tests | `final_full_suite_round13`: see R13.10 |
+| Tests | `final_full_suite_round13`: 251 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (271); see R13.10 |
 | Next | Round 14 (paper draft, L37) on the owner's go-ahead |
 
 ---

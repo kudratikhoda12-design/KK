@@ -1,0 +1,9 @@
+{
+ "git_head": "2acabbc",
+ "n_records": "420",
+ "n_tests": "271",
+ "passed": "251",
+ "failed": "2",
+ "skipped": "2",
+ "xfailed": "16"
+}

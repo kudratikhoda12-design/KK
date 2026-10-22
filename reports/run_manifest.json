@@ -3,7 +3,7 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "c9051e49b0e7633e27102d39326ed66bc7e93f00",
+  "head": "2acabbc1d297a2aebd864087e25f2fdba6f24ea3",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
@@ -2467,6 +2467,136 @@
    "elapsed_s": 51.692,
    "git_head": "c9051e4",
    "log": "reports/logs/round12c_build_pdf.log"
+  },
+  {
+   "name": "round12c_build_manifest",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T16:22:57Z",
+   "end_utc": "2026-10-22T16:23:01Z",
+   "elapsed_s": 3.352,
+   "git_head": "c9051e4",
+   "log": "reports/logs/round12c_build_manifest.log"
+  },
+  {
+   "name": "round12c_verify",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T16:23:01Z",
+   "end_utc": "2026-10-22T16:23:06Z",
+   "elapsed_s": 4.765,
+   "git_head": "c9051e4",
+   "log": "reports/logs/round12c_verify.log"
+  },
+  {
+   "name": "r13_lane2",
+   "command": ".venv/bin/python scripts/run_round13_lanes.py --lane 2",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T15:10:10Z",
+   "end_utc": "2026-10-22T19:00:34Z",
+   "elapsed_s": 13824.144,
+   "git_head": "1cf6da4",
+   "log": "reports/logs/r13_lane2.log"
+  },
+  {
+   "name": "r13_lane3",
+   "command": ".venv/bin/python scripts/run_round13_lanes.py --lane 3",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T15:10:12Z",
+   "end_utc": "2026-10-22T19:00:44Z",
+   "elapsed_s": 13832.397,
+   "git_head": "1cf6da4",
+   "log": "reports/logs/r13_lane3.log"
+  },
+  {
+   "name": "r13_lane4",
+   "command": ".venv/bin/python scripts/run_round13_lanes.py --lane 4",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T15:10:14Z",
+   "end_utc": "2026-10-22T19:01:07Z",
+   "elapsed_s": 13853.392,
+   "git_head": "1cf6da4",
+   "log": "reports/logs/r13_lane4.log"
+  },
+  {
+   "name": "r13_lane1",
+   "command": ".venv/bin/python scripts/run_round13_lanes.py --lane 1",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T15:10:08Z",
+   "end_utc": "2026-10-22T20:12:15Z",
+   "elapsed_s": 18126.735,
+   "git_head": "e4ce51f",
+   "log": "reports/logs/r13_lane1.log"
+  },
+  {
+   "name": "round13_analysis",
+   "command": ".venv/bin/python scripts/analyse_round13.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T20:12:28Z",
+   "end_utc": "2026-10-22T20:12:31Z",
+   "elapsed_s": 3.506,
+   "git_head": "e4ce51f",
+   "log": "reports/logs/round13_analysis.log"
+  },
+  {
+   "name": "final_full_suite_round13",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-22T19:55:51Z",
+   "end_utc": "2026-10-22T21:33:23Z",
+   "elapsed_s": 5852.054,
+   "git_head": "2acabbc",
+   "log": "reports/logs/final_full_suite_round13.log"
+  },
+  {
+   "name": "round13_compile_test_results",
+   "command": ".venv/bin/python scripts/compile_test_results.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T21:33:54Z",
+   "end_utc": "2026-10-22T21:33:54Z",
+   "elapsed_s": 0.084,
+   "git_head": "2acabbc",
+   "log": "reports/logs/round13_compile_test_results.log"
+  },
+  {
+   "name": "round13_build_report",
+   "command": ".venv/bin/python scripts/build_report_round13.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T21:33:54Z",
+   "end_utc": "2026-10-22T21:33:58Z",
+   "elapsed_s": 3.35,
+   "git_head": "2acabbc",
+   "log": "reports/logs/round13_build_report.log"
+  },
+  {
+   "name": "round13_build_pdf",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T21:33:58Z",
+   "end_utc": "2026-10-22T21:34:34Z",
+   "elapsed_s": 36.198,
+   "git_head": "2acabbc",
+   "log": "reports/logs/round13_build_pdf.log"
+  },
+  {
+   "name": "round13_build_manifest",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T21:34:34Z",
+   "end_utc": "2026-10-22T21:34:34Z",
+   "elapsed_s": 0.139,
+   "git_head": "2acabbc",
+   "log": "reports/logs/round13_build_manifest.log"
+  },
+  {
+   "name": "round13_verify",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T21:34:34Z",
+   "end_utc": "2026-10-22T21:34:38Z",
+   "elapsed_s": 3.835,
+   "git_head": "2acabbc",
+   "log": "reports/logs/round13_verify.log"
   }
  ],
  "deliverables": {
