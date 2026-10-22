@@ -10,7 +10,7 @@ rounds 11–1). Status: **research prototype; not publication-ready; no novelty 
 | **H-R12** | **Inconclusive**: B2-S − AFCM V3 mean identifiable RISE +0.0065, 95% CI [−0.051, +0.064]; TOST ±0.05 p 0.063. **AFCM V3 failed CK-6c (not validated)** |
 | Main exploratory findings | B2-S ≈ AFCM V3 in shapes and survival; both ≫ B1-FPCA in shapes; B2-S better than the Round-12a AFCM; residual calibration helps KAN-AFT under log-normal errors; pruning recall 0.95 / FDR 0.13 (S-Add); symbolic substitution keeps shapes, the refit destroys them |
 | S-Int/P0 continuity | fae_kan_s3 ≡ fae_mlp_s3 within ±0.005 (TOST p 0.005) |
-| Tests | `final_full_suite_round12c`: see R12c.10 |
+| Tests | `final_full_suite_round12c_rerun` (the first run was killed by a container restart; partial records kept): 248 passed, 2 failed (CK-6c, visible by D126; 4f original R1), 16 expected failures, 2 skipped (268); every CK record reproduced. Report revision 14 (236 pages; `reports/final_research_prototype_report_rev14.pdf`); verification ALL_CHECKS_PASS |
 | Next | Owner decisions L41; Round 13 (L36) |
 
 ---

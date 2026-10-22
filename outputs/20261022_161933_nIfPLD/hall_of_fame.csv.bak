@@ -1,0 +1,13 @@
+Complexity,Loss,Equation
+1,0.00053247565,"0.119648814"
+4,0.00017324639,"cos(x0) * 0.14607261"
+5,0.00015498044,"exp(cos(x0) + -2.9469593)"
+7,0.00010923471,"cos(tanh(x0 / 0.6389682)) * 0.15412885"
+8,6.8831345e-5,"cos(cos(cos(x0 + x0))) * 0.18059592"
+9,3.8167014e-5,"cos(cube(cos(cos(x0 + x0)))) * 0.15618983"
+10,1.2473567e-5,"cos(square(cube(cos(cos(x0 + x0))))) * 0.1467852"
+11,1.1492157e-5,"tanh(cos(square(cube(cos(cos(x0 + x0))))) * 0.1476521)"
+12,1.05980525e-5,"tanh(tanh(cos(square(cube(cos(cos(x0 + x0))))) * 0.14853081))"
+13,9.792487e-6,"tanh(tanh(tanh(cos(square(cube(cos(cos(x0 + x0))))) * 0.14941643)))"
+14,9.076845e-6,"tanh(tanh(tanh(tanh(cos(square(cube(cos(cos(x0 + x0))))) * 0.15031247))))"
+15,8.452359e-6,"tanh(tanh(tanh(tanh(tanh(cos(cube(square(cos(cos(x0 + x0))))) * 0.15122736)))))"

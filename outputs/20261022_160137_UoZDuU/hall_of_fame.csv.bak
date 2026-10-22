@@ -1,0 +1,11 @@
+Complexity,Loss,Equation
+1,0.057648413,"1.9412248"
+3,0.018450897,"x0 + 1.3908265"
+4,0.009914103,"exp(cos(cos(x0)))"
+5,0.008920019,"exp(cos(cos(square(x0))))"
+6,0.0063292873,"exp(cos(square(cos(cube(x0)))))"
+7,0.004386358,"exp(cos(cos(square(x0 + 0.060840543))))"
+9,0.0039427606,"exp(cos(square(cos(sin(cube(x0))) * 0.98453087)))"
+11,0.003802631,"exp(cos(square(cos(sin(cube(x0 * 1.0133778))) * 0.9873887)))"
+14,0.0028662551,"exp(cos((cos(cube(x0 * 1.1741167)) - x0) + square(x0)) + -0.12851122)"
+15,0.0027213097,"exp(cos(cos(cube(x0 * 1.1734936)) + tanh(square(x0) - x0)) + -0.12763767)"

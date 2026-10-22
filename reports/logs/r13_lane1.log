@@ -1,0 +1,90 @@
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[single pbc_E2 split 0 b2s_cox] ok 94.5s
+[single pbc_E2 split 0 afcm_v3] ok 108.1s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[single pbc_E2 split 0 b2s_aft] ok 88.2s
+[single pbc_E2 split 0 b2h_cox] ok 79.6s
+[single pbc_E2 split 0 b2h_aft] ok 175.2s
+[single pbc_E2 split 0 b1_fpca1_cox] ok 6.6s
+[single pbc_E2 split 0 b1_fpca1_aft] ok 7.0s
+[single pbc_E2 split 0 b1_sum_cox] ok 7.3s
+[single pbc_E2 split 0 b1_sum_aft] ok 3.6s
+[single pbc_E2 split 0 static_coxkan] ok 6.0s
+[single pbc_E2 split 0 fpca_cox] ok 0.2s
+[single pbc_E2 split 0 sum_cox] ok 0.2s
+[single pbc_E2 split 0 sum_rsf] ok 1.2s
+[single pbc_E2 split 0 lme2_cox] ok 13.8s
+[single pbc_E2 split 0 landmark_cox] ok 0.2s
+[single pbc_E2 split 0 b2s_cox_pace] ok 89.3s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[single pbc_E2 split 0 prune_symbolic] ok 752.7s
+[lane 1] job ('single', 'pbc_E2', 0, None) done in 1434s
+[single aids split 1 b2s_cox] ok 36.7s
+[single aids split 1 afcm_v3] ok 74.1s
+[single aids split 1 b2s_aft] ok 49.8s
+[single aids split 1 b2h_cox] ok 27.7s
+[single aids split 1 b2h_aft] ok 143.3s
+[single aids split 1 b1_fpca1_cox] ok 14.8s
+[single aids split 1 b1_fpca1_aft] ok 14.4s
+[single aids split 1 b1_sum_cox] ok 12.4s
+[single aids split 1 b1_sum_aft] ok 15.8s
+[single aids split 1 static_coxkan] ok 29.9s
+[single aids split 1 fpca_cox] ok 0.3s
+[single aids split 1 sum_cox] ok 0.5s
+[single aids split 1 sum_rsf] ok 0.5s
+[single aids split 1 lme2_cox] ok 4.6s
+[single aids split 1 landmark_cox] ok 0.2s
+[single aids split 1 b2s_cox_pace] ok 65.2s
+[single aids split 1 prune_symbolic] ok 245.5s
+[lane 1] job ('single', 'aids', 1, None) done in 736s
+[single aids split 2 b2s_cox] ok 38.7s
+[single aids split 2 afcm_v3] ok 76.1s
+[single aids split 2 b2s_aft] ok 38.7s
+[single aids split 2 b2h_cox] ok 26.6s
+[single aids split 2 b2h_aft] ok 60.0s
+[single aids split 2 b1_fpca1_cox] ok 6.5s
+[single aids split 2 b1_fpca1_aft] ok 9.0s
+[single aids split 2 b1_sum_cox] ok 11.1s
+[single aids split 2 b1_sum_aft] ok 8.7s
+[single aids split 2 static_coxkan] ok 13.8s
+[single aids split 2 fpca_cox] ok 0.2s
+[single aids split 2 sum_cox] ok 0.3s
+[single aids split 2 sum_rsf] ok 0.7s
+[single aids split 2 lme2_cox] ok 4.6s
+[single aids split 2 landmark_cox] ok 0.4s
+[single aids split 2 b2s_cox_pace] ok 39.1s
+[single aids split 2 prune_symbolic] ok 271.7s
+[lane 1] job ('single', 'aids', 2, None) done in 607s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[single pbc_E2 split 3 b2s_cox] ok 94.4s
+[single pbc_E2 split 3 afcm_v3] ok 124.6s
+[single pbc_E2 split 3 b2s_aft] ok 67.8s
+[single pbc_E2 split 3 b2h_cox] ok 93.8s
+[single pbc_E2 split 3 b2h_aft] ok 110.2s
+[single pbc_E2 split 3 b1_fpca1_cox] ok 7.2s
+[single pbc_E2 split 3 b1_fpca1_aft] ok 8.5s
+[single pbc_E2 split 3 b1_sum_cox] ok 9.8s
+[single pbc_E2 split 3 b1_sum_aft] ok 8.3s
+[single pbc_E2 split 3 static_coxkan] ok 12.1s
+[single pbc_E2 split 3 fpca_cox] ok 0.2s
+[single pbc_E2 split 3 sum_cox] ok 0.2s
+[single pbc_E2 split 3 sum_rsf] ok 0.7s
+[single pbc_E2 split 3 lme2_cox] ok 18.2s
+[single pbc_E2 split 3 landmark_cox] ok 0.4s
+[single pbc_E2 split 3 b2s_cox_pace] ok 86.5s
+[single pbc_E2 split 3 prune_symbolic] ok 770.7s
+[lane 1] job ('single', 'pbc_E2', 3, None) done in 1414s
+[single prothro split 4 b2s_cox] ok 18.7s
+[single prothro split 4 afcm_v3] ok 71.3s
+[single prothro split 4 b2s_aft] ok 31.5s
+[single prothro split 4 b2h_cox] ok 13.1s
+[single prothro split 4 b2h_aft] ok 49.6s

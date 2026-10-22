@@ -217,4 +217,5 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - Three pruning/symbolic cells failed (non-finite refits); harness fix committed (0eddcc6). Container restart at about
   04:27 UTC; interrupted jobs resumed; all 160 jobs done 06:49 UTC; the three failed cells rerun with the fix.
 - Analysis: H-R12 inconclusive (+0.0065, CI [−0.051, +0.064]); P0 equivalent. D127. L41 opened.
-
+- `final_full_suite_round12c` killed by a container restart; rerun as `final_full_suite_round12c_rerun`: 248 passed, 2 failed
+  (CK-6c, 4f R1), 2 skipped, 16 xfailed (268); CK records reproduced. Report revision 14 (236 pages), ALL_CHECKS_PASS.

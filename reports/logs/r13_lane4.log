@@ -1,0 +1,65 @@
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[single pbc_E1 split 0 b2s_cox] ok 101.5s
+[single pbc_E1 split 0 afcm_v3] ok 104.6s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[single pbc_E1 split 0 b2s_aft] ok 137.1s
+[single pbc_E1 split 0 b2h_cox] ok 155.8s
+[single pbc_E1 split 0 b2h_aft] ok 176.7s
+[single pbc_E1 split 0 b1_fpca1_cox] ok 10.4s
+[single pbc_E1 split 0 b1_fpca1_aft] ok 12.2s
+[single pbc_E1 split 0 b1_sum_cox] ok 11.5s
+[single pbc_E1 split 0 b1_sum_aft] ok 7.6s
+[single pbc_E1 split 0 static_coxkan] ok 16.7s
+[single pbc_E1 split 0 fpca_cox] ok 0.3s
+[single pbc_E1 split 0 sum_cox] ok 0.3s
+[single pbc_E1 split 0 sum_rsf] ok 0.9s
+[single pbc_E1 split 0 lme2_cox] ok 16.7s
+[single pbc_E1 split 0 landmark_cox] ok 0.2s
+[single pbc_E1 split 0 b2s_cox_pace] ok 76.4s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[single pbc_E1 split 0 prune_symbolic] ok 701.5s
+[lane 4] job ('single', 'pbc_E1', 0, None) done in 1532s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[single pbc_E1 split 1 b2s_cox] ok 78.2s
+[single pbc_E1 split 1 afcm_v3] ok 129.9s
+[single pbc_E1 split 1 b2s_aft] ok 100.4s
+[single pbc_E1 split 1 b2h_cox] ok 122.2s
+[single pbc_E1 split 1 b2h_aft] ok 285.1s
+[single pbc_E1 split 1 b1_fpca1_cox] ok 15.9s
+[single pbc_E1 split 1 b1_fpca1_aft] ok 20.6s
+[single pbc_E1 split 1 b1_sum_cox] ok 9.1s
+[single pbc_E1 split 1 b1_sum_aft] ok 10.1s
+[single pbc_E1 split 1 static_coxkan] ok 13.7s
+[single pbc_E1 split 1 fpca_cox] ok 0.2s
+[single pbc_E1 split 1 sum_cox] ok 0.2s
+[single pbc_E1 split 1 sum_rsf] ok 0.7s
+[single pbc_E1 split 1 lme2_cox] ok 16.2s
+[single pbc_E1 split 1 landmark_cox] ok 0.2s
+[single pbc_E1 split 1 b2s_cox_pace] ok 91.9s
+[single pbc_E1 split 1 prune_symbolic] ok 669.2s
+[lane 4] job ('single', 'pbc_E1', 1, None) done in 1564s
+[single prothro split 3 b2s_cox] ok 180.1s
+[single prothro split 3 afcm_v3] ok 67.9s
+[single prothro split 3 b2s_aft] ok 75.2s
+[single prothro split 3 b2h_cox] ok 77.1s
+[single prothro split 3 b2h_aft] ok 138.5s
+[single prothro split 3 b1_fpca1_cox] ok 65.5s
+[single prothro split 3 b1_fpca1_aft] ok 63.1s
+[single prothro split 3 b1_sum_cox] ok 20.0s
+[single prothro split 3 b1_sum_aft] ok 14.5s
+[single prothro split 3 static_coxkan] ok 16.1s
+[single prothro split 3 fpca_cox] ok 0.2s
+[single prothro split 3 sum_cox] ok 0.3s
+[single prothro split 3 sum_rsf] ok 0.9s
+[single prothro split 3 lme2_cox] ok 4.5s
+[single prothro split 3 landmark_cox] ok 0.2s
+[single prothro split 3 b2s_cox_pace] ok 268.5s

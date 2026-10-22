@@ -1,0 +1,86 @@
+[single aids split 0 b2s_cox] ok 37.8s
+[single aids split 0 afcm_v3] ok 67.0s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[single aids split 0 b2s_aft] ok 35.6s
+[single aids split 0 b2h_cox] ok 22.3s
+[single aids split 0 b2h_aft] ok 115.9s
+[single aids split 0 b1_fpca1_cox] ok 6.9s
+[single aids split 0 b1_fpca1_aft] ok 10.4s
+[single aids split 0 b1_sum_cox] ok 6.9s
+[single aids split 0 b1_sum_aft] ok 7.0s
+[single aids split 0 static_coxkan] ok 39.8s
+[single aids split 0 fpca_cox] ok 0.3s
+[single aids split 0 sum_cox] ok 0.3s
+[single aids split 0 sum_rsf] ok 1.0s
+[single aids split 0 lme2_cox] ok 4.6s
+[single aids split 0 landmark_cox] ok 0.3s
+[single aids split 0 b2s_cox_pace] ok 36.8s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[single aids split 0 prune_symbolic] ok 265.5s
+[lane 3] job ('single', 'aids', 0, None) done in 661s
+[single prothro split 1 b2s_cox] ok 65.5s
+[single prothro split 1 afcm_v3] ok 62.1s
+[single prothro split 1 b2s_aft] ok 55.4s
+[single prothro split 1 b2h_cox] ok 133.2s
+[single prothro split 1 b2h_aft] ok 55.1s
+[single prothro split 1 b1_fpca1_cox] ok 63.7s
+[single prothro split 1 b1_fpca1_aft] ok 49.8s
+[single prothro split 1 b1_sum_cox] ok 11.3s
+[single prothro split 1 b1_sum_aft] ok 8.1s
+[single prothro split 1 static_coxkan] ok 44.5s
+[single prothro split 1 fpca_cox] ok 0.2s
+[single prothro split 1 sum_cox] ok 0.2s
+[single prothro split 1 sum_rsf] ok 0.7s
+[single prothro split 1 lme2_cox] ok 4.8s
+[single prothro split 1 landmark_cox] ok 0.2s
+[single prothro split 1 b2s_cox_pace] ok 193.6s
+[single prothro split 1 prune_symbolic] ok 303.7s
+[lane 3] job ('single', 'prothro', 1, None) done in 1052s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[single pbc_E2 split 2 b2s_cox] ok 140.4s
+[single pbc_E2 split 2 afcm_v3] ok 122.7s
+[single pbc_E2 split 2 b2s_aft] ok 124.8s
+[single pbc_E2 split 2 b2h_cox] ok 182.0s
+[single pbc_E2 split 2 b2h_aft] ok 170.3s
+[single pbc_E2 split 2 b1_fpca1_cox] ok 11.1s
+[single pbc_E2 split 2 b1_fpca1_aft] ok 13.8s
+[single pbc_E2 split 2 b1_sum_cox] ok 14.6s
+[single pbc_E2 split 2 b1_sum_aft] ok 14.2s
+[single pbc_E2 split 2 static_coxkan] ok 20.5s
+[single pbc_E2 split 2 fpca_cox] ok 0.2s
+[single pbc_E2 split 2 sum_cox] ok 0.2s
+[single pbc_E2 split 2 sum_rsf] ok 0.8s
+[single pbc_E2 split 2 lme2_cox] ok 14.3s
+[single pbc_E2 split 2 landmark_cox] ok 0.1s
+[single pbc_E2 split 2 b2s_cox_pace] ok 314.9s
+[single pbc_E2 split 2 prune_symbolic] ok 724.7s
+[lane 3] job ('single', 'pbc_E2', 2, None) done in 1870s
+[single aids split 3 b2s_cox] ok 29.2s
+[single aids split 3 afcm_v3] ok 75.9s
+[single aids split 3 b2s_aft] ok 37.9s
+[single aids split 3 b2h_cox] ok 30.0s
+[single aids split 3 b2h_aft] ok 78.8s
+[single aids split 3 b1_fpca1_cox] ok 9.5s
+[single aids split 3 b1_fpca1_aft] ok 13.2s
+[single aids split 3 b1_sum_cox] ok 9.8s
+[single aids split 3 b1_sum_aft] ok 11.8s
+[single aids split 3 static_coxkan] ok 14.4s
+[single aids split 3 fpca_cox] ok 0.4s
+[single aids split 3 sum_cox] ok 0.3s
+[single aids split 3 sum_rsf] ok 0.7s
+[single aids split 3 lme2_cox] ok 7.3s
+[single aids split 3 landmark_cox] ok 0.2s
+[single aids split 3 b2s_cox_pace] ok 33.4s
+[single aids split 3 prune_symbolic] ok 227.5s
+[lane 3] job ('single', 'aids', 3, None) done in 581s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[single pbc_E2 split 4 b2s_cox] ok 109.7s

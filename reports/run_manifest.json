@@ -3,13 +3,13 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "7036c588c495b5ecb9a85b13dcf27a5e9324c245",
+  "head": "c9051e49b0e7633e27102d39326ed66bc7e93f00",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
  "environment": {
   "python": "3.13.16",
-  "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+  "platform": "Linux-6.18.44-fc-v140-x86_64-with-glibc2.39",
   "venv": ".venv (project-local)",
   "lock_file": "requirements-lock.txt",
   "lock_sha256": "c84359511c49bd2bd91948916ed5eb70d7c79ea188f764fe12484edae9172632",
@@ -2317,6 +2317,156 @@
    "elapsed_s": 33.619,
    "git_head": "7036c58",
    "log": "reports/logs/round12b_build_pdf_2.log"
+  },
+  {
+   "name": "round12b_build_manifest_2",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T16:36:43Z",
+   "end_utc": "2026-10-21T16:36:43Z",
+   "elapsed_s": 0.105,
+   "git_head": "7036c58",
+   "log": "reports/logs/round12b_build_manifest_2.log"
+  },
+  {
+   "name": "round12b_verify_2",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T16:36:43Z",
+   "end_utc": "2026-10-21T16:36:47Z",
+   "elapsed_s": 3.623,
+   "git_head": "7036c58",
+   "log": "reports/logs/round12b_verify_2.log"
+  },
+  {
+   "name": "round12_explore_ck6c_lamt",
+   "command": ".venv/bin/python scripts/explore_round12_ck6c_lamt.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-21T18:02:15Z",
+   "end_utc": "2026-10-21T18:04:15Z",
+   "elapsed_s": 119.989,
+   "git_head": "a9b4743",
+   "log": "reports/logs/round12_explore_ck6c_lamt.log"
+  },
+  {
+   "name": "r12_resume_slot2",
+   "command": "bash reports/round12/resume_after_restart.sh 2",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T04:29:56Z",
+   "end_utc": "2026-10-22T06:41:24Z",
+   "elapsed_s": 7887.848,
+   "git_head": "f0175f9",
+   "log": "reports/logs/r12_resume_slot2.log"
+  },
+  {
+   "name": "r12_resume_slot1",
+   "command": "bash reports/round12/resume_after_restart.sh 1",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T04:29:55Z",
+   "end_utc": "2026-10-22T06:43:44Z",
+   "elapsed_s": 8028.679,
+   "git_head": "f0175f9",
+   "log": "reports/logs/r12_resume_slot1.log"
+  },
+  {
+   "name": "r12_resume_slot4",
+   "command": "bash reports/round12/resume_after_restart.sh 4",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T04:29:58Z",
+   "end_utc": "2026-10-22T06:46:14Z",
+   "elapsed_s": 8176.285,
+   "git_head": "f0175f9",
+   "log": "reports/logs/r12_resume_slot4.log"
+  },
+  {
+   "name": "r12_resume_slot3",
+   "command": "bash reports/round12/resume_after_restart.sh 3",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T04:29:57Z",
+   "end_utc": "2026-10-22T06:48:52Z",
+   "elapsed_s": 8334.976,
+   "git_head": "f0175f9",
+   "log": "reports/logs/r12_resume_slot3.log"
+  },
+  {
+   "name": "r12_rerun_SAdd_10",
+   "command": ".venv/bin/python scripts/run_round12.py --scenario S-Add --reps 10-10 --only prune_symbolic",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T06:49:35Z",
+   "end_utc": "2026-10-22T07:21:21Z",
+   "elapsed_s": 1905.587,
+   "git_head": "f0175f9",
+   "log": "reports/logs/r12_rerun_SAdd_10.log"
+  },
+  {
+   "name": "r12_rerun_SSparse_2",
+   "command": ".venv/bin/python scripts/run_round12.py --scenario S-Sparse --reps 2-2 --only prune_symbolic",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T06:49:35Z",
+   "end_utc": "2026-10-22T07:23:37Z",
+   "elapsed_s": 2041.453,
+   "git_head": "f0175f9",
+   "log": "reports/logs/r12_rerun_SSparse_2.log"
+  },
+  {
+   "name": "r12_rerun_SAdd_18",
+   "command": ".venv/bin/python scripts/run_round12.py --scenario S-Add --reps 18-18 --only prune_symbolic",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T06:49:35Z",
+   "end_utc": "2026-10-22T07:25:08Z",
+   "elapsed_s": 2132.148,
+   "git_head": "f0175f9",
+   "log": "reports/logs/r12_rerun_SAdd_18.log"
+  },
+  {
+   "name": "round12_analysis",
+   "command": ".venv/bin/python scripts/analyse_round12.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T07:25:28Z",
+   "end_utc": "2026-10-22T07:25:30Z",
+   "elapsed_s": 2.108,
+   "git_head": "f0175f9",
+   "log": "reports/logs/round12_analysis.log"
+  },
+  {
+   "name": "final_full_suite_round12c_rerun",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-22T14:43:33Z",
+   "end_utc": "2026-10-22T16:21:36Z",
+   "elapsed_s": 5883.579,
+   "git_head": "c9051e4",
+   "log": "reports/logs/final_full_suite_round12c_rerun.log"
+  },
+  {
+   "name": "round12c_compile_test_results",
+   "command": ".venv/bin/python scripts/compile_test_results.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T16:22:00Z",
+   "end_utc": "2026-10-22T16:22:01Z",
+   "elapsed_s": 0.132,
+   "git_head": "c9051e4",
+   "log": "reports/logs/round12c_compile_test_results.log"
+  },
+  {
+   "name": "round12c_build_report",
+   "command": ".venv/bin/python scripts/build_report_round12c.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T16:22:01Z",
+   "end_utc": "2026-10-22T16:22:06Z",
+   "elapsed_s": 5.032,
+   "git_head": "c9051e4",
+   "log": "reports/logs/round12c_build_report.log"
+  },
+  {
+   "name": "round12c_build_pdf",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-22T16:22:06Z",
+   "end_utc": "2026-10-22T16:22:57Z",
+   "elapsed_s": 51.692,
+   "git_head": "c9051e4",
+   "log": "reports/logs/round12c_build_pdf.log"
   }
  ],
  "deliverables": {
