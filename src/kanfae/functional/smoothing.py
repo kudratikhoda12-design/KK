@@ -95,8 +95,10 @@ def pad_ragged(times, values):
         m = len(t)
         T[i, :m] = t
         T[i, m:] = t[-1] if m else 0.0
-        V[i, :m] = np.asarray(v, float).reshape(m, D)
-        M[i, :m] = True
+        vv = np.asarray(v, float).reshape(m, D)
+        ok = np.isfinite(vv)                                  # missing channel values (NaN) are masked out (Round 13)
+        V[i, :m] = np.where(ok, vv, 0.0)
+        M[i, :m] = ok
     return T, V, M, np.array([len(t) for t in times])
 
 

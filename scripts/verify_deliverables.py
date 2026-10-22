@@ -18,7 +18,7 @@ REP = ROOT / "reports"
 res = {}
 
 
-FINAL_RUN = "final_full_suite_round12c"
+FINAL_RUN = "final_full_suite_round12c_rerun"
 
 
 def norm(s):

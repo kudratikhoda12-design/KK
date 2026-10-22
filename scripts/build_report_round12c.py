@@ -16,7 +16,7 @@ import round2_data as D  # noqa: E402
 
 ROOT, REP = D.ROOT, D.REP
 md_table = R1.md_table
-FINAL = "final_full_suite_round12c"
+FINAL = "final_full_suite_round12c_rerun"
 SUM = REP / "round12_summary.json"
 CSV = REP / "tables/r12_summary_by_model.csv"
 LABEL = {"b2s_cox": "B2-S Cox (functional CoxKAN)", "b2s_aft": "B2-S KAN-AFT (Weibull)", "b2s_aft_rc": "B2-S KAN-AFT, residual-calibrated",
@@ -133,7 +133,7 @@ def decisions():
 
 def suite_table():
     rows = []
-    for run in ("final_full_suite_round11", "final_full_suite_round12", "final_full_suite_round12b", FINAL):
+    for run in ("final_full_suite_round11", "final_full_suite_round12", "final_full_suite_round12b", "final_full_suite_round12c", FINAL):
         g = R1.TA[R1.TA.run_id == run]
         if len(g):
             c = [int((g.outcome == o).sum()) for o in ("passed", "failed", "skipped", "xfailed")]

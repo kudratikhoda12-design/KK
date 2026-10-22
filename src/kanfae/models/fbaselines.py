@@ -19,19 +19,51 @@ def summaries(times, values):
     out = np.zeros((n, D, 4))
     for i, (t, v) in enumerate(zip(times, values)):
         t, v = np.asarray(t, float), np.asarray(v, float)
-        out[i, :, 0] = v[np.argmax(t)]
-        out[i, :, 1] = v.mean(0)
-        if len(t) >= 2 and np.ptp(t) > 0:
-            A = np.column_stack([np.ones(len(t)), t])
-            coef, *_ = np.linalg.lstsq(A, v, rcond=None)
-            out[i, :, 2] = coef[1]
-            if len(t) >= 3:
-                out[i, :, 3] = np.sqrt(((v - A @ coef) ** 2).sum(0) / (len(t) - 2))
+        if np.all(np.isfinite(v)):                                   # complete data: the Round-11/12 computation
+            out[i, :, 0] = v[np.argmax(t)]
+            out[i, :, 1] = v.mean(0)
+            if len(t) >= 2 and np.ptp(t) > 0:
+                A = np.column_stack([np.ones(len(t)), t])
+                coef, *_ = np.linalg.lstsq(A, v, rcond=None)
+                out[i, :, 2] = coef[1]
+                if len(t) >= 3:
+                    out[i, :, 3] = np.sqrt(((v - A @ coef) ** 2).sum(0) / (len(t) - 2))
+            continue
+        for d in range(D):                                           # missing values (Round 13): per channel
+            ok = np.isfinite(v[:, d])
+            td, vd = t[ok], v[ok, d]
+            if len(td) == 0:
+                out[i, d] = np.nan                                   # imputed by the caller (training means)
+                continue
+            out[i, d, 0], out[i, d, 1] = vd[np.argmax(td)], vd.mean()
+            if len(td) >= 2 and np.ptp(td) > 0:
+                A = np.column_stack([np.ones(len(td)), td])
+                coef, *_ = np.linalg.lstsq(A, vd, rcond=None)
+                out[i, d, 2] = coef[1]
+                if len(td) >= 3:
+                    out[i, d, 3] = np.sqrt(((vd - A @ coef) ** 2).sum() / (len(td) - 2))
     return out.reshape(n, D * 4)
 
 
 def last_values(times, values):
-    return np.vstack([np.asarray(v, float)[np.argmax(t)] for t, v in zip(times, values)])
+    """Last observed value per channel (NaN-aware; NaN if a channel was never observed)."""
+    out = []
+    for t, v in zip(times, values):
+        t, v = np.asarray(t, float), np.asarray(v, float)
+        row = np.full(v.shape[1], np.nan)
+        for d in range(v.shape[1]):
+            ok = np.isfinite(v[:, d])
+            if ok.any():
+                row[d] = v[ok, d][np.argmax(t[ok])]
+        out.append(row)
+    return np.vstack(out)
+
+
+def impute_train_mean(F, tr):
+    """Replace NaN features by the training-split column means (Round 13)."""
+    mu = np.nanmean(F[tr], axis=0)
+    mu = np.where(np.isfinite(mu), mu, 0.0)
+    return np.where(np.isfinite(F), F, mu[None, :])
 
 
 class GridFPCA:

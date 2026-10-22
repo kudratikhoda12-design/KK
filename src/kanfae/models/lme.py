@@ -15,6 +15,8 @@ def blup(times, values, beta, Sigma, sigma2):
     """BLUPs u_i = Sigma Z_i' V_i^{-1} (y_i - X_i beta), V_i = Z_i Sigma Z_i' + sigma2 I (Z_i = X_i = [1, t])."""
     out = np.zeros((len(times), 2))
     for i, (t, y) in enumerate(zip(times, values)):
+        if len(t) == 0:                        # no observation: BLUP = prior mean 0 (Round 13)
+            continue
         Z = np.column_stack([np.ones(len(t)), t])
         V = Z @ Sigma @ Z.T + sigma2 * np.eye(len(t))
         out[i] = Sigma @ Z.T @ np.linalg.solve(V, np.asarray(y, float) - Z @ beta)
@@ -26,6 +28,8 @@ class LME:
         self.max_iter, self.tol = max_iter, tol
 
     def fit(self, times, values):
+        keep = [i for i, t in enumerate(times) if len(t) > 0]
+        times, values = [times[i] for i in keep], [values[i] for i in keep]
         Zs = [np.column_stack([np.ones(len(t)), t]) for t in times]
         ys = [np.asarray(y, float) for y in values]
         Zall, yall = np.vstack(Zs), np.concatenate(ys)
@@ -72,8 +76,17 @@ class LME2Cox:
     def __init__(self, t_L=1.0, penalizer=0.0):
         self.t_L, self.penalizer = t_L, penalizer
 
+    @staticmethod
+    def _channel(times, values, d):
+        """Per-channel (times, values) with missing values (NaN) removed."""
+        tt, vv = [], []
+        for t, v in zip(times, values):
+            ok = np.isfinite(np.asarray(v, float)[:, d])
+            tt.append(np.asarray(t, float)[ok]); vv.append(np.asarray(v, float)[ok, d])
+        return tt, vv
+
     def _feats(self, times, values, z):
-        F = [lme.features(times, [v[:, d] for v in values], self.t_L) for d, lme in enumerate(self.lmes)]
+        F = [lme.features(*self._channel(times, values, d), self.t_L) for d, lme in enumerate(self.lmes)]
         X = np.hstack(F + ([z] if z is not None and z.shape[1] else []))
         return X
 
@@ -81,7 +94,7 @@ class LME2Cox:
         import pandas as pd
         from lifelines import CoxPHFitter
         D = values[0].shape[1]
-        self.lmes = [LME().fit(times, [v[:, k] for v in values]) for k in range(D)]
+        self.lmes = [LME().fit(*self._channel(times, values, k)) for k in range(D)]
         X = self._feats(times, values, z)
         self.cols = [f"f{j}" for j in range(X.shape[1])]
         df = pd.DataFrame(X, columns=self.cols).assign(T=y, E=np.asarray(d, int))

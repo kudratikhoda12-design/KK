@@ -69,8 +69,9 @@ def _diag_quadratic(t_eval, s, t, y, h):
 
 
 class PACE:
-    def __init__(self, fve=0.95, max_k=5, grid=GRID, seed=0):
+    def __init__(self, fve=0.95, max_k=5, grid=GRID, seed=0, h_grid=H_GRID):
         self.fve, self.max_k, self.grid, self.seed = fve, max_k, np.asarray(grid, float), seed
+        self.h_grid = tuple(h_grid)            # Round 13 (D129) widens it for gappy visit designs; default unchanged
 
     def fit(self, times, values):
         """times, values: lists over subjects of 1-D arrays (one channel)."""
@@ -79,7 +80,7 @@ class PACE:
         y = np.concatenate(values).astype(float)
         # --- mean: exact LOSO-CV over H_GRID
         best = None
-        for h in H_GRID:
+        for h in self.h_grid:
             u = (t[None, :] - t[:, None]) / h
             w = _epan(u) * (sid[None, :] != sid[:, None])            # drop the target's own subject
             dt = t[None, :] - t[:, None]
@@ -107,7 +108,7 @@ class PACE:
         rng = np.random.default_rng(self.seed)
         tgt = rng.choice(len(S), size=min(2000, len(S)), replace=False)
         best = None
-        for h in H_GRID[1:]:
+        for h in self.h_grid[1:]:
             pred = np.empty(len(tgt))
             for k, j in enumerate(tgt):
                 keep = P != P[j]
@@ -143,6 +144,8 @@ class PACE:
         out = np.zeros((len(times), self.K))
         L = np.diag(self.lam)
         for i, (ti, yi) in enumerate(zip(times, values)):
+            if len(ti) == 0:                   # no observation: the conditional expectation is the prior mean (0)
+                continue
             Phi = np.column_stack([np.interp(ti, self.grid, self.phi[:, k]) for k in range(self.K)])
             mu_i = np.interp(ti, self.grid, self.mu)
             Sig = Phi @ L @ Phi.T + self.sigma2 * np.eye(len(ti))
