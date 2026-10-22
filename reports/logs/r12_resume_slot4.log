@@ -1,0 +1,42 @@
+[S-Sparse rep 19 b2s_cox/pace] ok 354.7s
+[S-Sparse rep 19 afcm_v3/pace] ok 115.6s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Sparse rep 19 b2s_aft/pace] ok 332.8s
+[S-Sparse rep 19 b2h_cox/pace] ok 468.8s
+[S-Sparse rep 19 b2h_aft/pace] ok 377.7s
+[S-Sparse rep 19 b1_fpca1_cox/pace] ok 15.1s
+[S-Sparse rep 19 b1_fpca1_aft/pace] ok 43.4s
+[S-Sparse rep 19 fpca_cox/pace] ok 0.3s
+[S-Sparse rep 19 b1_sum_cox/raw] ok 18.6s
+[S-Sparse rep 19 b1_sum_aft/raw] ok 14.3s
+[S-Sparse rep 19 static_coxkan/raw] ok 13.6s
+[S-Sparse rep 19 sum_cox/raw] ok 0.1s
+[S-Sparse rep 19 sum_rsf/raw] ok 3.7s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[S-Sparse rep 19 prune_symbolic/bspline] ok 2280.0s
+[S-Misspec/loglogistic rep 12 b2s_cox/bspline] ok 258.5s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Misspec/loglogistic rep 12 b2s_aft/bspline] ok 361.0s
+[S-Misspec/loglogistic rep 12 afcm_v3/bspline] ok 123.4s
+[lane 4] job S-Misspec/loglogistic/12/phase2 done in 748s
+[S-Misspec/loglogistic rep 16 b2s_cox/bspline] ok 308.3s
+[S-Misspec/loglogistic rep 16 b2s_aft/bspline] ok 241.5s
+[S-Misspec/loglogistic rep 16 afcm_v3/bspline] ok 131.4s
+[lane 4] job S-Misspec/loglogistic/16/phase2 done in 681s
+[S-Add rep 0 b2s_cox_quantile/bspline] ok 322.7s
+[lane 4] job S-Add/None/0/phase2 done in 327s
+[S-Add rep 2 b2s_cox_quantile/bspline] ok 367.2s
+[lane 4] job S-Add/None/2/phase2 done in 367s
+[S-Add rep 7 b2s_cox_quantile/bspline] ok 881.5s
+[lane 4] job S-Add/None/7/phase2 done in 882s
+[S-Add rep 12 b2s_cox_quantile/bspline] ok 308.9s
+[lane 4] job S-Add/None/12/phase2 done in 309s
+[S-Add rep 15 b2s_cox_quantile/bspline] ok 401.5s
+[lane 4] job S-Add/None/15/phase2 done in 402s
+[S-Add rep 18 b2s_cox_quantile/bspline] ok 409.0s
+[lane 4] job S-Add/None/18/phase2 done in 409s

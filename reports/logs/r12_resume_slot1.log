@@ -1,0 +1,41 @@
+/home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[S-Sparse rep 18 prune_symbolic/bspline] ok 1645.8s
+[S-Misspec/loglogistic rep 2 b2s_cox/bspline] ok 222.6s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Misspec/loglogistic rep 2 b2s_aft/bspline] ok 315.6s
+[S-Misspec/loglogistic rep 2 afcm_v3/bspline] ok 122.5s
+[lane 1] job S-Misspec/loglogistic/2/phase2 done in 665s
+[S-Misspec/loglogistic rep 5 b2s_cox/bspline] ok 333.2s
+[S-Misspec/loglogistic rep 5 b2s_aft/bspline] ok 451.6s
+[S-Misspec/loglogistic rep 5 afcm_v3/bspline] ok 129.4s
+[lane 1] job S-Misspec/loglogistic/5/phase2 done in 914s
+[S-Misspec/loglogistic rep 8 b2s_cox/bspline] ok 248.2s
+[S-Misspec/loglogistic rep 8 b2s_aft/bspline] ok 345.9s
+[S-Misspec/loglogistic rep 8 afcm_v3/bspline] ok 124.0s
+[lane 1] job S-Misspec/loglogistic/8/phase2 done in 718s
+[S-Misspec/loglogistic rep 11 b2s_cox/bspline] ok 280.5s
+[S-Misspec/loglogistic rep 11 b2s_aft/bspline] ok 458.0s
+[S-Misspec/loglogistic rep 11 afcm_v3/bspline] ok 116.5s
+[lane 1] job S-Misspec/loglogistic/11/phase2 done in 855s
+[S-Misspec/loglogistic rep 17 b2s_cox/bspline] ok 218.8s
+[S-Misspec/loglogistic rep 17 b2s_aft/bspline] ok 157.2s
+[S-Misspec/loglogistic rep 17 afcm_v3/bspline] ok 134.3s
+[lane 1] job S-Misspec/loglogistic/17/phase2 done in 510s
+[S-Misspec/loglogistic rep 19 b2s_cox/bspline] ok 325.9s
+[S-Misspec/loglogistic rep 19 b2s_aft/bspline] ok 210.8s
+[S-Misspec/loglogistic rep 19 afcm_v3/bspline] ok 127.6s
+[lane 1] job S-Misspec/loglogistic/19/phase2 done in 665s
+[S-Add rep 4 b2s_cox_quantile/bspline] ok 585.7s
+[lane 1] job S-Add/None/4/phase2 done in 591s
+[S-Add rep 8 b2s_cox_quantile/bspline] ok 323.0s
+[lane 1] job S-Add/None/8/phase2 done in 323s
+[S-Add rep 11 b2s_cox_quantile/bspline] ok 774.1s
+[lane 1] job S-Add/None/11/phase2 done in 774s
+[S-Add rep 17 b2s_cox_quantile/bspline] ok 352.8s
+[lane 1] job S-Add/None/17/phase2 done in 353s

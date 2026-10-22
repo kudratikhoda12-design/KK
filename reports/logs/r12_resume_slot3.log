@@ -1,0 +1,49 @@
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Int rep 19 b2h_aft/bspline] ok 1250.1s
+[S-Int rep 19 b1_fpca1_cox/bspline] ok 15.6s
+[S-Int rep 19 b1_fpca1_aft/bspline] ok 12.1s
+[S-Int rep 19 fpca_cox/bspline] ok 1.5s
+[S-Int rep 19 b1_sum_cox/raw] ok 17.9s
+[S-Int rep 19 b1_sum_aft/raw] ok 18.9s
+[S-Int rep 19 static_coxkan/raw] ok 11.4s
+[S-Int rep 19 sum_cox/raw] ok 0.2s
+[S-Int rep 19 sum_rsf/raw] ok 6.5s
+[S-Int rep 19 b1_fpca2_cox/bspline] ok 16.2s
+[S-Int rep 19 b2deep_cox/bspline] ok 190.4s
+[S-Misspec/loglogistic rep 1 b2s_cox/bspline] ok 271.9s
+/home/user/KK/src/kanfae/models/fkan.py:257: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[S-Misspec/loglogistic rep 1 b2s_aft/bspline] ok 337.3s
+[S-Misspec/loglogistic rep 1 afcm_v3/bspline] ok 122.9s
+[lane 3] job S-Misspec/loglogistic/1/phase2 done in 736s
+[S-Misspec/loglogistic rep 4 b2s_cox/bspline] ok 229.4s
+[S-Misspec/loglogistic rep 4 b2s_aft/bspline] ok 363.9s
+[S-Misspec/loglogistic rep 4 afcm_v3/bspline] ok 119.9s
+[lane 3] job S-Misspec/loglogistic/4/phase2 done in 713s
+[S-Misspec/loglogistic rep 6 b2s_cox/bspline] ok 222.6s
+[S-Misspec/loglogistic rep 6 b2s_aft/bspline] ok 330.4s
+[S-Misspec/loglogistic rep 6 afcm_v3/bspline] ok 120.7s
+[lane 3] job S-Misspec/loglogistic/6/phase2 done in 674s
+[S-Misspec/loglogistic rep 10 b2s_cox/bspline] ok 285.2s
+[S-Misspec/loglogistic rep 10 b2s_aft/bspline] ok 228.9s
+[S-Misspec/loglogistic rep 10 afcm_v3/bspline] ok 126.2s
+[lane 3] job S-Misspec/loglogistic/10/phase2 done in 640s
+[S-Misspec/loglogistic rep 14 b2s_cox/bspline] ok 299.0s
+[S-Misspec/loglogistic rep 14 b2s_aft/bspline] ok 455.8s
+[S-Misspec/loglogistic rep 14 afcm_v3/bspline] ok 132.8s
+[lane 3] job S-Misspec/loglogistic/14/phase2 done in 888s
+[S-Misspec/loglogistic rep 18 b2s_cox/bspline] ok 267.4s
+[S-Misspec/loglogistic rep 18 b2s_aft/bspline] ok 390.7s
+[S-Misspec/loglogistic rep 18 afcm_v3/bspline] ok 129.5s
+[lane 3] job S-Misspec/loglogistic/18/phase2 done in 788s
+[S-Add rep 5 b2s_cox_quantile/bspline] ok 884.4s
+[lane 3] job S-Add/None/5/phase2 done in 889s
+[S-Add rep 10 b2s_cox_quantile/bspline] ok 310.8s
+[lane 3] job S-Add/None/10/phase2 done in 311s
+[S-Add rep 13 b2s_cox_quantile/bspline] ok 579.8s
+[lane 3] job S-Add/None/13/phase2 done in 580s
+[S-Add rep 19 b2s_cox_quantile/bspline] ok 561.9s
+[lane 3] job S-Add/None/19/phase2 done in 562s

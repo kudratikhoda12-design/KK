@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, L39 decisions (2026-10-21)
+# Final status: KAN-FAE research prototype, Round 12 (2026-10-22)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (revision 14: Part A = Round 12; Parts B–C = L39/L38; Parts D–N =
+rounds 11–1). Status: **research prototype; not publication-ready; no novelty claim.**
+
+| Item | Result |
+|---|---|
+| Round 12 (D126, D127) | All 160 jobs ran (4 scenarios × 20 + P0 × 20 + phase-2), none dropped; 3 pruning cells failed on non-finite symbolic refits and were rerun after a harness fix; a container restart was resumed |
+| **H-R12** | **Inconclusive**: B2-S − AFCM V3 mean identifiable RISE +0.0065, 95% CI [−0.051, +0.064]; TOST ±0.05 p 0.063. **AFCM V3 failed CK-6c (not validated)** |
+| Main exploratory findings | B2-S ≈ AFCM V3 in shapes and survival; both ≫ B1-FPCA in shapes; B2-S better than the Round-12a AFCM; residual calibration helps KAN-AFT under log-normal errors; pruning recall 0.95 / FDR 0.13 (S-Add); symbolic substitution keeps shapes, the refit destroys them |
+| S-Int/P0 continuity | fae_kan_s3 ≡ fae_mlp_s3 within ±0.005 (TOST p 0.005) |
+| Tests | `final_full_suite_round12c`: see R12c.10 |
+| Next | Owner decisions L41; Round 13 (L36) |
+
+---
+
+# L39 status (2026-10-21), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (revision 13: Part A = L39 decisions and the Round-12 gate;

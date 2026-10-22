@@ -108,11 +108,13 @@ def sel_table():
                      "; ".join(f"{k}: {n}" for k, n in v["selected_patterns"].items()),
                      f3(v["acceptance_rate_mean"]), f4(v["r2_val_accepted_mean"]),
                      ", ".join(f"{k} {n}" for k, n in v["stages_total"].items()),
-                     f3(v["rise_after_pruning"]), f3(v["rise_after_substitution"]),
+                     f3(v["rise_after_pruning"]), f3(v["rise_after_substitution_before_refit"]),
+                     f3(v["rise_after_substitution"]) + f" ({v['n_refit_nonfinite']} non-finite refits)",
                      f3(v["curve_error_after_pruning"]), f3(v["curve_error_after_substitution"])])
     return md_table(["Scenario", "n", "Recall {1, 2}", "FDR (channel 3)", "Selected patterns", "Symbolic acceptance rate",
                      "Mean validation R² (accepted)", "Stages (all edges)", "RISE after pruning",
-                     "RISE after substitution + refit", "Curve error after pruning", "Curve error after substitution"], rows)
+                     "RISE after substitution, before refit", "RISE after substitution + refit",
+                     "Curve error after pruning", "Curve error after substitution + refit"], rows)
 
 
 def exec_table():

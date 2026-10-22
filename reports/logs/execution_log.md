@@ -212,3 +212,9 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - Formal run `round12b_ck_acceptance`: CK-7b PASS; CK-6c FAIL (φ₁ 0.247). Gate closed; Round 12 not run (D124). L40.
 - `final_full_suite_round12b`: 248 passed, 2 failed (CK-6c, 4f original R1), 2 skipped, 16 xfailed (268); all CK
   records reproduced. Report revision 13 (206 pages; contents type reduced, D125); verification ALL_CHECKS_PASS.
+- L40 closed (owner D126); exploratory λ_t refit on the CK-6c data (φ₁ 0.133, φ₂ 0.096). Round-12 harness built,
+  dry-run on development seeds 931–935; plan committed (d995c5f) before any Round-12 seed. Launched 19:12 UTC.
+- Three pruning/symbolic cells failed (non-finite refits); harness fix committed (0eddcc6). Container restart at about
+  04:27 UTC; interrupted jobs resumed; all 160 jobs done 06:49 UTC; the three failed cells rerun with the fix.
+- Analysis: H-R12 inconclusive (+0.0065, CI [−0.051, +0.064]); P0 equivalent. D127. L41 opened.
+

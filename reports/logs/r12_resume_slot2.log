@@ -1,3 +1,83 @@
 /home/user/KK/src/kanfae/models/pipelines.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
   tr_nll.append(float(tn)); va_nll.append(float(vn))
+[P0 kan S3 rep 19] 546s
+/home/user/KK/src/kanfae/models/pipelines.py:172: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  tr_nll.append(float(tn)); va_nll.append(float(vn))
+[S-Sparse rep 0 flat_ae/raw] ok 22.5s
+[lane 2] job S-Sparse/None/0/phase2 done in 27s
+[S-Sparse rep 1 flat_ae/raw] ok 20.0s
+[lane 2] job S-Sparse/None/1/phase2 done in 20s
+[S-Sparse rep 2 flat_ae/raw] ok 20.8s
+[lane 2] job S-Sparse/None/2/phase2 done in 21s
+[S-Sparse rep 3 flat_ae/raw] ok 21.2s
+[lane 2] job S-Sparse/None/3/phase2 done in 21s
+[S-Sparse rep 4 flat_ae/raw] ok 20.0s
+[lane 2] job S-Sparse/None/4/phase2 done in 20s
+[S-Sparse rep 5 flat_ae/raw] ok 20.6s
+[lane 2] job S-Sparse/None/5/phase2 done in 21s
+[S-Sparse rep 6 flat_ae/raw] ok 20.9s
+[lane 2] job S-Sparse/None/6/phase2 done in 21s
+[S-Sparse rep 7 flat_ae/raw] ok 20.2s
+[lane 2] job S-Sparse/None/7/phase2 done in 20s
+[S-Sparse rep 8 flat_ae/raw] ok 21.0s
+[lane 2] job S-Sparse/None/8/phase2 done in 21s
+[S-Sparse rep 9 flat_ae/raw] ok 20.0s
+[lane 2] job S-Sparse/None/9/phase2 done in 20s
+[S-Sparse rep 10 flat_ae/raw] ok 20.9s
+[lane 2] job S-Sparse/None/10/phase2 done in 21s
+[S-Sparse rep 11 flat_ae/raw] ok 20.3s
+[lane 2] job S-Sparse/None/11/phase2 done in 20s
+[S-Sparse rep 12 flat_ae/raw] ok 20.1s
+[lane 2] job S-Sparse/None/12/phase2 done in 20s
+[S-Sparse rep 13 flat_ae/raw] ok 21.2s
+[lane 2] job S-Sparse/None/13/phase2 done in 21s
+[S-Sparse rep 14 flat_ae/raw] ok 21.3s
+[lane 2] job S-Sparse/None/14/phase2 done in 22s
+[S-Sparse rep 15 flat_ae/raw] ok 21.2s
+[lane 2] job S-Sparse/None/15/phase2 done in 21s
+[S-Sparse rep 16 flat_ae/raw] ok 20.4s
+[lane 2] job S-Sparse/None/16/phase2 done in 21s
+[S-Sparse rep 17 flat_ae/raw] ok 21.0s
+[lane 2] job S-Sparse/None/17/phase2 done in 21s
+[S-Sparse rep 18 flat_ae/raw] ok 20.4s
+[lane 2] job S-Sparse/None/18/phase2 done in 21s
+[S-Sparse rep 19 flat_ae/raw] ok 21.7s
+[lane 2] job S-Sparse/None/19/phase2 done in 22s
+[S-Misspec/loglogistic rep 0 b2s_cox/bspline] ok 446.7s
+[S-Misspec/loglogistic rep 0 b2s_aft/bspline] ok 255.0s
+[S-Misspec/loglogistic rep 0 afcm_v3/bspline] ok 119.4s
+[lane 2] job S-Misspec/loglogistic/0/phase2 done in 825s
+[S-Misspec/loglogistic rep 3 b2s_cox/bspline] ok 596.2s
+[S-Misspec/loglogistic rep 3 b2s_aft/bspline] ok 518.0s
+[S-Misspec/loglogistic rep 3 afcm_v3/bspline] ok 125.2s
+[lane 2] job S-Misspec/loglogistic/3/phase2 done in 1240s
+[S-Misspec/loglogistic rep 7 b2s_cox/bspline] ok 195.2s
+[S-Misspec/loglogistic rep 7 b2s_aft/bspline] ok 201.2s
+[S-Misspec/loglogistic rep 7 afcm_v3/bspline] ok 123.2s
+[lane 2] job S-Misspec/loglogistic/7/phase2 done in 520s
+[S-Misspec/loglogistic rep 9 b2s_cox/bspline] ok 195.9s
+[S-Misspec/loglogistic rep 9 b2s_aft/bspline] ok 304.5s
+[S-Misspec/loglogistic rep 9 afcm_v3/bspline] ok 124.1s
+[lane 2] job S-Misspec/loglogistic/9/phase2 done in 625s
+[S-Misspec/loglogistic rep 13 b2s_cox/bspline] ok 214.2s
+[S-Misspec/loglogistic rep 13 b2s_aft/bspline] ok 240.5s
+[S-Misspec/loglogistic rep 13 afcm_v3/bspline] ok 121.5s
+[lane 2] job S-Misspec/loglogistic/13/phase2 done in 576s
+[S-Misspec/loglogistic rep 15 b2s_cox/bspline] ok 217.7s
+[S-Misspec/loglogistic rep 15 b2s_aft/bspline] ok 451.7s
+[S-Misspec/loglogistic rep 15 afcm_v3/bspline] ok 127.2s
+[lane 2] job S-Misspec/loglogistic/15/phase2 done in 797s
+[S-Add rep 1 b2s_cox_quantile/bspline] ok 347.2s
+[lane 2] job S-Add/None/1/phase2 done in 347s
+[S-Add rep 3 b2s_cox_quantile/bspline] ok 256.6s
+[lane 2] job S-Add/None/3/phase2 done in 257s
+[S-Add rep 6 b2s_cox_quantile/bspline] ok 481.3s
+[lane 2] job S-Add/None/6/phase2 done in 482s
+[S-Add rep 9 b2s_cox_quantile/bspline] ok 566.8s
+[lane 2] job S-Add/None/9/phase2 done in 567s
+[S-Add rep 14 b2s_cox_quantile/bspline] ok 321.3s
+[lane 2] job S-Add/None/14/phase2 done in 322s
+[S-Add rep 16 b2s_cox_quantile/bspline] ok 346.4s
+[lane 2] job S-Add/None/16/phase2 done in 347s

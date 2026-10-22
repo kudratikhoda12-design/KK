@@ -147,6 +147,15 @@ KANFAE_RUN_ID=round12b_ck_acceptance scripts/run_logged.sh round12b_ck_acceptanc
 KANFAE_RUN_ID=final_full_suite_round12b scripts/run_logged.sh final_full_suite_round12b .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round12b.py         # report revision 13
+# Round 12 (2026-10-21/22; owner D126): the simulation study
+for k in 1 2 3 4; do scripts/run_logged.sh r12_lane$k .venv/bin/python scripts/run_round12_lanes.py --lane $k --start-utc 2026-10-21T19:12:34Z & done
+#   after the container restart (D127): bash reports/round12/resume_after_restart.sh <slot 1-4> (via run_logged r12_resume_slot<k>)
+R12_OUT=reports/round12/results_rerun_SAdd_10.jsonl scripts/run_logged.sh r12_rerun_SAdd_10 .venv/bin/python scripts/run_round12.py --scenario S-Add --reps 10-10 --only prune_symbolic
+#   likewise SAdd_18 (S-Add 18) and SSparse_2 (S-Sparse 2)
+scripts/run_logged.sh round12_analysis .venv/bin/python scripts/analyse_round12.py   # -> reports/round12_summary.json
+KANFAE_RUN_ID=final_full_suite_round12c scripts/run_logged.sh final_full_suite_round12c .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round12c.py         # report revision 14
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py

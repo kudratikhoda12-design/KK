@@ -140,6 +140,10 @@ def selection_symbolic(recs, scen):
                 r2_val_accepted_mean=float(np.mean(f("symbolic.mean_r2_val_accepted"))) if f("symbolic.mean_r2_val_accepted") else None,
                 stages_total=stage_tot, n_substituted_mean=float(np.mean(f("symbolic.n_substituted"))),
                 rise_after_pruning=float(np.mean(f("after_pruning.shape.mean_id"))),
+                rise_after_substitution_before_refit=float(np.mean(f("after_substitution_before_refit.shape.mean_id")))
+                if f("after_substitution_before_refit.shape.mean_id") else None,
+                n_refit_nonfinite=int(sum(get(r, "after_substitution.status") == "refit_nonfinite" for r in R)),
+                n_after_substitution_ok=len(f("after_substitution.shape.mean_id")),
                 rise_after_substitution=float(np.mean(f("after_substitution.shape.mean_id"))),
                 curve_error_after_pruning=float(np.mean(f("after_pruning.curve_error"))),
                 curve_error_after_substitution=float(np.mean(f("after_substitution.curve_error"))))
