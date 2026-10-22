@@ -1,0 +1,11 @@
+Complexity,Loss,Equation
+1,0.0029105179,"0.4006337"
+5,0.00058505783,"(x0 * 0.16633543) + 0.30908105"
+6,0.0003849044,"(tanh(x0) * 0.22796738) + 0.29315513"
+7,0.00023163445,"square(sin(tanh(tanh(x0 - -0.73196065))))"
+8,0.00014275739,"sin(square(tanh(sin(sin(x0 - -0.6264945)))))"
+9,9.9203025e-5,"tanh(tanh(tanh(tanh(tanh(tanh(x0 + 0.2673543))))))"
+10,8.7478795e-5,"tanh(tanh(tanh(tanh(tanh(sin(sin(x0 + 0.27033433)))))))"
+12,8.26806e-5,"sin(sin(tanh(tanh(tanh(tanh(sin(tanh(sin(x0)) + 0.26022336)))))))"
+13,7.907589e-5,"tanh(tanh(tanh(tanh(sin(tanh(sin((sin(x0) / 0.91324645) + 0.26022336)))))))"
+14,7.6621924e-5,"sin(sin(tanh(tanh(tanh(tanh(tanh(sin(sin(x0 + 0.20905553))) / 0.8290877))))))"

@@ -1,0 +1,9 @@
+Complexity,Loss,Equation
+1,0.15978289,"-0.9069381"
+4,0.09055205,"sin(x0 * -2.8196924)"
+6,0.021367552,"(cube(x0) - x0) / 0.27935615"
+9,0.015745312,"cube(tanh(cube(x0) - cos(x0)) - x0)"
+10,0.0054561975,"cube(sin(tanh(cube(x0) - cos(x0))) - x0)"
+11,0.0044299453,"cube(tanh(cube(x0) - sin(cos(square(x0)))) - x0)"
+12,0.0042368923,"cube(tanh(sin(cube(x0) - cos(x0))) - x0) / 0.96485513"
+14,0.004184834,"cube((tanh(sin(cube(x0) - cos(x0))) - x0) + -0.028121902) + 0.049743943"

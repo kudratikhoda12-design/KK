@@ -15,3 +15,293 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
 [S-Add rep 0 static_coxkan/raw] ok 13.0s
 [S-Add rep 0 sum_cox/raw] ok 0.1s
 [S-Add rep 0 sum_rsf/raw] ok 3.0s
+/home/user/KK/.venv/lib/python3.13/site-packages/juliacall/__init__.py:61: UserWarning: torch was imported before juliacall. This may cause a segfault. To avoid this, import juliacall before importing torch. For updates, see https://github.com/pytorch/pytorch/issues/78829.
+  warnings.warn(
+[S-Add rep 0 prune_symbolic/bspline] ok 851.9s
+[lane 1] job S-Add/None/0/core done in 1932s
+[S-Add rep 5 b2s_cox/bspline] ok 528.3s
+[S-Add rep 5 afcm_v3/bspline] ok 63.9s
+[S-Add rep 5 afcm_v0/bspline] ok 35.1s
+[S-Add rep 5 b2s_aft/bspline] ok 308.7s
+[S-Add rep 5 b2h_cox/bspline] ok 650.3s
+[S-Add rep 5 b2h_aft/bspline] ok 635.3s
+[S-Add rep 5 b1_fpca1_cox/bspline] ok 10.4s
+[S-Add rep 5 b1_fpca1_aft/bspline] ok 6.9s
+[S-Add rep 5 fpca_cox/bspline] ok 0.1s
+[S-Add rep 5 b1_sum_cox/raw] ok 11.2s
+[S-Add rep 5 b1_sum_aft/raw] ok 12.1s
+[S-Add rep 5 static_coxkan/raw] ok 5.0s
+[S-Add rep 5 sum_cox/raw] ok 0.1s
+[S-Add rep 5 sum_rsf/raw] ok 2.8s
+[S-Add rep 5 prune_symbolic/bspline] ok 1562.2s
+[lane 1] job S-Add/None/5/core done in 3832s
+[S-Add rep 10 b2s_cox/bspline] ok 148.2s
+[S-Add rep 10 afcm_v3/bspline] ok 63.4s
+[S-Add rep 10 afcm_v0/bspline] ok 35.9s
+[S-Add rep 10 b2s_aft/bspline] ok 288.0s
+[S-Add rep 10 b2h_cox/bspline] ok 185.3s
+[S-Add rep 10 b2h_aft/bspline] ok 622.4s
+[S-Add rep 10 b1_fpca1_cox/bspline] ok 8.7s
+[S-Add rep 10 b1_fpca1_aft/bspline] ok 9.9s
+[S-Add rep 10 fpca_cox/bspline] ok 0.1s
+[S-Add rep 10 b1_sum_cox/raw] ok 10.4s
+[S-Add rep 10 b1_sum_aft/raw] ok 8.1s
+[S-Add rep 10 static_coxkan/raw] ok 6.1s
+[S-Add rep 10 sum_cox/raw] ok 0.1s
+[S-Add rep 10 sum_rsf/raw] ok 2.7s
+[S-Add rep 10 prune_symbolic/bspline] failed 896.9s
+[lane 1] job S-Add/None/10/core done in 2286s
+[S-Add rep 13 b2s_cox/bspline] ok 302.9s
+[S-Add rep 13 afcm_v3/bspline] ok 61.8s
+[S-Add rep 13 afcm_v0/bspline] ok 34.0s
+[S-Add rep 13 b2s_aft/bspline] ok 144.6s
+[S-Add rep 13 b2h_cox/bspline] ok 642.1s
+[S-Add rep 13 b2h_aft/bspline] ok 763.1s
+[S-Add rep 13 b1_fpca1_cox/bspline] ok 10.0s
+[S-Add rep 13 b1_fpca1_aft/bspline] ok 7.6s
+[S-Add rep 13 fpca_cox/bspline] ok 0.1s
+[S-Add rep 13 b1_sum_cox/raw] ok 6.8s
+[S-Add rep 13 b1_sum_aft/raw] ok 9.0s
+[S-Add rep 13 static_coxkan/raw] ok 6.7s
+[S-Add rep 13 sum_cox/raw] ok 0.1s
+[S-Add rep 13 sum_rsf/raw] ok 2.6s
+[S-Add rep 13 prune_symbolic/bspline] ok 1130.2s
+[lane 1] job S-Add/None/13/core done in 3122s
+[S-Add rep 18 b2s_cox/bspline] ok 175.8s
+[S-Add rep 18 afcm_v3/bspline] ok 60.2s
+[S-Add rep 18 afcm_v0/bspline] ok 32.2s
+[S-Add rep 18 b2s_aft/bspline] ok 207.8s
+[S-Add rep 18 b2h_cox/bspline] ok 349.9s
+[S-Add rep 18 b2h_aft/bspline] ok 611.2s
+[S-Add rep 18 b1_fpca1_cox/bspline] ok 8.1s
+[S-Add rep 18 b1_fpca1_aft/bspline] ok 6.3s
+[S-Add rep 18 fpca_cox/bspline] ok 0.1s
+[S-Add rep 18 b1_sum_cox/raw] ok 8.4s
+[S-Add rep 18 b1_sum_aft/raw] ok 9.6s
+[S-Add rep 18 static_coxkan/raw] ok 14.9s
+[S-Add rep 18 sum_cox/raw] ok 0.1s
+[S-Add rep 18 sum_rsf/raw] ok 2.5s
+[S-Add rep 18 prune_symbolic/bspline] failed 1015.1s
+[lane 1] job S-Add/None/18/core done in 2502s
+[S-Misspec/lognormal rep 0 b2s_cox/bspline] ok 322.2s
+[S-Misspec/lognormal rep 0 b2s_aft/bspline] ok 258.0s
+[S-Misspec/lognormal rep 0 afcm_v3/bspline] ok 59.8s
+[lane 1] job S-Misspec/lognormal/0/core done in 643s
+[S-Misspec/lognormal rep 1 b2s_cox/bspline] ok 276.1s
+[S-Misspec/lognormal rep 1 b2s_aft/bspline] ok 189.2s
+[S-Misspec/lognormal rep 1 afcm_v3/bspline] ok 58.9s
+[lane 1] job S-Misspec/lognormal/1/core done in 524s
+[P0 mlp S3 rep 1] 175s
+[P0 kan S3 rep 1] 332s
+[lane 1] job S-Int/P0/None/1/core done in 507s
+[S-Int rep 2 b2s_cox/bspline] ok 117.0s
+[S-Int rep 2 afcm_v3/bspline] ok 59.1s
+[S-Int rep 2 b2s_aft/bspline] ok 209.4s
+[S-Int rep 2 b2h_cox/bspline] ok 162.0s
+[S-Int rep 2 b2h_aft/bspline] ok 260.6s
+[S-Int rep 2 b1_fpca1_cox/bspline] ok 9.5s
+[S-Int rep 2 b1_fpca1_aft/bspline] ok 9.9s
+[S-Int rep 2 fpca_cox/bspline] ok 0.1s
+[S-Int rep 2 b1_sum_cox/raw] ok 10.1s
+[S-Int rep 2 b1_sum_aft/raw] ok 11.8s
+[S-Int rep 2 static_coxkan/raw] ok 4.0s
+[S-Int rep 2 sum_cox/raw] ok 0.1s
+[S-Int rep 2 sum_rsf/raw] ok 2.4s
+[S-Int rep 2 b1_fpca2_cox/bspline] ok 9.2s
+[S-Int rep 2 b2deep_cox/bspline] ok 112.8s
+[lane 1] job S-Int/None/2/core done in 980s
+[P0 mlp S3 rep 2] 139s
+[P0 kan S3 rep 2] 381s
+[lane 1] job S-Int/P0/None/2/core done in 521s
+[S-Sparse rep 3 b2s_cox/bspline] ok 130.5s
+[S-Sparse rep 3 afcm_v3/bspline] ok 57.5s
+[S-Sparse rep 3 b2s_aft/bspline] ok 116.3s
+[S-Sparse rep 3 b2h_cox/bspline] ok 85.7s
+[S-Sparse rep 3 b2h_aft/bspline] ok 158.0s
+[S-Sparse rep 3 b1_fpca1_cox/bspline] ok 14.4s
+[S-Sparse rep 3 b1_fpca1_aft/bspline] ok 21.6s
+[S-Sparse rep 3 fpca_cox/bspline] ok 0.1s
+[S-Sparse rep 3 b2s_cox/pace] ok 137.4s
+[S-Sparse rep 3 afcm_v3/pace] ok 60.0s
+[S-Sparse rep 3 b2s_aft/pace] ok 126.8s
+[S-Sparse rep 3 b2h_cox/pace] ok 86.9s
+[S-Sparse rep 3 b2h_aft/pace] ok 184.1s
+[S-Sparse rep 3 b1_fpca1_cox/pace] ok 8.7s
+[S-Sparse rep 3 b1_fpca1_aft/pace] ok 13.8s
+[S-Sparse rep 3 fpca_cox/pace] ok 0.1s
+[S-Sparse rep 3 b1_sum_cox/raw] ok 10.4s
+[S-Sparse rep 3 b1_sum_aft/raw] ok 27.6s
+[S-Sparse rep 3 static_coxkan/raw] ok 14.8s
+[S-Sparse rep 3 sum_cox/raw] ok 0.1s
+[S-Sparse rep 3 sum_rsf/raw] ok 2.6s
+[S-Sparse rep 3 prune_symbolic/bspline] ok 752.2s
+[lane 1] job S-Sparse/None/3/core done in 2010s
+[S-Int rep 5 b2s_cox/bspline] ok 125.2s
+[S-Int rep 5 afcm_v3/bspline] ok 58.2s
+[S-Int rep 5 b2s_aft/bspline] ok 128.7s
+[S-Int rep 5 b2h_cox/bspline] ok 186.3s
+[S-Int rep 5 b2h_aft/bspline] ok 256.0s
+[S-Int rep 5 b1_fpca1_cox/bspline] ok 8.7s
+[S-Int rep 5 b1_fpca1_aft/bspline] ok 10.8s
+[S-Int rep 5 fpca_cox/bspline] ok 0.1s
+[S-Int rep 5 b1_sum_cox/raw] ok 10.9s
+[S-Int rep 5 b1_sum_aft/raw] ok 10.6s
+[S-Int rep 5 static_coxkan/raw] ok 4.4s
+[S-Int rep 5 sum_cox/raw] ok 0.1s
+[S-Int rep 5 sum_rsf/raw] ok 2.8s
+[S-Int rep 5 b1_fpca2_cox/bspline] ok 7.7s
+[S-Int rep 5 b2deep_cox/bspline] ok 116.8s
+[lane 1] job S-Int/None/5/core done in 927s
+[S-Int rep 6 b2s_cox/bspline] ok 91.0s
+[S-Int rep 6 afcm_v3/bspline] ok 58.9s
+[S-Int rep 6 b2s_aft/bspline] ok 81.0s
+[S-Int rep 6 b2h_cox/bspline] ok 80.5s
+[S-Int rep 6 b2h_aft/bspline] ok 104.4s
+[S-Int rep 6 b1_fpca1_cox/bspline] ok 8.3s
+[S-Int rep 6 b1_fpca1_aft/bspline] ok 6.6s
+[S-Int rep 6 fpca_cox/bspline] ok 0.1s
+[S-Int rep 6 b1_sum_cox/raw] ok 10.6s
+[S-Int rep 6 b1_sum_aft/raw] ok 12.4s
+[S-Int rep 6 static_coxkan/raw] ok 35.0s
+[S-Int rep 6 sum_cox/raw] ok 0.1s
+[S-Int rep 6 sum_rsf/raw] ok 2.9s
+[S-Int rep 6 b1_fpca2_cox/bspline] ok 9.0s
+[S-Int rep 6 b2deep_cox/bspline] ok 104.6s
+[lane 1] job S-Int/None/6/core done in 605s
+[S-Misspec/lognormal rep 6 b2s_cox/bspline] ok 159.7s
+[S-Misspec/lognormal rep 6 b2s_aft/bspline] ok 157.8s
+[S-Misspec/lognormal rep 6 afcm_v3/bspline] ok 58.8s
+[lane 1] job S-Misspec/lognormal/6/core done in 376s
+[P0 mlp S3 rep 6] 121s
+[P0 kan S3 rep 6] 297s
+[lane 1] job S-Int/P0/None/6/core done in 418s
+[S-Sparse rep 7 b2s_cox/bspline] ok 157.1s
+[S-Sparse rep 7 afcm_v3/bspline] ok 60.8s
+[S-Sparse rep 7 b2s_aft/bspline] ok 177.7s
+[S-Sparse rep 7 b2h_cox/bspline] ok 171.1s
+[S-Sparse rep 7 b2h_aft/bspline] ok 251.5s
+[S-Sparse rep 7 b1_fpca1_cox/bspline] ok 5.8s
+[S-Sparse rep 7 b1_fpca1_aft/bspline] ok 7.1s
+[S-Sparse rep 7 fpca_cox/bspline] ok 0.1s
+[S-Sparse rep 7 b2s_cox/pace] ok 168.0s
+[S-Sparse rep 7 afcm_v3/pace] ok 57.5s
+[S-Sparse rep 7 b2s_aft/pace] ok 335.0s
+[S-Sparse rep 7 b2h_cox/pace] ok 184.1s
+[S-Sparse rep 7 b2h_aft/pace] ok 450.8s
+[S-Sparse rep 7 b1_fpca1_cox/pace] ok 9.6s
+[S-Sparse rep 7 b1_fpca1_aft/pace] ok 8.4s
+[S-Sparse rep 7 fpca_cox/pace] ok 0.1s
+[S-Sparse rep 7 b1_sum_cox/raw] ok 12.4s
+[S-Sparse rep 7 b1_sum_aft/raw] ok 10.1s
+[S-Sparse rep 7 static_coxkan/raw] ok 11.4s
+[S-Sparse rep 7 sum_cox/raw] ok 0.1s
+[S-Sparse rep 7 sum_rsf/raw] ok 2.4s
+[S-Sparse rep 7 prune_symbolic/bspline] ok 731.7s
+[lane 1] job S-Sparse/None/7/core done in 2813s
+[P0 mlp S3 rep 9] 157s
+[P0 kan S3 rep 9] 344s
+[lane 1] job S-Int/P0/None/9/core done in 501s
+[S-Misspec/lognormal rep 10 b2s_cox/bspline] ok 114.3s
+[S-Misspec/lognormal rep 10 b2s_aft/bspline] ok 118.8s
+[S-Misspec/lognormal rep 10 afcm_v3/bspline] ok 60.8s
+[lane 1] job S-Misspec/lognormal/10/core done in 294s
+[P0 mlp S3 rep 10] 143s
+[P0 kan S3 rep 10] 360s
+[lane 1] job S-Int/P0/None/10/core done in 503s
+[S-Sparse rep 11 b2s_cox/bspline] ok 109.4s
+[S-Sparse rep 11 afcm_v3/bspline] ok 60.6s
+[S-Sparse rep 11 b2s_aft/bspline] ok 137.2s
+[S-Sparse rep 11 b2h_cox/bspline] ok 300.0s
+[S-Sparse rep 11 b2h_aft/bspline] ok 154.5s
+[S-Sparse rep 11 b1_fpca1_cox/bspline] ok 7.6s
+[S-Sparse rep 11 b1_fpca1_aft/bspline] ok 5.7s
+[S-Sparse rep 11 fpca_cox/bspline] ok 0.1s
+[S-Sparse rep 11 b2s_cox/pace] ok 180.5s
+[S-Sparse rep 11 afcm_v3/pace] ok 61.7s
+[S-Sparse rep 11 b2s_aft/pace] ok 178.8s
+[S-Sparse rep 11 b2h_cox/pace] ok 254.6s
+[S-Sparse rep 11 b2h_aft/pace] ok 236.4s
+[S-Sparse rep 11 b1_fpca1_cox/pace] ok 8.9s
+[S-Sparse rep 11 b1_fpca1_aft/pace] ok 16.0s
+[S-Sparse rep 11 fpca_cox/pace] ok 0.1s
+[S-Sparse rep 11 b1_sum_cox/raw] ok 7.2s
+[S-Sparse rep 11 b1_sum_aft/raw] ok 9.4s
+[S-Sparse rep 11 static_coxkan/raw] ok 11.7s
+[S-Sparse rep 11 sum_cox/raw] ok 0.1s
+[S-Sparse rep 11 sum_rsf/raw] ok 2.8s
+[S-Sparse rep 11 prune_symbolic/bspline] ok 657.5s
+[lane 1] job S-Sparse/None/11/core done in 2401s
+[S-Misspec/lognormal rep 13 b2s_cox/bspline] ok 101.7s
+[S-Misspec/lognormal rep 13 b2s_aft/bspline] ok 118.3s
+[S-Misspec/lognormal rep 13 afcm_v3/bspline] ok 59.1s
+[lane 1] job S-Misspec/lognormal/13/core done in 279s
+[S-Sparse rep 14 b2s_cox/bspline] ok 85.4s
+[S-Sparse rep 14 afcm_v3/bspline] ok 60.7s
+[S-Sparse rep 14 b2s_aft/bspline] ok 160.3s
+[S-Sparse rep 14 b2h_cox/bspline] ok 157.5s
+[S-Sparse rep 14 b2h_aft/bspline] ok 159.7s
+[S-Sparse rep 14 b1_fpca1_cox/bspline] ok 6.6s
+[S-Sparse rep 14 b1_fpca1_aft/bspline] ok 5.6s
+[S-Sparse rep 14 fpca_cox/bspline] ok 0.1s
+[S-Sparse rep 14 b2s_cox/pace] ok 148.4s
+[S-Sparse rep 14 afcm_v3/pace] ok 60.8s
+[S-Sparse rep 14 b2s_aft/pace] ok 101.4s
+[S-Sparse rep 14 b2h_cox/pace] ok 125.6s
+[S-Sparse rep 14 b2h_aft/pace] ok 158.4s
+[S-Sparse rep 14 b1_fpca1_cox/pace] ok 7.0s
+[S-Sparse rep 14 b1_fpca1_aft/pace] ok 9.4s
+[S-Sparse rep 14 fpca_cox/pace] ok 0.1s
+[S-Sparse rep 14 b1_sum_cox/raw] ok 8.4s
+[S-Sparse rep 14 b1_sum_aft/raw] ok 11.2s
+[S-Sparse rep 14 static_coxkan/raw] ok 15.3s
+[S-Sparse rep 14 sum_cox/raw] ok 0.1s
+[S-Sparse rep 14 sum_rsf/raw] ok 2.5s
+[S-Sparse rep 14 prune_symbolic/bspline] ok 575.6s
+[lane 1] job S-Sparse/None/14/core done in 1860s
+[S-Int rep 16 b2s_cox/bspline] ok 95.3s
+[S-Int rep 16 afcm_v3/bspline] ok 59.1s
+[S-Int rep 16 b2s_aft/bspline] ok 177.1s
+[S-Int rep 16 b2h_cox/bspline] ok 135.3s
+[S-Int rep 16 b2h_aft/bspline] ok 281.9s
+[S-Int rep 16 b1_fpca1_cox/bspline] ok 10.2s
+[S-Int rep 16 b1_fpca1_aft/bspline] ok 7.5s
+[S-Int rep 16 fpca_cox/bspline] ok 0.1s
+[S-Int rep 16 b1_sum_cox/raw] ok 15.3s
+[S-Int rep 16 b1_sum_aft/raw] ok 14.7s
+[S-Int rep 16 static_coxkan/raw] ok 7.0s
+[S-Int rep 16 sum_cox/raw] ok 0.1s
+[S-Int rep 16 sum_rsf/raw] ok 2.6s
+[S-Int rep 16 b1_fpca2_cox/bspline] ok 8.3s
+[S-Int rep 16 b2deep_cox/bspline] ok 100.6s
+[lane 1] job S-Int/None/16/core done in 915s
+[S-Int rep 17 b2s_cox/bspline] ok 105.8s
+[S-Int rep 17 afcm_v3/bspline] ok 59.6s
+[S-Int rep 17 b2s_aft/bspline] ok 118.4s
+[S-Int rep 17 b2h_cox/bspline] ok 160.7s
+[S-Int rep 17 b2h_aft/bspline] ok 148.1s
+[S-Int rep 17 b1_fpca1_cox/bspline] ok 13.3s
+[S-Int rep 17 b1_fpca1_aft/bspline] ok 7.9s
+[S-Int rep 17 fpca_cox/bspline] ok 0.1s
+[S-Int rep 17 b1_sum_cox/raw] ok 11.4s
+[S-Int rep 17 b1_sum_aft/raw] ok 8.8s
+[S-Int rep 17 static_coxkan/raw] ok 7.0s
+[S-Int rep 17 sum_cox/raw] ok 0.1s
+[S-Int rep 17 sum_rsf/raw] ok 2.7s
+[S-Int rep 17 b1_fpca2_cox/bspline] ok 8.7s
+[S-Int rep 17 b2deep_cox/bspline] ok 92.9s
+[lane 1] job S-Int/None/17/core done in 746s
+[P0 mlp S3 rep 17] 126s
+[P0 kan S3 rep 17] 321s
+[lane 1] job S-Int/P0/None/17/core done in 447s
+[S-Misspec/lognormal rep 18 b2s_cox/bspline] ok 212.5s
+[S-Misspec/lognormal rep 18 b2s_aft/bspline] ok 138.5s
+[S-Misspec/lognormal rep 18 afcm_v3/bspline] ok 57.5s
+[lane 1] job S-Misspec/lognormal/18/core done in 409s
+[P0 mlp S3 rep 18] 103s
+[P0 kan S3 rep 18] 348s
+[lane 1] job S-Int/P0/None/18/core done in 451s
+[S-Misspec/lognormal rep 19 b2s_cox/bspline] ok 85.3s
+[S-Misspec/lognormal rep 19 b2s_aft/bspline] ok 95.3s
+[S-Misspec/lognormal rep 19 afcm_v3/bspline] ok 53.9s
+[lane 1] job S-Misspec/lognormal/19/core done in 235s
+[P0 mlp S3 rep 19] 132s

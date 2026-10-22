@@ -1,0 +1,13 @@
+Complexity,Loss,Equation
+1,0.2660937,"-0.93419945"
+3,0.17406009,"-0.383758 - x0"
+4,0.09936716,"-0.6329723 - cube(x0)"
+5,0.06670103,"0.4856493 - exp(cube(x0))"
+6,0.055263188,"0.40741444 - exp(square(square(x0)))"
+7,0.031310216,"cube(x0 - exp(sin(square(x0))))"
+10,0.027670322,"((x0 * -13.07303) + -1.2391876) + (tanh(x0) * 15.909377)"
+11,0.007329665,"cube(cube(sin(exp(square(x0))))) - exp(square(sin(x0)))"
+12,0.007243069,"cube(square(square(sin(exp(square(x0)))))) - exp(tanh(cube(x0)))"
+13,0.0065280306,"cube(cube(sin(exp(square(x0))))) - exp(tanh(square(x0 - 0.021577904)))"
+14,0.0055682394,"(cube(square(square(sin(exp(square(x0)))))) + 0.110862345) - exp(tanh(square(x0)))"
+15,0.005123553,"square(sin(square(square(sin(square(exp(tanh(cube(x0))))))))) - exp(cube(square(x0)))"

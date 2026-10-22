@@ -1,0 +1,12 @@
+Complexity,Loss,Equation
+1,0.28089365,"1.2568045"
+3,0.20918174,"1.8072293 - x0"
+4,0.15506478,"1.5580311 - cube(x0)"
+5,0.13171738,"1.4396744 - square(cube(x0))"
+6,0.11801153,"cube(cos(cube(x0)) - -0.14507023)"
+7,0.105143294,"cube(cos(square(square(x0)))) * 1.5115533"
+8,0.09526343,"cube(square(cos(square(cube(x0))))) * 1.5115533"
+10,0.09442261,"cube(cube(square(cube(cos(cube(cube(x0))))))) - -0.5072575"
+11,0.09416216,"square(square(square(square(cube(cos(cube(cube(x0)))))))) - -0.5003019"
+12,0.089715846,"square(-0.11123408 - cube(square(cube(cos(cube(cube(x0))))))) - -0.2888128"
+14,0.089702554,"square(cube(square(cube(cos(cube(cube(x0))))) - 0.011348402) - -0.15171517) - -0.27274102"
