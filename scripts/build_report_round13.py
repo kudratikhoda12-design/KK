@@ -147,7 +147,7 @@ TABLES = {"single_pbc_E2": lambda: single_table("pbc_E2"), "single_pbc_E1": lamb
 
 
 def values():
-    out = {"git_head": R2.values()["git_head"]}
+    out = {"git_head": R2.values()["git_head"], "n_records": str(S()["n_records"])}
     g = R1.TA[R1.TA.run_id == FINAL]
     g = g if len(g) else R1.TL
     out["n_tests"] = str(len(g))
