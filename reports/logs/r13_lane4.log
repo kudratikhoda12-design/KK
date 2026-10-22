@@ -63,3 +63,115 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
 [single prothro split 3 lme2_cox] ok 4.5s
 [single prothro split 3 landmark_cox] ok 0.2s
 [single prothro split 3 b2s_cox_pace] ok 268.5s
+[single prothro split 3 prune_symbolic] ok 312.1s
+[lane 4] job ('single', 'prothro', 3, None) done in 1305s
+[single aids split 4 b2s_cox] ok 27.1s
+[single aids split 4 afcm_v3] ok 52.3s
+[single aids split 4 b2s_aft] ok 41.7s
+[single aids split 4 b2h_cox] ok 26.0s
+[single aids split 4 b2h_aft] ok 147.5s
+[single aids split 4 b1_fpca1_cox] ok 11.0s
+[single aids split 4 b1_fpca1_aft] ok 9.5s
+[single aids split 4 b1_sum_cox] ok 5.6s
+[single aids split 4 b1_sum_aft] ok 7.2s
+[single aids split 4 static_coxkan] ok 21.4s
+[single aids split 4 fpca_cox] ok 0.2s
+[single aids split 4 sum_cox] ok 0.3s
+[single aids split 4 sum_rsf] ok 0.4s
+[single aids split 4 lme2_cox] ok 3.8s
+[single aids split 4 landmark_cox] ok 0.2s
+[single aids split 4 b2s_cox_pace] ok 29.6s
+[single aids split 4 prune_symbolic] ok 170.2s
+[lane 4] job ('single', 'aids', 4, None) done in 554s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f2', 'f6', 'f10', 'f14', 'f22'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[b3 pbc_E2 split 0 b3_coxkan] ok 17.7s
+[b3 pbc_E2 split 0 b3_cox] ok 0.3s
+[lane 4] job ('b3', 'pbc_E2', 0, None) done in 18s
+[b3 prothro split 0 b3_coxkan] ok 27.5s
+[b3 prothro split 0 b3_cox] ok 0.1s
+[lane 4] job ('b3', 'prothro', 0, None) done in 28s
+[b3 prothro split 1 b3_coxkan] ok 72.5s
+[b3 prothro split 1 b3_cox] ok 0.1s
+[lane 4] job ('b3', 'prothro', 1, None) done in 73s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f2', 'f6', 'f10', 'f14', 'f22'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[b3 pbc_E2 split 3 b3_coxkan] ok 21.0s
+[b3 pbc_E2 split 3 b3_cox] ok 0.6s
+[lane 4] job ('b3', 'pbc_E2', 3, None) done in 22s
+[b3 prothro split 3 b3_coxkan] ok 18.0s
+[b3 prothro split 3 b3_cox] ok 0.1s
+[lane 4] job ('b3', 'prothro', 3, None) done in 18s
+[b3 aids split 3 b3_coxkan] ok 41.0s
+[b3 aids split 3 b3_cox] ok 0.2s
+[lane 4] job ('b3', 'aids', 3, None) done in 42s
+[b3 aids split 4 b3_coxkan] ok 21.0s
+[b3 aids split 4 b3_cox] ok 0.1s
+[lane 4] job ('b3', 'aids', 4, None) done in 22s
+[cmapss cmapss_FD001 split 1 b2s_aft_rc] ok 0.0s
+[cmapss cmapss_FD001 split 1 b2s_aft] ok 7785.4s
+[cmapss cmapss_FD001 split 1 sum_aft] ok 19.2s
+[cmapss cmapss_FD001 split 1 fpca_aft] ok 18.3s
+[lane 4] job ('cmapss', 'cmapss_FD001', 1, None) done in 7825s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b2s_cox split 2] ok 187.3s
+[lane 4] job ('stab', 'pbc_E2', 2, 'b2s_cox') done in 187s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b2s_cox split 4] ok 158.1s
+[lane 4] job ('stab', 'pbc_E2', 4, 'b2s_cox') done in 158s
+[stab prothro b2s_cox split 0] ok 37.7s
+[lane 4] job ('stab', 'prothro', 0, 'b2s_cox') done in 38s
+[stab prothro b2s_cox split 1] ok 112.1s
+[lane 4] job ('stab', 'prothro', 1, 'b2s_cox') done in 112s
+[stab prothro b2s_cox split 4] ok 34.0s
+[lane 4] job ('stab', 'prothro', 4, 'b2s_cox') done in 34s
+[stab aids b2s_cox split 1] ok 54.2s
+[lane 4] job ('stab', 'aids', 1, 'b2s_cox') done in 54s
+[stab aids b2s_cox split 2] ok 90.9s
+[lane 4] job ('stab', 'aids', 2, 'b2s_cox') done in 91s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b1_fpca1_cox split 0] ok 12.8s
+[lane 4] job ('stab', 'pbc_E2', 0, 'b1_fpca1_cox') done in 13s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b1_fpca1_cox split 1] ok 11.3s
+[lane 4] job ('stab', 'pbc_E2', 1, 'b1_fpca1_cox') done in 11s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b1_fpca1_cox split 2] ok 18.8s
+[lane 4] job ('stab', 'pbc_E2', 2, 'b1_fpca1_cox') done in 19s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b1_fpca1_cox split 4] ok 19.5s
+[lane 4] job ('stab', 'pbc_E2', 4, 'b1_fpca1_cox') done in 19s
+[stab prothro b1_fpca1_cox split 1] ok 28.1s
+[lane 4] job ('stab', 'prothro', 1, 'b1_fpca1_cox') done in 28s
+[stab prothro b1_fpca1_cox split 4] ok 42.6s
+[lane 4] job ('stab', 'prothro', 4, 'b1_fpca1_cox') done in 43s
+[stab aids b1_fpca1_cox split 4] ok 33.6s
+[lane 4] job ('stab', 'aids', 4, 'b1_fpca1_cox') done in 34s

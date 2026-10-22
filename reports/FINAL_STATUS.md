@@ -1,4 +1,20 @@
-# Final status: KAN-FAE research prototype, Round 12 (2026-10-22)
+# Final status: KAN-FAE research prototype, Round 13 (2026-10-22)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` (revision 15: Part A = Round 13; Part B = Round 12; Parts C–D =
+L39/L38; Parts E–O = rounds 11–1). Revision 14 is kept as `reports/final_research_prototype_report_rev14.pdf`.
+Status: **research prototype; not publication-ready; no novelty claim.**
+
+| Item | Result |
+|---|---|
+| D128 (approved by the owner) | L41 closed: H-R12 stays inconclusive; Round 13 exploratory; symbolic primary = substitution without refit |
+| Round 13 (D129, D130) | PBC (E2/E1), prothro, aids × 5 splits; B3; C-MAPSS; 100-fit stability. No predictive gain of functional/KAN models over simple baselines; stable, clinically aligned leading effects (except the prothro index under B2-S); symbolic substitution without refit preserves the model; C-MAPSS miscalibrated for every model |
+| Tests | `final_full_suite_round13`: see R13.10 |
+| Next | Round 14 (paper draft, L37) on the owner's go-ahead |
+
+---
+
+# Round 12 status (2026-10-22), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (revision 14: Part A = Round 12; Parts B–C = L39/L38; Parts D–N =

@@ -219,3 +219,7 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 - Analysis: H-R12 inconclusive (+0.0065, CI [−0.051, +0.064]); P0 equivalent. D127. L41 opened.
 - `final_full_suite_round12c` killed by a container restart; rerun as `final_full_suite_round12c_rerun`: 248 passed, 2 failed
   (CK-6c, 4f R1), 2 skipped, 16 xfailed (268); CK records reproduced. Report revision 14 (236 pages), ALL_CHECKS_PASS.
+- Round 13 (owner D128 approved; plan D129). JM 1.5-2 acquired; Round-13 data layer, NaN-aware helpers, harness;
+  dry runs on synthetic data only; plan committed (9380ef7) before any real-data fit. 70 jobs on 4 workers; one failed
+  cell (PACE sensitivity, PBC E2 split 1). Analysis D130: no predictive gain; interpretability measures informative.
+

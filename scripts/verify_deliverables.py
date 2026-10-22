@@ -18,7 +18,7 @@ REP = ROOT / "reports"
 res = {}
 
 
-FINAL_RUN = "final_full_suite_round12c_rerun"
+FINAL_RUN = "final_full_suite_round13"
 
 
 def norm(s):
@@ -37,6 +37,7 @@ T = norm(text) + " || " + norm(raw)          # layout and raw extraction (raw ke
 res["pdf_no_placeholders"] = "{{" not in text
 # round 3 (2026-10-17): Part A sections 0.1-0.3 and R3.1-R3.11; round 2 renumbered R2.1-R2.15; round 1 R1.1-R1.17
 res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 4)) and all(
+    re.search(rf"\bR13\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR12c\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR12b\.{k}\s", T) for k in range(1, 8)) and all(
     re.search(rf"\bR12\.{k}\s", T) for k in range(1, 10)) and all(
@@ -82,7 +83,8 @@ for tpl, vf in (("report_template_round2.md", "report_values_round2.json"),
                 ("report_template_round11.md", "report_values_round11.json"),
                 ("report_template_round12.md", "report_values_round12.json"),
                 ("report_template_round12b.md", "report_values_round12b.json"),
-                ("report_template_round12c.md", "report_values_round12c.json")):
+                ("report_template_round12c.md", "report_values_round12c.json"),
+                ("report_template_round13.md", "report_values_round13.json")):
     vals2 = json.loads((REP / vf).read_text())
     used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / tpl).read_text()))
     res[f"{tpl}_values_used"] = len(used2)

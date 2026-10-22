@@ -93,3 +93,79 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
 [single pbc_E1 split 3 afcm_v3] ok 125.2s
 [single pbc_E1 split 3 b2s_aft] ok 56.4s
 [single pbc_E1 split 3 b2h_cox] ok 54.1s
+[single pbc_E1 split 3 b2h_aft] ok 74.7s
+[single pbc_E1 split 3 b1_fpca1_cox] ok 5.8s
+[single pbc_E1 split 3 b1_fpca1_aft] ok 5.1s
+[single pbc_E1 split 3 b1_sum_cox] ok 6.9s
+[single pbc_E1 split 3 b1_sum_aft] ok 5.7s
+[single pbc_E1 split 3 static_coxkan] ok 6.6s
+[single pbc_E1 split 3 fpca_cox] ok 0.2s
+[single pbc_E1 split 3 sum_cox] ok 0.2s
+[single pbc_E1 split 3 sum_rsf] ok 0.5s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1614: ConvergenceWarning: Newton-Raphson failed to converge sufficiently. Please see the following tips in the lifelines documentation: https://lifelines.readthedocs.io/en/latest/Examples.html#problems-with-convergence-in-the-cox-proportional-hazard-model
+  warnings.warn(
+[single pbc_E1 split 3 lme2_cox] ok 10.5s
+[single pbc_E1 split 3 landmark_cox] ok 0.2s
+[single pbc_E1 split 3 b2s_cox_pace] ok 56.5s
+[single pbc_E1 split 3 prune_symbolic] ok 497.6s
+[lane 2] job ('single', 'pbc_E1', 3, None) done in 975s
+[b3 aids split 0 b3_coxkan] ok 14.9s
+[b3 aids split 0 b3_cox] ok 0.1s
+[lane 2] job ('b3', 'aids', 0, None) done in 15s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f2', 'f6', 'f10', 'f14', 'f22'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[b3 pbc_E2 split 1 b3_coxkan] ok 16.3s
+[b3 pbc_E2 split 1 b3_cox] ok 0.2s
+[lane 2] job ('b3', 'pbc_E2', 1, None) done in 17s
+[b3 aids split 1 b3_coxkan] ok 18.4s
+[b3 aids split 1 b3_cox] ok 0.2s
+[lane 2] job ('b3', 'aids', 1, None) done in 19s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f2', 'f6', 'f10', 'f14', 'f22'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[b3 pbc_E2 split 2 b3_coxkan] ok 15.1s
+[b3 pbc_E2 split 2 b3_cox] ok 0.2s
+[lane 2] job ('b3', 'pbc_E2', 2, None) done in 16s
+[b3 prothro split 2 b3_coxkan] ok 13.1s
+[b3 prothro split 2 b3_cox] ok 0.2s
+[lane 2] job ('b3', 'prothro', 2, None) done in 14s
+[b3 aids split 2 b3_coxkan] ok 53.4s
+[b3 aids split 2 b3_cox] ok 0.1s
+[lane 2] job ('b3', 'aids', 2, None) done in 54s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f2', 'f6', 'f10', 'f14', 'f22'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[b3 pbc_E2 split 4 b3_coxkan] ok 23.8s
+[b3 pbc_E2 split 4 b3_cox] ok 0.2s
+[lane 2] job ('b3', 'pbc_E2', 4, None) done in 24s
+[b3 prothro split 4 b3_coxkan] ok 28.6s
+[b3 prothro split 4 b3_cox] ok 0.2s
+[lane 2] job ('b3', 'prothro', 4, None) done in 29s
+[cmapss cmapss_FD001 split 0 b2s_aft_rc] ok 0.0s
+[cmapss cmapss_FD001 split 0 b2s_aft] ok 8498.1s
+[cmapss cmapss_FD001 split 0 sum_aft] ok 18.6s
+[cmapss cmapss_FD001 split 0 fpca_aft] ok 18.1s
+[lane 2] job ('cmapss', 'cmapss_FD001', 0, None) done in 8537s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b1_fpca1_cox split 3] ok 13.2s
+[lane 2] job ('stab', 'pbc_E2', 3, 'b1_fpca1_cox') done in 13s
+[stab prothro b1_fpca1_cox split 0] ok 62.5s
+[lane 2] job ('stab', 'prothro', 0, 'b1_fpca1_cox') done in 63s
+[stab aids b1_fpca1_cox split 1] ok 25.4s
+[lane 2] job ('stab', 'aids', 1, 'b1_fpca1_cox') done in 25s

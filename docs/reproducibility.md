@@ -156,6 +156,12 @@ scripts/run_logged.sh round12_analysis .venv/bin/python scripts/analyse_round12.
 KANFAE_RUN_ID=final_full_suite_round12c scripts/run_logged.sh final_full_suite_round12c .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round12c.py         # report revision 14
+# Round 13 (2026-10-22; owner D128, plan D129): real data (JM 1.5-2 from CRAN: data/raw/jm/, sha256 in D128)
+for k in 1 2 3 4; do scripts/run_logged.sh r13_lane$k .venv/bin/python scripts/run_round13_lanes.py --lane $k & done
+scripts/run_logged.sh round13_analysis .venv/bin/python scripts/analyse_round13.py     # -> reports/round13_summary.json, figures
+KANFAE_RUN_ID=final_full_suite_round13 scripts/run_logged.sh final_full_suite_round13 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round13.py          # report revision 15
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py

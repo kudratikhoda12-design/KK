@@ -84,3 +84,63 @@ Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pyto
 /home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
   warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
 [single pbc_E2 split 4 b2s_cox] ok 109.7s
+[single pbc_E2 split 4 afcm_v3] ok 111.6s
+[single pbc_E2 split 4 b2s_aft] ok 100.2s
+[single pbc_E2 split 4 b2h_cox] ok 135.0s
+[single pbc_E2 split 4 b2h_aft] ok 180.1s
+[single pbc_E2 split 4 b1_fpca1_cox] ok 14.8s
+[single pbc_E2 split 4 b1_fpca1_aft] ok 7.6s
+[single pbc_E2 split 4 b1_sum_cox] ok 8.8s
+[single pbc_E2 split 4 b1_sum_aft] ok 6.1s
+[single pbc_E2 split 4 static_coxkan] ok 21.6s
+[single pbc_E2 split 4 fpca_cox] ok 0.2s
+[single pbc_E2 split 4 sum_cox] ok 0.2s
+[single pbc_E2 split 4 sum_rsf] ok 0.5s
+[single pbc_E2 split 4 lme2_cox] ok 9.4s
+[single pbc_E2 split 4 landmark_cox] ok 0.1s
+[single pbc_E2 split 4 b2s_cox_pace] ok 74.2s
+[single pbc_E2 split 4 prune_symbolic] ok 533.7s
+[lane 3] job ('single', 'pbc_E2', 4, None) done in 1314s
+[cmapss cmapss_FD001 split 2 b2s_aft_rc] ok 0.0s
+[cmapss cmapss_FD001 split 2 b2s_aft] ok 7234.4s
+[cmapss cmapss_FD001 split 2 sum_aft] ok 19.7s
+[cmapss cmapss_FD001 split 2 fpca_aft] ok 18.4s
+[lane 3] job ('cmapss', 'cmapss_FD001', 2, None) done in 7274s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b2s_cox split 0] ok 228.0s
+[lane 3] job ('stab', 'pbc_E2', 0, 'b2s_cox') done in 228s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b2s_cox split 1] ok 184.4s
+[lane 3] job ('stab', 'pbc_E2', 1, 'b2s_cox') done in 184s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[stab pbc_E2 b2s_cox split 3] ok 246.6s
+[lane 3] job ('stab', 'pbc_E2', 3, 'b2s_cox') done in 247s
+[stab prothro b2s_cox split 2] ok 45.9s
+[lane 3] job ('stab', 'prothro', 2, 'b2s_cox') done in 46s
+[stab prothro b2s_cox split 3] ok 57.7s
+[lane 3] job ('stab', 'prothro', 3, 'b2s_cox') done in 58s
+[stab aids b2s_cox split 0] ok 111.8s
+[lane 3] job ('stab', 'aids', 0, 'b2s_cox') done in 112s
+[stab aids b2s_cox split 3] ok 44.0s
+[lane 3] job ('stab', 'aids', 3, 'b2s_cox') done in 44s
+[stab aids b2s_cox split 4] ok 77.2s
+[lane 3] job ('stab', 'aids', 4, 'b2s_cox') done in 77s
+[stab prothro b1_fpca1_cox split 2] ok 14.5s
+[lane 3] job ('stab', 'prothro', 2, 'b1_fpca1_cox') done in 15s
+[stab prothro b1_fpca1_cox split 3] ok 22.0s
+[lane 3] job ('stab', 'prothro', 3, 'b1_fpca1_cox') done in 22s
+[stab aids b1_fpca1_cox split 0] ok 12.9s
+[lane 3] job ('stab', 'aids', 0, 'b1_fpca1_cox') done in 13s
+[stab aids b1_fpca1_cox split 2] ok 11.0s
+[lane 3] job ('stab', 'aids', 2, 'b1_fpca1_cox') done in 11s
+[stab aids b1_fpca1_cox split 3] ok 17.9s
+[lane 3] job ('stab', 'aids', 3, 'b1_fpca1_cox') done in 18s
