@@ -445,8 +445,9 @@ About two thirds of the active edges received an accepted formula. Substitution 
 in both scenarios; the refit of all parameters by unconstrained L-BFGS multiplied it several-fold, and
 2 (S-Add) and
 1 (S-Sparse) refits became non-finite.
-The refit has no constraint keeping each substituted formula near the edge it approximated, and the formulas' affine
-parameters can move their arguments outside the domain of functions such as the logarithm.
+A plausible explanation (not tested separately) is that the refit has no constraint keeping each substituted formula
+near the edge it approximated, so the formulas' affine parameters can move their arguments outside the domain of
+functions such as the logarithm.
 
 ### 3.7 Continuity with the KAN-FAE studies (framing b)
 

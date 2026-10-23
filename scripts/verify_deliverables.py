@@ -18,7 +18,7 @@ REP = ROOT / "reports"
 res = {}
 
 
-FINAL_RUN = "final_full_suite_round13"
+FINAL_RUN = "final_full_suite_round14"
 
 
 def norm(s):
@@ -36,7 +36,12 @@ raw = subprocess.run(["pdftotext", "-raw", str(pdf), "-"], capture_output=True, 
 T = norm(text) + " || " + norm(raw)          # layout and raw extraction (raw keeps wrapped table cells contiguous)
 res["pdf_no_placeholders"] = "{{" not in text
 # round 3 (2026-10-17): Part A sections 0.1-0.3 and R3.1-R3.11; round 2 renumbered R2.1-R2.15; round 1 R1.1-R1.17
-res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 4)) and all(
+MS_SECTIONS = ["Abstract", "Keywords", "1. Introduction", "2. Models and estimation", "3. Simulation study",
+               "4. Real-data applications", "5. Discussion", "6. Conclusions", "Declarations",
+               "Appendix A. Number provenance and verification"]
+res["pdf_has_manuscript_sections"] = all(s in T for s in MS_SECTIONS)
+res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 3)) and all(
+    re.search(rf"\bR14\.{k}\s", T) for k in range(1, 6)) and all(
     re.search(rf"\bR13\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR12c\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR12b\.{k}\s", T) for k in range(1, 8)) and all(
@@ -84,7 +89,8 @@ for tpl, vf in (("report_template_round2.md", "report_values_round2.json"),
                 ("report_template_round12.md", "report_values_round12.json"),
                 ("report_template_round12b.md", "report_values_round12b.json"),
                 ("report_template_round12c.md", "report_values_round12c.json"),
-                ("report_template_round13.md", "report_values_round13.json")):
+                ("report_template_round13.md", "report_values_round13.json"),
+                ("report_template_round14.md", "report_values_round14.json")):
     vals2 = json.loads((REP / vf).read_text())
     used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / tpl).read_text()))
     res[f"{tpl}_values_used"] = len(used2)
@@ -119,6 +125,29 @@ res["final_suite_only_failure_is_R2"] = set(res["final_suite_failures"]) <= {
                                                                                          # original R1 (not gating, D103)
                                                                                          # (the 4d gate file skips: D89)
 
+# Round 14 (D131): the manuscript's own verification (ledger, re-render, number audit, citations, sections, its PDF),
+# its page renders, every logged manuscript value present in the report PDF, and the revision-16 copy of the report
+import hashlib  # noqa: E402
+import sys  # noqa: E402
+sys.path.insert(0, str(ROOT / "scripts"))
+import verify_manuscript_round14 as VM  # noqa: E402
+vm = dict(ledger=VM.check_ledger(), rerender=VM.check_rerender(), numbers=VM.check_numbers(),
+          citations=VM.check_citations(), sections=VM.check_sections(), pdf=VM.check_pdf())
+vm["pdf"]["passed"] = vm["pdf"]["passed"] and vm["pdf"].get("images", 0) >= len(VM.FIGURES)
+res["manuscript_checks"] = {k: v["passed"] for k, v in vm.items()}
+res["manuscript_pdf_pages"] = vm["pdf"].get("pages")
+ms_pages = sorted((REP / "logs/manuscript_pages").glob("page-*.png"))
+res["manuscript_page_renders"] = len(ms_pages)
+res["manuscript_blank_pages"] = [p.name for p in ms_pages if (np.asarray(Image.open(p).convert("L")) < 200).mean() < 0.002]
+led = json.loads((REP / "manuscript_values_round14.json").read_text())
+texts = {e["text"] for e in led["values"] if re.search(r"\d", e["text"]) and e["spec"] != "s"}
+res["manuscript_values_checked_in_report_pdf"] = len(texts)
+res["manuscript_values_missing_in_report_pdf"] = sorted(x for x in texts if norm(x) not in T)[:50]
+rev16 = REP / "final_research_prototype_report_rev16.pdf"
+res["rev16_copy_identical"] = rev16.exists() and hashlib.sha256(rev16.read_bytes()).hexdigest() == \
+    hashlib.sha256(pdf.read_bytes()).hexdigest()
+res["report_blank_pages_by_text"] = VM.check_pdf(pdf, REP / "final_research_prototype_report.md", [], 0)["blank_pages"]
+
 cmds = [json.loads(l) for l in (REP / "logs/commands.jsonl").read_text().splitlines() if l.strip()]
 res["commands_logged"] = len(cmds)
 res["commands_missing_log_file"] = [c["name"] for c in cmds if not (ROOT / c["log"]).exists()]
@@ -130,7 +159,11 @@ res["experiment_records"] = jl
 ok = (res["pdf_exists"] and res["pdf_opens"] and res["pdf_text_chars"] > 20000 and res["pdf_no_placeholders"]
       and res["pdf_has_all_17_sections"] and res["pdf_has_part1_sections"] and not res["round2_values_missing_in_pdf"]
       and res["final_suite_only_failure_is_R2"] and not blank and not missing and not res["report_values_missing_in_pdf"]
-      and all(chk) and not not_run and not res["commands_missing_log_file"] and res["experiment_csv_rows_equal_jsonl"])
+      and all(chk) and not not_run and not res["commands_missing_log_file"] and res["experiment_csv_rows_equal_jsonl"]
+      and res["pdf_has_manuscript_sections"] and all(res["manuscript_checks"].values())
+      and len(ms_pages) == res["manuscript_pdf_pages"] and not res["manuscript_blank_pages"]
+      and not res["manuscript_values_missing_in_report_pdf"] and res["rev16_copy_identical"]
+      and not res["report_blank_pages_by_text"])
 res["ALL_CHECKS_PASS"] = bool(ok)
 (REP / "logs/deliverable_verification.json").write_text(json.dumps(res, indent=1))
 print(json.dumps(res, indent=1))

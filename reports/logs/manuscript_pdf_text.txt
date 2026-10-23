@@ -619,58 +619,59 @@ normal curve error below B2-S Cox (−0.0049, 19 of 20 replicates), but not the 
 
 Table 8. Selection and symbolic extraction (B2-S Cox, seed-0 member, 20 replicates; RISE =
 identifiable RISE).
-Scenario       Recall       FDR            Symbolic        Mean          RISE after       RISE after      RISE after     Non-finite
-                                           acceptance      validation    pruning          substitution,   refit          refits
-                                                           R²                             no refit        (finite
-                                                           (accepted)                                     refits)
+Scenario       Recall       FDR            Symbolic     Mean         RISE after   RISE after      RISE after     Non-finite
+                                           acceptance   validation   pruning      substitution,   refit          refits
+                                                        R²                        no refit        (finite
+                                                        (accepted)                                refits)
 
-S-Add          0.95         0.133          0.644           0.9969        0.214            0.212           1.604 (18      2
-                                                                                                          of 20)
+S-Add          0.95         0.133          0.644        0.9969       0.214        0.212           1.604 (18      2
+                                                                                                  of 20)
 
-S-Sparse       0.80         0.075          0.667           0.9972        0.488            0.488           2.681 (19      1
-                                                                                                          of 20)
+S-Sparse       0.80         0.075          0.667        0.9972       0.488        0.488           2.681 (19      1
+                                                                                                  of 20)
 
 
 Pruning kept the active channels (recall 0.95 on S-Add) but did not reliably remove the null channel
 (FDR 0.13). About two thirds of the active edges received an accepted formula. Substitution left the
 RISE essentially unchanged in both scenarios; the refit of all parameters by unconstrained L-BFGS
-multiplied it several-fold, and 2 (S-Add) and 1 (S-Sparse) refits became non-finite. The refit has no
-constraint keeping each substituted formula near the edge it approximated, and the formulas’ affine
-parameters can move their arguments outside the domain of functions such as the logarithm.
+multiplied it several-fold, and 2 (S-Add) and 1 (S-Sparse) refits became non-finite. A plausible
+explanation (not tested separately) is that the refit has no constraint keeping each substituted
+formula near the edge it approximated, so the formulas’ affine parameters can move their arguments
+outside the domain of functions such as the logarithm.
 
 3.7 Continuity with the KAN-FAE studies (framing b)
 
 Table 9. KAN-FAE versus MLP-FAE (P0 setting; “KAN worse / better” counts replicates).
 
-Analysis         Contrast         Metric           Replicates        Mean            95% CI          Paired-t p        KAN worse
-                                                                     difference                                        / better
+Analysis         Contrast         Metric           Replicates    Mean         95% CI         Paired-t p        KAN worse
+                                                                 difference                                    / better
 
-H1               fae_kan −        curve error      5                 +0.0078         [+0.0002,       0.047             5/0
-(confirmatory,   fae_mlp, S2,                                                        +0.0155]
+H1               fae_kan −        curve error      5             +0.0078      [+0.0002,      0.047             5/0
+(confirmatory,   fae_mlp, S2,                                                 +0.0155]
 Round 8)         P0
 
-H1 secondary     fae_kan −        IBS              5                 +0.0070         [+0.0014,       0.025             4/1
-metric           fae_mlp, S2,                                                        +0.0126]
+H1 secondary     fae_kan −        IBS              5             +0.0070      [+0.0014,      0.025             4/1
+metric           fae_mlp, S2,                                                 +0.0126]
                  P0
 
-F1 (Round 9)     kan_S3 −         curve error      5                 −0.00005        [−0.00295,      0.96              2/3
-                 mlp_S3                                                              +0.00284]
+F1 (Round 9)     kan_S3 −         curve error      5             −0.00005     [−0.00295,     0.96              2/3
+                 mlp_S3                                                       +0.00284]
                  (tuned S3)
 
-F1 (Round 9)     kan_S3 −         IBS              5                 −0.0023         [−0.0069,       0.24              1/4
-                 mlp_S3                                                              +0.0023]
+F1 (Round 9)     kan_S3 −         IBS              5             −0.0023      [−0.0069,      0.24              1/4
+                 mlp_S3                                                       +0.0023]
                  (tuned S3)
 
-F1 (Round 9)     kan_S3 −         test             5                 +0.4294         [+0.1363,       0.015             5/0
-                 mlp_S3           reconstruction                                     +0.7226]
+F1 (Round 9)     kan_S3 −         test             5             +0.4294      [+0.1363,      0.015             5/0
+                 mlp_S3           reconstruction                              +0.7226]
                  (tuned S3)
 
-S-Int/P0         fae_kan_s3 −     curve error      20                −0.0005         [−0.0038,       0.77              11 / 9
-continuity       fae_mlp_s3,                                                         +0.0028]
+S-Int/P0         fae_kan_s3 −     curve error      20            −0.0005      [−0.0038,      0.77              11 / 9
+continuity       fae_mlp_s3,                                                  +0.0028]
 (Round 12)       fresh seeds
 
-S-Int/P0         fae_kan_s3 −     IBS              20                −0.0005         [−0.0028,       0.68              9 / 11
-continuity       fae_mlp_s3,                                                         +0.0018]
+S-Int/P0         fae_kan_s3 −     IBS              20            −0.0005      [−0.0028,      0.68              9 / 11
+continuity       fae_mlp_s3,                                                  +0.0018]
 (Round 12)       fresh seeds
 
 
@@ -682,13 +683,10 @@ curve error (90% CI [−0.0032, +0.0023]). In no arm, strategy or setting was KA
 MLP-FAE on survival. Its interpretability was also limited:
 
 Table 10. KAN-FAE pruning (Round 8; risk-encoder edges of the seed-0 member).
-
-KAN-FAE (Round 8;        Harrell C                     Curve error                Test reconstruction       Active risk-encoder
-replicate means)                                                                                            edges (of 512)
-
-before pruning           0.8473                        0.1079                     0.304                     512.0
 KAN-FAE (Round 8;         Harrell C         Curve error          Test reconstruction   Active risk-encoder
 replicate means)                                                                       edges (of 512)
+
+before pruning            0.8473            0.1079               0.304                 512.0
 
 after centred pruning     0.8473            0.1079               0.334                 499.8
 
@@ -747,11 +745,11 @@ aids                  6 (months)      467             403                126    
 All models used 5 outer splits by subject (60/20/20, stratified on the event). The real-data study
 produced 420 records; one cell failed: PACE returned non-finite curves for the PACE sensitivity model
 on one PBC split, which was recorded and not rerun. Every real-data result is exploratory.
-
-4.2 Single-landmark prediction
+4.2 Single-landmark prediction
 
 Table 12. IBS and Uno C (mean over the outer splits; the PACE row has 4 PBC E2 splits).
-Model          PBC E2       PBC E2     PBC E1      PBC E1      prothro     prothro    aids IBS      aids Uno
+
+Model          PBC E2       PBC E2     PBC E1      PBC E1      prothro     prothro    aids IBS      aids Uno
                IBS          Uno C      IBS         Uno C       IBS         Uno C                    C
 
 b2s_cox        0.150        0.771      0.122       0.791       0.219       0.572      0.160         0.704
@@ -826,15 +824,15 @@ sum_cox          PBC, E1             −0.021            [−0.065, +0.024]   +0
                  (sensitivity)
 
 sum_cox          prothro             −0.002            [−0.026, +0.021]   −0.019              [−0.106, +0.068]
-
-sum_cox          aids                −0.001            [−0.007, +0.005]   +0.007              [−0.025, +0.039]
-
-fpca_cox         PBC, E2 (primary)   +0.017            [−0.011, +0.046]   −0.011              [−0.067, +0.044]
-
-fpca_cox         PBC, E1             +0.007            [−0.008, +0.023]   +0.008              [−0.033, +0.049]
-                 (sensitivity)
 Comparator b      Data set            IBS: B2-S Cox −   95% NB interval      Uno C: B2-S Cox   95% NB interval
                                       b                                      −b
+
+sum_cox           aids                −0.001            [−0.007, +0.005]     +0.007            [−0.025, +0.039]
+
+fpca_cox          PBC, E2 (primary)   +0.017            [−0.011, +0.046]     −0.011            [−0.067, +0.044]
+
+fpca_cox          PBC, E1             +0.007            [−0.008, +0.023]     +0.008            [−0.033, +0.049]
+                  (sensitivity)
 
 fpca_cox          prothro             −0.003            [−0.022, +0.017]     −0.013            [−0.107, +0.081]
 

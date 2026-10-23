@@ -1,14 +1,15 @@
 {
  "pdf_exists": true,
  "pdf_opens": true,
- "pdf_pages": 255,
- "pdf_text_chars": 1739084,
+ "pdf_pages": 279,
+ "pdf_text_chars": 1895967,
  "pdf_no_placeholders": true,
+ "pdf_has_manuscript_sections": true,
  "pdf_has_part1_sections": true,
  "pdf_has_all_17_sections": true,
- "page_renders": 255,
+ "page_renders": 279,
  "blank_pages": [],
- "md_3dp_numbers": 849,
+ "md_3dp_numbers": 853,
  "md_numbers_missing_in_pdf": [],
  "report_values_used": 31,
  "report_values_missing_in_pdf": [],
@@ -27,6 +28,7 @@
  "report_template_round12b.md_values_used": 6,
  "report_template_round12c.md_values_used": 6,
  "report_template_round13.md_values_used": 7,
+ "report_template_round14.md_values_used": 11,
  "P0_summary_values_in_pdf": "21/21",
  "tests_reported": 272,
  "tests_without_log_evidence": [],
@@ -35,21 +37,33 @@
   "failed": 1,
   "skipped": 1
  },
- "final_suite_run": "final_full_suite_round13",
+ "final_suite_run": "final_full_suite_round14",
  "final_suite_counts": {
-  "passed": 251,
-  "failed": 2,
-  "skipped": 2,
-  "xfailed": 16
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
  },
- "final_suite_failures": [
-  "tests/test_learnability_fa4f.py::test_R1_oracle_features_head",
-  "tests/test_round12b_ck.py::test_CK6c_repaired_afcm_identifiable_rise"
- ],
- "final_suite_only_failure_is_R2": true,
- "commands_logged": 246,
+ "final_suite_failures": [],
+ "final_suite_only_failure_is_R2": false,
+ "manuscript_checks": {
+  "ledger": true,
+  "rerender": true,
+  "numbers": true,
+  "citations": true,
+  "sections": true,
+  "pdf": true
+ },
+ "manuscript_pdf_pages": 24,
+ "manuscript_page_renders": 24,
+ "manuscript_blank_pages": [],
+ "manuscript_values_checked_in_report_pdf": 679,
+ "manuscript_values_missing_in_report_pdf": [],
+ "rev16_copy_identical": true,
+ "report_blank_pages_by_text": [],
+ "commands_logged": 250,
  "commands_missing_log_file": [],
  "experiment_csv_rows_equal_jsonl": true,
  "experiment_records": 2393,
- "ALL_CHECKS_PASS": true
+ "ALL_CHECKS_PASS": false
 }
