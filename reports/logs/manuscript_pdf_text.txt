@@ -1087,83 +1087,81 @@ Figure 1c. From left: prothro, B2-S Cox; prothro, B1-FPCA-1 Cox; aids, B2-S Cox;
 Table 17. B3 per landmark (means over the outer splits; tdAUC only where ≥ 10 cases and ≥ 10
 controls, number of splits in parentheses).
 
-Data set    Landmark   Test rows   Brier, KAN   Brier, linear   C, KAN   C, linear   tdAUC,      tdAUC,
-            (data      (mean)      supermodel   supermodel                           KAN         linear
-            units)                                                                   (splits)    (splits)
+Data set    Landmark      Test rows   Brier, KAN   Brier, linear   C, KAN   C, linear   tdAUC,      tdAUC,
+            (data         (mean)      supermodel   supermodel                           KAN         linear
+            units)                                                                      (splits)    (splits)
 
-PBC, E2     365.25     58.6        0.141        0.127           0.805    0.815       0.871 (5)   0.896 (5)
+PBC, E2     365.25        58.6        0.141        0.127           0.805    0.815       0.871 (5)   0.896 (5)
 (primary)   (days)
-Data set     Landmark         Test rows   Brier, KAN    Brier, linear   C, KAN       C, linear     tdAUC,        tdAUC,
-             (data            (mean)      supermodel    supermodel                                 KAN           linear
-             units)                                                                                (splits)      (splits)
 
-PBC, E2      730.5            56.0        0.143         0.129           0.817        0.834         0.861 (5)     0.886 (5)
-(primary)    (days)
+PBC, E2     730.5         56.0        0.143        0.129           0.817    0.834       0.861 (5)   0.886 (5)
+(primary)   (days)
 
-PBC, E2      1095.75          42.6        0.137         0.140           0.816        0.802         0.868 (5)     0.857 (5)
-(primary)    (days)
+PBC, E2     1095.75       42.6        0.137        0.140           0.816    0.802       0.868 (5)   0.857 (5)
+(primary)   (days)
 
-PBC, E2      1461.0           34.6        0.154         0.175           0.828        0.826         0.853 (3)     0.849 (3)
-(primary)    (days)
+PBC, E2     1461.0        34.6        0.154        0.175           0.828    0.826       0.853 (3)   0.849 (3)
+(primary)   (days)
 
-prothro      0.5 (years)      83.0        0.232         0.235           0.591        0.589         0.655 (5)     0.643 (5)
+prothro     0.5 (years)   83.0        0.232        0.235           0.591    0.589       0.655 (5)   0.643 (5)
 
-prothro      1.0 (years)      68.0        0.217         0.221           0.636        0.634         0.703 (5)     0.691 (5)
+prothro     1.0 (years)   68.0        0.217        0.221           0.636    0.634       0.703 (5)   0.691 (5)
 
-prothro      2.0 (years)      56.4        0.215         0.213           0.617        0.623         0.688 (5)     0.699 (5)
+prothro     2.0 (years)   56.4        0.215        0.213           0.617    0.623       0.688 (5)   0.699 (5)
 
-prothro      3.0 (years)      47.8        0.234         0.227           0.660        0.649         0.571 (4)     0.587 (4)
+prothro     3.0 (years)   47.8        0.234        0.227           0.660    0.649       0.571 (4)   0.587 (4)
 
-aids         2.0              89.6        0.191         0.183           0.711        0.727         0.749 (5)     0.766 (5)
-             (months)
+aids        2.0           89.6        0.191        0.183           0.711    0.727       0.749 (5)   0.766 (5)
+            (months)
 
-aids         6.0              79.8        0.217         0.212           0.706        0.713         0.614 (4)     0.615 (4)
-             (months)
+aids        6.0           79.8        0.217        0.212           0.706    0.713       0.614 (4)   0.615 (4)
+            (months)
 
-aids         12.0             62.8        0.138         0.151           0.681        0.663         – (0)         – (0)
-             (months)
+aids        12.0          62.8        0.138        0.151           0.681    0.663       – (0)       – (0)
+            (months)
 
 
 The KAN supermodel was not consistently better than the linear landmark-stratified supermodel: on
 PBC the linear model had the lower Brier score at the first two landmarks and the KAN at the last two,
 and elsewhere the two were close.
-
-4.6 C-MAPSS calibration
+4.6 C-MAPSS calibration
 
 Table 18. C-MAPSS FD001 (Option B) (outer splits by engine; number in the last column).
 
-Model (C-MAPSS        IBS                 Harrell C             Uno C               Mean D-cal p           Splits with D-cal
-FD001, Option                                                                                              p < 0.05
+Model (C-MAPSS       IBS           Harrell C           Uno C          Mean D-cal p      Splits with D-cal
+FD001, Option                                                                           p < 0.05
 B)
 
-b2s_aft               0.0807              0.869                 0.873               4.7e−5                 5/5
+b2s_aft              0.0807        0.869               0.873          4.7e−5            5/5
 
-b2s_aft_rc            0.0799              0.869                 0.873               0.011                  5/5
+b2s_aft_rc           0.0799        0.869               0.873          0.011             5/5
 
-sum_aft               0.0792              0.865                 0.869               0.0037                 5/5
+sum_aft              0.0792        0.865               0.869          0.0037            5/5
 
-fpca_aft              0.0829              0.860                 0.864               0.0072                 5/5
+fpca_aft             0.0829        0.860               0.864          0.0072            5/5
 
 
-Contrast (C-MAPSS)                                Mean difference                95% NB interval                    p
+Contrast (C-MAPSS)                         Mean difference         95% NB interval               p
 
-ibs b2s_aft_rc − b2s_aft                          −0.0008                        [−0.0044, +0.0027]                 0.56
+ibs b2s_aft_rc − b2s_aft                   −0.0008                 [−0.0044, +0.0027]            0.56
 
-dcal_p b2s_aft_rc − b2s_aft                       +0.0109                        [−0.0270, +0.0489]                 0.47
+dcal_p b2s_aft_rc − b2s_aft                +0.0109                 [−0.0270, +0.0489]            0.47
 
-ibs b2s_aft_rc − sum_aft                          +0.0008                        [−0.0100, +0.0115]                 0.86
+ibs b2s_aft_rc − sum_aft                   +0.0008                 [−0.0100, +0.0115]            0.86
 
-dcal_p b2s_aft_rc − sum_aft                       +0.0072                        [−0.0342, +0.0486]                 0.65
+dcal_p b2s_aft_rc − sum_aft                +0.0072                 [−0.0342, +0.0486]            0.65
 
-ibs b2s_aft_rc − fpca_aft                         −0.0030                        [−0.0156, +0.0096]                 0.55
+ibs b2s_aft_rc − fpca_aft                  −0.0030                 [−0.0156, +0.0096]            0.55
 
-dcal_p b2s_aft_rc − fpca_aft                      +0.0037                        [−0.0462, +0.0537]                 0.85
+dcal_p b2s_aft_rc − fpca_aft               +0.0037                 [−0.0462, +0.0537]            0.85
 
 
 All four models were miscalibrated in every split. Residual calibration raised the mean D-calibration p
 of the KAN-AFT model but did not fix it, and IBS did not differ between models. Option B uses several
 windows per engine, which are correlated, so the D-calibration test is anti-conservative here.
-5. Discussion
+
+
+5. Discussion
 
 5.1 Principal findings
 
@@ -1190,8 +1188,7 @@ interaction scenario the composed B2-deep did not use that option to advantage. 
 models with static covariates (Knottenbelt et al., 2025; Jose et al., 2025; Mastroleo et al., 2026;
 Boulitsakis Logothetis et al., 2026) and the KAN joint model abstract (Lundin et al., 2025) address
 different input structures, and we make no claim relative to work we could read only in abstract.
-
-5.3 Limitations
+5.3 Limitations
 
       Unvalidated comparator. AFCM V3 failed its single-fit acceptance check; its shape recovery
       depends on how the validation-chosen penalties fall on a given data set (one λ_t shared by a
@@ -1217,7 +1214,9 @@ data were obtained from CRAN (survival 3.8-12, JM 1.5-2) and NASA’s prognostic
 checksums in the run manifest. Each round’s plan was committed before its seeds were used. Every
 number in this manuscript is rendered from the saved records, logged with its source, and re-checked
 by an independent script and a unit test (Appendix A).
-6. Conclusions
+
+
+6. Conclusions
 
 Functional CoxKAN and KAN-AFT models that apply KAN edges directly to longitudinal trajectories
 recover nonlinear functional effects, support channel selection and give accurate symbolic summaries
@@ -1239,61 +1238,59 @@ Declarations
       from saved records.
       Authors’ contributions, funding, competing interests, ethics. To be completed by the
       owner. The data sets are public and de-identified.
+References
 
-
-References
-
-      Andersen et al. (1993). Andersen P.K., Borgan Ø., Gill R.D., Keiding N. Statistical Models Based
-      on Counting Processes. Springer Series in Statistics. Springer. doi:10.1007/978-1-4612-4348-9
-      Boulitsakis Logothetis et al. (2026). Boulitsakis Logothetis S., Wood A., Liò P. KAPLAN:
-      Kolmogorov-Arnold prognostic learnable activation networks for survival analysis.
-      arXiv:2605.23082
-      Breslow (1974). Breslow N. Covariance analysis of censored survival data. Biometrics 30(1):89
-      (first page). doi:10.2307/2529620
-      Cox (1972). Cox D.R. Regression models and life-tables. Journal of the Royal Statistical Society,
-      Series B 34(2):187–202. doi:10.1111/j.2517-6161.1972.tb00899.x
-      Cranmer (2023). Cranmer M. Interpretable machine learning for science with PySR and
-      SymbolicRegression.jl. arXiv:2305.01582
-      Cui et al. (2021). Cui E., Crainiceanu C.M., Leroux A. Additive functional Cox model. Journal of
-      Computational and Graphical Statistics 30(3):780–793. doi:10.1080/10618600.2020.1853550
-      Du & Leroux (2024). Du H., Leroux A. Time-varying functional Cox model. arXiv:2412.14478
-      Efron (1977). Efron B. The efficiency of Cox’s likelihood function for censored data. Journal of
-      the American Statistical Association 72(359):557–565. doi:10.1080/01621459.1977.10480613
-      Fleming & Harrington (1991). Fleming T.R., Harrington D.P. Counting Processes and Survival
-      Analysis. Wiley (online edition 2005). doi:10.1002/9781118150672
-      Gao et al. (2025). Gao P., Zou Y., Duggal A., Huang S., Liang F., Wang X. Deep survival analysis
-      for competing risk modeling with functional covariates and missing data imputation.
-      arXiv:2509.25381
-      Gellar et al. (2015). Gellar J.E., Colantuoni E., Needham D.M., Crainiceanu C.M. Cox regression
-      models with functional covariates for survival data. Statistical Modelling 15(3):256–278.
-      doi:10.1177/1471082X14565526
-      Graf et al. (1999). Graf E., Schmoor C., Sauerbrei W., Schumacher M. Assessment and
-      comparison of prognostic classification schemes for survival data. Statistics in Medicine 18(17–
-      18):2529–2545
-Guo & Carlin (2004). Guo X., Carlin B.P. Separate and joint modeling of longitudinal and event
-time data using standard computer packages. The American Statistician 58(1):16–24.
-doi:10.1198/0003130042854
-Haider et al. (2020). Haider H., Hoehn B., Davis S., Greiner R. Effective ways to build and
-evaluate individual survival distributions. Journal of Machine Learning Research 21(85):1–63
-Harrell et al. (1982). Harrell F.E. et al. Evaluating the yield of medical tests. JAMA 247(18):2543
-(first page). doi:10.1001/jama.1982.03320430047030
-Hu & Nan (2025). Hu B., Nan B. Nonparametric estimation of conditional survival function with
-time-varying covariates using DeepONet. arXiv:2505.22748
-Ishwaran et al. (2008). Ishwaran H., Kogalur U.B., Blackstone E.H., Lauer M.S. Random survival
-forests. The Annals of Applied Statistics 2(3):841–860. doi:10.1214/08-AOAS169
-Jose et al. (2025). Jose M., Francis J., Kattumannil S.K. A structured nonparametric framework
-for nonlinear accelerated failure time models (KAN-AFT). arXiv:2512.20305
-Kaplan & Meier (1958). Kaplan E.L., Meier P. Nonparametric estimation from incomplete
-observations. Journal of the American Statistical Association 53(282):457–481.
-doi:10.1080/01621459.1958.10501452
-Katzman et al. (2018). Katzman J.L., Shaham U., Cloninger A., Bates J., Jiang T., Kluger Y.
-DeepSurv: personalized treatment recommender system using a Cox proportional hazards deep
-neural network. BMC Medical Research Methodology 18:24. doi:10.1186/s12874-018-0482-1
-Knottenbelt et al. (2025). Knottenbelt W., McGough W., Wray R., Zhang W.Z., Liu J., Prata
-Machado I., Gao Z., Crispin-Ortuzar M. CoxKAN: Kolmogorov-Arnold networks for interpretable,
-high-performance survival analysis. Bioinformatics 41(8):btaf413.
-doi:10.1093/bioinformatics/btaf413
-Kong et al. (2018). Kong D., Ibrahim J.G., Lee E., Zhu H. FLCRM: functional linear Cox regression
+   Andersen et al. (1993). Andersen P.K., Borgan Ø., Gill R.D., Keiding N. Statistical Models Based
+   on Counting Processes. Springer Series in Statistics. Springer. doi:10.1007/978-1-4612-4348-9
+   Boulitsakis Logothetis et al. (2026). Boulitsakis Logothetis S., Wood A., Liò P. KAPLAN:
+   Kolmogorov-Arnold prognostic learnable activation networks for survival analysis.
+   arXiv:2605.23082
+   Breslow (1974). Breslow N. Covariance analysis of censored survival data. Biometrics 30(1):89
+   (first page). doi:10.2307/2529620
+   Cox (1972). Cox D.R. Regression models and life-tables. Journal of the Royal Statistical Society,
+   Series B 34(2):187–202. doi:10.1111/j.2517-6161.1972.tb00899.x
+   Cranmer (2023). Cranmer M. Interpretable machine learning for science with PySR and
+   SymbolicRegression.jl. arXiv:2305.01582
+   Cui et al. (2021). Cui E., Crainiceanu C.M., Leroux A. Additive functional Cox model. Journal of
+   Computational and Graphical Statistics 30(3):780–793. doi:10.1080/10618600.2020.1853550
+   Du & Leroux (2024). Du H., Leroux A. Time-varying functional Cox model. arXiv:2412.14478
+   Efron (1977). Efron B. The efficiency of Cox’s likelihood function for censored data. Journal of
+   the American Statistical Association 72(359):557–565. doi:10.1080/01621459.1977.10480613
+   Fleming & Harrington (1991). Fleming T.R., Harrington D.P. Counting Processes and Survival
+   Analysis. Wiley (online edition 2005). doi:10.1002/9781118150672
+   Gao et al. (2025). Gao P., Zou Y., Duggal A., Huang S., Liang F., Wang X. Deep survival analysis
+   for competing risk modeling with functional covariates and missing data imputation.
+   arXiv:2509.25381
+   Gellar et al. (2015). Gellar J.E., Colantuoni E., Needham D.M., Crainiceanu C.M. Cox regression
+   models with functional covariates for survival data. Statistical Modelling 15(3):256–278.
+   doi:10.1177/1471082X14565526
+   Graf et al. (1999). Graf E., Schmoor C., Sauerbrei W., Schumacher M. Assessment and
+   comparison of prognostic classification schemes for survival data. Statistics in Medicine 18(17–
+   18):2529–2545
+   Guo & Carlin (2004). Guo X., Carlin B.P. Separate and joint modeling of longitudinal and event
+   time data using standard computer packages. The American Statistician 58(1):16–24.
+   doi:10.1198/0003130042854
+   Haider et al. (2020). Haider H., Hoehn B., Davis S., Greiner R. Effective ways to build and
+   evaluate individual survival distributions. Journal of Machine Learning Research 21(85):1–63
+   Harrell et al. (1982). Harrell F.E. et al. Evaluating the yield of medical tests. JAMA 247(18):2543
+   (first page). doi:10.1001/jama.1982.03320430047030
+   Hu & Nan (2025). Hu B., Nan B. Nonparametric estimation of conditional survival function with
+   time-varying covariates using DeepONet. arXiv:2505.22748
+   Ishwaran et al. (2008). Ishwaran H., Kogalur U.B., Blackstone E.H., Lauer M.S. Random survival
+   forests. The Annals of Applied Statistics 2(3):841–860. doi:10.1214/08-AOAS169
+   Jose et al. (2025). Jose M., Francis J., Kattumannil S.K. A structured nonparametric framework
+   for nonlinear accelerated failure time models (KAN-AFT). arXiv:2512.20305
+   Kaplan & Meier (1958). Kaplan E.L., Meier P. Nonparametric estimation from incomplete
+   observations. Journal of the American Statistical Association 53(282):457–481.
+   doi:10.1080/01621459.1958.10501452
+   Katzman et al. (2018). Katzman J.L., Shaham U., Cloninger A., Bates J., Jiang T., Kluger Y.
+   DeepSurv: personalized treatment recommender system using a Cox proportional hazards deep
+   neural network. BMC Medical Research Methodology 18:24. doi:10.1186/s12874-018-0482-1
+   Knottenbelt et al. (2025). Knottenbelt W., McGough W., Wray R., Zhang W.Z., Liu J., Prata
+   Machado I., Gao Z., Crispin-Ortuzar M. CoxKAN: Kolmogorov-Arnold networks for interpretable,
+   high-performance survival analysis. Bioinformatics 41(8):btaf413.
+   doi:10.1093/bioinformatics/btaf413
+Kong et al. (2018). Kong D., Ibrahim J.G., Lee E., Zhu H. FLCRM: functional linear Cox regression
 model. Biometrics 74(1):109–117. doi:10.1111/biom.12748
 Laird & Ware (1982). Laird N.M., Ware J.H. Random-effects models for longitudinal data.
 Biometrics 38(4):963 (first page). doi:10.2307/2529876
@@ -1323,30 +1320,30 @@ Kolmogorov–Arnold networks. Computational Statistics 41(5):114. doi:10.1007/s0
 01791-x
 Ramsay & Silverman (2005). Ramsay J.O., Silverman B.W. Functional Data Analysis. Springer
 Series in Statistics. Springer. doi:10.1007/b98888
-   Rizopoulos (2010). Rizopoulos D. JM: an R package for the joint modelling of longitudinal and
-   time-to-event data. Journal of Statistical Software 35(9). doi:10.18637/jss.v035.i09
-   Saxena & Goebel (2008). Saxena A., Goebel K. Turbofan Engine Degradation Simulation Data
-   Set. NASA Prognostics Data Repository, NASA Ames Research Center
-   Saxena et al. (2008). Saxena A., Goebel K., Simon D., Eklund N. Damage propagation modeling
-   for aircraft engine run-to-failure simulation. 2008 International Conference on Prognostics and
-   Health Management, 1–9. doi:10.1109/PHM.2008.4711414
-   Schuirmann (1987). Schuirmann D.J. A comparison of the two one-sided tests procedure and
-   the power approach for assessing the equivalence of average bioavailability. Journal of
-   Pharmacokinetics and Biopharmaceutics 15(6):657–680. doi:10.1007/BF01068419
-   Therneau & Grambsch (2000). Therneau T.M., Grambsch P.M. Modeling Survival Data:
-   Extending the Cox Model. Statistics for Biology and Health. Springer. doi:10.1007/978-1-4757-
-   3294-8
-   Therneau et al. (2026). Therneau T. et al. R package survival, version 3.8-12 (2026-09-02).
-   CRAN
-   Tsiatis & Davidian (2004). Tsiatis A.A., Davidian M. Joint modeling of longitudinal and time-to-
-   event data: an overview. Statistica Sinica 14:809–834
-   Uno et al. (2011). Uno H., Cai T., Pencina M.J., D’Agostino R.B., Wei L.J. On the C-statistics for
-   evaluating overall adequacy of risk prediction procedures with censored survival data. Statistics
-   in Medicine 30(10):1105–1117. doi:10.1002/sim.4154
-   van Houwelingen (2007). van Houwelingen H.C. Dynamic prediction by landmarking in event
-   history analysis. Scandinavian Journal of Statistics 34(1):70–85. doi:10.1111/j.1467-
-   9469.2006.00529.x
-   van Houwelingen & Putter (2012). van Houwelingen H.C., Putter H. Dynamic Prediction in
+Rizopoulos (2010). Rizopoulos D. JM: an R package for the joint modelling of longitudinal and
+time-to-event data. Journal of Statistical Software 35(9). doi:10.18637/jss.v035.i09
+Saxena & Goebel (2008). Saxena A., Goebel K. Turbofan Engine Degradation Simulation Data
+Set. NASA Prognostics Data Repository, NASA Ames Research Center
+Saxena et al. (2008). Saxena A., Goebel K., Simon D., Eklund N. Damage propagation modeling
+for aircraft engine run-to-failure simulation. 2008 International Conference on Prognostics and
+Health Management, 1–9. doi:10.1109/PHM.2008.4711414
+Schuirmann (1987). Schuirmann D.J. A comparison of the two one-sided tests procedure and
+the power approach for assessing the equivalence of average bioavailability. Journal of
+Pharmacokinetics and Biopharmaceutics 15(6):657–680. doi:10.1007/BF01068419
+Therneau & Grambsch (2000). Therneau T.M., Grambsch P.M. Modeling Survival Data:
+Extending the Cox Model. Statistics for Biology and Health. Springer. doi:10.1007/978-1-4757-
+3294-8
+Therneau et al. (2026). Therneau T. et al. R package survival, version 3.8-12 (2026-09-02).
+CRAN
+Tsiatis & Davidian (2004). Tsiatis A.A., Davidian M. Joint modeling of longitudinal and time-to-
+event data: an overview. Statistica Sinica 14:809–834
+Uno et al. (2011). Uno H., Cai T., Pencina M.J., D’Agostino R.B., Wei L.J. On the C-statistics for
+evaluating overall adequacy of risk prediction procedures with censored survival data. Statistics
+in Medicine 30(10):1105–1117. doi:10.1002/sim.4154
+van Houwelingen (2007). van Houwelingen H.C. Dynamic prediction by landmarking in event
+history analysis. Scandinavian Journal of Statistics 34(1):70–85. doi:10.1111/j.1467-
+9469.2006.00529.x
+   van Houwelingen & Putter (2012). van Houwelingen H.C., Putter H. Dynamic Prediction in
    Clinical Survival Analysis. Chapman & Hall/CRC (some sources give 2011)
    Wu et al. (2024). Wu S., Beaulac C., Cao J. Functional autoencoder for smoothing and
    representation learning. arXiv:2401.09499

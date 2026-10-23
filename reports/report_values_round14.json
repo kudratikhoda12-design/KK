@@ -1,0 +1,13 @@
+{
+ "git_head": "11fa635",
+ "ms_pages": "24",
+ "ms_values": "1361",
+ "ms_refs": "46",
+ "ms_title": "Functional Kolmogorov–Arnold survival models for longitudinal covariates: a pre-registered comparison with the additive functional Cox model, and why KAN blocks inside a functional autoencoder did not help",
+ "ms_check": "verification ALL_PASS",
+ "n_tests": "277",
+ "passed": "257",
+ "failed": "2",
+ "skipped": "2",
+ "xfailed": "16"
+}

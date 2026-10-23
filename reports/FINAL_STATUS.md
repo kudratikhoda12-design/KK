@@ -1,4 +1,22 @@
-# Final status: KAN-FAE research prototype, Round 13 (2026-10-22)
+# Final status: KAN-FAE research prototype, Round 14 (2026-10-23)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev16.pdf` (revision 16,
+283 pages: Part A = the Round-14 manuscript draft with its verification; Part B = Round 13; Part C = Round 12; Parts D–E =
+L39/L38; Parts F–P = rounds 11–1). Manuscript: `docs/manuscript_round14.md`, `reports/manuscript_round14.pdf` (24 pages).
+Status: **research prototype; manuscript draft for the owner's review, not peer reviewed; no novelty claim.**
+
+| Item | Result |
+|---|---|
+| D131 (owner) | Round 13 / revision 15 approved; L36, L41 closed; manuscript scope and number-provenance rule |
+| Round 14 (D132) | Manuscript under framing (a) + (b), D111 claim policy; every number rendered from saved records (1361 logged values), independently re-verified (ALL_PASS); 46 verified references; L37 closed |
+| Tests | `final_full_suite_round14_rerun2`: 257 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (277); two earlier partial runs kept (D132) |
+| Verification | `verify_deliverables.py` ALL_CHECKS_PASS (includes the manuscript checks) |
+| Next | Owner review of the draft: author block, venue, three statements marked as interpretations |
+
+---
+
+# Round 13 status (2026-10-22), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` (revision 15: Part A = Round 13; Part B = Round 12; Parts C–D =

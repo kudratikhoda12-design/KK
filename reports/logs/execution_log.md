@@ -225,3 +225,9 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
 
 - `final_full_suite_round13`: 251 passed, 2 failed (CK-6c, 4f R1), 2 skipped, 16 xfailed (271; no XPASS). Report
   revision 15 (255 pages); verification ALL_CHECKS_PASS.
+- Round 14 (owner D131, 2026-10-23): manuscript draft generated from saved records (`scripts/manuscript_round14.py`;
+  ledger of 1361 values; independent verifier ALL_PASS; tests R14-1..6); descriptive cohort record; verified references.
+  `final_full_suite_round14` stopped deliberately after 10 tests (manuscript accuracy pass first);
+  `final_full_suite_round14_rerun` stopped by the 2-hour background limit after 207 records (container ~44% slower);
+  `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, 4f R1), 2 skipped, 16 xfailed (277), no XPASS.
+  Report revision 16 (283 pages), copied to `final_research_prototype_report_rev16.pdf`; verification ALL_CHECKS_PASS. D132.
