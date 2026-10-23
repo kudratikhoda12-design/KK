@@ -1,0 +1,6 @@
+,JobSeek_pct,JobSeek_pct,JobSeek_pct,JobSeek_pct,Country_pct,Country_pct,Country_pct,Country_pct,Country_pct
+,I am actively looking for a job,I am not interested in new job opportunities,"I’m not actively looking, but I am open to new opportunities",n,Canada,Germany,India,United Kingdom,United States
+kmeans_cluster,,,,,,,,,
+0,3.6,42.3,54.1,4183,8.1,12.9,5.2,13.8,60.0
+1,7.9,34.9,57.1,1652,8.6,9.9,1.3,15.6,64.7
+2,25.2,11.4,63.4,2165,5.4,12.8,40.7,10.0,31.0

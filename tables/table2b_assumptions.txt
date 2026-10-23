@@ -1,0 +1,12 @@
+Box's M (equality of covariance matrices across JobSeek groups): M=729.94, chi2(15)=729.36, p=0
+
+Mardia's test on group-mean-centered residuals, by JobSeek group:
+  NotInterested (n=2592): skewness chi2(35)=4961.61, p=0; kurtosis Z=117.00, p=0
+  SeekingOpen (n=5408): skewness chi2(35)=5728.48, p=0; kurtosis Z=123.66, p=0
+
+Levene's test (equal variance) per DV, JobSeek groups:
+  logComp: W=129.319, p=9.764e-30
+  YearsCodePro: W=8.464, p=0.003632
+  WorkWeekHrs: W=28.149, p=1.153e-07
+  Age: W=0.007, p=0.933
+  JobSat_num: W=362.270, p=4.948e-79

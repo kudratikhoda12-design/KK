@@ -1,0 +1,1 @@
+Box's M on the 6-variable numeric block (LDA predictors): chi2(21)=785.27, p=0. With n~8000, Box's M is highly sensitive and virtually always significant; a formal reading would favor QDA, but we select between LDA and QDA empirically using cross-validated AUC/error rate below rather than the Box's M p-value alone.

@@ -1,0 +1,15 @@
+,OLS_logit_std_coef,Ridge_std_coef,shrinkage_pct
+logComp,-0.0547,-0.0652,-19.2
+YearsCodePro,-0.1826,-0.1759,3.6
+WorkWeekHrs,-0.0476,-0.0467,1.8
+Age,0.179,0.171,4.5
+JobSat_num,-1.0736,-1.0663,0.7
+CodeRevHrs,0.0318,0.0341,-7.1
+Hobbyist_bin,0.2596,0.2531,2.5
+Ed_Bachelors,-0.053,-0.0453,14.5
+Ed_Doctoral_Prof,0.0187,0.0265,-41.5
+Ed_Masters,0.0583,0.0639,-9.6
+Ctry_Canada,0.033,0.0297,10.2
+Ctry_Germany,-0.3818,-0.3764,1.4
+Ctry_India,1.1617,1.0849,6.6
+Ctry_United Kingdom,-0.1877,-0.187,0.3

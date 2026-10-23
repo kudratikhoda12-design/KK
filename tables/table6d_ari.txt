@@ -1,0 +1,1 @@
+Adjusted Rand Index between k-means and Ward hierarchical partitions (k=3): 0.6481

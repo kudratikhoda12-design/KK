@@ -1,0 +1,7 @@
+,logComp,YearsCodePro,WorkWeekHrs,Age,JobSat_num,CodeRevHrs
+logComp,1.0,0.261,0.075,0.273,0.109,-0.114
+YearsCodePro,0.261,1.0,0.08,0.859,0.003,0.01
+WorkWeekHrs,0.075,0.08,1.0,0.069,-0.006,0.113
+Age,0.273,0.859,0.069,1.0,-0.002,-0.017
+JobSat_num,0.109,0.003,-0.006,-0.002,1.0,-0.023
+CodeRevHrs,-0.114,0.01,0.113,-0.017,-0.023,1.0

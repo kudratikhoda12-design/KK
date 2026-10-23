@@ -1,0 +1,13 @@
+variable,JobSeek_lbl,mean,std,count
+logComp,Not interested,11.565,1.027,2592
+logComp,Seeking/Open,11.203,1.356,5408
+YearsCodePro,Not interested,9.003,7.539,2592
+YearsCodePro,Seeking/Open,8.292,7.369,5408
+WorkWeekHrs,Not interested,41.587,6.834,2592
+WorkWeekHrs,Seeking/Open,41.356,8.491,5408
+Age,Not interested,32.166,7.868,2592
+Age,Seeking/Open,31.691,8.014,5408
+JobSat_num,Not interested,4.476,0.926,2592
+JobSat_num,Seeking/Open,3.513,1.237,5408
+CodeRevHrs,Not interested,4.354,3.348,2592
+CodeRevHrs,Seeking/Open,4.713,3.654,5408

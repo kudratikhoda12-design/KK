@@ -1,0 +1,5 @@
+Condition number of standardized design matrix X (incl. intercept): 10.31
+Rule of thumb: >30 indicates moderate-to-strong multicollinearity.
+Largest pairwise correlation among predictors: YearsCodePro vs Age = 0.859 (see Table 1b), the main driver of the elevated condition number.
+
+CV-selected ridge lambda (5-fold, min deviance/log-loss): 4.9239

@@ -1,0 +1,32 @@
+Raw 2019 responses loaded: 88883
+After MainBranch='developer by profession' & Employment='Employed full-time': 55405
+Top-5 countries kept: ['United States', 'India', 'United Kingdom', 'Germany', 'Canada']
+After country filter: 29851
+
+Missingness (%) on filtered sample, pre-cleaning:
+CodeRevHrs       23.41
+ConvertedComp    19.42
+Age               9.81
+WorkWeekHrs       8.35
+OrgSize           2.76
+EdLevel           1.75
+YearsCodePro      0.80
+JobSat            0.43
+JobSeek           0.00
+Hobbyist          0.00
+
+WorkWeekHrs capped at 100; CodeRevHrs capped at 99th pct (20.0 h); ConvertedComp capped at 99th pct ($2,000,000); Age restricted to [16,75].
+
+Complete-case drop on analysis variables: 29851 -> 17847 (40.2% dropped)
+
+Final subsample drawn with seed=42: N = 8000
+
+JobSeek class balance in final sample: seeking/open = 67.6%, not interested = 32.4%
+
+Country counts in final sample:
+Country
+United States     4250
+India             1122
+United Kingdom    1053
+Germany            979
+Canada             596
