@@ -1,0 +1,97 @@
+{
+ "pbc_E2": {
+  "n_all": 312,
+  "n_cohort": 278,
+  "n_events": 135,
+  "landmark": 730.0,
+  "unit": "days",
+  "channels": [
+   "log bili",
+   "albumin",
+   "log alk.phos",
+   "log ast",
+   "platelet",
+   "log protime"
+  ],
+  "baseline": [
+   "age",
+   "female"
+  ],
+  "visits_median": 3.0,
+  "visits_q1": 3.0,
+  "visits_q3": 3.0,
+  "visits_min": 1,
+  "visits_max": 5
+ },
+ "pbc_E1": {
+  "n_all": 312,
+  "n_cohort": 278,
+  "n_events": 107,
+  "landmark": 730.0,
+  "unit": "days",
+  "channels": [
+   "log bili",
+   "albumin",
+   "log alk.phos",
+   "log ast",
+   "platelet",
+   "log protime"
+  ],
+  "baseline": [
+   "age",
+   "female"
+  ],
+  "visits_median": 3.0,
+  "visits_q1": 3.0,
+  "visits_q3": 3.0,
+  "visits_min": 1,
+  "visits_max": 5
+ },
+ "prothro": {
+  "n_all": 488,
+  "n_cohort": 332,
+  "n_events": 183,
+  "landmark": 1.0,
+  "unit": "years",
+  "channels": [
+   "prothrombin index"
+  ],
+  "baseline": [
+   "prednisone"
+  ],
+  "visits_median": 3.0,
+  "visits_q1": 3.0,
+  "visits_q3": 4.0,
+  "visits_min": 1,
+  "visits_max": 5
+ },
+ "aids": {
+  "n_all": 467,
+  "n_cohort": 403,
+  "n_events": 126,
+  "landmark": 6.0,
+  "unit": "months",
+  "channels": [
+   "sqrt CD4"
+  ],
+  "baseline": [
+   "ddI",
+   "male",
+   "prevOI_AIDS",
+   "AZT_failure"
+  ],
+  "visits_median": 3.0,
+  "visits_q1": 2.0,
+  "visits_q3": 3.0,
+  "visits_min": 1,
+  "visits_max": 3
+ },
+ "raw_facts": {
+  "aids_rows": 1405,
+  "aids_patients": 467,
+  "aids_cd4_max": 24.124676164,
+  "aids_cd4_noninteger": true,
+  "prothro_rows": 2968,
+  "prothro_patients": 488
+ }
+}
