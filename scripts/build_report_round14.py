@@ -16,7 +16,7 @@ import round2_data as D  # noqa: E402
 
 ROOT, REP = D.ROOT, D.REP
 md_table = R1.md_table
-FINAL = "final_full_suite_round14_rerun"
+FINAL = "final_full_suite_round14_rerun2"
 VER = REP / "manuscript_verification_round14.json"
 
 
@@ -48,7 +48,7 @@ def decisions():
 
 def suite_table():
     rows = []
-    for run in ("final_full_suite_round13", "final_full_suite_round14", FINAL):
+    for run in ("final_full_suite_round13", "final_full_suite_round14", "final_full_suite_round14_rerun", FINAL):
         g = R1.TA[R1.TA.run_id == run]
         if len(g):
             c = [int((g.outcome == o).sum()) for o in ("passed", "failed", "skipped", "xfailed")]
