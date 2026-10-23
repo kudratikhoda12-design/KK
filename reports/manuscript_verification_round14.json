@@ -1,7 +1,7 @@
 {
  "ledger": {
   "passed": true,
-  "n_values": 1362,
+  "n_values": 1361,
   "mismatches": []
  },
  "rerender": {
@@ -11,7 +11,7 @@
  },
  "numbers": {
   "passed": true,
-  "n_tokens": 1492,
+  "n_tokens": 1491,
   "n_template_literals": 130,
   "unregistered_in_manuscript": [],
   "template_literals_without_registered_context": [],

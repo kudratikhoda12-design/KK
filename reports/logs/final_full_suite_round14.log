@@ -1,0 +1,19 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /home/user/KK/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/user/KK
+configfile: pyproject.toml
+plugins: hypothesis-6.170.0
+collecting ... collected 276 items / 1 skipped
+
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[weibull] PASSED
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A1_terms_match_scipy[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[weibull] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A2_numerical_integration_and_hazard[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[weibull] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[lognormal] PASSED
+tests/test_aft_likelihood.py::test_A3_mixed_sample_and_censored_terms[loglogistic] PASSED
+tests/test_aft_likelihood.py::test_A4_gradcheck[weibull] 

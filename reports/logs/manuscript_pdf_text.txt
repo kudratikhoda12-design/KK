@@ -100,11 +100,11 @@ give both better prediction and readable effects. Two findings ended that line (
 numbers).
 
    1. No predictive advantage. The conventional MLP-FAE first had to pass a pre-registered
-      learnability gate, which only the sixth gated design passed (Table 1; one further revision failed
-      its pre-gate search). Under the configuration that passed, the single confirmatory test (H1)
-      found KAN-FAE worse than MLP-FAE in survival-curve error. With reconstruction pre-training
-      (strategy S3) the two were indistinguishable, and a fresh-seed re-test in Round 12 declared
-      them equivalent within a pre-registered margin.
+      learnability gate; every design failed it until Round 8 (Table 1 lists the gate looks with saved
+      verdict records). Under the configuration that passed, the single confirmatory test (H1) found
+      KAN-FAE worse than MLP-FAE in survival-curve error. With reconstruction pre-training (strategy
+      S3) the two were indistinguishable, and a fresh-seed re-test in Round 12 declared them
+      equivalent within a pre-registered margin.
    2. No clinical readability. In an autoencoder the KAN edges act on abstract front-end features
       and feed latent units that a further head combines into risk. Pruning removed almost no edge,
       and the symbolic formulas, though accurate, described maps between abstract coordinates
@@ -207,18 +207,19 @@ training residuals, so that the error law is not assumed.
 2.3 Model families
 
       B1 (two-stage interpretable coordinates). B1-FPCA: functional principal component scores
-      per channel (95% variance explained, at most 5 components; PACE for sparse data), with z,
-      feed a one-layer additive KAN (B1-FPCA-1) or a two-layer KAN [p → 4 → 1] (B1-FPCA-2). B1-SUM:
-      per-channel summaries (last value, mean, OLS slope, residual SD) feed the same heads.
+      per channel (95% variance explained, at most 5 components; PACE as an alternative front end
+      in the sparse simulation), with z, feed a one-layer additive KAN (B1-FPCA-1) or a two-layer KAN
+      [p → 4 → 1] (B1-FPCA-2). B1-SUM: per-channel summaries (last value, mean, OLS slope, residual
+      SD) feed the same heads.
       B2 (functional KAN layer on X(t)).
-            B2-H (time-homogeneous): η = Σ_d ∫φ_d(X_d(t))dt + Σ_k ψ_k(z_k).
-            B2-S (separable bivariate, rank 2): φ_d(x, t) = Σ_m g_dm(x)h_dm(t), with every g and h a
-            univariate KAN edge; the surface is read in x and t separately.
-            B2-deep: the functional summaries ∫g_dm(X_d(t))h_dm(t)dt feed a second KAN layer
-            [D·M + p → 4 → 1], which can represent interactions between channels.
-            Each φ_d is centred over the training data (the constant is absorbed by the baseline).
-            The primary input scale is standardised X; a quantile-transformed input (Cui et al., 2021)
-            is a sensitivity analysis.
+             B2-H (time-homogeneous): η = Σ_d ∫φ_d(X_d(t))dt + Σ_k ψ_k(z_k).
+             B2-S (separable bivariate, rank 2): φ_d(x, t) = Σ_m g_dm(x)h_dm(t), with every g and h a
+             univariate KAN edge; the surface is read in x and t separately.
+             B2-deep: the functional summaries ∫g_dm(X_d(t))h_dm(t)dt feed a second KAN layer
+             [D·M + p → 4 → 1], which can represent interactions between channels.
+             Each φ_d is centred over the training data (the constant is absorbed by the baseline).
+             The primary input scale is standardised X; a quantile-transformed input (Cui et al., 2021)
+             is a sensitivity analysis.
       B3 (stacked landmark supermodel). For each landmark t_L and subject at risk, features
       from the history window before t_L only, outcome administratively censored at t_L + w, one
       row per (subject, landmark); a CoxKAN with a landmark-stratified baseline and t_L as an
@@ -250,7 +251,7 @@ is valid because η is additive in φ; the seed-0 member is also reported.
       landmark_cox: Cox on the last observed values at the landmark plus z (van Houwelingen,
       2007).
       static CoxKAN: CoxKAN on the last observed values plus z. flat_ae: an autoencoder on the
-      flattened observations (sparse simulation only).
+      curve values on the grid, flattened into one vector (sparse simulation only).
 
 2.5 Pruning and channel selection
 
@@ -269,8 +270,7 @@ Each surviving edge of the pruned model is fitted in three stages: a linear func
 wrapped elementary functions, and PySR symbolic regression (Cranmer, 2023) (60 s per edge; only
 edges carrying at least 5% of their layer’s score, at most 10 per model). A formula is accepted if its
 validation R² exceeds 0.99. Accepted formulas replace their edges with trainable affine parameters.
-CoxKAN’s procedure then refits all parameters (Knottenbelt et al., 2025); we did so with
-unconstrained L-BFGS.
+The registered procedure then refits all parameters, which we did with unconstrained L-BFGS.
 
 Methodological finding. In the simulation (Section 3.6) the substituted model without refit
 reproduced the pruned model’s shapes, whereas the unconstrained refit drifted far from them, and in
@@ -285,8 +285,8 @@ real data confirmed the pattern (Section 4.3).
       weighted by the empirical density of (X(t), t) in the test data. Because some directions of φ
       cannot affect any subject’s η (for example a component linear in x when ∫X dt is nearly
       constant across subjects), the primary metric is the identifiable RISE: error and truth are
-        projected orthogonally to the directions of a 10 × 10 tensor B-spline space whose functional
-        has relative variance below 3e-8 on the test curves. The time-homogeneous estimate of B2-H
+      projected orthogonally to the directions of a 10 × 10 tensor B-spline space whose functional
+        has relative variance below 3e-8 on the test curves. The time-homogeneous estimate of B2-H
         against the homogeneous truth uses a one-dimensional RISE. The primary shape summary is
         the mean over the two active channels.
         Survival. Survival-curve error against the simulation oracle; integrated Brier score (IBS) with
@@ -344,9 +344,9 @@ Int/P0 3400–3419).
         S-Add: η = ∫sin(πX₁(t)/2)dt + ∫tanh(X₂(t))(1 + t)dt + 0.3z₁ − 0.3z₂, Weibull proportional
         hazards (shape 1.5), so the Cox model is correctly specified. φ₁ is time-homogeneous, φ₂ time-
         varying.
-      S-Int: S-Add’s η plus 0.8 times the product of the two channels’ functional summaries (a cross-
-      channel interaction that no additive model can represent).
-      S-Sparse: S-Add with 3–8 visits per subject; B-spline smoothing against PACE.
+        S-Int: S-Add’s η plus 0.8 times the product of the two channels’ functional summaries (a cross-
+        channel interaction that no additive model can represent).
+      S-Sparse: S-Add with 3–8 visits per subject; B-spline smoothing against PACE.
       S-Misspec: S-Add’s η as an AFT location, log T = 1 − η/1.5 + 0.5ε with log-normal or log-
       logistic ε (non-PH; the Cox model is misspecified).
       S-Int/P0: the Round-1 simulator setting P0, re-testing KAN-FAE against MLP-FAE under strategy
@@ -359,93 +359,96 @@ rerun after an evaluation-only harness fix, and are reported with their original
 
 Table 2. H-R12 and its sensitivity rows. a = B2-S, b = AFCM.
 
-Contrast (S-        Mean a   Mean b   Difference   95% CI      Paired-t   Wilcoxon   Replicates   TOST p
-Add,                                  a−b                      p          p          a<b/a>       (±0.05)
-identifiable                                                                         b
+Contrast (S-        Mean a    Mean b    Difference   95% CI      Paired-t      Wilcoxon     Replicates   TOST p
+Add,                                    a−b                      p             p            a<b/a>       (±0.05)
+identifiable                                                                                b
 RISE, 20
 replicates)
 
-H-R12               0.1785   0.1720   +0.0065      [−0.0506,   0.815      0.43       8 / 12       0.0634
-(confirmatory):                                    +0.0635]
+H-R12               0.1785    0.1720    +0.0065      [−0.0506,   0.815         0.43         8 / 12       0.0634
+(confirmatory):                                      +0.0635]
 B2-S Cox
 (ensemble) −
 AFCM V3
 
-Sensitivity: B2-S   0.1785   0.3578   −0.1793      [−0.2232,   6.2e−8     3.81e−6    19 / 1       1
-Cox − AFCM V0                                      −0.1354]
+Sensitivity: B2-S   0.1785    0.3578    −0.1793      [−0.2232,   6.2e−8        3.81e−6      19 / 1       1
+Cox − AFCM V0                                        −0.1354]
 (Round-12a
 AFCM)
 
-Sensitivity:        0.2073   0.1720   +0.0353      [−0.0317,   0.284      0.123      6 / 14       0.326
-single-seed B2-S                                   +0.1023]
+Sensitivity:        0.2073    0.1720    +0.0353      [−0.0317,   0.284         0.123        6 / 14       0.326
+single-seed B2-S                                     +0.1023]
 Cox − AFCM V3
 
-Sensitivity: raw    0.1798   0.1742   +0.0056      [−0.0532,   0.843      0.43       8 / 12       0.0655
-(Round-11) RISE                                    +0.0645]
+Sensitivity: raw    0.1798    0.1742    +0.0056      [−0.0532,   0.843         0.43         8 / 12       0.0655
+(Round-11) RISE                                      +0.0645]
 
-Per channel: φ₁     0.2758   0.2453   +0.0306      [−0.0724,   0.542      0.231      5 / 15       0.349
-(homogeneous                                       +0.1335]
+Per channel: φ₁     0.2758    0.2453    +0.0306      [−0.0724,   0.542         0.231        5 / 15       0.349
+(homogeneous                                         +0.1335]
 sin effect)
 
-Per channel: φ₂     0.0812   0.0988   −0.0176      [−0.0356,   0.0534     0.114      12 / 8       0.000639
-(time-varying                                      +0.0003]
+Per channel: φ₂     0.0812    0.0988    −0.0176      [−0.0356,   0.0534        0.114        12 / 8       0.000639
+(time-varying                                        +0.0003]
 tanh effect)
 
 
 The pre-registered rule declares “better” if the 95% CI lies below 0, “worse” if above, “equivalent” if
 within ±0.05 (TOST), and otherwise “inconclusive”. H-R12 is inconclusive. The comparator failed
 its acceptance check (Section 2.4), so even a clear result would have compared B2-S with an
-unvalidated AFCM. Against the earlier AFCM V0, B2-S was clearly better, which mainly shows how
-sensitive AFCM’s shape recovery is to its penalty specification. The time-varying effect φ₂ was
-recovered equivalently by both (TOST p 0.00064). Without the ensemble, single-seed B2-S had a
+unvalidated AFCM. Against the earlier AFCM V0, B2-S was clearly better; V0 and V3 differ only in their
+penalty specification, so AFCM’s shape recovery depends strongly on it. The time-varying effect φ₂
+was recovered equivalently by both (TOST p 0.00064). Without the ensemble, single-seed B2-S had a
 higher mean RISE (0.2073).
 
 3.3 Nonlinear shape recovery and survival accuracy (S-Add)
 
 Table 3. S-Add, all models (means over 20 replicates; RISE = identifiable RISE; “–” where a model
 has no functional shape).
-Model           Mean RISE       RISE φ₁       RISE φ₂            Curve error        IBS               Uno C           D-cal p <
-                (φ₁, φ₂)                                                                                              0.05
 
-B2-S Cox        0.1785          0.276         0.081              0.0487             0.1740            0.6628          5%
+Model             Mean RISE   RISE φ₁     RISE φ₂       Curve error      IBS             Uno C       D-cal p <
+                  (φ₁, φ₂)                                                                           0.05
+
+B2-S Cox          0.1785      0.276       0.081         0.0487           0.1740          0.6628      5%
 (ensemble)
+Model           Mean RISE       RISE φ₁         RISE φ₂            Curve error        IBS               Uno C           D-cal p <
+                (φ₁, φ₂)                                                                                                0.05
 
-B2-S KAN-       0.2211          0.365         0.077              0.0497             0.1735            0.6638          0%
+B2-S KAN-       0.2211          0.365           0.077              0.0497             0.1735            0.6638          0%
 AFT
 
-B2-H Cox        0.1226          0.152         0.093              0.0469             0.1741            0.6631          0%
+B2-H Cox        0.1226          0.152           0.093              0.0469             0.1741            0.6631          0%
 
-B2-H KAN-       0.1579          0.210         0.106              0.0484             0.1748            0.6616          0%
+B2-H KAN-       0.1579          0.210           0.106              0.0484             0.1748            0.6616          0%
 AFT
 
-B2-S Cox,       0.2336          0.395         0.072              0.0516             0.1747            0.6611          0%
+B2-S Cox,       0.2336          0.395           0.072              0.0516             0.1747            0.6611          0%
 quantile
 input
 
-AFCM V3 (not    0.1720          0.245         0.099              0.0476             0.1740            0.6629          0%
+AFCM V3 (not    0.1720          0.245           0.099              0.0476             0.1740            0.6629          0%
 validated,
 CK-6c)
 
-AFCM V0         0.3578          0.624         0.091              0.0572             0.1778            0.6535          0%
+AFCM V0         0.3578          0.624           0.091              0.0572             0.1778            0.6535          0%
 
-B1-FPCA-1       0.7351          1.098         0.372              0.0898             0.1872            0.6257          5%
+B1-FPCA-1       0.7351          1.098           0.372              0.0898             0.1872            0.6257          5%
 Cox
 
-B1-FPCA-1       0.6826          1.075         0.290              0.0795             0.1826            0.6381          0%
+B1-FPCA-1       0.6826          1.075           0.290              0.0795             0.1826            0.6381          0%
 KAN-AFT
 
-fpca_cox        0.7082          1.125         0.291              0.0765             0.1820            0.6407          0%
+fpca_cox        0.7082          1.125           0.291              0.0765             0.1820            0.6407          0%
 
-B1-SUM Cox      –               –             –                  0.0879             0.1873            0.6276          5%
+B1-SUM Cox      –               –               –                  0.0879             0.1873            0.6276          5%
 
-B1-SUM KAN-     –               –             –                  0.0820             0.1853            0.6330          5%
+B1-SUM KAN-     –               –               –                  0.0820             0.1853            0.6330          5%
 AFT
 
-sum_cox         –               –             –                  0.0744             0.1823            0.6394          0%
+sum_cox         –               –               –                  0.0744             0.1823            0.6394          0%
 
-sum_rsf         –               –             –                  0.0904             0.1850            0.6353          10%
+sum_rsf         –               –               –                  0.0904             0.1850            0.6353          10%
 
-static          –               –             –                  0.1126             0.1937            0.5968          0%
+static          –               –               –                  0.1126             0.1937            0.5968          0%
 CoxKAN (last
 values)
 
@@ -459,30 +462,30 @@ differ in curve error.
 
 Table 4. Pre-registered secondary contrasts (exploratory; no multiplicity correction).
 
-Scenario       Metric        Contrast a   Mean a        Mean b            Difference      95% CI         Paired-t p    a<b/a>
-                             −b                                                                                        b
+Scenario       Metric        Contrast a     Mean a        Mean b            Difference      95% CI         Paired-t p    a<b/a>
+                             −b                                                                                          b
 
-S-Add          curve error   B2-S Cox −   0.0487        0.0476            +0.0011         [−0.0025,      0.53          10 / 10
-                             AFCM V3                                                      +0.0047]
+S-Add          curve error   B2-S Cox −     0.0487        0.0476            +0.0011         [−0.0025,      0.53          10 / 10
+                             AFCM V3                                                        +0.0047]
 
-S-Add          RISE          B2-S Cox −   0.1785        0.7351            −0.5566         [−0.5974,      4.4e−17       20 / 0
-                             B1-FPCA-1                                                    −0.5159]
+S-Add          RISE          B2-S Cox −     0.1785        0.7351            −0.5566         [−0.5974,      4.4e−17       20 / 0
+                             B1-FPCA-1                                                      −0.5159]
                              Cox
 
-S-Int          curve error   B2-deep      0.0544        0.0501            +0.0043         [+0.0007,      0.0219        5 / 15
-                             Cox − B2-S                                                   +0.0079]
+S-Int          curve error   B2-deep        0.0544        0.0501            +0.0043         [+0.0007,      0.0219        5 / 15
+                             Cox − B2-S                                                     +0.0079]
                              Cox
 
-S-Int          curve error   B1-FPCA-2    0.0964        0.1003            −0.0038         [−0.0063,      0.00468       16 / 4
-                             − B1-FPCA-                                                   −0.0013]
+S-Int          curve error   B1-FPCA-2      0.0964        0.1003            −0.0038         [−0.0063,      0.00468       16 / 4
+                             − B1-FPCA-                                                     −0.0013]
                              1 (Cox)
-Scenario       Metric        Contrast a     Mean a       Mean b   Difference   95% CI      Paired-t p   a<b/a>
-                             −b                                                                         b
 
-S-Sparse       RISE          B2-S Cox:      0.3305       0.3693   −0.0388      [−0.1088,   0.261        14 / 6
-                             PACE − B-                                         +0.0313]
+S-Sparse       RISE          B2-S Cox:      0.3305        0.3693            −0.0388         [−0.1088,      0.261         14 / 6
+                             PACE − B-                                                      +0.0313]
                              spline front
                              end
+Scenario       Metric        Contrast a     Mean a       Mean b   Difference   95% CI      Paired-t p   a<b/a>
+                             −b                                                                         b
 
 S-Sparse       curve error   B2-S Cox:      0.0766       0.0798   −0.0032      [−0.0072,   0.103        13 / 7
                              PACE − B-                                         +0.0007]
@@ -548,10 +551,12 @@ fpca_cox, B-spline                                   0.658          0.0936      
 sum_cox                                              –              0.0960                 0.1850       0.6251
 
 flat_ae                                              –              0.1573                 0.2200       0.5830
-With sparse visits the shape errors of the direct functional models roughly doubled or more (B2-S Cox
+
+
+With sparse visits the shape errors of the direct functional models roughly doubled or more (B2-S Cox
 0.178 on S-Add, 0.369 on S-Sparse; AFCM V3 0.172 and 0.478), while the already large errors of the
 linear-in-scores models did not grow (B1-FPCA-1 Cox 0.735 and 0.654). PACE gave B2-S a slightly
-lower RISE and curve error than per-subject B-spline smoothing, but neither interval excluded 0 (Table
+lower RISE and curve error than per-subject B-spline smoothing, but neither interval excluded 0 (Table
 4); for B1-FPCA-1 PACE was worse. The flattened autoencoder had far higher curve error than B2-S
 (+0.0775, 20 of 20 replicates) and failed D-calibration in 70% of replicates.
 
@@ -679,8 +684,8 @@ H1, the only confirmatory test of Rounds 1–9, found KAN-FAE worse under the ga
 (strategy S2: joint training without reconstruction pre-training). With tuned reconstruction pre-training
 (S3) the survival gap vanished in Round 9 (F1) at the price of worse reconstruction, and the pre-
 registered Round-12 re-test on 20 fresh seeds declared KAN and MLP equivalent within ±0.005 in
-curve error (90% CI [−0.0032, +0.0023]). In no arm, strategy or setting was KAN-FAE better than
-MLP-FAE on survival. Its interpretability was also limited:
+curve error (90% CI [−0.0032, +0.0023]). In no arm, strategy or setting was KAN-FAE found better
+than MLP-FAE on survival. Its interpretability was also limited:
 
 Table 10. KAN-FAE pruning (Round 8; risk-encoder edges of the seed-0 member).
 KAN-FAE (Round 8;         Harrell C         Curve error          Test reconstruction   Active risk-encoder
@@ -697,12 +702,12 @@ regularised, after        0.8476            0.1080               0.506          
 centred pruning
 
 
-Pruning removed almost nothing because standardised encoder inputs make every edge non-
-negligible, and the regularised variant lost reconstruction quality. Symbolic formulas were accepted
-for many encoder edges without loss of accuracy, but each maps one abstract front-end feature to
-one latent unit, and the risk then passes through a further head; no formula for risk in terms of a
-clinical trajectory results. The direct models of Sections 2–4 place the KAN edge on the trajectory
-itself.
+Pruning removed almost nothing (Round 8 attributed this to BatchNorm making every encoder input
+unit-scale, so that no edge is small), and the regularised variant lost reconstruction quality. Symbolic
+formulas were accepted for many encoder edges without loss of accuracy, but each maps one
+abstract front-end feature to one latent unit, and the risk then passes through a further head; no
+formula for risk in terms of a clinical trajectory results. The direct models of Sections 2–4 place the
+KAN edge on the trajectory itself.
 
 
 4. Real-data applications
@@ -931,8 +936,8 @@ aids            sqrt CD4 1.0     0.67         0.9982       0.9990         0.660 
 
 On PBC E2, bilirubin, albumin and platelets were selected in every split, alkaline phosphatase and
 prothrombin time in one split, AST never. Substituting the accepted formulas without refit preserved
-the model on every data set (risk correlation with the pruned model at least 0.9985; IBS unchanged),
-whereas the refit changed it (correlation 0.27 to 0.87) and worsened IBS on PBC.
+the model on every data set (risk correlation with the pruned model at least 0.9985; IBS essentially
+unchanged), whereas the refit changed it (correlation 0.27 to 0.87) and worsened IBS on PBC.
 
 Table 15. Accepted formulas carrying at least 5% of their layer’s score, split 0.
 
@@ -1120,8 +1125,8 @@ aids         12.0             62.8        0.138         0.151           0.681   
 
 
 The KAN supermodel was not consistently better than the linear landmark-stratified supermodel: on
-PBC the linear model had the lower Brier score at the first two landmarks and the KAN at the last, and
-elsewhere the two were close.
+PBC the linear model had the lower Brier score at the first two landmarks and the KAN at the last two,
+and elsewhere the two were close.
 
 4.6 C-MAPSS calibration
 
@@ -1169,8 +1174,7 @@ windows per engine, which are correlated, so the D-calibration test is anti-cons
    2. Interpretability tools work when used conservatively. Channel-level pruning found the
       active channels (with imperfect removal of the null one); symbolic formulas substituted without
       refit reproduced the model; leading real-data effects were stable and pointed in clinically
-      expected directions. The unconstrained refit that CoxKAN-style pipelines apply after
-      substitution should be avoided or constrained.
+      expected directions. An unconstrained refit after substitution should be avoided or constrained.
    3. No predictive advantage on small real cohorts. Simple landmark models were at least as
       good; with so few visits per subject, the last observed value plausibly carried most of the
       information (an interpretation, not a tested finding).
@@ -1211,11 +1215,9 @@ different input structures, and we make no claim relative to work we could read 
 All code, decision logs, pre-registrations, raw records and this manuscript are in one repository. Public
 data were obtained from CRAN (survival 3.8-12, JM 1.5-2) and NASA’s prognostics repository, with
 checksums in the run manifest. Each round’s plan was committed before its seeds were used. Every
-number in this manuscript is rendered from the saved records, logged with its source, and re-checked
+number in this manuscript is rendered from the saved records, logged with its source, and re-checked
 by an independent script and a unit test (Appendix A).
-
-
-6. Conclusions
+6. Conclusions
 
 Functional CoxKAN and KAN-AFT models that apply KAN edges directly to longitudinal trajectories
 recover nonlinear functional effects, support channel selection and give accurate symbolic summaries
@@ -1265,10 +1267,10 @@ References
       Gellar et al. (2015). Gellar J.E., Colantuoni E., Needham D.M., Crainiceanu C.M. Cox regression
       models with functional covariates for survival data. Statistical Modelling 15(3):256–278.
       doi:10.1177/1471082X14565526
-Graf et al. (1999). Graf E., Schmoor C., Sauerbrei W., Schumacher M. Assessment and
-comparison of prognostic classification schemes for survival data. Statistics in Medicine 18(17–
-18):2529–2545
-Guo & Carlin (2004). Guo X., Carlin B.P. Separate and joint modeling of longitudinal and event
+      Graf et al. (1999). Graf E., Schmoor C., Sauerbrei W., Schumacher M. Assessment and
+      comparison of prognostic classification schemes for survival data. Statistics in Medicine 18(17–
+      18):2529–2545
+Guo & Carlin (2004). Guo X., Carlin B.P. Separate and joint modeling of longitudinal and event
 time data using standard computer packages. The American Statistician 58(1):16–24.
 doi:10.1198/0003130042854
 Haider et al. (2020). Haider H., Hoehn B., Davis S., Greiner R. Effective ways to build and
@@ -1319,9 +1321,9 @@ doi:10.1002/sim.9336
 Qin & Li (2026). Qin M., Li Z. F-KAN: a novel framework for functional regression based on
 Kolmogorov–Arnold networks. Computational Statistics 41(5):114. doi:10.1007/s00180-026-
 01791-x
-   Ramsay & Silverman (2005). Ramsay J.O., Silverman B.W. Functional Data Analysis. Springer
-   Series in Statistics. Springer. doi:10.1007/b98888
-   Rizopoulos (2010). Rizopoulos D. JM: an R package for the joint modelling of longitudinal and
+Ramsay & Silverman (2005). Ramsay J.O., Silverman B.W. Functional Data Analysis. Springer
+Series in Statistics. Springer. doi:10.1007/b98888
+   Rizopoulos (2010). Rizopoulos D. JM: an R package for the joint modelling of longitudinal and
    time-to-event data. Journal of Statistical Software 35(9). doi:10.18637/jss.v035.i09
    Saxena & Goebel (2008). Saxena A., Goebel K. Turbofan Engine Degradation Simulation Data
    Set. NASA Prognostics Data Repository, NASA Ames Research Center

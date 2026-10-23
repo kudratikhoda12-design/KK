@@ -171,7 +171,8 @@ scripts/run_logged.sh round14_describe_cohorts .venv/bin/python scripts/describe
 .venv/bin/python scripts/manuscript_round14.py                # docs/manuscript_round14.md + reports/manuscript_values_round14.json
 bash scripts/build_manuscript_pdf.sh                          # reports/manuscript_round14.pdf
 .venv/bin/python scripts/verify_manuscript_round14.py --pdf   # reports/manuscript_verification_round14.json (ALL_PASS)
-KANFAE_RUN_ID=final_full_suite_round14 scripts/run_logged.sh final_full_suite_round14 .venv/bin/python -m pytest -v -rA -s tests/
+# (final_full_suite_round14 was stopped after 10 tests to finalise the manuscript text first; its records are kept)
+KANFAE_RUN_ID=final_full_suite_round14_rerun scripts/run_logged.sh final_full_suite_round14_rerun .venv/bin/python -m pytest -v -rA -s tests/
 .venv/bin/python scripts/compile_test_results.py
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf

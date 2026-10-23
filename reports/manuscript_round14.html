@@ -182,13 +182,13 @@ KAN encoder would give both better prediction and readable effects. Two
 findings ended that line (Section 3.7 gives the numbers).</p>
 <ol type="1">
 <li><strong>No predictive advantage.</strong> The conventional MLP-FAE
-first had to pass a pre-registered learnability gate, which only the
-sixth gated design passed (Table 1; one further revision failed its
-pre-gate search). Under the configuration that passed, the single
-confirmatory test (H1) found KAN-FAE <em>worse</em> than MLP-FAE in
-survival-curve error. With reconstruction pre-training (strategy S3) the
-two were indistinguishable, and a fresh-seed re-test in Round 12
-declared them equivalent within a pre-registered margin.</li>
+first had to pass a pre-registered learnability gate; every design
+failed it until Round 8 (Table 1 lists the gate looks with saved verdict
+records). Under the configuration that passed, the single confirmatory
+test (H1) found KAN-FAE <em>worse</em> than MLP-FAE in survival-curve
+error. With reconstruction pre-training (strategy S3) the two were
+indistinguishable, and a fresh-seed re-test in Round 12 declared them
+equivalent within a pre-registered margin.</li>
 <li><strong>No clinical readability.</strong> In an autoencoder the KAN
 edges act on abstract front-end features and feed latent units that a
 further head combines into risk. Pruning removed almost no edge, and the
@@ -370,10 +370,10 @@ training residuals, so that the error law is not assumed.</p>
 <ul>
 <li><strong>B1 (two-stage interpretable coordinates).</strong> B1-FPCA:
 functional principal component scores per channel (95% variance
-explained, at most 5 components; PACE for sparse data), with z, feed a
-one-layer additive KAN (B1-FPCA-1) or a two-layer KAN [p → 4 → 1]
-(B1-FPCA-2). B1-SUM: per-channel summaries (last value, mean, OLS slope,
-residual SD) feed the same heads.</li>
+explained, at most 5 components; PACE as an alternative front end in the
+sparse simulation), with z, feed a one-layer additive KAN (B1-FPCA-1) or
+a two-layer KAN [p → 4 → 1] (B1-FPCA-2). B1-SUM: per-channel summaries
+(last value, mean, OLS slope, residual SD) feed the same heads.</li>
 <li><strong>B2 (functional KAN layer on X(t)).</strong>
 <ul>
 <li>B2-H (time-homogeneous): η = Σ_d ∫φ_d(X_d(t))dt + Σ_k ψ_k(z_k).</li>
@@ -430,8 +430,8 @@ survival forest (Ishwaran et al., 2008) on trajectory summaries.</li>
 <li><strong>landmark_cox</strong>: Cox on the last observed values at
 the landmark plus z (van Houwelingen, 2007).</li>
 <li><strong>static CoxKAN</strong>: CoxKAN on the last observed values
-plus z. <strong>flat_ae</strong>: an autoencoder on the flattened
-observations (sparse simulation only).</li>
+plus z. <strong>flat_ae</strong>: an autoencoder on the curve values on
+the grid, flattened into one vector (sparse simulation only).</li>
 </ul>
 <h3 id="pruning-and-channel-selection">2.5 Pruning and channel
 selection</h3>
@@ -454,9 +454,9 @@ linear function, a library of affine-wrapped elementary functions, and
 PySR symbolic regression (Cranmer, 2023) (60 s per edge; only edges
 carrying at least 5% of their layer’s score, at most 10 per model). A
 formula is accepted if its validation R² exceeds 0.99. Accepted formulas
-replace their edges with trainable affine parameters. CoxKAN’s procedure
-then refits all parameters (Knottenbelt et al., 2025); we did so with
-unconstrained L-BFGS.</p>
+replace their edges with trainable affine parameters. The registered
+procedure then refits all parameters, which we did with unconstrained
+L-BFGS.</p>
 <p><strong>Methodological finding.</strong> In the simulation (Section
 3.6) the substituted model <strong>without</strong> refit reproduced the
 pruned model’s shapes, whereas the unconstrained refit drifted far from
@@ -681,10 +681,11 @@ V3</strong></td>
 “inconclusive”. <strong>H-R12 is inconclusive.</strong> The comparator
 failed its acceptance check (Section 2.4), so even a clear result would
 have compared B2-S with an unvalidated AFCM. Against the earlier AFCM
-V0, B2-S was clearly better, which mainly shows how sensitive AFCM’s
-shape recovery is to its penalty specification. The time-varying effect
-φ₂ was recovered equivalently by both (TOST p 0.00064). Without the
-ensemble, single-seed B2-S had a higher mean RISE (0.2073).</p>
+V0, B2-S was clearly better; V0 and V3 differ only in their penalty
+specification, so AFCM’s shape recovery depends strongly on it. The
+time-varying effect φ₂ was recovered equivalently by both (TOST p
+0.00064). Without the ensemble, single-seed B2-S had a higher mean RISE
+(0.2073).</p>
 <h3 id="nonlinear-shape-recovery-and-survival-accuracy-s-add">3.3
 Nonlinear shape recovery and survival accuracy (S-Add)</h3>
 <p><strong>Table 3. S-Add, all models</strong> (means over 20
@@ -1470,8 +1471,8 @@ reconstruction pre-training). With tuned reconstruction pre-training
 reconstruction, and the pre-registered Round-12 re-test on 20 fresh
 seeds declared KAN and MLP <strong>equivalent</strong> within ±0.005 in
 curve error (90% CI [−0.0032, +0.0023]). In no arm, strategy or setting
-was KAN-FAE better than MLP-FAE on survival. Its interpretability was
-also limited:</p>
+was KAN-FAE found better than MLP-FAE on survival. Its interpretability
+was also limited:</p>
 <p><strong>Table 10. KAN-FAE pruning</strong> (Round 8; risk-encoder
 edges of the seed-0 member).</p>
 <table>
@@ -1522,14 +1523,14 @@ edges of the seed-0 member).</p>
 </tr>
 </tbody>
 </table>
-<p>Pruning removed almost nothing because standardised encoder inputs
-make every edge non-negligible, and the regularised variant lost
-reconstruction quality. Symbolic formulas were accepted for many encoder
-edges without loss of accuracy, but each maps one abstract front-end
-feature to one latent unit, and the risk then passes through a further
-head; no formula for risk in terms of a clinical trajectory results. The
-direct models of Sections 2–4 place the KAN edge on the trajectory
-itself.</p>
+<p>Pruning removed almost nothing (Round 8 attributed this to BatchNorm
+making every encoder input unit-scale, so that no edge is small), and
+the regularised variant lost reconstruction quality. Symbolic formulas
+were accepted for many encoder edges without loss of accuracy, but each
+maps one abstract front-end feature to one latent unit, and the risk
+then passes through a further head; no formula for risk in terms of a
+clinical trajectory results. The direct models of Sections 2–4 place the
+KAN edge on the trajectory itself.</p>
 <h2 id="real-data-applications">4. Real-data applications</h2>
 <h3 id="data-and-cohorts">4.1 Data and cohorts</h3>
 <ul>
@@ -2254,8 +2255,8 @@ Cox, seed-0 member, per split; means over the outer splits).</p>
 split, alkaline phosphatase and prothrombin time in one split, AST
 never. Substituting the accepted formulas <strong>without</strong> refit
 preserved the model on every data set (risk correlation with the pruned
-model at least 0.9985; IBS unchanged), whereas the refit changed it
-(correlation 0.27 to 0.87) and worsened IBS on PBC.</p>
+model at least 0.9985; IBS essentially unchanged), whereas the refit
+changed it (correlation 0.27 to 0.87) and worsened IBS on PBC.</p>
 <p><strong>Table 15. Accepted formulas carrying at least 5% of their
 layer’s score, split 0.</strong></p>
 <table style="width:100%;">
@@ -2768,7 +2769,7 @@ in parentheses).</p>
 </table>
 <p>The KAN supermodel was not consistently better than the linear
 landmark-stratified supermodel: on PBC the linear model had the lower
-Brier score at the first two landmarks and the KAN at the last, and
+Brier score at the first two landmarks and the KAN at the last two, and
 elsewhere the two were close.</p>
 <h3 id="c-mapss-calibration">4.6 C-MAPSS calibration</h3>
 <p><strong>Table 18. C-MAPSS FD001 (Option B)</strong> (outer splits by
@@ -2892,9 +2893,8 @@ linear-in-scores two-stage models when the effect is nonlinear.</li>
 conservatively.</strong> Channel-level pruning found the active channels
 (with imperfect removal of the null one); symbolic formulas substituted
 without refit reproduced the model; leading real-data effects were
-stable and pointed in clinically expected directions. The unconstrained
-refit that CoxKAN-style pipelines apply after substitution should be
-avoided or constrained.</li>
+stable and pointed in clinically expected directions. An unconstrained
+refit after substitution should be avoided or constrained.</li>
 <li><strong>No predictive advantage on small real cohorts.</strong>
 Simple landmark models were at least as good; with so few visits per
 subject, the last observed value plausibly carried most of the

@@ -83,9 +83,9 @@ used KAN blocks, with an AFT survival head on the latent representation (KAN-FAE
 encoder (MLP-FAE). The hope was that a KAN encoder would give both better prediction and readable effects. Two
 findings ended that line (Section 3.7 gives the numbers).
 
-1. **No predictive advantage.** The conventional MLP-FAE first had to pass a pre-registered learnability gate, which
-   only the sixth gated design passed (Table 1; one further revision failed its pre-gate search). Under the
-   configuration that passed, the single confirmatory test (H1) found
+1. **No predictive advantage.** The conventional MLP-FAE first had to pass a pre-registered learnability gate; every
+   design failed it until Round 8 (Table 1 lists the gate looks with saved verdict records). Under the configuration
+   that passed, the single confirmatory test (H1) found
    KAN-FAE *worse* than MLP-FAE in survival-curve error. With reconstruction pre-training (strategy S3) the two were
    indistinguishable, and a fresh-seed re-test in Round 12 declared them equivalent within a pre-registered margin.
 2. **No clinical readability.** In an autoencoder the KAN edges act on abstract front-end features and feed latent
@@ -154,7 +154,7 @@ assumed.
 ### 2.3 Model families
 
 - **B1 (two-stage interpretable coordinates).** B1-FPCA: functional principal component scores per channel (95%
-  variance explained, at most 5 components; PACE for sparse data), with z, feed a one-layer additive KAN (B1-FPCA-1)
+  variance explained, at most 5 components; PACE as an alternative front end in the sparse simulation), with z, feed a one-layer additive KAN (B1-FPCA-1)
   or a two-layer KAN [p → 4 → 1] (B1-FPCA-2). B1-SUM: per-channel summaries (last value, mean, OLS slope, residual SD)
   feed the same heads.
 - **B2 (functional KAN layer on X(t)).**
@@ -191,8 +191,8 @@ are the members' means, which is valid because η is additive in φ; the seed-0 
   BLUPs at the landmark enter a Cox model (a two-stage, joint-model-style baseline; JM itself was not available).
 - **sum_cox**, **sum_rsf**: Cox and random survival forest (Ishwaran et al., 2008) on trajectory summaries.
 - **landmark_cox**: Cox on the last observed values at the landmark plus z (van Houwelingen, 2007).
-- **static CoxKAN**: CoxKAN on the last observed values plus z. **flat_ae**: an autoencoder on the flattened
-  observations (sparse simulation only).
+- **static CoxKAN**: CoxKAN on the last observed values plus z. **flat_ae**: an autoencoder on the curve values on
+  the grid, flattened into one vector (sparse simulation only).
 
 ### 2.5 Pruning and channel selection
 
@@ -209,8 +209,8 @@ negative log partial likelihood per event) of the minimum validation loss, the l
 Each surviving edge of the pruned model is fitted in three stages: a linear function, a library of affine-wrapped
 elementary functions, and PySR symbolic regression (Cranmer, 2023) (60 s per edge; only edges carrying at least 5%
 of their layer's score, at most 10 per model). A formula is accepted if its validation R² exceeds 0.99. Accepted
-formulas replace their edges with trainable affine parameters. CoxKAN's procedure then refits all parameters
-(Knottenbelt et al., 2025); we did so with unconstrained L-BFGS.
+formulas replace their edges with trainable affine parameters. The registered procedure then refits all parameters,
+which we did with unconstrained L-BFGS.
 
 **Methodological finding.** In the simulation (Section 3.6) the substituted model **without** refit reproduced the
 pruned model's shapes, whereas the unconstrained refit drifted far from them, and in a few fits a formula left its
@@ -297,7 +297,8 @@ with their original failed records.
 The pre-registered rule declares "better" if the 95% CI lies below 0, "worse" if above, "equivalent" if within ±0.05
 (TOST), and otherwise "inconclusive". **H-R12 is inconclusive.** The comparator failed its acceptance check (Section
 2.4), so even a clear result would have compared B2-S with an unvalidated AFCM. Against the earlier AFCM V0, B2-S was
-clearly better, which mainly shows how sensitive AFCM's shape recovery is to its penalty specification. The
+clearly better; V0 and V3 differ only in their penalty specification, so AFCM's shape recovery depends strongly on
+it. The
 time-varying effect φ₂ was recovered equivalently by both (TOST p 0.00064).
 Without the ensemble, single-seed B2-S had a higher mean RISE (0.2073).
 
@@ -467,8 +468,8 @@ H1, the only confirmatory test of Rounds 1–9, found KAN-FAE worse under the ga
 training without reconstruction pre-training). With tuned reconstruction pre-training (S3) the survival gap
 vanished in Round 9 (F1) at the price of worse reconstruction, and the pre-registered Round-12 re-test on
 20 fresh seeds declared KAN and MLP **equivalent** within ±0.005 in curve error (90% CI
-[−0.0032, +0.0023]). In no arm, strategy or setting was KAN-FAE better than
-MLP-FAE on survival. Its interpretability was also limited:
+[−0.0032, +0.0023]). In no arm, strategy or setting was KAN-FAE found
+better than MLP-FAE on survival. Its interpretability was also limited:
 
 **Table 10. KAN-FAE pruning** (Round 8; risk-encoder edges of the seed-0 member).
 
@@ -479,8 +480,8 @@ MLP-FAE on survival. Its interpretability was also limited:
 | regularised, before pruning | 0.8477 | 0.1080 | 0.319 | 512.0 |
 | regularised, after centred pruning | 0.8476 | 0.1080 | 0.506 | 485.2 |
 
-Pruning removed almost nothing because standardised encoder inputs make every edge non-negligible, and the
-regularised variant lost reconstruction quality. Symbolic formulas were accepted for many encoder edges without loss
+Pruning removed almost nothing (Round 8 attributed this to BatchNorm making every encoder input unit-scale, so that
+no edge is small), and the regularised variant lost reconstruction quality. Symbolic formulas were accepted for many encoder edges without loss
 of accuracy, but each maps one abstract front-end feature to one latent unit, and the risk then passes through a
 further head; no formula for risk in terms of a clinical trajectory results. The direct models of Sections 2–4 place
 the KAN edge on the trajectory itself.
@@ -620,7 +621,7 @@ value carries most of the information a curve could add.
 On PBC E2, bilirubin, albumin and platelets were selected in every split, alkaline phosphatase and prothrombin time
 in one split, AST never. Substituting the accepted formulas **without** refit preserved the model on every data set
 (risk correlation with the pruned model at least
-0.9985; IBS unchanged), whereas the refit
+0.9985; IBS essentially unchanged), whereas the refit
 changed it (correlation 0.27 to
 0.87) and worsened IBS on PBC.
 
@@ -721,7 +722,8 @@ in parentheses).
 | aids | 12.0 (months) | 62.8 | 0.138 | 0.151 | 0.681 | 0.663 | – (0) | – (0) |
 
 The KAN supermodel was not consistently better than the linear landmark-stratified supermodel: on PBC the linear
-model had the lower Brier score at the first two landmarks and the KAN at the last, and elsewhere the two were close.
+model had the lower Brier score at the first two landmarks and the KAN at the last two, and elsewhere the two were
+close.
 
 ### 4.6 C-MAPSS calibration
 
@@ -756,8 +758,8 @@ which are correlated, so the D-calibration test is anti-conservative here.
    test; both were far better than linear-in-scores two-stage models when the effect is nonlinear.
 2. **Interpretability tools work when used conservatively.** Channel-level pruning found the active channels (with
    imperfect removal of the null one); symbolic formulas substituted without refit reproduced the model; leading
-   real-data effects were stable and pointed in clinically expected directions. The unconstrained refit that
-   CoxKAN-style pipelines apply after substitution should be avoided or constrained.
+   real-data effects were stable and pointed in clinically expected directions. An unconstrained refit after
+   substitution should be avoided or constrained.
 3. **No predictive advantage on small real cohorts.** Simple landmark models were at least as good; with so few
    visits per subject, the last observed value plausibly carried most of the information (an interpretation, not a
    tested finding).

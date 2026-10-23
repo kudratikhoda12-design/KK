@@ -1,7 +1,7 @@
 {
  "template": "docs/manuscript_round14_template.md",
  "output": "docs/manuscript_round14.md",
- "n_values": 1362,
+ "n_values": 1361,
  "cited": [
   "knottenbelt2025",
   "jose2025",
@@ -683,12 +683,6 @@
    "spec": "s",
    "value": "2023",
    "text": "2023"
-  },
-  {
-   "src": "docs/references_round14.md/knottenbelt2025/Year",
-   "spec": "s",
-   "value": "2025",
-   "text": "2025"
   },
   {
    "src": "docs/references_round14.md/graf1999/Year",
