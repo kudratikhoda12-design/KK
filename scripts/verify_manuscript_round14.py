@@ -9,7 +9,7 @@ Checks (each recorded in reports/manuscript_verification_round14.json; ALL_PASS 
               literal numbers typed into the template itself must all be registered (stricter: logged values do not
               excuse them)
   citations   every reference in docs/references_round14.md is cited, and every cited key is in it
-  sections    the required sections and all eight effect-figure files are present (figure files exist)
+  sections    the required sections and all five effect-figure files are present (figure files exist)
   pdf         (with --pdf) reports/manuscript_round14.pdf exists, is newer than the manuscript, has no blank page
               (a page without text and without an image), contains every required section title and embeds the figures
 Excluded from the number audit: code spans, HTML tags, link/image targets, headings, the reference list, and numbers
@@ -38,8 +38,7 @@ REQUIRED_SECTIONS = ["Abstract", "Keywords", "1. Introduction", "2. Models and e
                      "References", "Appendix A. Number provenance and verification"]
 FIGURES = ["ms14_r13_effects_pbc_E2_b2s_cox_a.png", "ms14_r13_effects_pbc_E2_b2s_cox_b.png",
            "ms14_r13_effects_pbc_E2_b1_fpca1_cox_a.png", "ms14_r13_effects_pbc_E2_b1_fpca1_cox_b.png",
-           "ms14_r13_effects_prothro_b2s_cox.png", "ms14_r13_effects_prothro_b1_fpca1_cox.png",
-           "ms14_r13_effects_aids_b2s_cox.png", "ms14_r13_effects_aids_b1_fpca1_cox.png"]
+           "ms14_r13_effects_prothro_aids_strip.png"]
 
 D = "docs/decisions.md"
 DN = "docs/design_note_round10.md"

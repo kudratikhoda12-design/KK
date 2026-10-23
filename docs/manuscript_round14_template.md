@@ -501,7 +501,7 @@ prothrombin time).
 
 **Figure 1b.** PBC (E2), B1-FPCA-1 Cox, same display.
 
-![](../reports/figures/ms14_r13_effects_prothro_b2s_cox.png){width=24%} ![](../reports/figures/ms14_r13_effects_prothro_b1_fpca1_cox.png){width=24%} ![](../reports/figures/ms14_r13_effects_aids_b2s_cox.png){width=24%} ![](../reports/figures/ms14_r13_effects_aids_b1_fpca1_cox.png){width=24%}
+![](../reports/figures/ms14_r13_effects_prothro_aids_strip.png){width=100%}
 
 **Figure 1c.** From left: prothro, B2-S Cox; prothro, B1-FPCA-1 Cox; aids, B2-S Cox; aids, B1-FPCA-1 Cox (prothrombin
 index and square-root CD4 in original units).
