@@ -172,11 +172,13 @@ class AFCM:
         return np.einsum("nj,jk,nk->n", Bx, self.theta[d], Bt).reshape(x.shape)
 
 
-def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, **kw):
+def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, rule="min", tol=0.01, **kw):
     """Grid over (lam_x, lam_t), selected by validation Efron NLPL. train/val: dicts xg, z, y, d.
     per_channel (D123 option): after the common grid, one coordinate sweep over channels, each choosing its own
     (lam_x_d, lam_t_d) on the same grid with the others fixed. per_channel "t" (D133): the same sweep over lam_t only,
-    lam_x staying common. Returns (best model, records)."""
+    lam_x staying common. rule "parsimonious" (D133 dry run; common grid only): among grid points whose validation
+    NLPL is within tol of the minimum, the largest lam_t (smoothest in t), then the largest lam_x -- the D120 rule and
+    tolerance. Returns (best model, records)."""
     torch.set_default_dtype(torch.float64)
     proto = AFCM(**kw)
     proto._set_ranges(train["xg"])
@@ -184,14 +186,20 @@ def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, 
     proto.zs = np.where(train["z"].std(0) > 0, train["z"].std(0), 1.0)
     W = proto.design(train["xg"])
     Ztr = proto._z(train["z"], len(W))
-    recs, best = [], None
+    recs, best, models = [], None, []
     for lx in lams_x:
         for lt in lams_t:
             m = _fit_one(proto, kw, lx, lt, W, Ztr, train)
             v = m.val_nll(val["xg"], val["z"], val["y"], val["d"])
             recs.append(dict(lam_x=lx, lam_t=lt, val_nll=v))
+            models.append(m)
             if best is None or v < best[0] - 1e-12:
                 best = (v, m)
+    if rule == "parsimonious":
+        vmin = min(r["val_nll"] for r in recs)
+        k = max((i for i, r in enumerate(recs) if r["val_nll"] <= vmin + tol), key=lambda i: (recs[i]["lam_t"], recs[i]["lam_x"]))
+        recs[k]["chosen"] = True
+        best = (recs[k]["val_nll"], models[k])
     if per_channel == "t":                         # D133: per-channel lambda_t only, lambda_x kept common
         D = W.shape[1]
         lt_d = [best[1].lam_t] * D

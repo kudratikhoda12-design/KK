@@ -24,10 +24,13 @@ from .fkan import THETAS_D120, FKANEnsemble
 ALL_OFF = float("inf")
 
 
-def residual_pack(pk):
-    """{xg, last, z, y, d} -> the b2s inputs {xg: xg - last, z: [last, z], y, d}."""
+def residual_pack(pk, residual=True):
+    """{xg, last, z, y, d} -> the b2s inputs {xg: xg - last (residual=True; the full curve xg otherwise),
+    z: [last, z], y, d}. residual=False is the "anchored" variant (D133 dry run): last-value edges plus a gated B2-S
+    on the full trajectory, which nests both b2s_cox and the pure landmark model."""
     z = pk["z"] if pk["z"] is not None and pk["z"].shape[1] else np.zeros((len(pk["last"]), 0))
-    return dict(xg=pk["xg"] - pk["last"][:, None, :], z=np.hstack([pk["last"], z]), y=pk["y"], d=pk["d"])
+    xg = pk["xg"] - pk["last"][:, None, :] if residual else pk["xg"]
+    return dict(xg=xg, z=np.hstack([pk["last"], z]), y=pk["y"], d=pk["d"])
 
 
 def _gate(m, theta, train, epochs):
@@ -45,12 +48,12 @@ class ResFKAN:
     """b2s_res_cox: FKANEnsemble (D112 protocol) on residual inputs, then the validation gate."""
 
     def __init__(self, thetas=THETAS_D120, tol=0.01, fine_tune_epochs=200, lrs=(1e-3, 3e-3), wds=(1e-4, 1e-3),
-                 seeds=(0, 1, 2), **kw):
-        self.thetas, self.tol, self.ft = tuple(thetas) + (ALL_OFF,), tol, fine_tune_epochs
+                 seeds=(0, 1, 2), residual=True, **kw):
+        self.thetas, self.tol, self.ft, self.residual = tuple(thetas) + (ALL_OFF,), tol, fine_tune_epochs, residual
         self.ens_kw = dict(lrs=lrs, wds=wds, seeds=seeds, kind="b2s", loss="cox", **kw)
 
     def fit(self, train, val):
-        tr, va = residual_pack(train), residual_pack(val)
+        tr, va = residual_pack(train, self.residual), residual_pack(val, self.residual)
         self.D = train["last"].shape[1]
         ens = FKANEnsemble(**self.ens_kw).fit(tr, va)
         self.lr, self.wd, self.tuning = ens.lr, ens.wd, ens.tuning
@@ -73,11 +76,12 @@ class ResFKAN:
             m.fine_tune(self.ft)
             m._finalise(tr)
             self.members.append(m)
+        self._tr = None
         return self
 
     # prediction on {xg, last, z}
     def _inp(self, xg, last, z):
-        p = residual_pack(dict(xg=xg, last=last, z=z, y=None, d=None))
+        p = residual_pack(dict(xg=xg, last=last, z=z, y=None, d=None), self.residual)
         return p["xg"], p["z"]
 
     def eta(self, xg, last, z):

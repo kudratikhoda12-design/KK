@@ -17,6 +17,8 @@ Jobs (python scripts/run_round15.py --job <name>; records appended to $R15_OUT, 
                           last values + z) on fsim S-Last or S-Sparse (sparse, n 1,000); last observed raw values.
   res_dev_real_<seed>     the same models on the Round-13 real-data harness with synthetic aids-shaped development
                           records (run_round13._dev_longdata(seed); RealCtx split 0) -- mechanics only.
+  afcmpars_<seed>         follow-up: V3 with the D120 parsimonious lambda rule (tol 0.01), same data as afcm_<seed>
+  (R15_ANCHORED=1)        follow-up: res jobs fit the "anchored" variant (full curve + last value) instead
   afcm_<seed>             the CK-6c procedure (S-Add, DGP v2, n 2,000) with AFCM V3 (single fit), afcm_ens (3-resample
                           bootstrap-averaged V3, resample seed 0) and V3 with per-channel lambda_t.
 Development seeds (verified unused before this round): 961-966, plus 914 (the D123 AFCM development seed) and 22
@@ -51,6 +53,7 @@ torch.set_num_threads(1)
 torch.set_default_dtype(torch.float64)
 OUT = Path(os.environ.get("R15_OUT", ROOT / "reports/round15/dev/results_dev.jsonl"))
 MUS = (1e-2, 1e-1, 1.0)
+ANCHORED = os.environ.get("R15_ANCHORED") == "1"      # dry-run follow-up: the full-curve "anchored" variant
 
 
 class Ctx15(R12.Ctx):
@@ -153,9 +156,9 @@ def _res_models(ctx, xg, last, z, metric, rec):
     out["landmark_cox"] = metric(lambda tt: lc.predict_survival(X[ctx.te], tt), lc.predict_risk(X[ctx.te]))
     t1 = time.time()
     rtr, rva = dict(tr, last=last[ctx.tr]), dict(va, last=last[ctx.va])
-    r = ResFKAN().fit(rtr, rva)
+    r = ResFKAN(residual=ANCHORED is False).fit(rtr, rva)
     lt, zt = last[ctx.te], z[ctx.te]
-    out["b2s_res_cox"] = metric(lambda tt: r.predict_survival(te["xg"], lt, zt, tt), r.predict_risk(te["xg"], lt, zt))
+    out["b2s_anchor_cox" if ANCHORED else "b2s_res_cox"] = metric(lambda tt: r.predict_survival(te["xg"], lt, zt, tt), r.predict_risk(te["xg"], lt, zt))
     rec.update(models=out, res_gate=r.gate_grid, res_on=r.residual_on, res_lr=r.lr, res_wd=r.wd,
                seconds_baselines=round(t1 - t0), seconds_res=round(time.time() - t1))
     return rec
@@ -200,6 +203,20 @@ def job_afcm(seed):
     return rec
 
 
+def job_afcmpars(seed):
+    """Dry-run follow-up: V3 with the D120 parsimonious rule (tol 0.01) instead of the minimum validation NLPL."""
+    import test_round11 as R11
+    from test_round12_ck import shapes
+    dat = fsim.generate("S-Add", n=2000, seed=seed)
+    tr, va, te = R11._split(2000, seed)
+    xg, lam = R11._smoothed(dat, tr)
+    t0 = time.time()
+    m, recs = fit_afcm(R11._pack(dat, xg, tr), R11._pack(dat, xg, va), rule="parsimonious", tol=0.01, **AFCM_D123)
+    vmin = min(r["val_nll"] for r in recs)
+    return dict(job="afcmpars", seed=seed, v3_pars=dict(shapes=shapes(m, dat.x_true_grid[te]), lam_x=m.lam_x, lam_t=m.lam_t,
+                n_within_tol=sum(r["val_nll"] <= vmin + 0.01 for r in recs), seconds=round(time.time() - t0)))
+
+
 def run(job):
     parts = job.split("_")
     t0 = time.time()
@@ -210,6 +227,8 @@ def run(job):
             rec = job_res_dev_real(int(parts[-1]))
         elif parts[0] == "res":
             rec = job_res(parts[1], int(parts[2]))
+        elif parts[0] == "afcmpars":
+            rec = job_afcmpars(int(parts[1]))
         elif parts[0] == "afcm":
             rec = job_afcm(int(parts[1]))
         else:
