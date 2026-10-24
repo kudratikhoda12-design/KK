@@ -160,24 +160,35 @@ class FKANSurv:
         self._finalise(train)
         return self
 
-    def refit_symbolic(self, max_iter=500):
+    def refit_symbolic(self, max_iter=500, anchor=None, mu=0.0):
         """CoxKAN-style refit after substitution: all remaining parameters (including the substituted formulas'
-        affine parameters) by L-BFGS on the unpenalised training loss, then the baseline is re-estimated."""
+        affine parameters) by L-BFGS on the unpenalised training loss, then the baseline is re-estimated.
+        D133 (Round 15) option: with `anchor` (the pruned model before substitution) and mu > 0, the objective adds
+        mu * sum over anchored terms of mean((term - term_anchor)^2) / var(term_anchor) on the training inputs
+        (functional distillation, see anchor_terms); val_loss stays the unpenalised validation loss."""
         dd = self.data
         params = self._params()
         opt = torch.optim.LBFGS(params, lr=1.0, max_iter=max_iter, tolerance_grad=1e-10, tolerance_change=1e-14,
                                 history_size=50, line_search_fn="strong_wolfe")
+        ref = None
+        if anchor is not None and mu > 0:
+            with torch.no_grad():
+                ref = [(r.detach().clone(), max(float(r.var()), 1e-8)) for r in anchor_terms(anchor.net, dd["Xtr"], dd["Ztr"])]
 
         def closure():
             opt.zero_grad()
             loss = self._loss(self.net(dd["Xtr"], dd["Ztr"]), dd["ytr"], dd["dtr"], dd["str"])
+            if ref is not None:
+                cur = anchor_terms(self.net, dd["Xtr"], dd["Ztr"])
+                loss = loss + mu * sum(((c - r) ** 2).mean() / v for c, (r, v) in zip(cur, ref))
             loss.backward()
             return loss
 
         opt.step(closure)
         loss = closure()
         self.refit_grad_norm = float(torch.sqrt(sum((q.grad ** 2).sum() for q in params if q.grad is not None)))
-        self.refit_train_loss = float(loss)
+        self.refit_train_loss = float(self._loss(self.net(dd["Xtr"], dd["Ztr"]), dd["ytr"], dd["dtr"], dd["str"]).detach())
+        self.refit_objective = float(loss.detach())
         with torch.no_grad():
             self.val_loss = float(self._loss(self.net(dd["Xva"], dd["Zva"]), dd["yva"], dd["dva"], dd["sva"]))
         self._finalise(self.train_)
@@ -318,11 +329,14 @@ class FKANSurv:
         return s / max(float(s.max()), 1e-12)
 
     @torch.no_grad()
-    def prune(self, theta_rel, channel_score="edge"):
+    def prune(self, theta_rel, channel_score="edge", only=None):
         """channel_score "edge" (Round 11): every edge/term against theta_rel with layer-normalised scores.
-        "integrated" (D120): functional channels as wholes by channel_scores(); other layers as in "edge"."""
+        "integrated" (D120): functional channels as wholes by channel_scores(); other layers as in "edge".
+        only (D133): restrict pruning to the named layers (e.g. ("g",) for the residual channels of b2s_res)."""
         n_pruned = 0
         for name, (layer, s) in self.edge_scores().items():
+            if only is not None and name not in only:
+                continue
             if channel_score == "integrated" and name in ("phi", "g"):
                 cs = self.channel_scores()
                 sel = (cs[:, None] < theta_rel).expand_as(layer.mask) & (layer.mask > 0)
@@ -413,15 +427,69 @@ _TORCH_F = {
 
 
 class SymbolicEdge(nn.Module):
-    """c * f(a * x_orig + b) + d with x_orig = x_layer * scale + offset; (a, b, c, d) trainable (affine refit)."""
+    """c * f(a * x_orig + b) + d with x_orig = x_layer * scale + offset; (a, b, c, d) trainable (affine refit).
+    guard (D133): (sign, floor, tau); the argument u = a x + b is replaced by the smooth bound
+    sign * (floor + tau * softplus((sign * u - floor) / tau)), i.e. sign * u is kept above floor. For log, sqrt and 1/x
+    (sign = that of u on the training range, floor = half the smallest |u| there, tau = floor / 10) this differs from u
+    by at most 5e-6 * floor on the training range and can never leave the formula's domain; for exp (sign -1,
+    floor = -(largest training u + 10), tau 1) it caps u smoothly 10 above its training range (relative change of
+    exp(u) at most 5e-5 there), so exp cannot overflow. guard None = the Round-11 edge (default)."""
 
-    def __init__(self, name, a, b, c, d, offset=0.0, scale=1.0):
+    def __init__(self, name, a, b, c, d, offset=0.0, scale=1.0, guard=None):
         super().__init__()
-        self.name, self.offset, self.scale = name, float(offset), float(scale)
+        self.name, self.offset, self.scale, self.guard = name, float(offset), float(scale), guard
         self.p = nn.Parameter(torch.tensor([a, b, c, d], dtype=torch.float64))
 
     def forward(self, x):
-        return self.p[2] * _TORCH_F[self.name](self.p[0] * (x * self.scale + self.offset) + self.p[1]) + self.p[3]
+        u = self.p[0] * (x * self.scale + self.offset) + self.p[1]
+        if self.guard is not None:
+            sg, fl, tau = self.guard
+            u = sg * (fl + tau * nn.functional.softplus((sg * u - fl) / tau))
+        return self.p[2] * _TORCH_F[self.name](u) + self.p[3]
+
+
+GUARDED = ("log", "sqrt", "1/x", "exp")
+
+
+def domain_guard(name, a, b, x_train):
+    """(sign, floor, tau) for a restricted-domain (log, sqrt, 1/x) or overflow-prone (exp) formula fitted on x_train
+    (original units), or None if f needs no guard or the training arguments do not have one strict sign (then the
+    formula is left as fitted)."""
+    if name not in GUARDED:
+        return None
+    u = a * np.asarray(x_train, float) + b
+    if name == "exp":
+        return (-1.0, -(float(np.max(u)) + 10.0), 1.0)
+    sg = 1.0 if name in ("log", "sqrt") else float(np.sign(np.median(u)))
+    if sg == 0 or np.any(sg * u <= 0):
+        return None
+    fl = 0.5 * float(np.min(sg * u))
+    return (sg, fl, fl / 10.0)
+
+
+def anchor_terms(net, X, Z):
+    """Distillation targets (D133): the functional surfaces phi_d(X_ig, t_g) at every training (subject, grid time) --
+    b2h: phi_d(x); b2s/b2deep: sum_m g_dm(x) h_dm(t) -- one (n*G,) tensor per channel, then every static/deep edge's
+    activation on its training inputs, one tensor per edge."""
+    out = []
+    n = X.shape[0] if X is not None else Z.shape[0]
+    if net.kind in ("b2h", "b2s", "b2deep"):
+        G = X.shape[1]
+        flat = X.reshape(-1, net.D)
+        if net.kind == "b2h":
+            a = net.phi.edge_activations(flat)[:, :, 0]                          # (nG, D)
+            out += [a[:, d] for d in range(net.D)]
+        else:
+            g = net.g.edge_activations(flat).reshape(n, G, net.D, net.M)
+            h = net.h.edge_activations(net.tgrid[:, None])[:, 0, :].reshape(G, net.D, net.M)
+            s = (g * h[None]).sum(3)                                              # (n, G, D)
+            out += [s[:, :, d].reshape(-1) for d in range(net.D)]
+    for name, layer, inp in net.layers_with_inputs(X, Z):
+        if name in ("phi", "g"):
+            continue
+        a = layer.edge_activations(inp)
+        out += [a[:, i, o] for i in range(layer.n_in) for o in range(layer.n_out)]
+    return out
 
 
 def _edge_inputs(model):
@@ -476,9 +544,11 @@ def symbolic_edges(model, use_pysr=False, pysr_timeout=60, max_pysr=10, min_shar
     return recs
 
 
-def substitute_symbolic(model, recs, stages=("linear", "library")):
-    """Replace every accepted edge of the given stages by its formula (trainable affine parameters)."""
-    layers = {name: layer for name, layer, _, _ in _edge_inputs(model)}
+def substitute_symbolic(model, recs, stages=("linear", "library"), guard=False):
+    """Replace every accepted edge of the given stages by its formula (trainable affine parameters).
+    guard (D133): restricted-domain library formulas get a domain guard computed on the edge's training inputs."""
+    ei = {name: (layer, inp, os_) for name, layer, inp, os_ in _edge_inputs(model)}
+    layers = {name: v[0] for name, v in ei.items()}
     n = 0
     for r in recs:
         res = r["result"]
@@ -488,8 +558,31 @@ def substitute_symbolic(model, recs, stages=("linear", "library")):
             e = SymbolicEdge("x", res.params["a"], res.params["b"], 1.0, 0.0, r["offset"], r["scale"])
         else:
             p = res.params
-            e = SymbolicEdge(p["f"], p["a"], p["b"], p["c"], p["d"], r["offset"], r["scale"])
+            gd = None
+            if guard:
+                _, inp, _ = ei[r["layer"]]
+                xo = inp[:, r["i"]].detach().numpy() * r["scale"] + r["offset"]
+                gd = domain_guard(p["f"], p["a"], p["b"], xo)
+            e = SymbolicEdge(p["f"], p["a"], p["b"], p["c"], p["d"], r["offset"], r["scale"], guard=gd)
         layers[r["layer"]].symbolic[(r["i"], r["o"])] = e
         n += 1
     model._sym_params = [e.p for layer in layers.values() for e in layer.symbolic.values() if isinstance(e, SymbolicEdge)]
     return n
+
+
+def refit_distill(sub, anchor, mus=(1e-2, 1e-1, 1.0), max_iter=200):
+    """D133 symbolic_distill: refit copies of the substituted model `sub` (substituted with guard=True) with the
+    functional-distillation anchor at each mu, choose mu by the unpenalised validation loss (a non-finite fit is never
+    chosen). Returns (chosen model or None, records)."""
+    recs, best = [], None
+    for mu in mus:
+        m = copy.deepcopy(sub)
+        m.refit_symbolic(max_iter=max_iter, anchor=anchor, mu=mu)
+        ok = bool(np.isfinite(m.val_loss) and np.isfinite(m.refit_train_loss))
+        recs.append(dict(mu=mu, val_loss=float(m.val_loss), train_loss=float(m.refit_train_loss), finite=ok,
+                         grad_norm=float(m.refit_grad_norm)))
+        if ok and (best is None or m.val_loss < best[0] - 1e-12):
+            best = (m.val_loss, mu, m)
+    if best is not None:
+        [r for r in recs if r["mu"] == best[1]][0]["chosen"] = True
+    return (best[2] if best else None), recs

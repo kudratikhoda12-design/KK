@@ -30,7 +30,11 @@ LAM = np.array([1.0, 0.5, 0.25, 0.125])
 LAM_V2 = np.r_[0.5, 0.5, LAM * 7.0 / 15.0]               # level, linear trend, Fourier (D120)
 D = 3
 SHAPE = 1.5
-SCENARIOS = ("S-Add", "S-Int", "S-Misspec-lognormal", "S-Misspec-loglogistic", "S-Misspec-mixture")
+SCENARIOS = ("S-Add", "S-Int", "S-Misspec-lognormal", "S-Misspec-loglogistic", "S-Misspec-mixture", "S-Last")
+# S-Last (D133, Round 15): the hazard depends on the channels' current values at the landmark t = 1 only,
+# eta = sin(pi X_1(1) / 2) + 1.5 tanh(X_2(1)) + 0.3 z_1 - 0.3 z_2 (channel 3 null); Weibull PH, shape 1.5. With sparse
+# visits X(1) itself is never observed, so the last observed value is a noisy, lagged proxy and the trajectory carries
+# extra information about X(1). Used for b2s_res_cox; the other scenarios are unchanged.
 DGPS = ("v1", "v2")
 _MIS_MU = 0.7 * -0.6 + 0.3 * 1.4
 _MIS_SD = float(np.sqrt(0.7 * (0.25 + 0.36) + 0.3 * (1.0 + 1.96) - _MIS_MU ** 2))
@@ -121,6 +125,9 @@ def _eta(scenario, xi, z):
     Xf = _curves(xi, FINE)                                   # (n, F, D)
     a1 = _trap(phi1(Xf[:, :, 0]), FINE)
     a2 = _trap(phi2(Xf[:, :, 1], FINE[None, :]), FINE)
+    if scenario == "S-Last":
+        x1 = _curves(xi, np.array([1.0]))[:, 0, :]                       # (n, D) at the landmark
+        return np.sin(np.pi * x1[:, 0] / 2.0) + 1.5 * np.tanh(x1[:, 1]) + 0.3 * z[:, 0] - 0.3 * z[:, 1]
     eta = a1 + a2 + 0.3 * z[:, 0] - 0.3 * z[:, 1]
     if scenario == "S-Int":
         eta = eta + 0.8 * a1 * _trap(np.tanh(Xf[:, :, 1]), FINE)

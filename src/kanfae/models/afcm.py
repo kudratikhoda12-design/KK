@@ -175,7 +175,8 @@ class AFCM:
 def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, **kw):
     """Grid over (lam_x, lam_t), selected by validation Efron NLPL. train/val: dicts xg, z, y, d.
     per_channel (D123 option): after the common grid, one coordinate sweep over channels, each choosing its own
-    (lam_x_d, lam_t_d) on the same grid with the others fixed. Returns (best model, records)."""
+    (lam_x_d, lam_t_d) on the same grid with the others fixed. per_channel "t" (D133): the same sweep over lam_t only,
+    lam_x staying common. Returns (best model, records)."""
     torch.set_default_dtype(torch.float64)
     proto = AFCM(**kw)
     proto._set_ranges(train["xg"])
@@ -191,7 +192,20 @@ def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, 
             recs.append(dict(lam_x=lx, lam_t=lt, val_nll=v))
             if best is None or v < best[0] - 1e-12:
                 best = (v, m)
-    if per_channel:
+    if per_channel == "t":                         # D133: per-channel lambda_t only, lambda_x kept common
+        D = W.shape[1]
+        lt_d = [best[1].lam_t] * D
+        for d in range(D):
+            for lt in lams_t:
+                ct = list(lt_d)
+                ct[d] = lt
+                m = _fit_one(proto, kw, best[1].lam_x, ct, W, Ztr, train)
+                v = m.val_nll(val["xg"], val["z"], val["y"], val["d"])
+                recs.append(dict(channel=d, lam_x=best[1].lam_x, lam_t=ct, val_nll=v))
+                if v < best[0] - 1e-12:
+                    best = (v, m)
+            lt_d = list(np.broadcast_to(best[1].lam_t, D))
+    elif per_channel:
         D = W.shape[1]
         lx_d, lt_d = [best[1].lam_x] * D, [best[1].lam_t] * D
         for d in range(D):
@@ -214,3 +228,44 @@ def _fit_one(proto, kw, lx, lt, W, Ztr, train):
     if m.xin == "quantile":
         m.qs, m.qp = proto.qs, proto.qp
     return m._fit_design(W, Ztr, train["y"], train["d"])
+
+
+def fit_afcm_bagged(train, val, B=3, seed=0, **kw):
+    """D133 afcm_ens: B bootstrap resamples of the training subjects, each fitted by fit_afcm's validation-selected
+    grid (the same fixed validation split; x-basis ranges and z standardisation from the full training set, so all
+    fits share one design); the coefficient vectors (theta, gamma) are averaged -- eta is linear in them, so this is
+    the mean of the resample models' linear predictors -- and the Breslow baseline is re-estimated on the full
+    training set. Returns (averaged model, records with each resample's selected lambdas)."""
+    torch.set_default_dtype(torch.float64)
+    lams_x, lams_t = kw.pop("lams_x", LAM_GRID), kw.pop("lams_t", LAM_T_GRID)
+    proto = AFCM(**kw)
+    proto._set_ranges(train["xg"])
+    proto.zm = train["z"].mean(0)
+    proto.zs = np.where(train["z"].std(0) > 0, train["z"].std(0), 1.0)
+    W = proto.design(train["xg"])
+    Ztr = proto._z(train["z"], len(W))
+    rng = np.random.default_rng(seed)
+    n = len(train["y"])
+    thetas, gammas, recs = [], [], []
+    for b in range(B):
+        idx = rng.integers(0, n, n)
+        sub = dict(y=train["y"][idx], d=train["d"][idx])
+        best = None
+        for lx in lams_x:
+            for lt in lams_t:
+                m = _fit_one(proto, kw, lx, lt, W[idx], Ztr[idx], sub)
+                v = m.val_nll(val["xg"], val["z"], val["y"], val["d"])
+                if best is None or v < best[0] - 1e-12:
+                    best = (v, lx, lt, m)
+        recs.append(dict(resample=b, lam_x=best[1], lam_t=best[2], val_nll=best[0]))
+        thetas.append(best[3].theta)
+        gammas.append(best[3].gamma)
+    m = AFCM(**{**kw, "lam_x": float("nan"), "lam_t": float("nan")})
+    m.lo, m.hi, m.bx, m.zm, m.zs = proto.lo, proto.hi, proto.bx, proto.zm, proto.zs
+    if m.xin == "quantile":
+        m.qs, m.qp = proto.qs, proto.qp
+    m.theta, m.gamma, m.D = np.mean(thetas, 0), np.mean(gammas, 0), W.shape[1]
+    eta = W.reshape(n, -1) @ m.theta.reshape(-1) + Ztr @ m.gamma
+    m.baseline = breslow_baseline(eta, train["y"], train["d"])
+    m.val_nll_bag = m.val_nll(val["xg"], val["z"], val["y"], val["d"])
+    return m, recs
