@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Round 15 dry run and D133 proposal</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+:root { --ink: #0b0b0b; --ink2: #52514e; --rule: #d9d8d3; --accent: #2a78d6; --bg: #ffffff; }
+body { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 9.6pt; line-height: 1.42; color: var(--ink); background: var(--bg); max-width: 100%; }
+h1 { font-size: 19pt; margin: 0 0 4pt; }
+h2 { font-size: 13.5pt; border-bottom: 1.5px solid var(--accent); padding-bottom: 2pt; margin-top: 18pt; page-break-after: avoid; }
+h3 { font-size: 11pt; margin-top: 12pt; page-break-after: avoid; }
+p, li { orphans: 3; widows: 3; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 7.8pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th, td { border-bottom: 0.6px solid var(--rule); padding: 2.5pt 4pt; text-align: left; vertical-align: top; }
+th { background: #f3f2ee; font-weight: 600; }
+code, pre { font-family: "DejaVu Sans Mono", monospace; font-size: 8pt; }
+pre { background: #f6f5f2; padding: 6pt; border-radius: 4px; white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; }
+img { max-width: 100%; display: block; margin: 6pt auto; page-break-inside: avoid; }
+blockquote { border-left: 3px solid var(--accent); margin: 6pt 0; padding: 2pt 10pt; color: var(--ink2); }
+.small { font-size: 8pt; color: var(--ink2); }
+nav#TOC { font-size: 7.4pt; line-height: 1.2; page-break-after: always; }
+
+nav#TOC ul { list-style: none; padding-left: 12pt; }
+
+nav#TOC > ul { columns: 2; column-gap: 16pt; padding-left: 0; }
+nav#TOC ul ul li { break-inside: avoid; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Round 15 dry run and D133 proposal</h1>
+</header>
+<h1 id="round-15-dry-run-development-seeds-only-and-the-d133-registration-proposal">Round
+15 dry run (development seeds only) and the D133 registration
+proposal</h1>
+<p>Status: <strong>dry run complete; awaiting the owner’s approval
+before any formal seed is used.</strong> Records:
+<code>reports/round15/dev/*.jsonl</code>; summary
+<code>reports/round15/dev_summary.json</code>; code committed locally.
+Development seeds 961–966 (verified unused), 914 (the D123 AFCM
+development seed) and 22 (the CK-6c seed, a known failure case, used
+only to see whether a variant changes it). No formal seed (24;
+3500–3519; 3600–3619; 3700–3719) has been used. Every dry-run number
+below is a single development replicate: it shows mechanics and
+direction, not evidence.</p>
+<h2 id="what-the-dry-run-found">1. What the dry run found</h2>
+<ol type="1">
+<li><strong>symbolic_distill works as intended.</strong>
+<ul>
+<li>The unconstrained refit again destroyed the learned shapes
+(identifiable RISE 0.197 → 1.781 on S-Add, 0.503 → 5.184 on S-Sparse),
+even though no restricted-domain formula was involved on these
+seeds.</li>
+<li>The distillation refit kept them (0.200 and 0.502) and slightly
+improved the validation partial likelihood on S-Add (4.2151 vs 4.2205
+after pruning; S-Sparse 4.2479 vs 4.2477), with IBS unchanged.</li>
+<li>Validation chose μ = 1, the largest value in your grid, on both
+seeds; smaller μ let the shapes drift (μ = 0.01: 0.593 and 0.675).</li>
+<li>The domain guard was never triggered on these two seeds (no log,
+sqrt, 1/x or exp formula was accepted), so its safety property is shown
+only by the unit tests (R15-1: finite for any parameters; no change on
+the training range).</li>
+</ul></li>
+<li><strong>b2s_res_cox as specified (residual curve X(t) − X_last) is
+misspecified when the whole trajectory matters.</strong>
+<ul>
+<li>On S-Sparse (truth ∫sin(πX/2)dt) it was worse than plain B2-S Cox
+(curve error 0.0924 vs 0.0828): a nonlinear effect of X(t) cannot be
+written as an effect of X_last plus an effect of X(t) − X_last.</li>
+<li>On S-Last (truth depends on X(1) only) the gate correctly switched
+every functional channel off, and the model beat B2-S Cox (0.1727 vs
+0.1800), close to the static last-value CoxKAN (0.1679).</li>
+</ul></li>
+<li><strong>The anchored variant fixes this.</strong> Same last-value
+edges and the same validation gate, but the gated B2-S term acts on the
+full curve X(t) instead of the residual, so the model nests both B2-S
+Cox and the pure landmark model.
+<ul>
+<li>S-Sparse: 0.0810 (better than B2-S Cox 0.0828 and the residual
+design 0.0924).</li>
+<li>S-Last: 0.1736 (gate off; like the residual design).</li>
+<li>On the small, aids-shaped synthetic set the gate switched the
+functional part off and both gated variants lost to B2-S Cox (IBS
+0.1985/0.1993 vs 0.1946): with about 80 validation subjects the gate is
+conservative.</li>
+</ul></li>
+<li><strong>afcm_ens does not resolve the CK-6c sensitivity.</strong>
+<ul>
+<li>On seed 22 (CK-6c’s failure) every variant still had φ₁ ≈ 0.24: the
+3-resample bag 0.239, per-channel λ_t 0.240 (and φ₂ rose to 0.108), the
+D120 parsimonious λ rule 0.247. All bootstrap resamples chose λ_t =
+0.01: validation genuinely prefers the time-varying fit on these data,
+so averaging over resamples cannot change it.</li>
+<li>On seed 914 the variants were worse than the single V3 fit (V3
+0.023; bag 0.056; parsimonious 0.092; per-channel λ_t 0.224). On seed
+966 V3 0.055; bag 0.097.</li>
+<li>V3 itself passed the CK-6c criterion on 2 of these 3 seeds, so a
+single fresh seed (24) is close to a coin toss whichever variant is
+used.</li>
+</ul></li>
+</ol>
+<h2 id="dry-run-tables">2. Dry-run tables</h2>
+<p><strong>symbolic_distill</strong> (B2-S Cox, seed-0 member after
+pruning; identifiable RISE; validation NLPL is the unpenalised loss)</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data</th>
+<th>Model</th>
+<th>Mean RISE</th>
+<th>RISE φ₁</th>
+<th>RISE φ₂</th>
+<th>Curve error</th>
+<th>IBS</th>
+<th>Validation NLPL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>S-Add 961</td>
+<td>after pruning</td>
+<td>0.197</td>
+<td>0.292</td>
+<td>0.103</td>
+<td>0.0531</td>
+<td>0.1923</td>
+<td>4.2205</td>
+</tr>
+<tr class="even">
+<td>S-Add 961</td>
+<td>sub_noguard</td>
+<td>0.197</td>
+<td>0.292</td>
+<td>0.103</td>
+<td>0.0518</td>
+<td>0.1924</td>
+<td>4.2205</td>
+</tr>
+<tr class="odd">
+<td>S-Add 961</td>
+<td>refit_old</td>
+<td>1.781</td>
+<td>2.360</td>
+<td>1.201</td>
+<td>0.0906</td>
+<td>0.2081</td>
+<td>4.2925</td>
+</tr>
+<tr class="even">
+<td>S-Add 961</td>
+<td>sub_guard</td>
+<td>0.197</td>
+<td>0.292</td>
+<td>0.103</td>
+<td>0.0518</td>
+<td>0.1924</td>
+<td>4.2205</td>
+</tr>
+<tr class="odd">
+<td>S-Add 961</td>
+<td>refit_guard</td>
+<td>1.781</td>
+<td>2.360</td>
+<td>1.201</td>
+<td>0.0906</td>
+<td>0.2081</td>
+<td>4.2925</td>
+</tr>
+<tr class="even">
+<td>S-Add 961</td>
+<td>distill_mu0.01</td>
+<td>0.593</td>
+<td>0.573</td>
+<td>0.613</td>
+<td>0.0717</td>
+<td>0.1996</td>
+<td>4.2463</td>
+</tr>
+<tr class="odd">
+<td>S-Add 961</td>
+<td>distill_mu0.1</td>
+<td>0.239</td>
+<td>0.310</td>
+<td>0.168</td>
+<td>0.0573</td>
+<td>0.1934</td>
+<td>4.2179</td>
+</tr>
+<tr class="even">
+<td>S-Add 961</td>
+<td>distill_mu1</td>
+<td>0.200</td>
+<td>0.293</td>
+<td>0.107</td>
+<td>0.0524</td>
+<td>0.1924</td>
+<td>4.2151</td>
+</tr>
+<tr class="odd">
+<td>S-Add 961</td>
+<td>distill</td>
+<td>0.200</td>
+<td>0.293</td>
+<td>0.107</td>
+<td>0.0524</td>
+<td>0.1924</td>
+<td>4.2151</td>
+</tr>
+<tr class="even">
+<td>S-Sparse 962</td>
+<td>after pruning</td>
+<td>0.503</td>
+<td>0.828</td>
+<td>0.178</td>
+<td>0.0862</td>
+<td>0.1757</td>
+<td>4.2477</td>
+</tr>
+<tr class="odd">
+<td>S-Sparse 962</td>
+<td>sub_noguard</td>
+<td>0.503</td>
+<td>0.830</td>
+<td>0.176</td>
+<td>0.0861</td>
+<td>0.1750</td>
+<td>4.2477</td>
+</tr>
+<tr class="even">
+<td>S-Sparse 962</td>
+<td>refit_old</td>
+<td>5.184</td>
+<td>6.514</td>
+<td>3.854</td>
+<td>0.1126</td>
+<td>0.1893</td>
+<td>4.3814</td>
+</tr>
+<tr class="odd">
+<td>S-Sparse 962</td>
+<td>sub_guard</td>
+<td>0.503</td>
+<td>0.830</td>
+<td>0.176</td>
+<td>0.0861</td>
+<td>0.1750</td>
+<td>4.2477</td>
+</tr>
+<tr class="even">
+<td>S-Sparse 962</td>
+<td>refit_guard</td>
+<td>5.184</td>
+<td>6.514</td>
+<td>3.854</td>
+<td>0.1126</td>
+<td>0.1893</td>
+<td>4.3814</td>
+</tr>
+<tr class="odd">
+<td>S-Sparse 962</td>
+<td>distill_mu0.01</td>
+<td>0.675</td>
+<td>1.007</td>
+<td>0.343</td>
+<td>0.0926</td>
+<td>0.1805</td>
+<td>4.2875</td>
+</tr>
+<tr class="even">
+<td>S-Sparse 962</td>
+<td>distill_mu0.1</td>
+<td>0.507</td>
+<td>0.843</td>
+<td>0.172</td>
+<td>0.0868</td>
+<td>0.1770</td>
+<td>4.2520</td>
+</tr>
+<tr class="odd">
+<td>S-Sparse 962</td>
+<td>distill_mu1</td>
+<td>0.502</td>
+<td>0.828</td>
+<td>0.177</td>
+<td>0.0860</td>
+<td>0.1755</td>
+<td>4.2479</td>
+</tr>
+<tr class="even">
+<td>S-Sparse 962</td>
+<td>distill</td>
+<td>0.502</td>
+<td>0.828</td>
+<td>0.177</td>
+<td>0.0860</td>
+<td>0.1755</td>
+<td>4.2479</td>
+</tr>
+</tbody>
+</table>
+<p><strong>b2s_res_cox and the anchored follow-up</strong> (curve error
+only on simulated data)</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data</th>
+<th>Model</th>
+<th>Curve error</th>
+<th>IBS</th>
+<th>Harrell C</th>
+<th>Uno C</th>
+<th>D-cal p</th>
+<th>Functional channels kept by the gate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>S-Last 963</td>
+<td>b2s_anchor_cox</td>
+<td>0.1736</td>
+<td>0.1708</td>
+<td>0.6377</td>
+<td>0.6438</td>
+<td>0.746</td>
+<td>[0, 0, 0]</td>
+</tr>
+<tr class="even">
+<td>S-Sparse 964</td>
+<td>b2s_anchor_cox</td>
+<td>0.0810</td>
+<td>0.1679</td>
+<td>0.6614</td>
+<td>0.6652</td>
+<td>0.426</td>
+<td>[1, 1, 1]</td>
+</tr>
+<tr class="odd">
+<td>dev_aids 965</td>
+<td>b2s_anchor_cox</td>
+<td>–</td>
+<td>0.1993</td>
+<td>0.5950</td>
+<td>0.5928</td>
+<td>0.790</td>
+<td>[0, 0, 0]</td>
+</tr>
+<tr class="even">
+<td>S-Last 963</td>
+<td>b2s_cox</td>
+<td>0.1800</td>
+<td>0.1731</td>
+<td>0.6252</td>
+<td>0.6359</td>
+<td>0.263</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>S-Last 963</td>
+<td>static_coxkan</td>
+<td>0.1679</td>
+<td>0.1699</td>
+<td>0.6394</td>
+<td>0.6455</td>
+<td>0.785</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>S-Last 963</td>
+<td>landmark_cox</td>
+<td>0.1807</td>
+<td>0.1728</td>
+<td>0.6357</td>
+<td>0.6395</td>
+<td>0.719</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>S-Last 963</td>
+<td>b2s_res_cox</td>
+<td>0.1727</td>
+<td>0.1702</td>
+<td>0.6403</td>
+<td>0.6462</td>
+<td>0.733</td>
+<td>[0, 0, 0]</td>
+</tr>
+<tr class="even">
+<td>S-Sparse 964</td>
+<td>b2s_cox</td>
+<td>0.0828</td>
+<td>0.1684</td>
+<td>0.6614</td>
+<td>0.6645</td>
+<td>0.128</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>S-Sparse 964</td>
+<td>static_coxkan</td>
+<td>0.1131</td>
+<td>0.1862</td>
+<td>0.5773</td>
+<td>0.5792</td>
+<td>0.995</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>S-Sparse 964</td>
+<td>landmark_cox</td>
+<td>0.1161</td>
+<td>0.1895</td>
+<td>0.5601</td>
+<td>0.5641</td>
+<td>0.918</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>S-Sparse 964</td>
+<td>b2s_res_cox</td>
+<td>0.0924</td>
+<td>0.1722</td>
+<td>0.6352</td>
+<td>0.6366</td>
+<td>0.775</td>
+<td>[1, 1, 0]</td>
+</tr>
+<tr class="even">
+<td>dev_aids 965</td>
+<td>b2s_cox</td>
+<td>–</td>
+<td>0.1946</td>
+<td>0.6266</td>
+<td>0.6353</td>
+<td>0.638</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>dev_aids 965</td>
+<td>static_coxkan</td>
+<td>–</td>
+<td>0.1987</td>
+<td>0.6022</td>
+<td>0.5953</td>
+<td>0.668</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>dev_aids 965</td>
+<td>landmark_cox</td>
+<td>–</td>
+<td>0.2055</td>
+<td>0.5826</td>
+<td>0.5883</td>
+<td>0.375</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>dev_aids 965</td>
+<td>b2s_res_cox</td>
+<td>–</td>
+<td>0.1985</td>
+<td>0.6055</td>
+<td>0.5997</td>
+<td>0.686</td>
+<td>[0, 0, 0]</td>
+</tr>
+</tbody>
+</table>
+<p><strong>afcm_ens and alternatives</strong> (the CK-6c procedure, n
+2,000; identifiable RISE; CK-6c criterion φ₁ &lt; 0.15 and φ₂ &lt;
+0.10)</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Seed</th>
+<th>AFCM variant</th>
+<th>RISE φ₁</th>
+<th>RISE φ₂</th>
+<th>Selected λ_t</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>22</td>
+<td>V3 (single fit)</td>
+<td>0.247</td>
+<td>0.053</td>
+<td>0.01</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td>V3, D120 parsimonious λ rule (tol 0.01)</td>
+<td>0.247</td>
+<td>0.053</td>
+<td>0.01</td>
+</tr>
+<tr class="odd">
+<td>22</td>
+<td>V3, per-channel λ_t</td>
+<td>0.240</td>
+<td>0.108</td>
+<td>[0.01, 0.0001, 1.0]</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td>afcm_ens: 3-resample bag of V3</td>
+<td>0.239</td>
+<td>0.050</td>
+<td>[0.01, 0.01, 0.01]</td>
+</tr>
+<tr class="odd">
+<td>914</td>
+<td>V3 (single fit)</td>
+<td>0.023</td>
+<td>0.053</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>914</td>
+<td>V3, D120 parsimonious λ rule (tol 0.01)</td>
+<td>0.092</td>
+<td>0.056</td>
+<td>10000.0</td>
+</tr>
+<tr class="odd">
+<td>914</td>
+<td>V3, per-channel λ_t</td>
+<td>0.224</td>
+<td>0.048</td>
+<td>[0.0001, 1.0, 0.01]</td>
+</tr>
+<tr class="even">
+<td>914</td>
+<td>afcm_ens: 3-resample bag of V3</td>
+<td>0.056</td>
+<td>0.064</td>
+<td>[10000.0, 100.0, 10000.0]</td>
+</tr>
+<tr class="odd">
+<td>966</td>
+<td>V3 (single fit)</td>
+<td>0.055</td>
+<td>0.056</td>
+<td>10000.0</td>
+</tr>
+<tr class="even">
+<td>966</td>
+<td>V3, D120 parsimonious λ rule (tol 0.01)</td>
+<td>0.063</td>
+<td>0.056</td>
+<td>10000.0</td>
+</tr>
+<tr class="odd">
+<td>966</td>
+<td>V3, per-channel λ_t</td>
+<td>0.065</td>
+<td>0.056</td>
+<td>[10000.0, 10000.0, 0.0001]</td>
+</tr>
+<tr class="even">
+<td>966</td>
+<td>afcm_ens: 3-resample bag of V3</td>
+<td>0.097</td>
+<td>0.055</td>
+<td>[10000.0, 0.01, 10000.0]</td>
+</tr>
+</tbody>
+</table>
+<h2 id="d133-the-registration-i-propose-needs-your-approval">3. D133:
+the registration I propose (needs your approval)</h2>
+<p><strong>Fresh seeds</strong> (verified unused in every code file,
+test and record on 2026-10-24): CK-6d <strong>24</strong>; S-Add
+<strong>3500–3519</strong>; S-Sparse <strong>3600–3619</strong> (3–8
+visits); S-Last <strong>3700–3719</strong> (3–8 visits). Seeds 25 and 26
+are also unused and are not assigned. DGP v2, n 1,000 (CK-6d: n 2,000),
+split_groups 60/20/20 on δ, B-spline front end, the D112 ensembles, as
+in Round 12. Every run is reported, failures included.</p>
+<p><strong>Family A: symbolic_distill (as you specified).</strong> Per
+S-Add and S-Sparse replicate: the Round-12 pruning procedure on the B2-S
+Cox seed-0 model, stages 1–2 (PySR is not needed: its formulas are never
+substituted), then the domain-guarded substitution and the distillation
+refit with μ ∈ {1e-2, 1e-1, 1} chosen by unpenalised validation NLPL.
+Also recorded: the no-refit model and the old unconstrained refit.</p>
+<ul>
+<li><strong>H-R15a (confirmatory; both parts must hold):</strong>
+<ol type="1">
+<li>all 40 distillation refits finite;</li>
+<li>on S-Add, distilled RISE minus RISE after pruning (mean identifiable
+RISE, paired over 20 replicates): the upper 95% t-bound below +0.05
+(non-inferiority; the H-R12 margin).</li>
+</ol></li>
+<li>Secondary (exploratory): the same on S-Sparse; distilled minus old
+refit; distilled minus no-refit in IBS, curve error and validation NLPL;
+how often μ = 1 (the grid edge) is chosen; how often the guard is
+active.</li>
+</ul>
+<p><strong>Family B: landmark-anchored functional CoxKAN.</strong> On
+S-Last and S-Sparse (the same replicates as family A): B2-S Cox, static
+CoxKAN on last values + z, landmark Cox, the residual design (your
+specification) and the anchored variant.</p>
+<ul>
+<li>I recommend the <strong>anchored variant as the primary</strong>
+model of H-R15b, with the residual design as a registered secondary. If
+you prefer to keep the residual design as primary, the dry run predicts
+that H-R15b part 2 below fails.</li>
+<li><strong>H-R15b (confirmatory; both parts must hold):</strong>
+<ol type="1">
+<li>on S-Last, primary minus B2-S Cox in survival-curve error: the 95%
+CI entirely below 0;</li>
+<li>on S-Sparse, the same difference: the upper 95% bound below +0.005
+(non-inferiority; the P0 margin).</li>
+</ol></li>
+<li>Secondary: the same contrasts against static CoxKAN and landmark
+Cox; the residual design; the gate’s decisions, including whether it
+removes the null channel.</li>
+<li><strong>Real data (exploratory only, not prospective).</strong> PBC
+E2/E1, prothro and aids on the Round-13 splits 0–4 (so the saved
+Round-13 records of B2-S Cox, static CoxKAN and landmark Cox are the
+paired comparators, after a deterministic reproduction check on one
+split); Nadeau–Bengio intervals; the last-value edges checked against
+the pre-stated clinical directions. The design was motivated by Round 13
+on these same data, so nothing here can be confirmatory.</li>
+</ul>
+<p><strong>Family C: AFCM.</strong> The dry run predicts that afcm_ens
+does not fix the single-fit sensitivity. I need your choice:</p>
+<ul>
+<li><strong>C1 (as you specified):</strong> CK-6d on seed 24 with
+afcm_ens: the CK-6c procedure and criterion (identifiable RISE φ₁ &lt;
+0.15 and φ₂ &lt; 0.10). If it passes, <strong>H-R15c</strong>
+(conditional confirmatory) re-runs the H-R12 comparison against afcm_ens
+on S-Add 3500–3519 with the H-R12 rule; if it fails, AFCM stays “not
+validated”.</li>
+<li><strong>C2 (my recommendation):</strong> do not spend seed 24 now.
+Implement REML/Laplace-type smoothing selection (the method of
+<code>mgcv</code>, which the original AFCM uses) on development seeds
+first. The dry run shows that validation-NLPL selection itself, not
+variance, causes the failure.</li>
+<li><strong>C3:</strong> replace the single-seed acceptance check by a
+multi-seed one (for example, at least 4 of 5 fresh seeds pass), because
+a single fit passes or fails almost by chance (V3 passed 2 of 3
+development seeds).</li>
+</ul>
+<p><strong>Budget (estimated from the dry-run timings).</strong> About
+25 lane-hours (4 parallel lanes, about 7 h wall clock in this
+container).</p>
+<h2 id="further-ways-to-improve-the-model-my-suggestions-not-implemented">4.
+Further ways to improve the model (my suggestions, not implemented)</h2>
+<ol type="1">
+<li><strong>Shrink B2-S towards a time-constant effect.</strong>
+<ul>
+<li>In Round 12 the time-homogeneous B2-H had the lowest shape error
+(0.123 vs 0.179 for B2-S).</li>
+<li>A roughness penalty on the time profiles h(t), chosen by validation,
+would let B2-S fall back to B2-H when the data do not support time
+variation.</li>
+<li>This is the most promising change for shape recovery.</li>
+</ul></li>
+<li><strong>Monotone edges in the pre-stated clinical
+directions.</strong> These would remove sign flips in small cohorts (the
+prothrombin-index misalignment) at little cost; the directions are
+already registered.</li>
+<li><strong>Bootstrap bagging of the KAN ensembles</strong> instead of
+seed-only ensembles. CK-5b passed only through ensembling, so resample
+variance matters.</li>
+<li><strong>A gate that is less conservative on small data:</strong> a
+cross-validated gate instead of one validation split (56–80 subjects on
+the real data).</li>
+<li><strong>REML/Laplace smoothing selection for AFCM</strong> (option
+C2).</li>
+</ol>
+<p>These are not part of D133; each would need its own development run
+and registration.</p>
+</body>
+</html>
