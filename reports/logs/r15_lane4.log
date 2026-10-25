@@ -1,0 +1,31 @@
+[lane 4] last_3700 ok 617s
+/home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+[lane 4] sparse_3601 ok 2067s
+[lane 4] add_3503 ok 1636s
+[lane 4] last_3704 ok 612s
+[lane 4] add_3505 ok 1692s
+[lane 4] last_3706 ok 847s
+[lane 4] last_3707 ok 654s
+[lane 4] add_3508 ok 1264s
+[lane 4] sparse_3609 ok 1594s
+[lane 4] add_3511 ok 1191s
+[lane 4] last_3712 ok 623s
+[lane 4] add_3513 ok 1425s
+[lane 4] last_3714 ok 523s
+[lane 4] sparse_3615 ok 1687s
+[lane 4] add_3517 ok 1115s
+[lane 4] sparse_3618 ok 2306s
+[lane 4] real_aids_1 ok 85s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[lane 4] real_pbc_E1_2 ok 201s
+[lane 4] real_prothro_3 ok 102s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[lane 4] real_pbc_E1_4 ok 167s

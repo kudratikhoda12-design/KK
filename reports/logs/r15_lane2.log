@@ -1,0 +1,51 @@
+/home/user/KK/src/kanfae/models/kan.py:68: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return tot + lam_ent * ent + lam_coef * coef_l1, {"l1": l1.detach(), "entropy": float(ent),
+[lane 2] add_3501 ok 1487s
+[lane 2] add_3502 ok 1192s
+[lane 2] last_3702 ok 507s
+[lane 2] sparse_3603 ok 2162s
+[lane 2] last_3705 ok 554s
+[lane 2] sparse_3606 ok 2615s
+[lane 2] sparse_3608 ok 1537s
+[lane 2] add_3510 ok 1115s
+[lane 2] sparse_3611 ok 1832s
+/home/user/KK/src/kanfae/survival/cox.py:73: RuntimeWarning: divide by zero encountered in scalar divide
+  dH = np.array([e[t == u].sum() / r[t >= u].sum() for u in ut])
+/home/user/KK/src/kanfae/survival/cox.py:87: RuntimeWarning: invalid value encountered in multiply
+  return np.exp(-np.exp(np.asarray(eta, float))[:, None] * H[None, :])
+[lane 2] sparse_3613 ok 1577s
+[lane 2] add_3515 ok 1230s
+[lane 2] last_3716 ok 632s
+[lane 2] sparse_3617 ok 1725s
+[lane 2] last_3718 ok 474s
+[lane 2] last_3719 ok 517s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[lane 2] real_pbc_E2_0 ok 165s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[lane 2] real_pbc_E1_0 ok 206s
+[lane 2] real_prothro_0 ok 48s
+[lane 2] real_aids_0 ok 77s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[lane 2] real_pbc_E2_1 ok 184s
+[lane 2] real_prothro_1 ok 56s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[lane 2] real_pbc_E2_2 ok 229s
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+[lane 2] real_pbc_E1_3 ok 179s
+[lane 2] real_aids_4 ok 91s
