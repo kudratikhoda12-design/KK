@@ -17,6 +17,8 @@ Jobs (python scripts/run_round15.py --job <name>; records appended to $R15_OUT, 
                           last values + z) on fsim S-Last or S-Sparse (sparse, n 1,000); last observed raw values.
   res_dev_real_<seed>     the same models on the Round-13 real-data harness with synthetic aids-shaped development
                           records (run_round13._dev_longdata(seed); RealCtx split 0) -- mechanics only.
+  afcmlaml_<seed>         D134 check C2: V3 basis/penalties with LAML-selected lambdas (AIC-type rule for information)
+  (R15_GATE=cv)           D134 check G: the anchored/residual model with the cross-validated gate
   afcmpars_<seed>         follow-up: V3 with the D120 parsimonious lambda rule (tol 0.01), same data as afcm_<seed>
   (R15_ANCHORED=1)        follow-up: res jobs fit the "anchored" variant (full curve + last value) instead
   afcm_<seed>             the CK-6c procedure (S-Add, DGP v2, n 2,000) with AFCM V3 (single fit), afcm_ens (3-resample
@@ -43,7 +45,7 @@ sys.path.insert(0, str(ROOT / "tests"))
 import run_round12 as R12  # noqa: E402
 from kanfae.data import fsim  # noqa: E402
 from kanfae.data.splits import split_groups  # noqa: E402
-from kanfae.models.afcm import AFCM_D123, fit_afcm, fit_afcm_bagged  # noqa: E402
+from kanfae.models.afcm import AFCM_D123, fit_afcm, fit_afcm_bagged, fit_afcm_laml  # noqa: E402
 from kanfae.models.fbaselines import LinearCox, impute_train_mean, last_values  # noqa: E402
 from kanfae.models.fkan import (FKANEnsemble, refit_distill, select_lambda_theta, substitute_symbolic,  # noqa: E402
                                 symbolic_edges)
@@ -54,6 +56,7 @@ torch.set_default_dtype(torch.float64)
 OUT = Path(os.environ.get("R15_OUT", ROOT / "reports/round15/dev/results_dev.jsonl"))
 MUS = (1e-2, 1e-1, 1.0)
 ANCHORED = os.environ.get("R15_ANCHORED") == "1"      # dry-run follow-up: the full-curve "anchored" variant
+GATE = os.environ.get("R15_GATE", "split")              # D134 development check G: "cv" = cross-validated gate
 
 
 class Ctx15(R12.Ctx):
@@ -156,9 +159,9 @@ def _res_models(ctx, xg, last, z, metric, rec):
     out["landmark_cox"] = metric(lambda tt: lc.predict_survival(X[ctx.te], tt), lc.predict_risk(X[ctx.te]))
     t1 = time.time()
     rtr, rva = dict(tr, last=last[ctx.tr]), dict(va, last=last[ctx.va])
-    r = ResFKAN(residual=ANCHORED is False).fit(rtr, rva)
+    r = ResFKAN(residual=ANCHORED is False, gate=GATE).fit(rtr, rva)
     lt, zt = last[ctx.te], z[ctx.te]
-    out["b2s_anchor_cox" if ANCHORED else "b2s_res_cox"] = metric(lambda tt: r.predict_survival(te["xg"], lt, zt, tt), r.predict_risk(te["xg"], lt, zt))
+    out[("b2s_anchor_cox" if ANCHORED else "b2s_res_cox") + ("_cvgate" if GATE == "cv" else "")] = metric(lambda tt: r.predict_survival(te["xg"], lt, zt, tt), r.predict_risk(te["xg"], lt, zt))
     rec.update(models=out, res_gate=r.gate_grid, res_on=r.residual_on, res_lr=r.lr, res_wd=r.wd,
                seconds_baselines=round(t1 - t0), seconds_res=round(time.time() - t1))
     return rec
@@ -217,6 +220,28 @@ def job_afcmpars(seed):
                 n_within_tol=sum(r["val_nll"] <= vmin + 0.01 for r in recs), seconds=round(time.time() - t0)))
 
 
+def job_afcmlaml(seed):
+    """D134 development check C2: V3's basis and penalties, lambdas chosen by LAML on the training data (primary);
+    the AIC-type rule is reported for information."""
+    import test_round11 as R11
+    from test_round12_ck import shapes
+    dat = fsim.generate("S-Add", n=2000, seed=seed)
+    tr, va, te = R11._split(2000, seed)
+    xg, lam = R11._smoothed(dat, tr)
+    ptr = R11._pack(dat, xg, tr)
+    kw = {k: v for k, v in AFCM_D123.items()}
+    rec = dict(job="afcmlaml", seed=seed, n=2000, smoothing_lambda=lam)
+    for crit in ("laml", "aic"):
+        t0 = time.time()
+        m, recs = fit_afcm_laml(ptr, criterion=crit, **kw)
+        ch = [r for r in recs if r.get("chosen")][0]
+        rec[crit] = dict(shapes=shapes(m, dat.x_true_grid[te]), lam_x=ch["lam_x"], lam_t=ch["lam_t"], edf=ch["edf"],
+                         grid=recs, seconds=round(time.time() - t0))
+    s = rec["laml"]["shapes"]
+    rec["laml_meets_ck6c_criterion"] = bool(s["phi1"]["rise_id"] < 0.15 and s["phi2"]["rise_id"] < 0.10)
+    return rec
+
+
 def run(job):
     parts = job.split("_")
     t0 = time.time()
@@ -227,6 +252,8 @@ def run(job):
             rec = job_res_dev_real(int(parts[-1]))
         elif parts[0] == "res":
             rec = job_res(parts[1], int(parts[2]))
+        elif parts[0] == "afcmlaml":
+            rec = job_afcmlaml(int(parts[1]))
         elif parts[0] == "afcmpars":
             rec = job_afcmpars(int(parts[1]))
         elif parts[0] == "afcm":

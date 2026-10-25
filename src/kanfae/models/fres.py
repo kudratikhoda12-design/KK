@@ -18,8 +18,10 @@ from __future__ import annotations
 import copy
 
 import numpy as np
+import torch
 
-from .fkan import THETAS_D120, FKANEnsemble
+from ..survival.cox import cox_nll
+from .fkan import THETAS_D120, FKANEnsemble, FKANSurv
 
 ALL_OFF = float("inf")
 
@@ -48,8 +50,9 @@ class ResFKAN:
     """b2s_res_cox: FKANEnsemble (D112 protocol) on residual inputs, then the validation gate."""
 
     def __init__(self, thetas=THETAS_D120, tol=0.01, fine_tune_epochs=200, lrs=(1e-3, 3e-3), wds=(1e-4, 1e-3),
-                 seeds=(0, 1, 2), residual=True, **kw):
+                 seeds=(0, 1, 2), residual=True, gate="split", cv_folds=5, **kw):
         self.thetas, self.tol, self.ft, self.residual = tuple(thetas) + (ALL_OFF,), tol, fine_tune_epochs, residual
+        self.gate, self.cv_folds, self.kw = gate, cv_folds, kw
         self.ens_kw = dict(lrs=lrs, wds=wds, seeds=seeds, kind="b2s", loss="cox", **kw)
 
     def fit(self, train, val):
@@ -63,8 +66,14 @@ class ResFKAN:
             cand.append(m)
             self.gate_grid.append(dict(theta=th if th != ALL_OFF else "all_off", val_loss=float(m.val_loss),
                                        residual_on=[int((m.net.g.mask[d] > 0).any()) for d in range(self.D)]))
-        vmin = min(g["val_loss"] for g in self.gate_grid)
-        ok = [i for i, g in enumerate(self.gate_grid) if g["val_loss"] <= vmin + self.tol]
+        score = "val_loss"
+        if self.gate == "cv":                                       # D134: cross-validated gate
+            cvs = self._cv_scores(tr, va, ens)
+            for g, s in zip(self.gate_grid, cvs):
+                g["cv_loss"] = s
+            score = "cv_loss"
+        vmin = min(g[score] for g in self.gate_grid)
+        ok = [i for i, g in enumerate(self.gate_grid) if g[score] <= vmin + self.tol]
         k = max(ok, key=lambda i: self.thetas[i])
         self.gate_grid[k]["chosen"] = True
         mask = cand[k].net.g.mask.clone()
@@ -78,6 +87,26 @@ class ResFKAN:
             self.members.append(m)
         self._tr = None
         return self
+
+    def _cv_scores(self, tr, va, ens):
+        """D134 CV gate: pooled training + validation subjects, `cv_folds` folds (seed 0, stratified on the event);
+        per fold the seed-0 model at the tuned (lr, wd) is trained on the other folds for the tuned model's best epoch
+        count (no early stopping), each gate setting is fine-tuned `ft` epochs, and the held-out fold's NLPL per event
+        is recorded. Returns the fold-mean NLPL per gate setting (order of self.thetas)."""
+        from sklearn.model_selection import StratifiedKFold
+        pool = {k: np.concatenate([tr[k], va[k]]) for k in ("xg", "z", "y", "d")}
+        best_ep = int(np.argmin(ens.members[0].history)) + 1
+        folds = StratifiedKFold(self.cv_folds, shuffle=True, random_state=0).split(pool["y"], pool["d"])
+        sc = np.zeros(len(self.thetas))
+        for a, b in folds:
+            ftr = {k: v[a] for k, v in pool.items()}
+            m = FKANSurv(**{**self.kw, "kind": "b2s", "loss": "cox", "lr": self.lr, "wd": self.wd, "seed": 0,
+                            "max_epochs": best_ep, "patience": best_ep, "early_stopping": False}).fit(ftr, None)
+            for j, th in enumerate(self.thetas):
+                mm = _gate(m, th, ftr, self.ft)
+                eta = torch.tensor(mm.eta(pool["xg"][b], pool["z"][b]))
+                sc[j] += float(cox_nll(eta, torch.tensor(pool["y"][b]), torch.tensor(pool["d"][b]), "efron")) / self.cv_folds
+        return sc.tolist()
 
     # prediction on {xg, last, z}
     def _inp(self, xg, last, z):

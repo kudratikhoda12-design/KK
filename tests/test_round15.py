@@ -159,3 +159,34 @@ def test_R15_6_s_last_scenario():
     assert all(t.max() < 1.0 for t in d.times)
     a = fsim.generate("S-Add", n=50, seed=3000)
     assert np.allclose(a.y[:3], [0.71610892, 0.36745362, 0.40277489])
+
+
+@pytest.mark.criterion("R15-7")
+def test_R15_7_laml_information_and_selection():
+    from kanfae.survival.cox import cox_nll
+    rng = np.random.default_rng(0)
+    n, q = 60, 4
+    X = rng.normal(size=(n, q))
+    y = np.round(rng.exponential(size=n), 1) + 0.1
+    d = rng.random(n) < 0.7
+    b = rng.normal(size=q) * 0.3
+    H = A.cox_information(X, X @ b, y, d)
+    f = lambda bb: cox_nll(torch.tensor(X) @ bb, torch.tensor(y), torch.tensor(d.astype(float)), "breslow", reduction="sum")  # noqa: E731
+    assert np.allclose(H, torch.autograd.functional.hessian(f, torch.tensor(b)).numpy(), atol=1e-10)
+    dat = fsim.generate("S-Add", n=240, seed=7, dgp="v2")
+    pk = dict(xg=dat.x_true_grid[:160], z=dat.z[:160], y=dat.y[:160], d=dat.delta[:160].astype(float))
+    m, recs = A.fit_afcm_laml(pk, lams_x=(1e-3, 1e-1), lams_t=(1e-2, 1.0), pen_norm=True, t_pen="d1d2")
+    assert sum(r.get("chosen", False) for r in recs) == 1 and all(np.isfinite(r["laml"]) for r in recs)
+    ch = [r for r in recs if r.get("chosen")][0]
+    assert ch["laml"] == max(r["laml"] for r in recs) and 0 < ch["edf"] < 2 * 100 + 2
+
+
+@pytest.mark.criterion("R15-8")
+def test_R15_8_cross_validated_gate():
+    p = _toy(D=2)
+    last = p["xg"][:, -1, :] + 0.01
+    rf = ResFKAN(lrs=(1e-2,), wds=(1e-4,), seeds=(0, 1), fine_tune_epochs=5, max_epochs=30, patience=30,
+                 residual=False, gate="cv", cv_folds=3)
+    rf.fit(dict(_split(p, 0, 110), last=last[:110]), dict(_split(p, 110, 160), last=last[110:]))
+    assert all("cv_loss" in g and np.isfinite(g["cv_loss"]) for g in rf.gate_grid)
+    assert sum(g.get("chosen", False) for g in rf.gate_grid) == 1 and len(rf.members) == 2

@@ -277,3 +277,74 @@ def fit_afcm_bagged(train, val, B=3, seed=0, **kw):
     m.baseline = breslow_baseline(eta, train["y"], train["d"])
     m.val_nll_bag = m.val_nll(val["xg"], val["z"], val["y"], val["d"])
     return m, recs
+
+
+def cox_information(X, eta, y, d):
+    """Observed information of the Cox partial likelihood (Breslow form for ties) at eta for the design X (n, q):
+    sum over event times u of d_u [S2(u)/S0(u) - m_u m_u'], with S_k sums over the risk set {y >= u} and m = S1/S0.
+    Vectorised as X' diag(w_j A(y_j)) X - M' diag(d_u) M, A(t) = sum_{u <= t} d_u / S0(u)."""
+    X, eta, y, d = np.asarray(X, float), np.asarray(eta, float), np.asarray(y, float), np.asarray(d, bool)
+    w = np.exp(eta - eta.max())
+    o = np.argsort(y, kind="stable")
+    ys, ws, Xs = y[o], w[o], X[o]
+    ut = np.unique(y[d])
+    first = np.searchsorted(ys, ut, side="left")                      # first sorted index with y >= u
+    S0 = np.cumsum(ws[::-1])[::-1][first]
+    S1 = np.cumsum((ws[:, None] * Xs)[::-1], axis=0)[::-1][first]      # (U, q)
+    du = np.array([np.sum(d & (y == u)) for u in ut], float)
+    A = np.cumsum(du / S0)
+    k = np.searchsorted(ut, y, side="right") - 1                         # events with u <= y_j
+    c = w * np.where(k >= 0, A[np.clip(k, 0, None)], 0.0)
+    M = S1 / S0[:, None]
+    return (X * c[:, None]).T @ X - (M * du[:, None]).T @ M
+
+
+def laml_terms(m, W, Z, y, d):
+    """D134 LAML for a fitted AFCM m (common or per-channel lambdas): returns dict(laml, edf, aic, lp) with
+    l_p the Efron log partial likelihood (sum), S = 2 E (lam_x Kx + lam_t Kt + ridge I) per channel (E events; the
+    fit minimises mean NLPL + penalty, so this is the same penalty in log-likelihood units), H the observed information
+    (Breslow form) at theta_hat; LAML = l_p - theta'S theta / 2 + log|S|/2 - log|H + S|/2 (gamma unpenalised),
+    edf = tr((H + S)^-1 H), aic = -l_p + edf."""
+    n, D, P = W.shape
+    X = np.hstack([W.reshape(n, D * P), Z])
+    th = np.concatenate([m.theta.reshape(-1), m.gamma])
+    eta = X @ th
+    E = float(np.sum(d))
+    lp = -float(cox_nll(torch.tensor(eta), torch.tensor(y, dtype=torch.float64), torch.tensor(np.asarray(d, float)),
+                        m.ties, reduction="sum"))
+    Kx, Kt = (k.numpy() for k in m._penalty_mats())
+    q = X.shape[1]
+    S = np.zeros((q, q))
+    for k in range(D):
+        blk = 2 * E * (m._lam(m.lam_x, k) * Kx + m._lam(m.lam_t, k) * Kt + m.ridge * np.eye(P))
+        S[k * P:(k + 1) * P, k * P:(k + 1) * P] = blk
+    H = cox_information(X, eta, y, d)
+    A = H + S
+    sign_s, logdet_s = np.linalg.slogdet(S[:D * P, :D * P])
+    sign_a, logdet_a = np.linalg.slogdet(A)
+    laml = lp - 0.5 * th @ S @ th + 0.5 * logdet_s - 0.5 * logdet_a
+    edf = float(np.trace(np.linalg.solve(A, H)))
+    return dict(laml=float(laml) if sign_s > 0 and sign_a > 0 else float("nan"), edf=edf, aic=-lp + edf, lp=lp)
+
+
+def fit_afcm_laml(train, lams_x=LAM_GRID, lams_t=LAM_T_GRID, criterion="laml", **kw):
+    """D134 (option C2): the AFCM grid with (lam_x, lam_t) chosen on the training data by the Laplace approximate
+    marginal likelihood (criterion "laml", maximised; primary) or the AIC-type rule (criterion "aic": minimise
+    -l_p + edf; information). No validation split is used. Returns (chosen model, records)."""
+    torch.set_default_dtype(torch.float64)
+    proto = AFCM(**kw)
+    proto._set_ranges(train["xg"])
+    proto.zm = train["z"].mean(0)
+    proto.zs = np.where(train["z"].std(0) > 0, train["z"].std(0), 1.0)
+    W = proto.design(train["xg"])
+    Ztr = proto._z(train["z"], len(W))
+    recs, models = [], []
+    for lx in lams_x:
+        for lt in lams_t:
+            m = _fit_one(proto, kw, lx, lt, W, Ztr, train)
+            recs.append(dict(lam_x=lx, lam_t=lt, **laml_terms(m, W, Ztr, train["y"], train["d"])))
+            models.append(m)
+    ok = [i for i, r in enumerate(recs) if np.isfinite(r[criterion])]
+    k = max(ok, key=lambda i: recs[i]["laml"]) if criterion == "laml" else min(ok, key=lambda i: recs[i]["aic"])
+    recs[k]["chosen"] = True
+    return models[k], recs
