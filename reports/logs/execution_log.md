@@ -231,3 +231,7 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   `final_full_suite_round14_rerun` stopped by the 2-hour background limit after 207 records (container ~44% slower);
   `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, 4f R1), 2 skipped, 16 xfailed (277), no XPASS.
   Report revision 16 (283 pages), copied to `final_research_prototype_report_rev16.pdf`; verification ALL_CHECKS_PASS. D132.
+- Round 15 (owner D133/D134, 2026-10-24/25): Phase-2 methods implemented (symbolic_distill, b2s_res_cox / anchored
+  variant, afcm_ens, LAML AFCM, CV gate; S-Last scenario); dry run on development seeds (D133); development checks C2
+  and G failed (D135; seed 24 unused); formal run 80/80 jobs (10:51–16:32 UTC). H-R15a and H-R15b not supported under
+  their registered rules; post-hoc diagnosis of S-Add 3515 (degenerate formula, L-BFGS NaN). D136.

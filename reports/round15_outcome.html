@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Round 15 outcome</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+:root { --ink: #0b0b0b; --ink2: #52514e; --rule: #d9d8d3; --accent: #2a78d6; --bg: #ffffff; }
+body { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 9.6pt; line-height: 1.42; color: var(--ink); background: var(--bg); max-width: 100%; }
+h1 { font-size: 19pt; margin: 0 0 4pt; }
+h2 { font-size: 13.5pt; border-bottom: 1.5px solid var(--accent); padding-bottom: 2pt; margin-top: 18pt; page-break-after: avoid; }
+h3 { font-size: 11pt; margin-top: 12pt; page-break-after: avoid; }
+p, li { orphans: 3; widows: 3; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 7.8pt; page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+th, td { border-bottom: 0.6px solid var(--rule); padding: 2.5pt 4pt; text-align: left; vertical-align: top; }
+th { background: #f3f2ee; font-weight: 600; }
+code, pre { font-family: "DejaVu Sans Mono", monospace; font-size: 8pt; }
+pre { background: #f6f5f2; padding: 6pt; border-radius: 4px; white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; }
+img { max-width: 100%; display: block; margin: 6pt auto; page-break-inside: avoid; }
+blockquote { border-left: 3px solid var(--accent); margin: 6pt 0; padding: 2pt 10pt; color: var(--ink2); }
+.small { font-size: 8pt; color: var(--ink2); }
+nav#TOC { font-size: 7.4pt; line-height: 1.2; page-break-after: always; }
+
+nav#TOC ul { list-style: none; padding-left: 12pt; }
+
+nav#TOC > ul { columns: 2; column-gap: 16pt; padding-left: 0; }
+nav#TOC ul ul li { break-inside: avoid; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Round 15 outcome</h1>
+</header>
+<h1 id="round-15-outcome-phase-2-methods-d133d136">Round 15 outcome
+(Phase-2 methods; D133–D136)</h1>
+<p>Launched 10:51 UTC on 2026-10-25 after the owner’s decisions (D134)
+and the two development checks (D135); 80 of 80 jobs completed without
+failure (16:32 UTC). Records
+<code>reports/round15/results_lane*.jsonl</code>; analysis
+<code>reports/round15_summary.json</code>
+(<code>scripts/analyse_round15.py</code>, committed before the run
+finished). Seed 24 was not used. Everything is committed locally;
+nothing is pushed.</p>
+<h2 id="confirmatory-results-registered-rules">1. Confirmatory results
+(registered rules)</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Hypothesis</th>
+<th>Part</th>
+<th>Result</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>H-R15a</strong> symbolic_distill</td>
+<td>(i) all 40 distillation refits finite</td>
+<td>39 of 40 (S-Add 3515: every mu non-finite)</td>
+<td>fails</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>(ii) S-Add: distilled − pruned RISE, upper 95% bound &lt; +0.05</td>
+<td>+0.026, 95% CI [−0.006, +0.059]</td>
+<td>fails</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td><strong>overall</strong></td>
+<td></td>
+<td><strong>not supported</strong></td>
+</tr>
+<tr class="even">
+<td><strong>H-R15b</strong> b2s_anchor_cox</td>
+<td>(i) S-Last: anchored − B2-S Cox curve error, CI &lt; 0</td>
+<td>−0.0185 [−0.0222, −0.0149], better in 20/20</td>
+<td><strong>holds</strong></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>(ii) S-Sparse: the same, upper 95% bound &lt; +0.005</td>
+<td>+0.0047 [−0.0001, +0.0094]</td>
+<td>fails</td>
+</tr>
+<tr class="even">
+<td></td>
+<td><strong>overall</strong></td>
+<td></td>
+<td><strong>not supported</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-the-results-say">2. What the results say</h2>
+<ol type="1">
+<li><strong>Distillation solves the problem it was built for, but
+validation selection of μ undermines it.</strong>
+<ul>
+<li>Against the old unconstrained refit, the distilled model kept the
+shapes: RISE −0.93 on S-Add and −10.5 on S-Sparse, with curve error
+−0.021 and −0.017.</li>
+<li>Its validation partial likelihood was slightly better than that of
+the unrefitted substitution; IBS and C were unchanged.</li>
+<li><em>Post hoc (exploratory):</em> at a fixed μ of 1 or 10 the
+distilled shapes equal the pruned shapes within ±0.002.</li>
+<li>The registered rule chose μ by validation NLPL, which picked a loose
+anchor (μ 0.1 or 0.01) in 8 S-Add replicates, and those cost shape
+accuracy (mean +0.033 and +0.277).</li>
+</ul></li>
+<li><strong>The one non-finite refit was a numerical failure, not a
+domain failure.</strong>
+<ul>
+<li>A baseline-covariate edge had a nearly degenerate accepted formula:
+softplus(205.3x + 384.1) with an output scale of 0.0018.</li>
+<li>The first L-BFGS step sent the parameters to about 1e180, and the
+line search cannot recover from a NaN trial.</li>
+<li>The domain guard (active in 5 cells) cannot prevent this; a NaN-safe
+refit with a fallback to the substituted model would.</li>
+</ul></li>
+<li><strong>The anchored model is clearly better than B2-S Cox when the
+landmark value carries the signal (S-Last), and matches it when the gate
+keeps the trajectory channels.</strong>
+<ul>
+<li><em>Post hoc:</em> on S-Sparse it matched B2-S Cox when the gate
+kept channels: +0.0012 [−0.0005, +0.0030] in 16 replicates (the null
+channel was removed in 6).</li>
+<li>It lost when the gate switched everything off: +0.018 in 4
+replicates. These false “all off” decisions are why part (ii)
+failed.</li>
+<li>The residual design (your original specification) was worse than
+B2-S Cox on S-Sparse (+0.0149, 19/20), as the dry run predicted.</li>
+</ul></li>
+<li><strong>Real data (exploratory).</strong>
+<ul>
+<li>The Round-13 records reproduced exactly (difference 0.0).</li>
+<li>On PBC E2 the anchored model’s IBS (0.135) lies between B2-S Cox
+(0.150) and landmark Cox (0.127). No interval excludes 0 on any data
+set.</li>
+<li>The last-value edges alone are often not monotone in the clinical
+direction (albumin 0.2, prothrombin index 0.2, CD4 0.4 of splits). This
+is not comparable with Round 13: when the gate keeps a channel, its
+effect is shared between the last-value edge and the trajectory
+term.</li>
+</ul></li>
+<li><strong>AFCM</strong> stays “not validated” (D135); no AFCM model
+was run.</li>
+</ol>
+<h2 id="candidates-for-a-next-round-untested-each-would-need-its-own-registration">3.
+Candidates for a next round (untested; each would need its own
+registration)</h2>
+<ol type="1">
+<li>symbolic_distill with a fixed large μ (or the D120 parsimonious
+rule: the largest μ within a validation tolerance) and a NaN-safe refit
+that falls back to the substituted model.</li>
+<li>A gate that cannot switch off all channels on weak validation
+evidence. For example, require the “all off” setting to beat the full
+model by more than the tolerance (the reverse parsimony), or average the
+gate over bootstrap resamples.</li>
+<li>Laplace selection for AFCM combined with per-channel λ_t, since
+Laplace helped on seed 22 but hurt on seed 966.</li>
+</ol>
+</body>
+</html>
