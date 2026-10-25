@@ -178,6 +178,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+# Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)
