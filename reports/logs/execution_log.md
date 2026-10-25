@@ -235,3 +235,6 @@ Human-readable log of the autonomous staged run (D21). Machine-readable command 
   variant, afcm_ens, LAML AFCM, CV gate; S-Last scenario); dry run on development seeds (D133); development checks C2
   and G failed (D135; seed 24 unused); formal run 80/80 jobs (10:51–16:32 UTC). H-R15a and H-R15b not supported under
   their registered rules; post-hoc diagnosis of S-Add 3515 (degenerate formula, L-BFGS NaN). D136.
+- `final_full_suite_round15` (owner: "build report revision 17 with Round 15 and run the full suite"): 265 passed,
+  2 failed (CK-6c, 4f R1), 2 skipped, 16 xfailed (285; no XPASS). Report revision 17 (314 pages; contents type 6.6 pt),
+  copied to `final_research_prototype_report_rev17.pdf`; verification ALL_CHECKS_PASS. D137.

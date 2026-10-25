@@ -1,16 +1,16 @@
 # Final status: KAN-FAE research prototype, Round 15 (2026-10-25)
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
-Latest full report: revision 16 (`reports/final_research_prototype_report_rev16.pdf`, Round 14). Round 15 is reported in
-`docs/round15_dryrun.md` / `reports/round15_dryrun.pdf` (dry run, D133) and `docs/round15_outcome.md` /
-`reports/round15_outcome.pdf` (outcome, D136); it is not yet in a cumulative report revision.
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev17.pdf` (revision 17,
+314 pages: Part A = Round 15; Part B = Round 14 manuscript; Parts C–Q = earlier revisions). Also
+`reports/round15_dryrun.pdf` (D133) and `reports/round15_outcome.pdf` (D136).
 
 | Item | Result |
 |---|---|
 | D133–D135 | Phase-2 methods implemented (all options default-off); dry run on development seeds; owner decisions; development checks C2 (Laplace AFCM) and G (CV gate) failed their pre-fixed rules, so seed 24 is unused |
 | Round 15 (D136) | 80/80 jobs. **H-R15a not supported** (39/40 refits finite; S-Add upper bound +0.059 > 0.05), although distillation kept the shapes where the old refit destroyed them; **H-R15b not supported** (S-Last part holds, −0.0185; S-Sparse upper bound +0.0094 > 0.005); real data exploratory, no interval excludes 0 |
-| Tests | New DET tests R15-1..R15-8 pass; no full-suite run in Round 15 (last full suite: `final_full_suite_round14_rerun2`) |
-| Next | Owner decision: next-round candidates in `docs/round15_outcome.md` §3; a cumulative report revision 17 with Round 15 on request |
+| Tests | `final_full_suite_round15`: 265 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (285); no XPASS. Verification ALL_CHECKS_PASS (D137) |
+| Next | Owner decision: next-round candidates in `docs/round15_outcome.md` §3 |
 
 ---
 

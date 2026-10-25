@@ -1,14 +1,732 @@
-<p class="small">Research prototype report, revision 16 · generated from saved records by
-<code>scripts/build_report_round14.py</code> · git <code>11fa635</code> (local branch
-<code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype; Part A is a manuscript
-draft for the owner's review, not peer reviewed; no novelty claim</b>. Part A is Round 14: the manuscript draft
-(L37; D110, D111, D131) followed by its verification, decisions and tests. Part B is revision 15's Part A (Round 13);
-Part C is revision 14's Part A (Round 12); Parts D–E are the L39 and L38 parts; Parts F–P are the round-11 to round-1
-reports.</p>
+<p class="small">Research prototype report, revision 17 · generated from saved records by
+<code>scripts/build_report_round15.py</code> · git <code>5ec6014</code> (local branch
+<code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype; not publication-ready;
+no novelty claim</b>. Part A is Round 15, the pre-registered Phase-2 methods round (D133–D136). Part B is revision 16's
+Part A (Round 14: the manuscript draft); Part C is Round 13; Part D is Round 12; Parts E–F are the L39 and L38 parts;
+Parts G–Q are the round-11 to round-1 reports.</p>
 
-## 0. Round-14 summary (plain English)
+## 0. Round-15 summary (plain English)
 
 ### 0.1 Outcome
+
+| Item | Result |
+|---|---|
+| Methods (D133) | **symbolic_distill**: domain-guarded symbolic substitution with a functional-distillation refit. **b2s_anchor_cox** (primary) / **b2s_res_cox** (secondary): last-value edges plus a validation-gated B2-S term on the full curve (anchored) or on the residual curve. **afcm_ens** and Laplace (LAML) smoothing selection for AFCM. All new options are off by default; Rounds 1–14 are unchanged |
+| Development (D133–D135) | Dry run on development seeds only, then two owner-requested checks: Laplace AFCM met the CK-6c criterion on only 1 of 3 seeds and the cross-validated gate did not improve dev_aids, so **fresh seed 24 was not used** and AFCM stays "not validated" |
+| Formal run | 80 jobs, 0 failed: S-Add 3500–3519, S-Sparse 3600–3619, S-Last 3700–3719, real data on the Round-13 splits |
+| **H-R15a** (symbolic_distill) | **Not supported.** 39 of 40 distillation refits finite (rule: all). S-Add distilled − pruned shape error +0.0262, 95% CI [-0.006, +0.059] (rule: upper bound below +0.05). Against the old unconstrained refit the distilled model was far better (-0.9347) |
+| **H-R15b** (b2s_anchor_cox) | **Not supported.** Part 1 holds: S-Last anchored − B2-S Cox curve error -0.0185, CI [-0.0222, -0.0149]. Part 2 fails: S-Sparse +0.0047, CI [-0.0001, +0.0094] (rule: upper bound below +0.005). The residual design was worse on S-Sparse (+0.0149) |
+| Real data | Exploratory; no Nadeau–Bengio interval excludes 0 |
+| Tests | Final suite: 285 tests: 265 passed, 2 failed (CK-6c and the 4f gate's original R1), 16 expected failures, 2 skipped |
+
+### 0.2 What the results say (all statements after the two verdicts are exploratory)
+
+1. **Distillation solves the refit problem, but choosing μ by validation undermines it.**
+   - At a fixed μ of 1 or 10 the distilled shapes equal the pruned shapes (R15.8).
+   - The validation partial likelihood sometimes preferred a loose anchor, which cost shape accuracy.
+2. **The one non-finite refit was numerical, not a domain failure.** A nearly degenerate formula made the first
+   L-BFGS step overflow. A NaN-safe refit with a fallback to the substituted model would prevent it; the domain guard
+   cannot.
+3. **The anchored model is better than B2-S Cox when the landmark value carries the signal (S-Last)**, and matches it
+   on S-Sparse whenever its gate keeps the trajectory channels. It loses only when the gate switches every channel
+   off (4 of 20 S-Sparse replicates).
+4. **Laplace selection for AFCM is not a fix either**: it improved the known failure seed (22) but broke a seed that
+   validation selection handled well (966).
+
+## R15.1 Owner decisions (D133, D134) and fact check
+
+- **D133 (owner).** Open a prospective, pre-registered Phase-2 round for three methods aimed at the failure modes of
+  Rounds 12–13; dry run on development seeds first; register exact criteria and fresh seeds; keep Rounds 1–14 intact;
+  commit locally.
+- **D134 (owner).** Families A and B approved, with μ ∈ {0.01, 0.1, 1, 10} (10 added because the dry run chose the grid
+  edge), b2s_anchor_cox primary and b2s_res_cox secondary; real data exploratory on the Round-13 splits. AFCM option
+  C2: develop Laplace/REML selection before spending seed 24. The cross-validated gate is checked on dev_aids first.
+  The rules for both checks were fixed in D134 before they ran.
+- **Fact check.** Seeds 24–26, 961–966 and the blocks 3500–3819 appeared in no code, test or record before use.
+  GCV/Laplace selection did not exist in the code base before this round.
+
+## R15.2 Methods (as implemented)
+
+- **symbolic_distill.**
+  - Restricted-domain library formulas (log, sqrt, 1/x) get a smooth floor on their argument; exp gets a smooth cap.
+    On the training range this changes the formula by less than 5e-6 of the floor.
+  - The refit adds μ × the variance-normalised squared distance between each refitted B2 surface (and static edge) and
+    the pruned model's, on all training (subject, grid time) points.
+  - μ is chosen by the unpenalised validation partial likelihood.
+- **b2s_anchor_cox / b2s_res_cox.**
+  - The existing B2-S network on transformed inputs: z → [last observed values, z]; the curves stay as they are
+    (anchored) or become X(t) − X_last (residual).
+  - Validation gate: the residual layer's channels are pruned as wholes over θ_rel ∈ D120's grid plus "all off". The
+    D120 parsimonious rule (tolerance 0.01) picks the gate, and the chosen mask is applied to all three ensemble
+    members.
+- **AFCM variants.**
+  - Bootstrap-averaged V3: 3 resamples, coefficients averaged.
+  - Per-channel λ_t.
+  - The D120 parsimonious λ rule.
+  - Laplace approximate marginal likelihood (LAML) selection, with the Breslow-form observed information verified
+    against an autograd Hessian (difference 2e-14).
+- **S-Last** (new simulator scenario): the hazard depends on the curves' values at the landmark only.
+- **Tests:** R15-1 to R15-8 (deterministic).
+
+## R15.3 Dry run (development seeds 961–966, 914 and the known failure seed 22)
+
+**symbolic_distill** (B2-S Cox, seed-0 member after pruning; identifiable RISE; validation NLPL is the unpenalised loss)
+
+| Data | Model | Mean RISE | RISE φ₁ | RISE φ₂ | Curve error | IBS | Validation NLPL |
+|---|---|---|---|---|---|---|---|
+| S-Add 961 | after pruning | 0.197 | 0.292 | 0.103 | 0.0531 | 0.1923 | 4.2205 |
+| S-Add 961 | sub_noguard | 0.197 | 0.292 | 0.103 | 0.0518 | 0.1924 | 4.2205 |
+| S-Add 961 | refit_old | 1.781 | 2.360 | 1.201 | 0.0906 | 0.2081 | 4.2925 |
+| S-Add 961 | sub_guard | 0.197 | 0.292 | 0.103 | 0.0518 | 0.1924 | 4.2205 |
+| S-Add 961 | refit_guard | 1.781 | 2.360 | 1.201 | 0.0906 | 0.2081 | 4.2925 |
+| S-Add 961 | distill_mu0.01 | 0.593 | 0.573 | 0.613 | 0.0717 | 0.1996 | 4.2463 |
+| S-Add 961 | distill_mu0.1 | 0.239 | 0.310 | 0.168 | 0.0573 | 0.1934 | 4.2179 |
+| S-Add 961 | distill_mu1 | 0.200 | 0.293 | 0.107 | 0.0524 | 0.1924 | 4.2151 |
+| S-Add 961 | distill | 0.200 | 0.293 | 0.107 | 0.0524 | 0.1924 | 4.2151 |
+| S-Sparse 962 | after pruning | 0.503 | 0.828 | 0.178 | 0.0862 | 0.1757 | 4.2477 |
+| S-Sparse 962 | sub_noguard | 0.503 | 0.830 | 0.176 | 0.0861 | 0.1750 | 4.2477 |
+| S-Sparse 962 | refit_old | 5.184 | 6.514 | 3.854 | 0.1126 | 0.1893 | 4.3814 |
+| S-Sparse 962 | sub_guard | 0.503 | 0.830 | 0.176 | 0.0861 | 0.1750 | 4.2477 |
+| S-Sparse 962 | refit_guard | 5.184 | 6.514 | 3.854 | 0.1126 | 0.1893 | 4.3814 |
+| S-Sparse 962 | distill_mu0.01 | 0.675 | 1.007 | 0.343 | 0.0926 | 0.1805 | 4.2875 |
+| S-Sparse 962 | distill_mu0.1 | 0.507 | 0.843 | 0.172 | 0.0868 | 0.1770 | 4.2520 |
+| S-Sparse 962 | distill_mu1 | 0.502 | 0.828 | 0.177 | 0.0860 | 0.1755 | 4.2479 |
+| S-Sparse 962 | distill | 0.502 | 0.828 | 0.177 | 0.0860 | 0.1755 | 4.2479 |
+
+**b2s_res_cox and the anchored follow-up** (curve error only on simulated data)
+
+| Data | Model | Curve error | IBS | Harrell C | Uno C | D-cal p | Functional channels kept by the gate |
+|---|---|---|---|---|---|---|---|
+| S-Last 963 | b2s_anchor_cox | 0.1736 | 0.1708 | 0.6377 | 0.6438 | 0.746 | [0, 0, 0] |
+| S-Sparse 964 | b2s_anchor_cox | 0.0810 | 0.1679 | 0.6614 | 0.6652 | 0.426 | [1, 1, 1] |
+| dev_aids 965 | b2s_anchor_cox | – | 0.1993 | 0.5950 | 0.5928 | 0.790 | [0, 0, 0] |
+| S-Last 963 | b2s_cox | 0.1800 | 0.1731 | 0.6252 | 0.6359 | 0.263 |  |
+| S-Last 963 | static_coxkan | 0.1679 | 0.1699 | 0.6394 | 0.6455 | 0.785 |  |
+| S-Last 963 | landmark_cox | 0.1807 | 0.1728 | 0.6357 | 0.6395 | 0.719 |  |
+| S-Last 963 | b2s_res_cox | 0.1727 | 0.1702 | 0.6403 | 0.6462 | 0.733 | [0, 0, 0] |
+| S-Sparse 964 | b2s_cox | 0.0828 | 0.1684 | 0.6614 | 0.6645 | 0.128 |  |
+| S-Sparse 964 | static_coxkan | 0.1131 | 0.1862 | 0.5773 | 0.5792 | 0.995 |  |
+| S-Sparse 964 | landmark_cox | 0.1161 | 0.1895 | 0.5601 | 0.5641 | 0.918 |  |
+| S-Sparse 964 | b2s_res_cox | 0.0924 | 0.1722 | 0.6352 | 0.6366 | 0.775 | [1, 1, 0] |
+| dev_aids 965 | b2s_cox | – | 0.1946 | 0.6266 | 0.6353 | 0.638 |  |
+| dev_aids 965 | static_coxkan | – | 0.1987 | 0.6022 | 0.5953 | 0.668 |  |
+| dev_aids 965 | landmark_cox | – | 0.2055 | 0.5826 | 0.5883 | 0.375 |  |
+| dev_aids 965 | b2s_res_cox | – | 0.1985 | 0.6055 | 0.5997 | 0.686 | [0, 0, 0] |
+
+**afcm_ens and alternatives** (the CK-6c procedure, n 2,000; identifiable RISE; CK-6c criterion φ₁ < 0.15 and φ₂ < 0.10)
+
+| Seed | AFCM variant | RISE φ₁ | RISE φ₂ | Selected λ_t |
+|---|---|---|---|---|
+| 22 | V3 (single fit) | 0.247 | 0.053 | 0.01 |
+| 22 | V3, D120 parsimonious λ rule (tol 0.01) | 0.247 | 0.053 | 0.01 |
+| 22 | V3, per-channel λ_t | 0.240 | 0.108 | [0.01, 0.0001, 1.0] |
+| 22 | afcm_ens: 3-resample bag of V3 | 0.239 | 0.050 | [0.01, 0.01, 0.01] |
+| 914 | V3 (single fit) | 0.023 | 0.053 | 1.0 |
+| 914 | V3, D120 parsimonious λ rule (tol 0.01) | 0.092 | 0.056 | 10000.0 |
+| 914 | V3, per-channel λ_t | 0.224 | 0.048 | [0.0001, 1.0, 0.01] |
+| 914 | afcm_ens: 3-resample bag of V3 | 0.056 | 0.064 | [10000.0, 100.0, 10000.0] |
+| 966 | V3 (single fit) | 0.055 | 0.056 | 10000.0 |
+| 966 | V3, D120 parsimonious λ rule (tol 0.01) | 0.063 | 0.056 | 10000.0 |
+| 966 | V3, per-channel λ_t | 0.065 | 0.056 | [10000.0, 10000.0, 0.0001] |
+| 966 | afcm_ens: 3-resample bag of V3 | 0.097 | 0.055 | [10000.0, 0.01, 10000.0] |
+
+
+## R15.4 The two development checks of D134
+
+| Check | Selection | RISE φ₁ | RISE φ₂ | Selected λ | CK-6c criterion |
+|---|---|---|---|---|---|
+| C2, seed 22 | LAML (primary) | 0.158 | 0.094 | λ_x 1e-05, λ_t 1 | does not meet |
+| C2, seed 22 | AIC-type (information) | 0.160 | 0.078 | λ_x 1e-05, λ_t 0.01 |  |
+| C2, seed 914 | LAML (primary) | 0.057 | 0.058 | λ_x 1e-05, λ_t 0.01 | meets |
+| C2, seed 914 | AIC-type (information) | 0.057 | 0.058 | λ_x 1e-05, λ_t 0.01 |  |
+| C2, seed 966 | LAML (primary) | 0.190 | 0.048 | λ_x 0.0001, λ_t 1 | does not meet |
+| C2, seed 966 | AIC-type (information) | 0.190 | 0.048 | λ_x 0.0001, λ_t 1 |  |
+
+| Check | Model | Curve error | IBS | Channels kept by the CV gate |
+|---|---|---|---|---|
+| G, S-Sparse 964 | b2s_cox | 0.083 | 0.168 |  |
+| G, S-Sparse 964 | static_coxkan | 0.113 | 0.186 |  |
+| G, S-Sparse 964 | landmark_cox | 0.116 | 0.189 |  |
+| G, S-Sparse 964 | b2s_anchor_cox_cvgate | 0.113 | 0.187 | [0, 0, 0] |
+| G, S-Last 963 | b2s_cox | 0.180 | 0.173 |  |
+| G, S-Last 963 | static_coxkan | 0.168 | 0.170 |  |
+| G, S-Last 963 | landmark_cox | 0.181 | 0.173 |  |
+| G, S-Last 963 | b2s_anchor_cox_cvgate | 0.174 | 0.171 | [0, 0, 0] |
+| G, dev_aids 965 | b2s_cox | – | 0.195 |  |
+| G, dev_aids 965 | static_coxkan | – | 0.199 |  |
+| G, dev_aids 965 | landmark_cox | – | 0.205 |  |
+| G, dev_aids 965 | b2s_anchor_cox_cvgate | – | 0.199 | [0, 0, 0] |
+
+- **C2 failed** (rule: the CK-6c criterion on all three seeds). Seed 24 was not used.
+- **G failed** (rule: a lower dev_aids test IBS than the single-split gate's 0.1993). The CV gate was not added to the
+  real-data lane.
+
+## R15.5 Execution
+
+| Jobs | Count | Median minutes |
+|---|---|---|
+| S-Add | 20 | 22.5 |
+| S-Sparse | 20 | 28.4 |
+| S-Last | 20 | 10.3 |
+| real data | 20 | 2.2 |
+
+Records: 80; failed jobs: 0.
+
+Four single-threaded lanes, one queue, 10:51–16:32 UTC on 2026-10-25. The registration was locked (D135) and the
+harness smoke-tested on development data before launch.
+
+## R15.6 H-R15a: symbolic_distill (S-Add and S-Sparse, 20 replicates each)
+
+| Model (B2-S Cox seed-0, pruned) | S-Add mean RISE | S-Sparse mean RISE |
+|---|---|---|
+| after pruning | 0.231 | 0.453 |
+| substituted, no refit | 0.230 | 0.453 |
+| old unconstrained refit | 1.202 | 10.999 |
+| guarded substitution | 0.230 | 0.453 |
+| distillation, μ 0.01 | 0.513 | 0.513 |
+| distillation, μ 0.1 | 0.261 | 0.454 |
+| distillation, μ 1 | 0.236 | 0.453 |
+| distillation, μ 10 | 0.235 | 0.453 |
+| **distillation, μ chosen by validation (the method)** | 0.262 | 0.455 |
+
+| Contrast | Replicates | Mean difference | 95% CI | Paired-t p | a < b / a > b |
+|---|---|---|---|---|---|
+| S-Add: distilled − after pruning (RISE) | 19 | +0.0262 | [-0.0061, +0.0585] | 0.105 | 8 / 11 |
+| S-Add: distilled − old refit (RISE) | 18 | -0.9347 | [-1.2732, -0.5961] | 2.03e-05 | 18 / 0 |
+| S-Add: distilled − old refit (curve error) | 18 | -0.0213 | [-0.0271, -0.0154] | 6.26e-07 | 17 / 1 |
+| S-Add: distilled − no refit (curve error) | 19 | +0.0013 | [-0.0005, +0.0032] | 0.138 | 8 / 11 |
+| S-Add: distilled − no refit (IBS) | 19 | +0.0001 | [-0.0003, +0.0006] | 0.498 | 7 / 12 |
+| S-Add: distilled − no refit (validation NLPL) | 19 | -0.0036 | [-0.0061, -0.0010] | 0.00834 | 14 / 5 |
+| S-Sparse: distilled − after pruning (RISE) | 20 | +0.0020 | [-0.0009, +0.0048] | 0.169 | 10 / 9 |
+| S-Sparse: distilled − old refit (RISE) | 20 | -10.5443 | [-18.3133, -2.7753] | 0.0105 | 18 / 1 |
+| S-Sparse: distilled − old refit (curve error) | 19 | -0.0170 | [-0.0213, -0.0128] | 1.22e-07 | 19 / 0 |
+| S-Sparse: distilled − no refit (curve error) | 20 | +0.0003 | [+0.0000, +0.0005] | 0.0407 | 8 / 12 |
+| S-Sparse: distilled − no refit (IBS) | 20 | +0.0003 | [+0.0000, +0.0007] | 0.0449 | 10 / 10 |
+| S-Sparse: distilled − no refit (validation NLPL) | 20 | -0.0012 | [-0.0020, -0.0003] | 0.0109 | 12 / 8 |
+
+| Scenario | Distillation refits finite | Old refits finite | μ chosen | Guarded edges | Recall | FDR |
+|---|---|---|---|---|---|---|
+| S-Add | 19 / 20 | 18 / 20 | μ 0.01: 1, μ 0.1: 7, μ 1.0: 4, μ 10.0: 7 | 4 | 0.900 | 0.050 |
+| S-Sparse | 20 / 20 | 20 / 20 | μ 0.01: 1, μ 0.1: 6, μ 1.0: 1, μ 10.0: 12 | 1 | 0.775 | 0.133 |
+
+## R15.7 H-R15b: landmark-anchored functional CoxKAN (S-Last and S-Sparse, 20 replicates each)
+
+| Model | S-Last curve error | S-Sparse curve error | S-Last IBS | S-Sparse IBS |
+|---|---|---|---|---|
+| `b2s_anchor_cox` | 0.168 | 0.087 | 0.182 | 0.186 |
+| `b2s_res_cox` | 0.169 | 0.097 | 0.183 | 0.188 |
+| `b2s_cox` | 0.187 | 0.082 | 0.192 | 0.185 |
+| `static_coxkan` | 0.169 | 0.106 | 0.182 | 0.191 |
+| `landmark_cox` | 0.176 | 0.107 | 0.183 | 0.192 |
+
+| Contrast | Replicates | Mean difference | 95% CI | Paired-t p | a < b / a > b |
+|---|---|---|---|---|---|
+| S-Last: b2s_anchor_cox - b2s_cox (curve error) | 20 | -0.0185 | [-0.0222, -0.0149] | 1.87e-09 | 20 / 0 |
+| S-Last: b2s_anchor_cox - static_coxkan (curve error) | 20 | -0.0007 | [-0.0019, +0.0004] | 0.208 | 12 / 8 |
+| S-Last: b2s_anchor_cox - landmark_cox (curve error) | 20 | -0.0081 | [-0.0105, -0.0058] | 6.34e-07 | 18 / 2 |
+| S-Last: b2s_res_cox - b2s_cox (curve error) | 20 | -0.0183 | [-0.0215, -0.0151] | 3.01e-10 | 20 / 0 |
+| S-Last: b2s_res_cox - b2s_anchor_cox (curve error) | 20 | +0.0002 | [-0.0008, +0.0013] | 0.668 | 8 / 12 |
+| S-Last: b2s_anchor_cox - b2s_cox (IBS) | 20 | -0.0101 | [-0.0121, -0.0082] | 1.42e-09 | 20 / 0 |
+| S-Last: b2s_anchor_cox - landmark_cox (IBS) | 20 | -0.0013 | [-0.0029, +0.0004] | 0.132 | 12 / 8 |
+| S-Sparse: b2s_anchor_cox - b2s_cox (curve error) | 20 | +0.0047 | [-0.0001, +0.0094] | 0.0531 | 7 / 13 |
+| S-Sparse: b2s_anchor_cox - static_coxkan (curve error) | 20 | -0.0186 | [-0.0243, -0.0129] | 1.55e-06 | 17 / 3 |
+| S-Sparse: b2s_anchor_cox - landmark_cox (curve error) | 20 | -0.0205 | [-0.0260, -0.0149] | 2.68e-07 | 20 / 0 |
+| S-Sparse: b2s_res_cox - b2s_cox (curve error) | 20 | +0.0149 | [+0.0102, +0.0196] | 2.32e-06 | 1 / 19 |
+| S-Sparse: b2s_res_cox - b2s_anchor_cox (curve error) | 20 | +0.0103 | [+0.0065, +0.0141] | 1.92e-05 | 4 / 16 |
+| S-Sparse: b2s_anchor_cox - b2s_cox (IBS) | 20 | +0.0004 | [-0.0014, +0.0022] | 0.656 | 12 / 8 |
+| S-Sparse: b2s_anchor_cox - landmark_cox (IBS) | 20 | -0.0062 | [-0.0090, -0.0033] | 0.000229 | 18 / 2 |
+
+| Scenario | Model | Share of replicates keeping channel 1 / 2 / 3 (3 = null) | Gate all off |
+|---|---|---|---|
+| S-Last | b2s_anchor_cox | [0.05, 0.1, 0.1] | 18 / 20 |
+| S-Last | b2s_res_cox | [0.2, 0.2, 0.2] | 16 / 20 |
+| S-Sparse | b2s_anchor_cox | [0.8, 0.8, 0.5] | 4 / 20 |
+| S-Sparse | b2s_res_cox | [0.4, 0.6, 0.45] | 8 / 20 |
+
+## R15.8 Post-hoc diagnosis (exploratory; no verdict changes)
+
+| Contrast | Replicates | Mean difference | 95% CI | Paired-t p | a < b / a > b |
+|---|---|---|---|---|---|
+| add: distill_mu1 - after_pruning (RISE) | 19 | +0.0003 | [-0.0016, +0.0023] | 0.724 | 7 / 12 |
+| add: distill_mu10 - after_pruning (RISE) | 19 | -0.0008 | [-0.0018, +0.0002] | 0.107 | 11 / 8 |
+| sparse: distill_mu1 - after_pruning (RISE) | 20 | -0.0005 | [-0.0016, +0.0005] | 0.312 | 11 / 8 |
+| sparse: distill_mu10 - after_pruning (RISE) | 20 | -0.0003 | [-0.0006, -0.0000] | 0.0419 | 14 / 5 |
+| sparse: anchor - b2s, gate kept >= 1 channel | 16 | +0.0012 | [-0.0005, +0.0030] | 0.162 | 6 / 10 |
+| sparse: anchor - b2s, gate all off | 4 | +0.0184 | [-0.0081, +0.0448] | 0.114 | 1 / 3 |
+
+| Scenario | μ chosen by validation | Mean RISE change against after pruning |
+|---|---|---|
+| add | 0.01 | +0.2771 |
+| add | 0.1 | +0.0330 |
+| add | 1.0 | -0.0004 |
+| add | 10.0 | -0.0012 |
+| sparse | 0.01 | +0.0000 |
+| sparse | 0.1 | +0.0070 |
+| sparse | 1.0 | +0.0003 |
+| sparse | 10.0 | -0.0003 |
+
+**S-Add 3515.** The accepted formula on the baseline-covariate edge was `softplus` with affine parameters a = 205.3, b = 384.1, c = 0.0018, d = -0.757. The first non-finite evaluation was L-BFGS evaluation 1 (training loss before it 5.201); afterwards the substituted parameters were of order 1e+180.
+
+## R15.9 Real data (exploratory; Round-13 splits 0–4)
+
+| Data set | Model (Round-15 new: anchor, res; others: Round-13 records) | IBS | Uno C |
+|---|---|---|---|
+| pbc_E2 | `b2s_anchor_cox` | 0.135 | 0.802 |
+| pbc_E2 | `b2s_res_cox` | 0.147 | 0.790 |
+| pbc_E2 | `b2s_cox` | 0.150 | 0.771 |
+| pbc_E2 | `landmark_cox` | 0.127 | 0.794 |
+| pbc_E2 | `static_coxkan` | 0.147 | 0.791 |
+| pbc_E1 | `b2s_anchor_cox` | 0.116 | 0.808 |
+| pbc_E1 | `b2s_res_cox` | 0.127 | 0.795 |
+| pbc_E1 | `b2s_cox` | 0.122 | 0.791 |
+| pbc_E1 | `landmark_cox` | 0.110 | 0.799 |
+| pbc_E1 | `static_coxkan` | 0.119 | 0.805 |
+| prothro | `b2s_anchor_cox` | 0.215 | 0.583 |
+| prothro | `b2s_res_cox` | 0.218 | 0.577 |
+| prothro | `b2s_cox` | 0.219 | 0.572 |
+| prothro | `landmark_cox` | 0.216 | 0.589 |
+| prothro | `static_coxkan` | 0.215 | 0.591 |
+| aids | `b2s_anchor_cox` | 0.162 | 0.700 |
+| aids | `b2s_res_cox` | 0.163 | 0.692 |
+| aids | `b2s_cox` | 0.160 | 0.704 |
+| aids | `landmark_cox` | 0.159 | 0.700 |
+| aids | `static_coxkan` | 0.164 | 0.695 |
+
+| Data set | Contrast | Mean difference | Nadeau–Bengio 95% interval |
+|---|---|---|---|
+| pbc_E2 | ibs b2s_anchor_cox - b2s_cox | -0.015 | [-0.036, +0.006] |
+| pbc_E2 | ibs b2s_anchor_cox - landmark_cox | +0.008 | [-0.029, +0.046] |
+| pbc_E2 | uno_c b2s_anchor_cox - b2s_cox | +0.031 | [-0.045, +0.108] |
+| pbc_E2 | uno_c b2s_anchor_cox - landmark_cox | +0.008 | [-0.038, +0.054] |
+| pbc_E1 | ibs b2s_anchor_cox - b2s_cox | -0.006 | [-0.023, +0.012] |
+| pbc_E1 | ibs b2s_anchor_cox - landmark_cox | +0.006 | [-0.011, +0.023] |
+| pbc_E1 | uno_c b2s_anchor_cox - b2s_cox | +0.017 | [-0.008, +0.042] |
+| pbc_E1 | uno_c b2s_anchor_cox - landmark_cox | +0.008 | [-0.046, +0.063] |
+| prothro | ibs b2s_anchor_cox - b2s_cox | -0.003 | [-0.013, +0.007] |
+| prothro | ibs b2s_anchor_cox - landmark_cox | -0.001 | [-0.012, +0.011] |
+| prothro | uno_c b2s_anchor_cox - b2s_cox | +0.011 | [-0.030, +0.053] |
+| prothro | uno_c b2s_anchor_cox - landmark_cox | -0.006 | [-0.080, +0.068] |
+| aids | ibs b2s_anchor_cox - b2s_cox | +0.002 | [-0.008, +0.012] |
+| aids | ibs b2s_anchor_cox - landmark_cox | +0.002 | [-0.006, +0.010] |
+| aids | uno_c b2s_anchor_cox - b2s_cox | -0.005 | [-0.054, +0.045] |
+| aids | uno_c b2s_anchor_cox - landmark_cox | -0.001 | [-0.013, +0.012] |
+
+| Data set | Last-value edge | Stated direction of risk | Share of splits monotone | Splits |
+|---|---|---|---|---|
+| pbc_E2 | log bili | increasing | 0.8 | 5 |
+| pbc_E2 | albumin | decreasing | 0.2 | 5 |
+| pbc_E2 | log protime | increasing | 0.8 | 5 |
+| pbc_E1 | log bili | increasing | 1.0 | 5 |
+| pbc_E1 | albumin | decreasing | 0.4 | 5 |
+| pbc_E1 | log protime | increasing | 0.6 | 5 |
+| prothro | prothrombin index | decreasing | 0.2 | 5 |
+| aids | sqrt CD4 | decreasing | 0.4 | 5 |
+
+Split-0 reproduction of the Round-13 landmark Cox records (maximum absolute metric difference): pbc_E2 0; pbc_E1 0; prothro 0; aids 0.
+
+When the gate keeps a channel, that channel's effect is shared between its last-value edge and its trajectory term,
+so the edge-level monotonicity check above is not comparable with Round 13's total-effect alignment.
+
+## R15.10 Limitations
+
+- **The real-data analyses are not prospective.** The anchored design was motivated by Round 13 on the same data.
+- **The dry run informed the primary model** (anchored rather than residual) before the owner approved it. This is
+  disclosed; the formal seeds were fresh.
+- **AFCM is still not validated**, and none of the four selection variants tried fixes its single-fit sensitivity.
+- **Twenty replicates per scenario on one simulator.**
+
+## R15.11 Decisions (D133–D137)
+
+| ID | Decision | Status | Content | Rationale |
+|---|---|---|---|---|
+| D133 | **Round 15 (Phase-2 methods): owner instruction, implementation, development dry run and registration proposal (2026-10-24)** | PROPOSED (awaiting owner approval; no formal seed used) | **Owner instruction:** open a prospective, pre-registered Phase-2 round testing (1) `symbolic_distill` (domain-guarded symbolic substitution + functional-distillation refit, mu in {1e-2, 1e-1, 1} by validation NLPL), (2) `b2s_res_cox` (static KAN edge on the last observed value + gated B2-S on the residual X(t) − X(t_L)), (3) `afcm_ens` (3-resample bootstrap-averaged AFCM, or GCV/Laplace / per-channel lambda_t), with CK-6d on fresh seed 24; dry run on development seeds first; keep Rounds 1–14 intact; commit locally. **Implemented (all options default-off; Rounds 1–14 code paths and records unchanged; fsim scenarios other than the new S-Last generate identical data):** `SymbolicEdge(guard=...)`, `domain_guard` (log, sqrt, 1/x: smooth floor at half the smallest training argument; exp: smooth cap 10 above the training range), `substitute_symbolic(guard=)`, `refit_symbolic(anchor=, mu=)` with `anchor_terms` (B2 surfaces at every training (subject, grid time) plus static edge activations, each normalised by its anchor variance), `refit_distill`; `kanfae.models.fres.ResFKAN` (residual=True: your design; residual=False: the "anchored" variant, full curve + last-value edges) with the validation gate (integrated residual-channel pruning over THETAS_D120 plus "all off", D120 parsimonious rule, tol 0.01); `fit_afcm_bagged`, `fit_afcm(per_channel="t")`, `fit_afcm(rule="parsimonious")`; fsim scenario S-Last (eta = sin(pi X_1(1)/2) + 1.5 tanh(X_2(1)) + 0.3 z_1 − 0.3 z_2). GCV/Laplace selection was not implemented. Tests R15-1..R15-6 (DET). **Dry run (development seeds 961–966 verified unused, plus 914 and the known CK-6c failure seed 22; `reports/round15/dev/`, `docs/round15_dryrun.md`):** symbolic_distill kept the shapes (identifiable RISE S-Add 0.197 → 0.200; S-Sparse 0.503 → 0.502) where the unconstrained refit destroyed them (1.781; 5.184); mu = 1 (grid edge) chosen on both; the guard was not triggered on these seeds. b2s_res_cox (residual) was worse than B2-S Cox on S-Sparse (curve error 0.0924 vs 0.0828) -- a nonlinear effect of X(t) is not an effect of X_last plus one of X(t) − X_last -- and better on S-Last (0.1727 vs 0.1800; gate all off); the anchored variant (dry-run follow-up) was better on both (0.0810; 0.1736). On a small aids-shaped synthetic set the gate switched the functional part off and lost to B2-S Cox (IBS 0.1985 vs 0.1946). afcm_ens did not change seed 22 (phi_1 0.239 vs 0.247; every resample chose lambda_t 0.01); per-channel lambda_t (0.240, phi_2 0.108) and the parsimonious rule (0.247) did not either; on seed 914 all variants were worse than single V3 (0.023 vs 0.056–0.224). **Proposed registration (fresh seeds verified unused: 24; S-Add 3500–3519; S-Sparse 3600–3619; S-Last 3700–3719; 25, 26 unassigned):** H-R15a (symbolic_distill; confirmatory): all 40 distillation refits finite AND S-Add distilled − pruned mean identifiable RISE upper 95% t-bound < +0.05. H-R15b (confirmatory; primary model = the anchored variant, recommended; residual design secondary): S-Last primary − B2-S Cox curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Real data (PBC, prothro, aids; Round-13 splits 0–4; exploratory only). AFCM: owner choice among C1 (CK-6d on seed 24 with afcm_ens, CK-6c criterion; H-R15c conditional on a pass), C2 (recommended: REML/Laplace selection developed first, seed 24 kept), C3 (multi-seed acceptance check). Budget about 25 lane-hours. | Owner instruction; D111 claim policy |
+| D134 | **Owner decisions on the D133 proposal (2026-10-25) and the rules for the two development checks (fixed before they run)** | ADOPTED (owner) | **(1) Family A approved** (H-R15a; S-Add 3500–3519, S-Sparse 3600–3619) with mu in **{1e-2, 1e-1, 1, 10}** (10 added because both dry-run seeds chose the grid edge 1). **(2) Family B approved** (H-R15b; S-Last 3700–3719, S-Sparse 3600–3619) with **`b2s_anchor_cox` primary** and `b2s_res_cox` a registered secondary. **(3) Real data approved as exploratory** on the Round-13 splits 0–4. Development check G (owner): on `dev_aids` seed 965, compare the single-split validation gate with a **cross-validated gate**; rule fixed now: the CV gate is included in the real-data lane (as an additional exploratory model, `b2s_anchor_cox_cvgate`) **if its dev_aids test IBS is lower than the single-split anchored model's (0.1993, dry run)**; simulation families keep the registered single-split gate. CV gate definition (fixed now): pooled training + validation subjects, 5 folds (`split` seed 0, stratified on the event); in each fold the seed-0 anchored model at the tuned (lr, wd) is trained on the other four folds for the tuned model's best epoch count (no early stopping), then each gate setting (theta_rel in THETAS_D120 and "all off", integrated residual-channel pruning) is fine-tuned 200 epochs and scored by the held-out fold's NLPL per event; the D120 parsimonious rule (tol 0.01) on the 5-fold mean picks the gate; the chosen mask is then applied to the three members trained as before. Soft shrinkage toward B2-H was not implemented. **(4) Family C: option C2.** Seed 24 not used until the dev check passes. Development check C2 on seeds 22, 914, 966 (CK-6c procedure, n 2,000): AFCM V3's basis and penalties with lambdas chosen on the same 9 x 5 grid by the **Laplace approximate marginal likelihood (LAML, primary, fixed now)**: LAML(lambda) = l_p(theta_hat) − ½ theta_hat' S theta_hat + ½ log|S| − ½ log|H + S|, with l_p the log partial likelihood (sum), S = 2 E (lambda_x Kx + lambda_t Kt + ridge I) the penalty in the same units (E = number of training events), H the observed information of the partial likelihood (Breslow form) at theta_hat; the effective degrees of freedom tr((H + S)^-1 H) and an AIC-type rule (minimise −l_p + edf) are reported for information only. **Pass rule (fixed now):** C2 passes the development check only if the LAML-selected AFCM meets the CK-6c criterion (identifiable RISE phi_1 < 0.15 and phi_2 < 0.10) on **all three** seeds 22, 914 and 966; only then is CK-6d run on seed 24 with the LAML AFCM (same criterion) and, if CK-6d passes, H-R15c (B2-S Cox ensemble − LAML AFCM on S-Add 3500–3519, the H-R12 rule). Otherwise seed 24 stays unused and AFCM stays "not validated". | Owner instruction |
+| D135 | **Outcome of the two D134 development checks and the locked Round-15 registration (2026-10-25; before any formal seed)** | ADOPTED | **Check C2 (rule fixed in D134): FAIL.** LAML-selected AFCM, identifiable RISE (phi_1 / phi_2): seed 22: 0.158 / 0.094 (V3 0.247 / 0.053; improved but above 0.15); seed 914: 0.057 / 0.058 (V3 0.023 / 0.053); seed 966: 0.190 / 0.048 (V3 0.055 / 0.056). The AIC-type rule (information) gave 0.160 / 0.078, 0.057 / 0.058 and 0.190 / 0.048. So **seed 24 stays unused, CK-6d and H-R15c are not run, and AFCM stays "not validated"**; no AFCM model enters the formal run. **Check G: FAIL.** On dev_aids (seed 965) the cross-validated gate also switched every functional channel off: test IBS 0.1993, identical to the single-split gate (rule: must be lower), so the CV gate is not added to the real-data lane. For information: on S-Sparse 964 the CV gate switched all channels off (curve error 0.1134 vs 0.0810 with the single-split gate); on S-Last 963 it matched the single-split gate (0.1736). Records `reports/round15/dev/results_check_lane*.jsonl`; flags `reports/round15/dev_check_flags.json` ({"C2_pass": false, "G_pass": false}). **Locked registration** (`scripts/run_round15_formal.py`, `run_round15_lanes.py`; docstrings binding; smoke-tested on development data with reduced settings before launch): 80 jobs, 4 single-threaded lanes, one queue. S-Add 3500–3519 and S-Sparse 3600–3619: B2-S Cox ensemble (D112) and the symbolic_distill pipeline (select_lambda_theta D120 on the seed-0 model at the ensemble's tuned lr/wd; stages 1–2, no PySR; after pruning, substituted without refit, old unconstrained refit (200 L-BFGS iterations), guarded substitution, guarded distillation refit at mu 1e-2, 1e-1, 1, 10, and the mu chosen by unpenalised validation NLPL). S-Sparse 3600–3619 and S-Last 3700–3719: B2-S Cox, static CoxKAN (last values + z), landmark Cox, b2s_anchor_cox (primary) and b2s_res_cox (secondary), single-split validation gate. Real data (exploratory): pbc_E2, pbc_E1, prothro, aids × Round-13 splits 0–4: b2s_anchor_cox and b2s_res_cox (with last-value effect curves for the clinical-direction check), plus landmark_cox on split 0 as a reproduction check of the Round-13 records. **Hypotheses (as D133/D134):** H-R15a: all 40 distillation refits finite AND S-Add (distilled − after pruning) mean identifiable RISE upper 95% t-bound < +0.05. H-R15b: S-Last (b2s_anchor_cox − b2s_cox) curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Everything else exploratory, no multiplicity correction; every run reported. | D133, D134 |
+| D136 | **Round 15 outcome (2026-10-25; launched 10:51 UTC, 80/80 jobs ok at 16:32 UTC; records `reports/round15/results_lane*.jsonl`, analysis `reports/round15_summary.json`)** | ADOPTED | **H-R15a (symbolic_distill): NOT SUPPORTED** under its registered rule. Part 1: 39 of 40 distillation refits finite (S-Add 3515: every mu non-finite; the old refit too). Part 2: S-Add distilled − after-pruning mean identifiable RISE +0.026, 95% CI [−0.006, +0.059] (upper bound above +0.05). S-Sparse: +0.002 [−0.001, +0.005]. Against the old unconstrained refit the distilled model was far better (S-Add RISE −0.93, 18/18 finite pairs; S-Sparse −10.5; curve error −0.021 and −0.017). Validation NLPL improved slightly over the unrefitted substitution (−0.0036 and −0.0012 per event); IBS and Uno C unchanged. mu chosen (S-Add / S-Sparse): 0.01: 1/1, 0.1: 7/6, 1: 4/1, 10: 7/12. The guard was active in 5 cells; the one failure (S-Add 3515) was not caused by its guarded edge (below). **H-R15b (b2s_anchor_cox): NOT SUPPORTED.** Part 1 holds: S-Last anchored − B2-S Cox curve error −0.0185 [−0.0222, −0.0149], 20/20. Part 2 fails: S-Sparse +0.0047 [−0.0001, +0.0094] (upper bound above +0.005). Secondary: the residual design is worse than B2-S Cox on S-Sparse (+0.0149, 19/20) and equal to the anchored model on S-Last; anchored vs landmark Cox: S-Last −0.0081, S-Sparse −0.0205; the gate kept the active channels in 16/20 S-Sparse replicates (null channel removed in 6) and switched everything off in 18/20 S-Last replicates. **Post-hoc diagnosis (exploratory; no verdict changes; `scripts/diag_round15_3515.py`, `reports/round15/diag_3515.json`, `reports/round15/posthoc_exploratory.json`):** (i) S-Add 3515 failed because an accepted library formula on a baseline-covariate edge was nearly degenerate (softplus(205.3 x + 384.1) with output scale 0.0018); the first L-BFGS step sent the parameters to about 1e180 and the strong-Wolfe line search cannot recover from a NaN trial -- a numerical, not a domain, failure, which the guard cannot prevent. (ii) At a fixed mu of 1 or 10 the distilled RISE equals the pruned RISE within ±0.002 on both scenarios; part 2 failed because validation NLPL chose a loose anchor (mu 0.1 or 0.01) in 8 S-Add replicates (mean RISE change +0.033 and +0.277). (iii) On S-Sparse the anchored model matched B2-S Cox where the gate kept a channel (+0.0012 [−0.0005, +0.0030], n 16) and lost where it switched everything off (+0.018, n 4). **Real data (exploratory):** the split-0 reproduction of the Round-13 landmark Cox records was exact (difference 0.0 on all four data sets). PBC E2 IBS: anchored 0.135, B2-S Cox 0.150, landmark Cox 0.127; every Nadeau–Bengio interval includes 0. The last-value edges alone were rarely monotone in the clinical direction (albumin 0.2, prothrombin index 0.2, CD4 0.4 of splits; bilirubin 0.8–1.0); when the gate keeps a channel its effect is shared between the last-value edge and the trajectory term, so this edge-level check is not comparable with Round 13's total-effect alignment. AFCM: not run (D135). No novelty or superiority claim (D111). | D133–D135 |
+| D137 | **Report revision 17 and verification (2026-10-25; owner: "build report revision 17 with Round 15 and run the full suite")** | ADOPTED | Report revision 17 (`scripts/build_report_round15.py`): Part A = Round 15 (D133–D136; every number read from `reports/round15_summary.json`, the development records, `reports/round15/posthoc_exploratory.json` and `reports/round15/diag_3515.json`); Part B = revision 16's Part A (Round 14, the manuscript draft); Parts C–Q = revision 16's Parts B–P, unchanged; copied to `reports/final_research_prototype_report_rev17.pdf` (revision 16's copy kept). `scripts/verify_deliverables.py`: final run `final_full_suite_round15`; Part-A sections R15.1–R15.13 required in addition to all earlier ones; round-15 template values checked; the revision-17 copy must equal the report PDF; allowed final-suite failures unchanged (the 4f gate's original R1, D103; CK-6c, D124/D126). **Final suite `final_full_suite_round15`:** 265 passed, 2 failed (CK-6c, 4f R1), 16 expected failures, 2 skipped (285), no XPASS; Round-15 tests R15-1..R15-8 pass. | Recorded failures stay visible |
+
+## R15.12 Tests
+
+| Full-suite run | Passed | Failed | Skipped | Expected failures (xfail) | Total | Failed tests |
+|---|---|---|---|---|---|---|
+| final_full_suite_round14_rerun2 | 257 | 2 | 2 | 16 | 277 | test_R1_oracle_features_head (test_learnability_fa4f.py); test_CK6c_repaired_afcm_identifiable_rise (test_round12b_ck.py) |
+| final_full_suite_round15 | 265 | 2 | 2 | 16 | 285 | test_R1_oracle_features_head (test_learnability_fa4f.py); test_CK6c_repaired_afcm_identifiable_rise (test_round12b_ck.py) |
+
+**All test runs, in chronological order**
+
+| Test run (chronological) | Passed | Failed | Skipped | Expected failures (xfail) | Total |
+|---|---|---|---|---|---|
+| stageA_attempt1 | 41 | 4 | 0 | 0 | 45 |
+| stageA_attempt2 | 41 | 4 | 0 | 0 | 45 |
+| stageA_attempt3 | 45 | 0 | 0 | 0 | 45 |
+| stageB_attempt1 | 40 | 0 | 0 | 0 | 40 |
+| stageC_attempt1 | 19 | 0 | 0 | 0 | 19 |
+| stageD_attempt1 | 54 | 1 | 1 | 0 | 56 |
+| stageD_attempt2 | 7 | 1 | 0 | 0 | 8 |
+| stageD_attempt3 | 8 | 0 | 0 | 0 | 8 |
+| stageD_gate_attempt1 | 1 | 2 | 0 | 0 | 3 |
+| stageD_gate_attempt2 | 1 | 2 | 0 | 0 | 3 |
+| stageD_gate_attempt3 | 2 | 1 | 0 | 0 | 3 |
+| stageCDE_final | 55 | 0 | 1 | 0 | 56 |
+| stageF_attempt1 | 2 | 0 | 0 | 0 | 2 |
+| regress_after_penalty_fix | 73 | 0 | 1 | 0 | 74 |
+| stageG_attempt1 | 4 | 0 | 0 | 0 | 4 |
+| final_full_suite | 148 | 1 | 1 | 0 | 150 |
+| rev3_unit_attempt1 | 50 | 0 | 1 | 0 | 51 |
+| rev3_gate_attempt1 | 2 | 1 | 0 | 0 | 3 |
+| audit_attempt1 | 9 | 0 | 0 | 0 | 9 |
+| censored_ls_attempt1 | 5 | 0 | 0 | 0 | 5 |
+| kan_regress_after_pruning | 12 | 0 | 0 | 0 | 12 |
+| kreg_sym_attempt1 | 10 | 1 | 0 | 0 | 11 |
+| kreg_sym_attempt2 | 1 | 0 | 0 | 0 | 1 |
+| f7f8_attempt1 | 5 | 0 | 0 | 0 | 5 |
+| f8_after_cache | 5 | 0 | 0 | 0 | 5 |
+| d41_gate_selected | 2 | 1 | 0 | 0 | 3 |
+| f9_attempt1 | 6 | 0 | 0 | 0 | 6 |
+| interval_attempt1 | 3 | 2 | 0 | 0 | 5 |
+| interval_attempt2 | 5 | 0 | 0 | 0 | 5 |
+| gate_ext | 2 | 1 | 0 | 0 | 3 |
+| cache_regression_oldcode | 0 | 1 | 0 | 0 | 1 |
+| cache_regression_fixed | 7 | 0 | 0 | 0 | 7 |
+| gate_D53_recompute | 2 | 1 | 0 | 0 | 3 |
+| final_full_suite_round2 | 90 | 2 | 0 | 0 | 92 |
+| final_full_suite_round2_rerun | 178 | 8 | 1 | 0 | 187 |
+| models_repair_D56 | 28 | 0 | 1 | 0 | 29 |
+| final_full_suite_round2_v3 | 185 | 1 | 1 | 0 | 187 |
+| fq_attempt1 | 7 | 4 | 0 | 0 | 11 |
+| fq_attempt2 | 9 | 2 | 0 | 0 | 11 |
+| fq_attempt3 | 10 | 1 | 0 | 0 | 11 |
+| fq_attempt4 | 11 | 0 | 0 | 0 | 11 |
+| revised_gate_fa | 1 | 2 | 0 | 0 | 3 |
+| fq10 | 3 | 0 | 0 | 0 | 3 |
+| final_full_suite_round3 | 198 | 2 | 1 | 1 | 202 |
+| hr_attempt1 | 3 | 0 | 0 | 0 | 3 |
+| revised_gate_fa4b | 2 | 2 | 0 | 0 | 4 |
+| final_full_suite_round4 | 200 | 5 | 1 | 3 | 209 |
+| flat_ae_fix_D78 | 4 | 0 | 0 | 0 | 4 |
+| final_full_suite_round4_rerun | 203 | 2 | 1 | 3 | 209 |
+| rs_attempt1 | 3 | 1 | 0 | 0 | 4 |
+| rs_attempt2 | 4 | 0 | 0 | 0 | 4 |
+| ceil_attempt1 | 3 | 0 | 0 | 0 | 3 |
+| revised_gate_fa4c | 2 | 2 | 0 | 0 | 4 |
+| final_full_suite_round5 | 212 | 2 | 1 | 5 | 220 |
+| gate_fa4c_reproduction | 2 | 2 | 0 | 0 | 4 |
+| bi_attempt1 | 7 | 0 | 0 | 0 | 7 |
+| final_full_suite_round6 | 215 | 0 | 1 | 7 | 223 |
+| final_full_suite_round6_rerun | 215 | 0 | 2 | 7 | 224 |
+| 20261018T175917 | 0 | 0 | 1 | 0 | 1 |
+| revised_gate_fa4e | 1 | 3 | 0 | 0 | 4 |
+| final_full_suite_round7 | 216 | 3 | 2 | 7 | 228 |
+| nf_tests_dev | 4 | 0 | 0 | 0 | 4 |
+| regression_4f_dev | 35 | 0 | 1 | 0 | 36 |
+| revised_gate_fa4f | 3 | 1 | 0 | 0 | 4 |
+| st_tests_dev | 7 | 0 | 0 | 0 | 7 |
+| final_full_suite_round8 | 226 | 1 | 2 | 10 | 239 |
+| fc_tests_dev | 4 | 1 | 0 | 0 | 5 |
+| fc_tests_dev2 | 15 | 0 | 0 | 0 | 15 |
+| final_full_suite_round9 | 231 | 1 | 2 | 10 | 244 |
+| final_full_suite_round10 | 231 | 1 | 2 | 10 | 244 |
+| round11_acceptance | 10 | 5 | 0 | 0 | 15 |
+| final_full_suite_round11 | 241 | 6 | 2 | 10 | 259 |
+| round12_ck_acceptance | 6 | 1 | 0 | 0 | 7 |
+| final_full_suite_round12 | 247 | 2 | 2 | 15 | 266 |
+| round12b_ck_acceptance | 1 | 1 | 0 | 0 | 2 |
+| final_full_suite_round12b | 248 | 2 | 2 | 16 | 268 |
+| final_full_suite_round12c | 183 | 1 | 2 | 11 | 197 |
+| final_full_suite_round12c_rerun | 248 | 2 | 2 | 16 | 268 |
+| final_full_suite_round13 | 251 | 2 | 2 | 16 | 271 |
+| 20261023T152041 | 6 | 0 | 0 | 0 | 6 |
+| final_full_suite_round14 | 9 | 0 | 1 | 0 | 10 |
+| final_full_suite_round14_rerun | 188 | 1 | 2 | 16 | 207 |
+| 20261023T152406 | 6 | 0 | 0 | 0 | 6 |
+| final_full_suite_round14_rerun2 | 257 | 2 | 2 | 16 | 277 |
+| 20261024T093853 | 4 | 2 | 0 | 0 | 6 |
+| 20261024T093935 | 1 | 1 | 0 | 0 | 2 |
+| 20261024T093949 | 6 | 0 | 0 | 0 | 6 |
+| 20261024T094030 | 11 | 0 | 0 | 0 | 11 |
+| 20261024T114232 | 6 | 0 | 0 | 0 | 6 |
+| 20261025T100348 | 8 | 0 | 0 | 0 | 8 |
+| final_full_suite_round15 | 265 | 2 | 2 | 16 | 285 |
+
+## R15.13 Task ledger and reproducibility
+
+### Task ledger: originally failed, blocked, skipped or unrun items (opened 2026-10-17)
+
+Each row is updated as work proceeds. The final column points to the supporting log or record. Original
+statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-run of revision 3.
+
+| # | Item | Original status / reason | Blocking dependency | Alternatives considered | Experiments / tests | Final outcome | Evidence | Remaining limitation |
+|---|---|---|---|---|---|---|---|---|
+| L1 | Learnability gate R2 (functional MLP AE) | FAILED (original design, 2 repairs: C 0.8361); FAILED again with revision 3 NFL front (C 0.8461) | – | Fronts A0–A4 (linear, pointwise-MLP NFL, energy, tensor spline, tensor spline + derivative energy); latent size 4/8; α 1/0.1/0; Adam 1e-3/3e-3, AdamW; early stopping on objective/NLL; linear/MLP/KAN encoders; 3000/10000 epochs; capacity 32/64 and 64/128 | D41 + D46 controlled search (validation only; 17 fits after deduplication); official gate; fresh replications on seeds 101–110; D53 defect found, fixed and all affected results recomputed | **FAILED (final, pre-registered):** gate C 0.8497 < 0.8636 (probe mean 0.663 < 0.8; ω probe ≈ 0); replications 0/5 (D41) and 0/5 (D46). No further extension (D46) | `reports/learnability_search.jsonl`, `reports/learnability_confirmation_*.jsonl`, `reports/logs/stageD_gate_D53.log` | The frequency parameter ω is not linearly decodable from a reconstruction-driven latent; next steps need an owner decision (report I.15) Round 3 (owner option (c), D57/D61): frequency-aware representation; validation-only search (11 fits); revised gate on fresh seed 41: **R2 FAILED** (C 0.8189 < 0.8656; ω probe 0.865); fresh confirmations 111–115: 0/5. Diagnosis D65 (overfitting of the spectral block; a compact summary meets the probe criterion on validation but not C) and D66 (R1's σ check not robust) Round 4 (owner D67, pre-registered D71): Revision 4b (compact front + head weight decay): fresh seed 61 R2 FAILED (C 0.8372 < 0.8662); confirmations 121–125: 0/5. Diagnosis D74/D75: the R2 concordance criterion is at or beyond the information limit of the data (near-optimal estimates + true risk function below the threshold on 9/10 fresh seeds) Round 5 (owner D80): Revision 4c Step 1 PASSED (instability and stopping conflict fixed on validation); Step 2 amended gate (seed 81) NOT CONFIRMED: concordance part passed, probe part failed (0.772 < 0.78); confirmations 131–135: 1/5 (D84) Round 6 (owner D86): Revision 4d Step 1 FAILED (no candidate met the multi-seed eligibility; closest short by 0.001 on one seed's probe); gate not run (D89) |
+| L2 | H1 primary: KAN vs MLP functional AE | NOT RUN (blocked by L1, D33) | L1 | – | – | **BLOCKED** (L1 failed; `scripts/run_neural_synthetic.py` ready but deliberately not run) | – | No evidence for or against KAN |
+| L3 | H2: α > 0 vs α = 0 | NOT RUN (blocked by L1) | L1 | (α was varied inside the search, on validation only; not a test of H2) | – | **BLOCKED** | – | |
+| L4 | H3: functional vs flattened under sparse sampling | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L5 | Training controls S1/S2/S3/survival-only on the revised design | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L6 | Ablations AB1–AB8 | NOT RUN (blocked by L1) | L1 | – | – | **BLOCKED** | – | |
+| L7 | Neural models on C-MAPSS and PBC | NOT RUN (blocked by L1) | L1, L2 | KAN-AFT (non-functional, reference method) was run on PBC instead (D52) | – | **BLOCKED** for KAN-FAE; KAN-AFT on PBC DONE | `reports/kanaft_pbc.jsonl` | |
+| L8 | KAN regularisation and pruning | NOT IMPLEMENTED (audit finding A-KAN-REG) | – | CoxKAN Eqs. 5–8 / KAN-AFT L_R; edge and node pruning (θ = 1e-2) | KREG-1..4 (pass); KAN-AFT synthetic (12 fits) and PBC (10 fits) with before/after metrics; D54 threshold diagnostic | **DONE (implemented, tested, applied to KAN-AFT).** At θ = 1e-2 an edge was pruned in only 1 of 22 fits (seed 203 IPCW, λ = 1e-2: the true null z₄); D54 explains why (offset-inclusive score; scale dependence) | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl`, `reports/pruning_threshold_diag.jsonl` | Not applied to KAN-FAE (blocked by L1). θ = 1e-2 does not remove the true null edge at the λ chosen on validation |
+| L9 | Symbolic formula extraction (R² > 0.99) | NOT IMPLEMENTED (audit finding A-SYM) | L8 | Stage 1 linear → stage 2 library (15 functions, affine form) → stage 3 PySR 2.7.0 | SYM-1..4 (pass); KAN-AFT synthetic with known truth (3 seeds × 4 losses); PBC (2 endpoints × 5 splits) | **DONE for KAN-AFT.** Synthetic: true shapes (tanh, quadratic, sine) recovered with validation R² > 0.99; rejected fits keep the spline; substitution changes test C by ≤ 0.002. PBC: formulas accepted for some covariates, but the accepted family is not stable across splits | `reports/kanaft_symbolic.jsonl`, `reports/kanaft_pbc.jsonl` | **KAN-FAE symbolic extraction BLOCKED by L1.** Real-data formula forms are not stable across resamples (interpret edge shapes, not formula identity) |
+| L10 | Censoring-adjusted least-squares estimators (BJ, IPCW, transform) | NOT IMPLEMENTED (new requirement) | – | KAN-AFT Appendix A; BJ log scale (Efron tail) and time-scale variant; IPCW with G(T−); Fan–Gijbels transform | LS-1..5 (pass); KAN-AFT synthetic per loss; L16 study (D50) | **DONE** as separate validated variants (Cox partial likelihood not inserted into the AFT model). Transform biased on the log scale (A-TRANSFORM); marginal IPCW biased under CA-1-only censoring | `src/kanfae/survival/censored_ls.py`, `reports/censoring_variants.jsonl` | Not combined with KAN-FAE joint training (blocked by L1; BJ needs an outer loop) |
+| L11 | M2 for the linear autoencoder | SKIPPED: rank-limited, not applicable (D32) | – | none needed; a mathematical impossibility, not a defect | – | remains NOT APPLICABLE | `reports/logs/stageCDE_unit_final.log` | |
+| L12 | PBC endpoint choice (E1 / E2 / competing risks) | UNRESOLVED owner decision (D9-R) | owner | – | E1 and E2 both run as labelled sensitivity analyses (baselines and KAN-AFT) | **DECIDED (D58, provisional):** E2 primary, E1 sensitivity; to be confirmed with the owner's professor | `docs/design.md` §9.1 | E3 (competing risks) future work |
+| L13 | C-MAPSS landmark design (A / B) | UNRESOLVED owner decision (D3b-R) | owner | – | Both options run (FD001, FD003); Option B re-run with engine-cluster bootstrap (v3, D62) | **DECIDED (D59):** Option B primary, Option A secondary | `docs/design.md` §9.2 | |
+| L14 | Interval likelihood for integer cycles | NOT IMPLEMENTED (D25) | – | `log[S(y−1) − S(y)]` for events; stable log-difference form | INT-1..3; INT-1 failed once (test-reference cancellation, D48), then passed | **DONE (implemented and tested)** | `src/kanfae/survival/aft.py`, `tests/test_interval_likelihood.py` | Not yet used in a C-MAPSS experiment (would only matter for neural/AFT models on integer cycles; deferred) |
+| L15 | C-MAPSS FD002–FD004 | NOT RUN (budget) | – | FD003 shares FD001's single operating condition; FD002/FD004 need per-condition normalisation | FD003: baselines, 3 analyses × 5 splits (D51) | **FD003 DONE (baselines). FD002/FD004 NOT RUN** (new preprocessing design needed; not improvised) | `reports/experiment_results.jsonl` (dataset `cmapss_FD003`) | FD002/FD004 remain unrun |
+| L16 | Informative-censoring and misspecification synthetic variants | NOT RUN | – | CA2 / CA1 (covariate-dependent censoring) / MIS (skewed mixture errors) | D50 study: 20 replicates × 3 scenarios × 6 estimators | **DONE.** Parametric log-normal and BJ unbiased in all three; marginal-G IPCW biased under CA1 (β₁ bias −0.07); transform biased everywhere (−0.14 to −0.82); oracle conditional-G IPCW reduces but does not remove the CA1 bias (practical positivity) | `reports/censoring_variants.jsonl` | Linear estimators only; not repeated with neural models |
+| L17 | Literature review / bibliographic verification | NOT DONE (D27) | – | Targeted search; arXiv versions of uploaded references with checksums | `docs/literature_review.md` | **DONE (targeted).** Closely related prior work found (FunKAN, Wu et al.); **no novelty claim** is made | `docs/literature_review.md` | Not a systematic review; discrepancies recorded, not resolved |
+| L18 | Diagnostic run `diag_rev3_R2` (NFL variants) | STOPPED by me after 1 of 5 configurations, to free CPU; superseded by the controlled search in L1 | – | – | – | STOPPED (partial log kept) | `reports/logs/diag_rev3_R2.log` | |
+| L19 | Feature-cache defect (D53) | NEW (found 2026-10-17 via replication seed 110) | – | – | Regression test F8b; recomputation of the search, gate and confirmations | **FIXED**; all affected results recomputed; superseded records kept | `reports/superseded_D53/`, `reports/logs/diag_seed110*.log` | |
+| L20 | Revision 4b (compact frequency summary + survival-generalisation fix) | NEW (round 3 diagnosis D65) | owner approval + new pre-registration | survival-path regularisation (early stopping, head dropout, head weight decay, weight decay, latent size) | D70 diagnosis; D71 search (11 + 2 fits), gate seed 61, confirmations 121–125 | **DONE: FAILED R2** (NOT CONFIRMED) | `reports/revised_gate_verdict_fa4b.json` | Recommendation: re-reference R2's concordance criterion (L23) |
+| L21 | Robustness of the R1 σ criterion | NEW (round 3 diagnosis D66) | owner decision | prospective amendment R1-A (owner D68) | fresh seeds 601–610 and gate seed 61: original check 0/11 pass, R1-A 11/11 pass | **DONE (amendment adopted prospectively; original results unchanged)** | `reports/r1a_fresh_seeds.jsonl` | |
+| L22 | H1 / H2 / H3 / controls / ablations AB1–AB8 / KAN-FAE pruning (uncentred + centred) and symbolic extraction / D31 check for D ≥ 6 | BLOCKED (D57) | L1 | – | guard verified for the revision-4, 4b and 4c selections | **BLOCKED / NOT RUN** (no design has passed the gate) | `reports/revised_gate_verdict_fa4c.json` | |
+| L23 | Attainable reference for R2's concordance criterion | NEW (round 4, D75) | owner decision | – | owner amendment D80/D82 (C_ceiling − 0.015) | **DONE (amended prospectively; used for the 4c gate)** | `src/kanfae/evaluation/ceiling.py` | |
+| L24 | Training stability of the frequency-aware front | NEW (round 4, D77) | owner decision | spectral balance, clipping, lr, AdamW | Step-1 search D81; full-budget diagnostic D83 | **DONE: fixed** (jumps 12 → 0; thread spread 0.013 → 0.0006) | `reports/diag_4c_stability.json` | |
+| L25 | E3 competing-risks analysis (PBC) | FUTURE WORK (owner D58/D69) | separate specification and tests | cause-specific hazards / Fine–Gray | – | **NOT RUN**; no competing-risk claims | `docs/pbc_endpoint_justification.md` | |
+| L26 | Determinism of neural fits | NEW (round 5, D79) | – | single-threaded fits | determinism check | **DONE** (all round-5 fits single-threaded; reproducible) | `reports/logs/determinism_check_4b.log` | Round-4 search selection may partly reflect numerical noise (disclosed) |
+| L27 | Stopping rule that preserves both the representation and the survival optimum | NEW (round 5, D84) | owner approval | two_checkpoint / two_state_refit × burn-in {300, 500} × lr {1e-3, 3e-3}; multi-seed selection | D87 search, 24 fits | **DONE: Step 1 FAILED** (stopping is no longer the constraint; the latent's encoding of b and A is) | `reports/learnability_selected_fa4d.json` | |
+| L28 | Representation capacity for b and A (latent size r ∈ {12, 16}; objective patience ∈ {100, 300}) with two-checkpoint stopping, lr 1e-3, multi-seed rule | NEW (round 6 diagnosis D89) | owner approval + new pre-registration | – | – | **APPROVED as Revision 4e (D91)**, with an owner Tier-2 fallback and a re-referenced R2 probe part; see L29 | `reports/learnability_search_fa4d.jsonl` | |
+| L29 | Revision 4e: Step 1 search (r × patience × α, two-tier rule), Step 2 gate (seed 92) + confirmations 141–145, Step 3 if CONFIRMED | NEW (round 7, D91) | D92/D93 pre-registration | – | – | **DONE: Step 1 PASSED (Tier 1, r 16); Step 2 NOT CONFIRMED** (seed 92: R2 C short by 0.0022, R3 \|ΔC\| 0.0254; confirmations 4/5); Step 3 not run | `reports/learnability_selected_fa4e.json` | |
+| L30 | Concordance gap to C_ceiling (linear AFT head vs nonlinear risk; training-seed variance) and R3's two-sided tolerance | NEW (round 7, D95–D97) | owner decision + new pre-registration + new fresh seeds (92 and 141–145 are now used) | – | – | **APPROVED as Revision 4f (D99)**: nonlinear head / seed ensemble; R2 margin 0.025; one-sided R3-A; see L31 | `reports/revised_gate_verdict_fa4e.json`, `reports/diag_4e_seed92.json` | |
+| L31 | Revision 4f: Step 1 (head mode × ensemble), Step 2 gate (seed 93) + confirmations 151–155, Step 3 if CONFIRMED | NEW (round 8, D99) | D100/D101 pre-registration | – | – | **DONE: Step 1 PASSED; Step 2 CONFIRMED (first gate passed); Step 3 run in full** (H1 favours MLP weakly; H3 reversed; D106) | `reports/learnability_selected_fa4f.json` | |
+| L32 | Next steps after the first confirmed gate: KAN-favourable fairness check (e.g. S3 training, decoder width ≥ r), write-up of H1–H3 as exploratory evidence, PBC endpoint confirmation | NEW (round 8, D106) | owner decision | – | – | **DONE (round 9, D107–D109)**: (1) fairness study D108/D109: under S3 KAN ≈ MLP on survival with or without the decoder bottleneck, KAN never better, bottleneck limits reconstruction; (2) H1 stays the only confirmatory test, the rest exploratory, no novelty claim; (3) PBC E2 primary / E1 sensitivity, the comparisons' conclusions are the same under both endpoints (point estimates differ), clinical sign-off external | `reports/step3_summary.json` | |
+| L33 | Round 10: literature review, design note, pre-registration of Rounds 11–13 | NEW (round 10, D110) | owner decision | `docs/literature_review_round10.md`, `docs/design_note_round10.md` | – | **DONE (D110–D114)** | report revision 10 | |
+| L34 | Round 11: implement CoxKAN (exact ties), PACE, B1, B2 (fkan), B3 builder, AFCM / LME2 / landmark baselines, residual-calibrated KAN-AFT; tests CK-1..CK-12 | NEW (D112) | Round 10 committed | `src/kanfae/{survival/cox,data/fsim,data/landmark,functional/pace,models/fkan,models/afcm,models/lme,models/fbaselines}.py`, `tests/test_round11.py` | – | **DONE (D116, D117): 7 of 12 criteria pass; CK-3, CK-5, CK-6, CK-8, CK-11 FAIL (recorded)** | report revision 11 | |
+| L35 | Round 12: simulation study (S-Add, S-Int + P0 continuity, S-Sparse, S-Misspec; N 20; H-R12 confirmatory) | NEW (D113) | Round 11 tests run; owner decisions L38, L39, L40 | – | – | **DONE (D127)**: H-R12 inconclusive (AFCM not validated) | – | |
+| L36 | Round 13: real data (PBC single + B3, prothro, aids, C-MAPSS secondary) with the interpretability measures | NEW (D114) | Round 11 | – | – | **DONE (D130)**: no predictive gain; interpretability measures informative | – | |
+| L37 | Round 14: paper draft (framing (a) + (b); no novelty claim per D111) | NEW (D110) | Rounds 12–13 | – | – | **DONE (D131, D132)**: manuscript draft (`docs/manuscript_round14.md`, `reports/manuscript_round14.pdf`) generated from saved records with value-level provenance checks; report revision 16 | – | |
+| L38 | Owner decisions before Round 12: S-Add identifiability and RISE (D118 options a/b/c; affects H-R12), CK-3 (early stopping vs MLE), CK-8 (θ_rel grid / functional edge score), CK-11 (Weibull contrast not reached) | NEW (round 11, D117/D118) | Round 11 | – | – | **DECIDED (D120)**; repaired tests run (D121): 4 of 5 pass, CK-6b FAIL | – | |
+| L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
+| L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
+| L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
+
+
+
+### Reproducibility
+
+Project instructions (the repository README.md is intentionally left unchanged, D28).
+
+
+```bash
+### environment (project-local; never touches the global Python)
+bash scripts/setup_env.sh                          # or: KANFAE_FROM_LOCK=1 bash scripts/setup_env.sh
+bash scripts/verify_env.sh                         # E-1 / E-5 evidence
+### tests (every attempt is appended to reports/logs/test_records.jsonl)
+KANFAE_RUN_ID=rerun .venv/bin/python -m pytest -v -rA tests/
+### data (public sources; checksums in reports/run_manifest.json)
+###   C-MAPSS: https://phm-datasets.s3.amazonaws.com/NASA/6.+Turbofan+Engine+Degradation+Simulation+Data+Set.zip
+###            -> extract inner CMAPSSData.zip into data/raw/cmapss/
+###   PBC:     https://cran.r-project.org/src/contrib/survival_3.8-12.tar.gz -> data/raw/pbc/{DESCRIPTION,data/pbc.rda}
+### experiments (resumable; completed run IDs are skipped)
+bash scripts/run_all_experiments.sh                # synthetic (5 replicates x 6 settings) + C-MAPSS (5 splits)
+.venv/bin/python scripts/run_cmapss.py --splits 5 --analyses cmapss_A,cmapss_A_artificial --models sum_cox --code-version D37
+.venv/bin/python scripts/run_pbc.py --splits 5
+### round 2 (2026-10-17): learnability recovery (validation-only search, then gate and fresh-seed confirmations)
+.venv/bin/python scripts/learnability_search.py            # D41 steps S1-S7 -> reports/learnability_search.jsonl
+.venv/bin/python scripts/learnability_search_ext.py        # D46 steps S8-S11 -> reports/learnability_selected_ext.json
+KANFAE_RUN_ID=gate .venv/bin/python -m pytest -v -s tests/test_learnability.py
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --seeds 101,102,103,104,105
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_ext.json \
+    --seeds 106,107,108,109,110 --tag _ext
+### round 2: estimators, KAN-AFT, symbolic extraction, censoring variants, pruning diagnostic, FD003
+.venv/bin/python scripts/run_kanaft_symbolic.py             # synthetic known-truth KAN-AFT (resumable; --fresh)
+.venv/bin/python scripts/run_censoring_variants.py          # L16 / D50
+.venv/bin/python scripts/diag_pruning_threshold.py          # D54
+.venv/bin/python scripts/run_kanaft_pbc.py                  # D52
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --code-version v2   # D51
+### round 3 (2026-10-17): revision 4 (frequency-aware front), pre-registered in D61 before these runs
+.venv/bin/python scripts/diag_frequency_information.py     # D60 (seed-21 training split only)
+.venv/bin/python -m pytest -v tests/test_frequency_front.py # FQ-1..FQ-10
+.venv/bin/python scripts/learnability_search_fa.py         # validation-only search -> reports/learnability_selected_fa.json
+KANFAE_RUN_ID=revised_gate_fa .venv/bin/python -m pytest -v -s tests/test_learnability_fa.py   # fresh seed 41
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa.json \
+    --seeds 111,112,113,114,115 --tag _fa
+.venv/bin/python scripts/revised_gate_verdict.py           # -> reports/revised_gate_verdict.json (D61 rule)
+.venv/bin/python scripts/run_neural_synthetic.py           # refuses to run unless the verdict is CONFIRMED (D57)
+.venv/bin/python scripts/diag_fa_overfitting.py            # D65 (validation only)
+.venv/bin/python scripts/diag_r1_seeds.py                  # D66
+.venv/bin/python scripts/run_cmapss.py --subset FD001 --analyses cmapss_B --code-version v3   # D62
+.venv/bin/python scripts/run_cmapss.py --subset FD003 --analyses cmapss_B --code-version v3
+### round 4 (2026-10-18): Revision 4b, pre-registered in D71 before these runs
+.venv/bin/python scripts/diag_overfit_curves.py            # D70 (seed-21 train/validation only)
+.venv/bin/python -m pytest -v tests/test_survival_regularisation.py   # HR-1..HR-3
+.venv/bin/python scripts/learnability_search_fa4b.py       # -> reports/learnability_selected_fa4b.json
+KANFAE_RUN_ID=revised_gate_fa4b .venv/bin/python -m pytest -v -s tests/test_learnability_fa4b.py   # fresh seed 61
+.venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4b.json \
+    --seeds 121,122,123,124,125 --tag _fa4b
+.venv/bin/python scripts/revised_gate_verdict.py fa4b     # -> reports/revised_gate_verdict_fa4b.json (D71 rule)
+.venv/bin/python scripts/diag_r1_seeds.py --seeds 601,602,603,604,605,606,607,608,609,610 --out reports/r1a_fresh_seeds.jsonl
+.venv/bin/python scripts/diag_4b_ceiling.py               # D74
+.venv/bin/python scripts/diag_data_ceiling.py             # D75 (seed 21 validation)
+.venv/bin/python scripts/diag_data_ceiling_seeds.py       # D75 (fresh seeds 701-710)
+.venv/bin/python scripts/make_figures_round4.py && .venv/bin/python scripts/build_report_round4.py
+### round 5 (2026-10-18): Revision 4c, pre-registered in D81/D82 before these runs; all fits single-threaded (D79)
+OMP_NUM_THREADS=1 .venv/bin/python -m pytest -v tests/test_training_stability.py tests/test_ceiling.py   # RS, CEIL
+OMP_NUM_THREADS=1 .venv/bin/python scripts/learnability_search_fa4c.py        # Step 1 -> reports/learnability_selected_fa4c.json
+OMP_NUM_THREADS=1 KANFAE_RUN_ID=revised_gate_fa4c .venv/bin/python -m pytest -v -s tests/test_learnability_fa4c.py  # seed 81
+OMP_NUM_THREADS=1 .venv/bin/python scripts/confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4c.json \
+    --seeds 131,132,133,134,135 --tag _fa4c --amended --threads 1
+.venv/bin/python scripts/revised_gate_verdict.py fa4c     # -> reports/revised_gate_verdict_fa4c.json (D82 rule)
+.venv/bin/python scripts/diag_4c_stability.py             # D83 diagnostics
+.venv/bin/python scripts/build_report_round5.py           # report revision 5 (all parts, per-round snapshots)
+### round 6 (2026-10-18): every run_logged command and the pytest session are single-threaded (D86)
+scripts/run_logged.sh bi_tests .venv/bin/python -m pytest -v tests/test_burn_in.py          # BI-2..BI-4
+scripts/run_logged.sh search_fa4d .venv/bin/python scripts/learnability_search_fa4d.py      # Step 1 (D87)
+### Step 2 would be: tests/test_learnability_fa4d.py (seed 92) and
+###   confirm_learnability.py fae_mlp --selected reports/learnability_selected_fa4d.json --seeds 141,142,143,144,145 \
+###   --tag _fa4d --amended --ceiling-margin 0.02 --threads 1 ; revised_gate_verdict.py fa4d   (not run: Step 1 failed)
+KANFAE_RUN_ID=final_full_suite_round6_rerun scripts/run_logged.sh final_full_suite_round6_rerun \
+    .venv/bin/python -m pytest -v -rA -s tests/                                          # final suite (D90)
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round6.py           # report revision 6
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### round 7 (2026-10-18; owner D91)
+scripts/run_logged.sh search_fa4e .venv/bin/python scripts/learnability_search_fa4e.py      # Step 1 (D92)
+KANFAE_RUN_ID=revised_gate_fa4e scripts/run_logged.sh revised_gate_fa4e \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4e.py                       # gate, seed 92 (D93)
+scripts/run_logged.sh confirm_fa4e .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4e.json --seeds 141,142,143,144,145 --tag _fa4e \
+    --amended --ceiling-margin 0.02 --probe-rule 4e --threads 1                               # confirmations
+scripts/run_logged.sh verdict_fa4e .venv/bin/python scripts/revised_gate_verdict.py fa4e  # -> NOT CONFIRMED (D95)
+scripts/run_logged.sh diag_4e_seed92 .venv/bin/python scripts/diag_4e_seed92.py            # D96 (train/validation only)
+KANFAE_RUN_ID=final_full_suite_round7 scripts/run_logged.sh final_full_suite_round7 \
+    .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round7.py           # report revision 7
+### round 8 (2026-10-18; owner D99)
+.venv/bin/python -m pytest -v tests/test_revision_4f.py tests/test_step3_tools.py              # NF-1..4, ST-1..3
+scripts/run_logged.sh search_fa4f .venv/bin/python scripts/learnability_search_fa4f.py      # Step 1 (D100)
+KANFAE_RUN_ID=revised_gate_fa4f scripts/run_logged.sh revised_gate_fa4f \
+    .venv/bin/python -m pytest -v -s -rA tests/test_learnability_fa4f.py                       # gate, seed 93 (D101)
+scripts/run_logged.sh confirm_fa4f .venv/bin/python scripts/confirm_learnability.py fae_mlp \
+    --selected reports/learnability_selected_fa4f.json --seeds 151,152,153,154,155 --tag _fa4f \
+    --amended --ceiling-margin 0.025 --probe-rule 4f --ensemble 3 --threads 1                 # confirmations
+scripts/run_logged.sh verdict_fa4f .venv/bin/python scripts/revised_gate_verdict.py fa4f  # -> CONFIRMED (D103)
+reports/step3/lanes.sh A|B|C|D        # Step 3 (D104): KANFAE_RESULTS=reports/step3/<group>.jsonl scripts/run_neural_synthetic.py
+                                      #   --analyses H1 | H2,CONTROLS | H3 | SECONDARY | AB1,AB3 | AB4 | AB5,AB6,AB7,AB8;
+                                      #   scripts/kanfae_prune_symbolic.py --variant plain | reg
+KANFAE_RESULTS=reports/step3/real_pbc.jsonl .venv/bin/python scripts/run_neural_real.py --data pbc        # D105
+KANFAE_RESULTS=reports/step3/real_cmapss.jsonl .venv/bin/python scripts/run_neural_real.py --data cmapss
+.venv/bin/python scripts/analyse_step3.py                 # -> reports/step3_summary.json, reports/tables/step3_*.csv
+KANFAE_RUN_ID=final_full_suite_round8 scripts/run_logged.sh final_full_suite_round8 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/build_report_round8.py           # report revision 8
+### round 9 (2026-10-19; owner D107)
+.venv/bin/python -m pytest -v tests/test_kan_fairness.py                                     # FC-1..FC-5
+reports/round9/lanes.sh 1|2|3|4       # D108: KANFAE_RESULTS=reports/round9/laneN.jsonl scripts/run_kan_fairness.py --cells
+                                      #   mlp:S2,mlp:S3,mlp_wide:S2 | kan:S2,kan:S3 | kan_shared:S2,kan_shared:S3 |
+                                      #   kan_unb:S2,kan_unb:S3,mlp_wide:S3
+cd scripts && ../.venv/bin/python analyse_round9.py && cd ..   # -> reports/round9_summary.json, reports/tables/r9_*.csv
+KANFAE_RUN_ID=final_full_suite_round9 scripts/run_logged.sh final_full_suite_round9 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round9.py           # report revision 9
+### round 10 (2026-10-19; owner D110): documents only. The literature review (docs/literature_review_round10.md) and the
+### design note / pre-registration of Rounds 11-13 (docs/design_note_round10.md; D111-D114). No model code changed,
+### no data acquired.
+KANFAE_RUN_ID=final_full_suite_round10 scripts/run_logged.sh final_full_suite_round10 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round10.py          # report revision 10
+### round 11 (2026-10-20; owner "start round 11", D112/D116): implementation and acceptance tests CK-1..CK-12.
+### Formal acceptance run (one pytest process per STAT test, 4-6 in parallel, each single-threaded via conftest):
+KANFAE_RUN_ID=round11_acceptance .venv/bin/python -m pytest tests/test_round11.py -q -k "test_CK3_"   # likewise CK5, CK6,
+###   CK7, CK8, and -k "CK1_ or CK2_ or CK4_ or CK9_ or CK10 or CK12_ or CK11_"; logs reports/logs/round11/acceptance_*.log;
+###   STAT numbers appended to reports/logs/round11_ck.jsonl
+scripts/run_logged.sh round11_diag_identifiability .venv/bin/python scripts/diag_round11_identifiability.py   # D118 (seed 902)
+scripts/run_logged.sh round11_explore_rise .venv/bin/python scripts/explore_round11_rise.py                     # D118, exploratory
+KANFAE_RUN_ID=final_full_suite_round11 scripts/run_logged.sh final_full_suite_round11 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round11.py          # report revision 11
+### L38 decisions / repaired tests (2026-10-21; owner D120): DGP v2, identifiable RISE, repaired CK-3b..CK-11b
+scripts/run_logged.sh round12_diag_identifiability_v2 .venv/bin/python scripts/diag_round12_identifiability.py  # seed 902
+KANFAE_RUN_ID=round12_ck_acceptance scripts/run_logged.sh round12_ck_acceptance_CK8b .venv/bin/python -m pytest tests/test_round12_ck.py -v -k "test_CK8b_"
+###   likewise _CK5b (-k test_CK5b_), _CK6b, and _other (-k "test_CK3b_ or test_CK11b_ or ID1 or ID2"); 4 parallel lanes
+scripts/run_logged.sh round12_explore_afcm_floor .venv/bin/python scripts/explore_round12_afcm_floor.py         # D121, exploratory
+KANFAE_RUN_ID=final_full_suite_round12 scripts/run_logged.sh final_full_suite_round12 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round12.py          # report revision 12
+### L39 decisions (2026-10-21; owner D123): AFCM diagnosis on development seed 914, CK-6c / CK-7b
+scripts/run_logged.sh round12_diag_afcm_fix_V0_r12a .venv/bin/python scripts/diag_round12_afcm_fix.py V0_r12a V1_wide_lx
+###   likewise _V2_wide_norm (V2_wide_norm V3_norm_d1d2), _V4_d1d2_perchannel, _V5_d1d2_quantile (V5.. V6..); 4 lanes
+KANFAE_RUN_ID=round12b_ck_acceptance scripts/run_logged.sh round12b_ck_acceptance_CK6c .venv/bin/python -m pytest tests/test_round12b_ck.py -v -k "test_CK6c_"
+KANFAE_RUN_ID=round12b_ck_acceptance scripts/run_logged.sh round12b_ck_acceptance_CK7b .venv/bin/python -m pytest tests/test_round12b_ck.py -v -k "test_CK7b_"
+KANFAE_RUN_ID=final_full_suite_round12b scripts/run_logged.sh final_full_suite_round12b .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round12b.py         # report revision 13
+### Round 12 (2026-10-21/22; owner D126): the simulation study
+for k in 1 2 3 4; do scripts/run_logged.sh r12_lane$k .venv/bin/python scripts/run_round12_lanes.py --lane $k --start-utc 2026-10-21T19:12:34Z & done
+###   after the container restart (D127): bash reports/round12/resume_after_restart.sh <slot 1-4> (via run_logged r12_resume_slot<k>)
+R12_OUT=reports/round12/results_rerun_SAdd_10.jsonl scripts/run_logged.sh r12_rerun_SAdd_10 .venv/bin/python scripts/run_round12.py --scenario S-Add --reps 10-10 --only prune_symbolic
+###   likewise SAdd_18 (S-Add 18) and SSparse_2 (S-Sparse 2)
+scripts/run_logged.sh round12_analysis .venv/bin/python scripts/analyse_round12.py   # -> reports/round12_summary.json
+KANFAE_RUN_ID=final_full_suite_round12c scripts/run_logged.sh final_full_suite_round12c .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round12c.py         # report revision 14
+### Round 13 (2026-10-22; owner D128, plan D129): real data (JM 1.5-2 from CRAN: data/raw/jm/, sha256 in D128)
+for k in 1 2 3 4; do scripts/run_logged.sh r13_lane$k .venv/bin/python scripts/run_round13_lanes.py --lane $k & done
+scripts/run_logged.sh round13_analysis .venv/bin/python scripts/analyse_round13.py     # -> reports/round13_summary.json, figures
+KANFAE_RUN_ID=final_full_suite_round13 scripts/run_logged.sh final_full_suite_round13 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round13.py          # report revision 15
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 14 (2026-10-23; owner D131): manuscript draft; no model is fitted
+scripts/run_logged.sh round14_describe_cohorts .venv/bin/python scripts/describe_cohorts_round14.py   # descriptive counts
+.venv/bin/python scripts/make_manuscript_figures_round14.py   # cropped display versions of the Round-13 effect figures
+.venv/bin/python scripts/manuscript_round14.py                # docs/manuscript_round14.md + reports/manuscript_values_round14.json
+bash scripts/build_manuscript_pdf.sh                          # reports/manuscript_round14.pdf
+.venv/bin/python scripts/verify_manuscript_round14.py --pdf   # reports/manuscript_verification_round14.json (ALL_PASS)
+### (final_full_suite_round14 was stopped after 10 tests to finalise the manuscript text first; its records are kept)
+### (final_full_suite_round14_rerun was stopped by the session's 2-hour background limit after 207 records; kept)
+setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logged.sh final_full_suite_round14_rerun2 .venv/bin/python -m pytest -v -rA -s tests/ &
+.venv/bin/python scripts/compile_test_results.py
+.venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
+.venv/bin/python scripts/build_report_round3.py
+### report (round 2 part + round 1 part)
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/aggregate_results.py
+.venv/bin/python scripts/make_figures.py && .venv/bin/python scripts/make_figures_round2.py
+.venv/bin/python scripts/build_report_round2.py
+bash scripts/build_pdf.sh && .venv/bin/python scripts/build_manifest.py
+```
+
+Every executed command, with its exit code and timing, is in `reports/logs/commands.jsonl`. The full outputs
+are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execution_log.md`.
+
+
+
+# Parts B–Q: historical records
+
+Part B is revision 16's Part A (Round 14, the manuscript draft); Part C is Round 13; Part D is Round 12; Parts E and F
+are the L39 and L38 parts; Parts G–Q are the round-11 to round-1 reports, each rendered from its own records. Embedded
+living documents show their current version.
+
+
+# Part B: revision 16 (Round 14 manuscript draft, 2026-10-23), historical record
+
+<p class="small">Research prototype report, revision 16 · generated from saved records by
+<code>scripts/build_report_round14.py</code> · git <code>5ec6014</code> (local branch
+<code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype; Part A is a manuscript
+draft for the owner's review, not peer reviewed; no novelty claim</b>. Part B is Round 14: the manuscript draft
+(L37; D110, D111, D131) followed by its verification, decisions and tests. Part C is revision 15's Part A (Round 13);
+Part D is revision 14's Part A (Round 12); Parts E–F are the L39 and L38 parts; Parts G–Q are the round-11 to round-1
+reports.</p>
+
+## R14-0. Round-14 summary (plain English)
+
+### R14-0.1 Outcome
 
 | Item | Result |
 |---|---|
@@ -19,7 +737,7 @@ reports.</p>
 | Claims | As D111: no novelty or "first" claim; no superiority claim; H-R12 reported as inconclusive against an unvalidated comparator |
 | Tests | Final suite: 277 tests: 257 passed, 2 failed (CK-6c and the 4f gate's original R1), 16 expected failures, 2 skipped |
 
-### 0.2 What the owner needs to do
+### R14-0.2 What the owner needs to do
 
 1. **Complete the author block**, affiliations, funding, competing interests and author contributions (left as
    placeholders; nothing was invented).
@@ -29,7 +747,6 @@ reports.</p>
    favour simple baselines (§4.2), why the unconstrained refit fails (§3.6), and the framing-(b) statement that the
    autoencoder's KAN edges are not clinically readable (§3.7).
 
-# Part A: Manuscript draft (Round 14)
 
 ## Functional Kolmogorov–Arnold survival models for longitudinal covariates: a pre-registered comparison with the additive functional Cox model, and why KAN blocks inside a functional autoencoder did not help {#manuscript-title}
 
@@ -920,7 +1637,7 @@ effects. These negative and equivalence findings, with the full record behind th
 
 - **Approval.** The owner approved Round 13 and report revision 15 and confirmed L36 and L41 closed.
 - **Scope.** A self-contained manuscript under D110's two-part framing and D111's claim policy, embedded here as
-  Part A; Parts B–P are revision 15's Parts A–O, unchanged.
+  Part A; Parts C–Q are revision 15's Parts A–O, unchanged.
 - **Fact check of the owner's instruction.** Every number quoted in the instruction matches the records to its stated
   precision; the clarifications (orientation of one contrast, rounding of two values, the finite-refit averaging and
   two statements worded as interpretations) are recorded in D131 (R14.3).
@@ -941,8 +1658,13 @@ effects. These negative and equivalence findings, with the full record behind th
 
 | ID | Decision | Status | Content | Rationale |
 |---|---|---|---|---|
-| D131 | **Owner decisions opening Round 14 (2026-10-23): audit and approval of Round 13 / report revision 15; scope of the paper draft (closing L37 under D110/D111)** | ADOPTED (owner) | **(1) Approval.** Round 13 (D128–D130) and report revision 15 (255 pages; `final_full_suite_round13`: 271 tests, 251 passed, 2 visible failures CK-6c and 4f R1, 16 strict xfails, 2 skipped, no XPASS) are verified and approved by the owner; L36 and L41 are confirmed closed. **(2) Scope.** A complete, self-contained, publication-style manuscript `docs/manuscript_round14.md`, compiled to `reports/manuscript_round14.pdf`, and embedded as Part A of the cumulative report revision 16 (`scripts/build_report_round14.py`, `reports/final_research_prototype_report_rev16.pdf`; Parts B–P = revision 15's Parts A–O, unchanged). Framing (a) = Rounds 10–13 (B1, B2, B3 against AFCM V3/V0 with the CK-6c caveat, fpca_cox, lme2_cox, sum_cox, sum_rsf, landmark_cox); framing (b) = Rounds 1–9 plus the Round-12 S-Int/P0 continuity (KAN-FAE vs MLP-FAE). Claim policy D111: no novelty or "first" claim; no superiority claim where an interval includes 0 or the comparator is not validated. **(3) Number provenance.** Every number in the manuscript is rendered from saved records (`reports/*.json`, `reports/tables/*.csv`, `reports/round14/cohort_summary.json`) through a resolver that logs each value's source (`reports/manuscript_values_round14.json`); a verification script and unit test re-resolve every logged value independently, re-render the manuscript, and require every other numeric token to be a registered design constant or citation year found in its cited source document. **(4) Commit locally only.** **Fact check of the owner's instruction against the records (2026-10-23):** all quoted numbers match the records to the stated precision (H-R12 0.1785 vs 0.1720, +0.0065, CI [−0.0506, +0.0635], p 0.815, TOST p 0.0634; φ₂ TOST p 0.00064; V0 −0.1793, p 6.2e-8; B1-FPCA-1 0.7351, −0.5566, 20/20; S-Misspec D-cal failure shares b2s_aft_rc 0.00/0.00 vs b2s_aft 0.25 (log-normal) / 0.15 (log-logistic), log-normal curve error −0.0049, 19/20; RISE S-Add 0.214 → 0.212 → 1.604, S-Sparse 0.488 → 0.488 → 2.681; H1 +0.0078, p 0.047; P0 −0.0005, TOST p 0.0049; cohorts 278/332/403, median 3 visits, re-derived without any fit by `scripts/describe_cohorts_round14.py`), with these clarifications: (a) the S-Sparse contrast is recorded as flat_ae − B2-S = **+0.0775** (the owner's −0.0775 is the same contrast in the other orientation); (b) Round-9 F1 is −0.000054 in the record (−0.0001 is its 4-decimal rounding); (c) B2-H Cox's 0.122 is its identifiable RISE (0.1220); its registered primary RISE (`rise_1d` for the homogeneous channel 1, D120) is 0.1226; (d) the refitted-model RISE (1.604, 2.681) is a mean over the 18 and 19 replicates whose refit stayed finite; (e) "destroying clinical interpretability" in framing (b) is an interpretation: the records show that KAN-FAE pruning removed 0–1 of 512 risk-encoder edges and that its accepted formulas map abstract front features to latent units (R8.10), so the manuscript says the architecture *does not provide* clinically readable effects, not that a measured quantity was destroyed; (f) "why small cohorts favour simple baselines" is offered as an interpretation consistent with the results, not as a tested finding. **References:** R1.17 listed method references "named but not bibliographically verified (to be verified before any manuscript)"; they were verified on 2026-10-23 by Crossref metadata (Cox 1972; Breslow 1974; Efron 1977; Kaplan & Meier 1958; Harrell et al. 1982; Graf et al. 1999; Uno et al. 2011; Nadeau & Bengio 2003; Ishwaran et al. 2008; Schuirmann 1987; Laird & Ware 1982; Ramsay & Silverman 2005; Andersen et al. 1993; Guo & Carlin 2004; Murtaugh et al. 1994; Therneau & Grambsch 2000; Saxena et al. 2008), the JMLR landing page (Haider et al. 2020, D-calibration) and arXiv (Cranmer 2023, PySR); Goldman et al. (1996, the aids trial) could not be verified and is not cited (`docs/references_round14.md`). Authors, affiliations, funding and competing interests are left for the owner to complete. | Owner instruction; D110, D111 |
-| D132 | **Round 14 outcome: manuscript draft and report revision 16 (2026-10-23)** | ADOPTED | **Deliverables:** `docs/manuscript_round14.md` (rendered from `docs/manuscript_round14_template.md` by `scripts/manuscript_round14.py`), `reports/manuscript_round14.pdf`, and report revision 16 (`scripts/build_report_round14.py`; Part A = the manuscript with its verification, decisions and tests; Parts B–P = revision 15's Parts A–O), copied to `reports/final_research_prototype_report_rev16.pdf`. **No new analysis:** every number is read from saved records; the only new record is the descriptive cohort count (`reports/round14/cohort_summary.json`, no model fitted), which reproduces D129. **Verification:** `scripts/verify_manuscript_round14.py --pdf` ALL_PASS (every logged value re-read and re-formatted by an independent reader; byte-identical re-render; every other number a registered constant or convention in a registered template context, each traced to a phrase in its source document; all references cited; sections and figures present; no blank PDF page); wired into `scripts/verify_deliverables.py` together with a check that every logged manuscript value appears in the report PDF and that the revision-16 copy is identical. Tests R14-1..R14-6 (`tests/test_round14_manuscript.py`, including negative controls: a hand-typed number and a changed logged value are detected). **Display figures:** the Round-13 effect figures were cropped and tiled for page width (`scripts/make_manuscript_figures_round14.py`; no re-plotting). **Accuracy pass before the final suite:** gate-history wording, the refit no longer attributed to CoxKAN, PACE scope in B1, B3 wording, and explanations worded as interpretations. **Final suite:** `final_full_suite_round14` was stopped deliberately after 10 tests so that the final suite would test the final manuscript text; `final_full_suite_round14_rerun` was stopped by the session's 2-hour background limit after 207 records (this container ran every test about 44% slower than in Round 13); both partial runs' records are kept. `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, kept visible by D126; the 4f gate's original R1), 16 expected failures, 2 skipped (277), no XPASS. L37 closed. | D110, D111, D131 |
+| D131 | **Owner decisions opening Round 14 (2026-10-23): audit and approval of Round 13 / report revision 15; scope of the paper draft (closing L37 under D110/D111)** | ADOPTED (owner) | **(1) Approval.** Round 13 (D128–D130) and report revision 15 (255 pages; `final_full_suite_round13`: 271 tests, 251 passed, 2 visible failures CK-6c and 4f R1, 16 strict xfails, 2 skipped, no XPASS) are verified and approved by the owner; L36 and L41 are confirmed closed. **(2) Scope.** A complete, self-contained, publication-style manuscript `docs/manuscript_round14.md`, compiled to `reports/manuscript_round14.pdf`, and embedded as Part A of the cumulative report revision 16 (`scripts/build_report_round14.py`, `reports/final_research_prototype_report_rev16.pdf`; Parts C–Q = revision 15's Parts A–O, unchanged). Framing (a) = Rounds 10–13 (B1, B2, B3 against AFCM V3/V0 with the CK-6c caveat, fpca_cox, lme2_cox, sum_cox, sum_rsf, landmark_cox); framing (b) = Rounds 1–9 plus the Round-12 S-Int/P0 continuity (KAN-FAE vs MLP-FAE). Claim policy D111: no novelty or "first" claim; no superiority claim where an interval includes 0 or the comparator is not validated. **(3) Number provenance.** Every number in the manuscript is rendered from saved records (`reports/*.json`, `reports/tables/*.csv`, `reports/round14/cohort_summary.json`) through a resolver that logs each value's source (`reports/manuscript_values_round14.json`); a verification script and unit test re-resolve every logged value independently, re-render the manuscript, and require every other numeric token to be a registered design constant or citation year found in its cited source document. **(4) Commit locally only.** **Fact check of the owner's instruction against the records (2026-10-23):** all quoted numbers match the records to the stated precision (H-R12 0.1785 vs 0.1720, +0.0065, CI [−0.0506, +0.0635], p 0.815, TOST p 0.0634; φ₂ TOST p 0.00064; V0 −0.1793, p 6.2e-8; B1-FPCA-1 0.7351, −0.5566, 20/20; S-Misspec D-cal failure shares b2s_aft_rc 0.00/0.00 vs b2s_aft 0.25 (log-normal) / 0.15 (log-logistic), log-normal curve error −0.0049, 19/20; RISE S-Add 0.214 → 0.212 → 1.604, S-Sparse 0.488 → 0.488 → 2.681; H1 +0.0078, p 0.047; P0 −0.0005, TOST p 0.0049; cohorts 278/332/403, median 3 visits, re-derived without any fit by `scripts/describe_cohorts_round14.py`), with these clarifications: (a) the S-Sparse contrast is recorded as flat_ae − B2-S = **+0.0775** (the owner's −0.0775 is the same contrast in the other orientation); (b) Round-9 F1 is −0.000054 in the record (−0.0001 is its 4-decimal rounding); (c) B2-H Cox's 0.122 is its identifiable RISE (0.1220); its registered primary RISE (`rise_1d` for the homogeneous channel 1, D120) is 0.1226; (d) the refitted-model RISE (1.604, 2.681) is a mean over the 18 and 19 replicates whose refit stayed finite; (e) "destroying clinical interpretability" in framing (b) is an interpretation: the records show that KAN-FAE pruning removed 0–1 of 512 risk-encoder edges and that its accepted formulas map abstract front features to latent units (R8.10), so the manuscript says the architecture *does not provide* clinically readable effects, not that a measured quantity was destroyed; (f) "why small cohorts favour simple baselines" is offered as an interpretation consistent with the results, not as a tested finding. **References:** R1.17 listed method references "named but not bibliographically verified (to be verified before any manuscript)"; they were verified on 2026-10-23 by Crossref metadata (Cox 1972; Breslow 1974; Efron 1977; Kaplan & Meier 1958; Harrell et al. 1982; Graf et al. 1999; Uno et al. 2011; Nadeau & Bengio 2003; Ishwaran et al. 2008; Schuirmann 1987; Laird & Ware 1982; Ramsay & Silverman 2005; Andersen et al. 1993; Guo & Carlin 2004; Murtaugh et al. 1994; Therneau & Grambsch 2000; Saxena et al. 2008), the JMLR landing page (Haider et al. 2020, D-calibration) and arXiv (Cranmer 2023, PySR); Goldman et al. (1996, the aids trial) could not be verified and is not cited (`docs/references_round14.md`). Authors, affiliations, funding and competing interests are left for the owner to complete. | Owner instruction; D110, D111 |
+| D132 | **Round 14 outcome: manuscript draft and report revision 16 (2026-10-23)** | ADOPTED | **Deliverables:** `docs/manuscript_round14.md` (rendered from `docs/manuscript_round14_template.md` by `scripts/manuscript_round14.py`), `reports/manuscript_round14.pdf`, and report revision 16 (`scripts/build_report_round14.py`; Part A = the manuscript with its verification, decisions and tests; Parts C–Q = revision 15's Parts A–O), copied to `reports/final_research_prototype_report_rev16.pdf`. **No new analysis:** every number is read from saved records; the only new record is the descriptive cohort count (`reports/round14/cohort_summary.json`, no model fitted), which reproduces D129. **Verification:** `scripts/verify_manuscript_round14.py --pdf` ALL_PASS (every logged value re-read and re-formatted by an independent reader; byte-identical re-render; every other number a registered constant or convention in a registered template context, each traced to a phrase in its source document; all references cited; sections and figures present; no blank PDF page); wired into `scripts/verify_deliverables.py` together with a check that every logged manuscript value appears in the report PDF and that the revision-16 copy is identical. Tests R14-1..R14-6 (`tests/test_round14_manuscript.py`, including negative controls: a hand-typed number and a changed logged value are detected). **Display figures:** the Round-13 effect figures were cropped and tiled for page width (`scripts/make_manuscript_figures_round14.py`; no re-plotting). **Accuracy pass before the final suite:** gate-history wording, the refit no longer attributed to CoxKAN, PACE scope in B1, B3 wording, and explanations worded as interpretations. **Final suite:** `final_full_suite_round14` was stopped deliberately after 10 tests so that the final suite would test the final manuscript text; `final_full_suite_round14_rerun` was stopped by the session's 2-hour background limit after 207 records (this container ran every test about 44% slower than in Round 13); both partial runs' records are kept. `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, kept visible by D126; the 4f gate's original R1), 16 expected failures, 2 skipped (277), no XPASS. L37 closed. | D110, D111, D131 |
+| D133 | **Round 15 (Phase-2 methods): owner instruction, implementation, development dry run and registration proposal (2026-10-24)** | PROPOSED (awaiting owner approval; no formal seed used) | **Owner instruction:** open a prospective, pre-registered Phase-2 round testing (1) `symbolic_distill` (domain-guarded symbolic substitution + functional-distillation refit, mu in {1e-2, 1e-1, 1} by validation NLPL), (2) `b2s_res_cox` (static KAN edge on the last observed value + gated B2-S on the residual X(t) − X(t_L)), (3) `afcm_ens` (3-resample bootstrap-averaged AFCM, or GCV/Laplace / per-channel lambda_t), with CK-6d on fresh seed 24; dry run on development seeds first; keep Rounds 1–14 intact; commit locally. **Implemented (all options default-off; Rounds 1–14 code paths and records unchanged; fsim scenarios other than the new S-Last generate identical data):** `SymbolicEdge(guard=...)`, `domain_guard` (log, sqrt, 1/x: smooth floor at half the smallest training argument; exp: smooth cap 10 above the training range), `substitute_symbolic(guard=)`, `refit_symbolic(anchor=, mu=)` with `anchor_terms` (B2 surfaces at every training (subject, grid time) plus static edge activations, each normalised by its anchor variance), `refit_distill`; `kanfae.models.fres.ResFKAN` (residual=True: your design; residual=False: the "anchored" variant, full curve + last-value edges) with the validation gate (integrated residual-channel pruning over THETAS_D120 plus "all off", D120 parsimonious rule, tol 0.01); `fit_afcm_bagged`, `fit_afcm(per_channel="t")`, `fit_afcm(rule="parsimonious")`; fsim scenario S-Last (eta = sin(pi X_1(1)/2) + 1.5 tanh(X_2(1)) + 0.3 z_1 − 0.3 z_2). GCV/Laplace selection was not implemented. Tests R15-1..R15-6 (DET). **Dry run (development seeds 961–966 verified unused, plus 914 and the known CK-6c failure seed 22; `reports/round15/dev/`, `docs/round15_dryrun.md`):** symbolic_distill kept the shapes (identifiable RISE S-Add 0.197 → 0.200; S-Sparse 0.503 → 0.502) where the unconstrained refit destroyed them (1.781; 5.184); mu = 1 (grid edge) chosen on both; the guard was not triggered on these seeds. b2s_res_cox (residual) was worse than B2-S Cox on S-Sparse (curve error 0.0924 vs 0.0828) -- a nonlinear effect of X(t) is not an effect of X_last plus one of X(t) − X_last -- and better on S-Last (0.1727 vs 0.1800; gate all off); the anchored variant (dry-run follow-up) was better on both (0.0810; 0.1736). On a small aids-shaped synthetic set the gate switched the functional part off and lost to B2-S Cox (IBS 0.1985 vs 0.1946). afcm_ens did not change seed 22 (phi_1 0.239 vs 0.247; every resample chose lambda_t 0.01); per-channel lambda_t (0.240, phi_2 0.108) and the parsimonious rule (0.247) did not either; on seed 914 all variants were worse than single V3 (0.023 vs 0.056–0.224). **Proposed registration (fresh seeds verified unused: 24; S-Add 3500–3519; S-Sparse 3600–3619; S-Last 3700–3719; 25, 26 unassigned):** H-R15a (symbolic_distill; confirmatory): all 40 distillation refits finite AND S-Add distilled − pruned mean identifiable RISE upper 95% t-bound < +0.05. H-R15b (confirmatory; primary model = the anchored variant, recommended; residual design secondary): S-Last primary − B2-S Cox curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Real data (PBC, prothro, aids; Round-13 splits 0–4; exploratory only). AFCM: owner choice among C1 (CK-6d on seed 24 with afcm_ens, CK-6c criterion; H-R15c conditional on a pass), C2 (recommended: REML/Laplace selection developed first, seed 24 kept), C3 (multi-seed acceptance check). Budget about 25 lane-hours. | Owner instruction; D111 claim policy |
+| D134 | **Owner decisions on the D133 proposal (2026-10-25) and the rules for the two development checks (fixed before they run)** | ADOPTED (owner) | **(1) Family A approved** (H-R15a; S-Add 3500–3519, S-Sparse 3600–3619) with mu in **{1e-2, 1e-1, 1, 10}** (10 added because both dry-run seeds chose the grid edge 1). **(2) Family B approved** (H-R15b; S-Last 3700–3719, S-Sparse 3600–3619) with **`b2s_anchor_cox` primary** and `b2s_res_cox` a registered secondary. **(3) Real data approved as exploratory** on the Round-13 splits 0–4. Development check G (owner): on `dev_aids` seed 965, compare the single-split validation gate with a **cross-validated gate**; rule fixed now: the CV gate is included in the real-data lane (as an additional exploratory model, `b2s_anchor_cox_cvgate`) **if its dev_aids test IBS is lower than the single-split anchored model's (0.1993, dry run)**; simulation families keep the registered single-split gate. CV gate definition (fixed now): pooled training + validation subjects, 5 folds (`split` seed 0, stratified on the event); in each fold the seed-0 anchored model at the tuned (lr, wd) is trained on the other four folds for the tuned model's best epoch count (no early stopping), then each gate setting (theta_rel in THETAS_D120 and "all off", integrated residual-channel pruning) is fine-tuned 200 epochs and scored by the held-out fold's NLPL per event; the D120 parsimonious rule (tol 0.01) on the 5-fold mean picks the gate; the chosen mask is then applied to the three members trained as before. Soft shrinkage toward B2-H was not implemented. **(4) Family C: option C2.** Seed 24 not used until the dev check passes. Development check C2 on seeds 22, 914, 966 (CK-6c procedure, n 2,000): AFCM V3's basis and penalties with lambdas chosen on the same 9 x 5 grid by the **Laplace approximate marginal likelihood (LAML, primary, fixed now)**: LAML(lambda) = l_p(theta_hat) − ½ theta_hat' S theta_hat + ½ log|S| − ½ log|H + S|, with l_p the log partial likelihood (sum), S = 2 E (lambda_x Kx + lambda_t Kt + ridge I) the penalty in the same units (E = number of training events), H the observed information of the partial likelihood (Breslow form) at theta_hat; the effective degrees of freedom tr((H + S)^-1 H) and an AIC-type rule (minimise −l_p + edf) are reported for information only. **Pass rule (fixed now):** C2 passes the development check only if the LAML-selected AFCM meets the CK-6c criterion (identifiable RISE phi_1 < 0.15 and phi_2 < 0.10) on **all three** seeds 22, 914 and 966; only then is CK-6d run on seed 24 with the LAML AFCM (same criterion) and, if CK-6d passes, H-R15c (B2-S Cox ensemble − LAML AFCM on S-Add 3500–3519, the H-R12 rule). Otherwise seed 24 stays unused and AFCM stays "not validated". | Owner instruction |
+| D135 | **Outcome of the two D134 development checks and the locked Round-15 registration (2026-10-25; before any formal seed)** | ADOPTED | **Check C2 (rule fixed in D134): FAIL.** LAML-selected AFCM, identifiable RISE (phi_1 / phi_2): seed 22: 0.158 / 0.094 (V3 0.247 / 0.053; improved but above 0.15); seed 914: 0.057 / 0.058 (V3 0.023 / 0.053); seed 966: 0.190 / 0.048 (V3 0.055 / 0.056). The AIC-type rule (information) gave 0.160 / 0.078, 0.057 / 0.058 and 0.190 / 0.048. So **seed 24 stays unused, CK-6d and H-R15c are not run, and AFCM stays "not validated"**; no AFCM model enters the formal run. **Check G: FAIL.** On dev_aids (seed 965) the cross-validated gate also switched every functional channel off: test IBS 0.1993, identical to the single-split gate (rule: must be lower), so the CV gate is not added to the real-data lane. For information: on S-Sparse 964 the CV gate switched all channels off (curve error 0.1134 vs 0.0810 with the single-split gate); on S-Last 963 it matched the single-split gate (0.1736). Records `reports/round15/dev/results_check_lane*.jsonl`; flags `reports/round15/dev_check_flags.json` ({"C2_pass": false, "G_pass": false}). **Locked registration** (`scripts/run_round15_formal.py`, `run_round15_lanes.py`; docstrings binding; smoke-tested on development data with reduced settings before launch): 80 jobs, 4 single-threaded lanes, one queue. S-Add 3500–3519 and S-Sparse 3600–3619: B2-S Cox ensemble (D112) and the symbolic_distill pipeline (select_lambda_theta D120 on the seed-0 model at the ensemble's tuned lr/wd; stages 1–2, no PySR; after pruning, substituted without refit, old unconstrained refit (200 L-BFGS iterations), guarded substitution, guarded distillation refit at mu 1e-2, 1e-1, 1, 10, and the mu chosen by unpenalised validation NLPL). S-Sparse 3600–3619 and S-Last 3700–3719: B2-S Cox, static CoxKAN (last values + z), landmark Cox, b2s_anchor_cox (primary) and b2s_res_cox (secondary), single-split validation gate. Real data (exploratory): pbc_E2, pbc_E1, prothro, aids × Round-13 splits 0–4: b2s_anchor_cox and b2s_res_cox (with last-value effect curves for the clinical-direction check), plus landmark_cox on split 0 as a reproduction check of the Round-13 records. **Hypotheses (as D133/D134):** H-R15a: all 40 distillation refits finite AND S-Add (distilled − after pruning) mean identifiable RISE upper 95% t-bound < +0.05. H-R15b: S-Last (b2s_anchor_cox − b2s_cox) curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Everything else exploratory, no multiplicity correction; every run reported. | D133, D134 |
+| D136 | **Round 15 outcome (2026-10-25; launched 10:51 UTC, 80/80 jobs ok at 16:32 UTC; records `reports/round15/results_lane*.jsonl`, analysis `reports/round15_summary.json`)** | ADOPTED | **H-R15a (symbolic_distill): NOT SUPPORTED** under its registered rule. Part 1: 39 of 40 distillation refits finite (S-Add 3515: every mu non-finite; the old refit too). Part 2: S-Add distilled − after-pruning mean identifiable RISE +0.026, 95% CI [−0.006, +0.059] (upper bound above +0.05). S-Sparse: +0.002 [−0.001, +0.005]. Against the old unconstrained refit the distilled model was far better (S-Add RISE −0.93, 18/18 finite pairs; S-Sparse −10.5; curve error −0.021 and −0.017). Validation NLPL improved slightly over the unrefitted substitution (−0.0036 and −0.0012 per event); IBS and Uno C unchanged. mu chosen (S-Add / S-Sparse): 0.01: 1/1, 0.1: 7/6, 1: 4/1, 10: 7/12. The guard was active in 5 cells; the one failure (S-Add 3515) was not caused by its guarded edge (below). **H-R15b (b2s_anchor_cox): NOT SUPPORTED.** Part 1 holds: S-Last anchored − B2-S Cox curve error −0.0185 [−0.0222, −0.0149], 20/20. Part 2 fails: S-Sparse +0.0047 [−0.0001, +0.0094] (upper bound above +0.005). Secondary: the residual design is worse than B2-S Cox on S-Sparse (+0.0149, 19/20) and equal to the anchored model on S-Last; anchored vs landmark Cox: S-Last −0.0081, S-Sparse −0.0205; the gate kept the active channels in 16/20 S-Sparse replicates (null channel removed in 6) and switched everything off in 18/20 S-Last replicates. **Post-hoc diagnosis (exploratory; no verdict changes; `scripts/diag_round15_3515.py`, `reports/round15/diag_3515.json`, `reports/round15/posthoc_exploratory.json`):** (i) S-Add 3515 failed because an accepted library formula on a baseline-covariate edge was nearly degenerate (softplus(205.3 x + 384.1) with output scale 0.0018); the first L-BFGS step sent the parameters to about 1e180 and the strong-Wolfe line search cannot recover from a NaN trial -- a numerical, not a domain, failure, which the guard cannot prevent. (ii) At a fixed mu of 1 or 10 the distilled RISE equals the pruned RISE within ±0.002 on both scenarios; part 2 failed because validation NLPL chose a loose anchor (mu 0.1 or 0.01) in 8 S-Add replicates (mean RISE change +0.033 and +0.277). (iii) On S-Sparse the anchored model matched B2-S Cox where the gate kept a channel (+0.0012 [−0.0005, +0.0030], n 16) and lost where it switched everything off (+0.018, n 4). **Real data (exploratory):** the split-0 reproduction of the Round-13 landmark Cox records was exact (difference 0.0 on all four data sets). PBC E2 IBS: anchored 0.135, B2-S Cox 0.150, landmark Cox 0.127; every Nadeau–Bengio interval includes 0. The last-value edges alone were rarely monotone in the clinical direction (albumin 0.2, prothrombin index 0.2, CD4 0.4 of splits; bilirubin 0.8–1.0); when the gate keeps a channel its effect is shared between the last-value edge and the trajectory term, so this edge-level check is not comparable with Round 13's total-effect alignment. AFCM: not run (D135). No novelty or superiority claim (D111). | D133–D135 |
+| D137 | **Report revision 17 and verification (2026-10-25; owner: "build report revision 17 with Round 15 and run the full suite")** | ADOPTED | Report revision 17 (`scripts/build_report_round15.py`): Part A = Round 15 (D133–D136; every number read from `reports/round15_summary.json`, the development records, `reports/round15/posthoc_exploratory.json` and `reports/round15/diag_3515.json`); Part C = revision 16's Part A (Round 14, the manuscript draft); Parts D–Q = revision 16's Parts C–Q, unchanged; copied to `reports/final_research_prototype_report_rev17.pdf` (revision 16's copy kept). `scripts/verify_deliverables.py`: final run `final_full_suite_round15`; Part-A sections R15.1–R15.13 required in addition to all earlier ones; round-15 template values checked; the revision-17 copy must equal the report PDF; allowed final-suite failures unchanged (the 4f gate's original R1, D103; CK-6c, D124/D126). **Final suite `final_full_suite_round15`:** 265 passed, 2 failed (CK-6c, 4f R1), 16 expected failures, 2 skipped (285), no XPASS; Round-15 tests R15-1..R15-8 pass. | Recorded failures stay visible |
 
 ## R14.4 Tests
 
@@ -1092,6 +1814,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -1275,6 +1998,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -1289,21 +2023,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts B–P: historical records
+# Parts C–Q: historical records
 
-Part B is revision 15's Part A (Round 13); Part C is revision 14's Part A (Round 12); Parts D and E are the L39 and
-L38 parts; Parts F–P are the round-11 to round-1 reports, each rendered from its own records. Embedded living
+Part C is revision 15's Part A (Round 13); Part D is revision 14's Part A (Round 12); Parts E and F are the L39 and
+L38 parts; Parts G–Q are the round-11 to round-1 reports, each rendered from its own records. Embedded living
 documents show their current version.
 
 
-# Part B: revision 15 (Round 13, 2026-10-22), historical record
+# Part C: revision 15 (Round 13, 2026-10-22), historical record
 
 <p class="small">Research prototype report, revision 15 · generated from saved records by
-<code>scripts/build_report_round13.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round13.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part B is Round 13, the real-data study (D114 as amended by D128 and D129;
-outcome D130). <b>Every Round-13 result is exploratory.</b> Part C is revision 14's Part A (Round 12); Parts D–E are the
-L39 and L38 parts; Parts F–P are the round-11 to round-1 reports.</p>
+publication-ready; no novelty claim</b>. Part C is Round 13, the real-data study (D114 as amended by D128 and D129;
+outcome D130). <b>Every Round-13 result is exploratory.</b> Part D is revision 14's Part A (Round 12); Parts E–F are the
+L39 and L38 parts; Parts G–Q are the round-11 to round-1 reports.</p>
 
 ## R13-0. Round-13 summary (plain English)
 
@@ -1633,8 +2367,13 @@ for the log-transformed PBC markers):
 | D128 | **Closing L41 (2026-10-22; owner instruction: "Proceed with closing Ledger L41 and start Round 13")** | ADOPTED (owner go-ahead; the three choices below were Claude's defaults under that instruction and were **confirmed and approved by the owner on 2026-10-22**) | **(1) H-R12** stays **inconclusive** as recorded (D127); no re-analysis and no new confirmatory test. Round 13 is exploratory throughout (D114). AFCM V3 stays in Round 13 as a baseline flagged "not validated" (CK-6c). **(2) Symbolic stage:** in Round 13 the **primary** symbolic model is the substituted model **without** the refit (Round 12: substitution kept the shapes, RISE 0.212 vs 0.214, while the unconstrained refit raised it to 1.60); the refitted variant is reported as secondary for continuity with D112. **(3) Round 13** starts on the D114 registration, with an operational plan (D129) committed before any real-data model is fitted. **Data acquired for Round 13 (fact check of D110/D114):** JM 1.5-2 from CRAN (`JM_1.5-2.tar.gz`, sha256 d2afe10c…7a8c; `data/raw/jm/`); `aids` has 467 patients and 1,405 rows (its documentation states 1,408 rows); `prothro` has 488 patients (its documentation says both 488 and 467); times in months (aids) and years (prothro). **Correction:** aids `CD4` is already on the square-root scale (non-integer values, maximum 24.1), although the documentation calls it a count, so D114's "sqrt CD4" means using the variable as provided, not transforming it again. PBC `pbcseq` (survival 3.8-12) and C-MAPSS FD001 are the Round-1 local copies. **Bookkeeping:** the Round-12 final suite (`final_full_suite_round12c`) was killed by a second container restart partway through (its partial records are kept); it is rerun as `final_full_suite_round12c_rerun`, the run that report revision 14 and its verification use. | Owner instruction; D114 |
 | D129 | **Round 13 operational plan (real data; exploratory throughout)** (registered and committed before any model is fitted on real data; `scripts/run_round13.py`, `run_round13_lanes.py`; docstrings binding) | ADOPTED | **Data and cohorts** (descriptive counts only, no fit): PBC `pbcseq` single landmark 730 d, whole history window, 278 patients (E2 135 events primary; E1 107 sensitivity), as Rounds 1–9; `prothro` 1 y, 332 patients, 183 deaths; `aids` 6 months, 403 patients, 126 deaths; median 3 visits in the window everywhere. Baseline covariates: PBC age, female; prothro prednisone; aids ddI, male, prevOI, AZT failure. Outer splits by subject, `split_groups` 60/20/20 stratified on the event, seeds 0–4. **Front end:** per-subject penalised B-spline smoothing (12 functions; held-out-point λ on training subjects; missing channel values masked; a channel never observed takes the training mean curve). PACE (bandwidths widened to 0.05–0.5 for gappy visit designs; default unchanged elsewhere) only for the `b2s_cox_pace` sensitivity. **Single-landmark models** (D114: S-Add's models plus lme2_cox and landmark_cox): b2s_cox, b2s_aft, b2h_cox, b2h_aft, b1_fpca1_cox/aft, b1_sum_cox/aft, static_coxkan, afcm_v3 (flagged not validated), fpca_cox, sum_cox, sum_rsf, lme2_cox (NaN-aware LME, BLUPs → Cox), landmark_cox (last values + z), b2s_cox_pace; every KAN model is the D112 ensemble (seed-0 member also reported); features with missing values take training means. **Pruning and symbolic** on b2s_cox per split (D120 selection; stages 1–2 + PySR as D112). Primary = substituted model **without** refit (D128), with the risk correlation to the pruned model ("fidelity"); refitted model secondary. Formulas in original units. **Metrics:** marginal and conditional IPCW IBS (Cox censoring model on z, penaliser 0.1, weights capped at the 95th percentile), Harrell C, Uno C (τ = q90 of training residual times), D-cal p. **B3** (PBC E2: landmarks 1–4 y, horizon 5 y, window 2 y; prothro 0.5/1/2/3 y, 5 y, 2 y; aids 2/6/12 months, 12 months, whole history): window summaries + z + t_L; b3_coxkan (static KAN ensemble, landmark-stratified Cox, t_L an input edge) and b3_cox (lifelines, strata, penaliser 0.01); per landmark on test rows: IPCW Brier at the horizon, Harrell C within the horizon, time-dependent AUC at the horizon **only with ≥ 10 cases and ≥ 10 controls** (counts recorded; rule set after a development dry run had 1 control). **C-MAPSS FD001 Option B** (split by engine): b2s_aft (Weibull KAN-AFT ensemble on smoothed sensor windows, s/100 covariate), b2s_aft_rc (residual-calibrated twin), sum_aft and fpca_aft (Round-1 grids tuned by validation IBS). **Interpretability** (pbc_E2, prothro, aids; b2s_cox and b1_fpca1_cox): 20 bootstrap resamples of the training subjects per split (5 × 20 = 100 single-seed fits at the split's tuned lr/wd). Effects on a common x-grid (50 points, 5th–95th percentiles of pooled observed values) × 50 grid times. **Stability** = mean pairwise squared Pearson correlation (R²) and cosine of the centred, time-averaged effects over the 100 fits (and of the full surface for B2-S). **Effect plots:** pointwise median and 5–95% band (90%) of centred time-averaged effects, x in clinical units (exp for log channels). **Clinical alignment** (directions fixed in D114: PBC log bilirubin ↑, albumin ↓, log prothrombin time ↑; prothro prothrombin index ↓; aids CD4 ↓): a fit is aligned if its time-averaged centred effect is monotone in the stated direction (every consecutive difference has the stated sign or is within 1% of the effect's range); the channel aligns if ≥ 80% of the 100 fits do. **Contrasts** (exploratory; Nadeau–Bengio corrected t-interval over the 5 splits, factor 1/5 + n_test/n_train): b2s_cox − {afcm_v3, landmark_cox, lme2_cox, sum_cox, fpca_cox, b1_fpca1_cox} in IBS, conditional IBS and Uno C per data set; b3_coxkan − b3_cox per landmark (descriptive) and pooled; C-MAPSS b2s_aft_rc − {b2s_aft, sum_aft, fpca_aft} in IBS and D-cal. **Execution:** 4 single-threaded workers on one queue (single → B3 → C-MAPSS → stability). **Mechanics dry run** without real data: synthetic records shaped like aids (fsim S-Add sparse, development seed 941, 5% missing values) for single/B3/stability, and a synthetic C-MAPSS-format table (seed 942). Problems found and fixed there: Round-1 `fpca_aft`/`sum_aft` need their tuning grids; relative output paths; the tdAUC rule above. | D114, D128 |
 | D130 | **Round 13 outcome (real data; exploratory)** (2026-10-22; launched about 14:5x UTC, last job 20:12 UTC; records `reports/round13/results_lane*.jsonl`, analysis `reports/round13_summary.json`, `reports/tables/r13_single_by_model.csv`, figures `reports/figures/r13_effects_*.png`) | ADOPTED | **Execution:** 420 records; one failed cell (PBC E2 split 1, `b2s_cox_pace`: PACE returned non-finite curves on that split's visit design; recorded, not rerun or patched; the sensitivity model has 4 of 5 PBC E2 splits). **Single landmark:** no functional or KAN model was clearly better than the simple baselines. Every Nadeau–Bengio interval for B2-S Cox minus {afcm_v3, landmark_cox, lme2_cox, sum_cox, fpca_cox, b1_fpca1_cox} in IBS includes 0; the only interval excluding 0 is PBC E1 Uno C against sum_cox (+0.043). Best IBS: PBC E2 landmark_cox 0.127 (B2-S Cox 0.150); PBC E1 landmark_cox / afcm_v3 0.110; prothro b1_fpca1_aft 0.211; aids fpca_cox 0.157. D-cal p < 0.05 in no single-landmark cell. **Selection (B2-S Cox):** PBC E2 selection frequency over 5 splits: bilirubin 1.0, albumin 1.0, alkaline phosphatase 0.2, AST 0.0, platelets 1.0, prothrombin time 0.2. **Symbolic:** acceptance 0.69 (PBC E2), mean validation R² 0.997; substitution **without refit** (primary, D128) preserved the model (risk correlation with the pruned model 0.998–1.000 on all data sets; IBS and Uno C unchanged); the refit changed it (correlation 0.27–0.87; IBS worse on PBC; 3 non-finite refits on PBC). **Stability and clinical alignment** (100 bootstrap fits; aligned = ≥ 80% of fits monotone in the stated direction): B2-S Cox, PBC log bilirubin ↑ 1.00 (aligned), albumin ↓ 0.90 (aligned), log prothrombin time ↑ 0.81 (aligned); prothro prothrombin index ↓ 0.72 (**not aligned**); aids CD4 ↓ 0.99 (aligned). B1-FPCA-1 aligned on every stated channel (prothro 0.98). Stability R² of the time-averaged effects: bilirubin 0.986, albumin 0.966, CD4 0.985, prothrombin index 0.832; 0.64–0.91 for the other PBC markers (AST, alkaline phosphatase, platelets, prothrombin time). **B3:** the KAN supermodel was not consistently better than the linear landmark-stratified Cox supermodel (linear lower Brier at PBC landmarks 1–2 y, KAN at 4 y; other data sets close). **C-MAPSS:** all four models were miscalibrated in every split (D-cal p < 0.05 in 5/5); residual calibration raised the mean p (0.011 vs 0.00005) but did not fix it; IBS equal within the intervals. The within-engine correlation of Option B windows makes the D-cal test anti-conservative. **Conclusion:** no predictive gain from functional or KAN models on these small real-data cohorts. The interpretability measures behave as intended: a stable, clinically plausible PBC marker subset, exact symbolic substitution without refit, and stable aligned leading effects. No novelty or superiority claim (D111). | D114, D129 |
-| D131 | **Owner decisions opening Round 14 (2026-10-23): audit and approval of Round 13 / report revision 15; scope of the paper draft (closing L37 under D110/D111)** | ADOPTED (owner) | **(1) Approval.** Round 13 (D128–D130) and report revision 15 (255 pages; `final_full_suite_round13`: 271 tests, 251 passed, 2 visible failures CK-6c and 4f R1, 16 strict xfails, 2 skipped, no XPASS) are verified and approved by the owner; L36 and L41 are confirmed closed. **(2) Scope.** A complete, self-contained, publication-style manuscript `docs/manuscript_round14.md`, compiled to `reports/manuscript_round14.pdf`, and embedded as Part A of the cumulative report revision 16 (`scripts/build_report_round14.py`, `reports/final_research_prototype_report_rev16.pdf`; Parts C–P = revision 15's Parts A–O, unchanged). Framing (a) = Rounds 10–13 (B1, B2, B3 against AFCM V3/V0 with the CK-6c caveat, fpca_cox, lme2_cox, sum_cox, sum_rsf, landmark_cox); framing (b) = Rounds 1–9 plus the Round-12 S-Int/P0 continuity (KAN-FAE vs MLP-FAE). Claim policy D111: no novelty or "first" claim; no superiority claim where an interval includes 0 or the comparator is not validated. **(3) Number provenance.** Every number in the manuscript is rendered from saved records (`reports/*.json`, `reports/tables/*.csv`, `reports/round14/cohort_summary.json`) through a resolver that logs each value's source (`reports/manuscript_values_round14.json`); a verification script and unit test re-resolve every logged value independently, re-render the manuscript, and require every other numeric token to be a registered design constant or citation year found in its cited source document. **(4) Commit locally only.** **Fact check of the owner's instruction against the records (2026-10-23):** all quoted numbers match the records to the stated precision (H-R12 0.1785 vs 0.1720, +0.0065, CI [−0.0506, +0.0635], p 0.815, TOST p 0.0634; φ₂ TOST p 0.00064; V0 −0.1793, p 6.2e-8; B1-FPCA-1 0.7351, −0.5566, 20/20; S-Misspec D-cal failure shares b2s_aft_rc 0.00/0.00 vs b2s_aft 0.25 (log-normal) / 0.15 (log-logistic), log-normal curve error −0.0049, 19/20; RISE S-Add 0.214 → 0.212 → 1.604, S-Sparse 0.488 → 0.488 → 2.681; H1 +0.0078, p 0.047; P0 −0.0005, TOST p 0.0049; cohorts 278/332/403, median 3 visits, re-derived without any fit by `scripts/describe_cohorts_round14.py`), with these clarifications: (a) the S-Sparse contrast is recorded as flat_ae − B2-S = **+0.0775** (the owner's −0.0775 is the same contrast in the other orientation); (b) Round-9 F1 is −0.000054 in the record (−0.0001 is its 4-decimal rounding); (c) B2-H Cox's 0.122 is its identifiable RISE (0.1220); its registered primary RISE (`rise_1d` for the homogeneous channel 1, D120) is 0.1226; (d) the refitted-model RISE (1.604, 2.681) is a mean over the 18 and 19 replicates whose refit stayed finite; (e) "destroying clinical interpretability" in framing (b) is an interpretation: the records show that KAN-FAE pruning removed 0–1 of 512 risk-encoder edges and that its accepted formulas map abstract front features to latent units (R8.10), so the manuscript says the architecture *does not provide* clinically readable effects, not that a measured quantity was destroyed; (f) "why small cohorts favour simple baselines" is offered as an interpretation consistent with the results, not as a tested finding. **References:** R1.17 listed method references "named but not bibliographically verified (to be verified before any manuscript)"; they were verified on 2026-10-23 by Crossref metadata (Cox 1972; Breslow 1974; Efron 1977; Kaplan & Meier 1958; Harrell et al. 1982; Graf et al. 1999; Uno et al. 2011; Nadeau & Bengio 2003; Ishwaran et al. 2008; Schuirmann 1987; Laird & Ware 1982; Ramsay & Silverman 2005; Andersen et al. 1993; Guo & Carlin 2004; Murtaugh et al. 1994; Therneau & Grambsch 2000; Saxena et al. 2008), the JMLR landing page (Haider et al. 2020, D-calibration) and arXiv (Cranmer 2023, PySR); Goldman et al. (1996, the aids trial) could not be verified and is not cited (`docs/references_round14.md`). Authors, affiliations, funding and competing interests are left for the owner to complete. | Owner instruction; D110, D111 |
-| D132 | **Round 14 outcome: manuscript draft and report revision 16 (2026-10-23)** | ADOPTED | **Deliverables:** `docs/manuscript_round14.md` (rendered from `docs/manuscript_round14_template.md` by `scripts/manuscript_round14.py`), `reports/manuscript_round14.pdf`, and report revision 16 (`scripts/build_report_round14.py`; Part A = the manuscript with its verification, decisions and tests; Parts C–P = revision 15's Parts A–O), copied to `reports/final_research_prototype_report_rev16.pdf`. **No new analysis:** every number is read from saved records; the only new record is the descriptive cohort count (`reports/round14/cohort_summary.json`, no model fitted), which reproduces D129. **Verification:** `scripts/verify_manuscript_round14.py --pdf` ALL_PASS (every logged value re-read and re-formatted by an independent reader; byte-identical re-render; every other number a registered constant or convention in a registered template context, each traced to a phrase in its source document; all references cited; sections and figures present; no blank PDF page); wired into `scripts/verify_deliverables.py` together with a check that every logged manuscript value appears in the report PDF and that the revision-16 copy is identical. Tests R14-1..R14-6 (`tests/test_round14_manuscript.py`, including negative controls: a hand-typed number and a changed logged value are detected). **Display figures:** the Round-13 effect figures were cropped and tiled for page width (`scripts/make_manuscript_figures_round14.py`; no re-plotting). **Accuracy pass before the final suite:** gate-history wording, the refit no longer attributed to CoxKAN, PACE scope in B1, B3 wording, and explanations worded as interpretations. **Final suite:** `final_full_suite_round14` was stopped deliberately after 10 tests so that the final suite would test the final manuscript text; `final_full_suite_round14_rerun` was stopped by the session's 2-hour background limit after 207 records (this container ran every test about 44% slower than in Round 13); both partial runs' records are kept. `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, kept visible by D126; the 4f gate's original R1), 16 expected failures, 2 skipped (277), no XPASS. L37 closed. | D110, D111, D131 |
+| D131 | **Owner decisions opening Round 14 (2026-10-23): audit and approval of Round 13 / report revision 15; scope of the paper draft (closing L37 under D110/D111)** | ADOPTED (owner) | **(1) Approval.** Round 13 (D128–D130) and report revision 15 (255 pages; `final_full_suite_round13`: 271 tests, 251 passed, 2 visible failures CK-6c and 4f R1, 16 strict xfails, 2 skipped, no XPASS) are verified and approved by the owner; L36 and L41 are confirmed closed. **(2) Scope.** A complete, self-contained, publication-style manuscript `docs/manuscript_round14.md`, compiled to `reports/manuscript_round14.pdf`, and embedded as Part A of the cumulative report revision 16 (`scripts/build_report_round14.py`, `reports/final_research_prototype_report_rev16.pdf`; Parts D–Q = revision 15's Parts A–O, unchanged). Framing (a) = Rounds 10–13 (B1, B2, B3 against AFCM V3/V0 with the CK-6c caveat, fpca_cox, lme2_cox, sum_cox, sum_rsf, landmark_cox); framing (b) = Rounds 1–9 plus the Round-12 S-Int/P0 continuity (KAN-FAE vs MLP-FAE). Claim policy D111: no novelty or "first" claim; no superiority claim where an interval includes 0 or the comparator is not validated. **(3) Number provenance.** Every number in the manuscript is rendered from saved records (`reports/*.json`, `reports/tables/*.csv`, `reports/round14/cohort_summary.json`) through a resolver that logs each value's source (`reports/manuscript_values_round14.json`); a verification script and unit test re-resolve every logged value independently, re-render the manuscript, and require every other numeric token to be a registered design constant or citation year found in its cited source document. **(4) Commit locally only.** **Fact check of the owner's instruction against the records (2026-10-23):** all quoted numbers match the records to the stated precision (H-R12 0.1785 vs 0.1720, +0.0065, CI [−0.0506, +0.0635], p 0.815, TOST p 0.0634; φ₂ TOST p 0.00064; V0 −0.1793, p 6.2e-8; B1-FPCA-1 0.7351, −0.5566, 20/20; S-Misspec D-cal failure shares b2s_aft_rc 0.00/0.00 vs b2s_aft 0.25 (log-normal) / 0.15 (log-logistic), log-normal curve error −0.0049, 19/20; RISE S-Add 0.214 → 0.212 → 1.604, S-Sparse 0.488 → 0.488 → 2.681; H1 +0.0078, p 0.047; P0 −0.0005, TOST p 0.0049; cohorts 278/332/403, median 3 visits, re-derived without any fit by `scripts/describe_cohorts_round14.py`), with these clarifications: (a) the S-Sparse contrast is recorded as flat_ae − B2-S = **+0.0775** (the owner's −0.0775 is the same contrast in the other orientation); (b) Round-9 F1 is −0.000054 in the record (−0.0001 is its 4-decimal rounding); (c) B2-H Cox's 0.122 is its identifiable RISE (0.1220); its registered primary RISE (`rise_1d` for the homogeneous channel 1, D120) is 0.1226; (d) the refitted-model RISE (1.604, 2.681) is a mean over the 18 and 19 replicates whose refit stayed finite; (e) "destroying clinical interpretability" in framing (b) is an interpretation: the records show that KAN-FAE pruning removed 0–1 of 512 risk-encoder edges and that its accepted formulas map abstract front features to latent units (R8.10), so the manuscript says the architecture *does not provide* clinically readable effects, not that a measured quantity was destroyed; (f) "why small cohorts favour simple baselines" is offered as an interpretation consistent with the results, not as a tested finding. **References:** R1.17 listed method references "named but not bibliographically verified (to be verified before any manuscript)"; they were verified on 2026-10-23 by Crossref metadata (Cox 1972; Breslow 1974; Efron 1977; Kaplan & Meier 1958; Harrell et al. 1982; Graf et al. 1999; Uno et al. 2011; Nadeau & Bengio 2003; Ishwaran et al. 2008; Schuirmann 1987; Laird & Ware 1982; Ramsay & Silverman 2005; Andersen et al. 1993; Guo & Carlin 2004; Murtaugh et al. 1994; Therneau & Grambsch 2000; Saxena et al. 2008), the JMLR landing page (Haider et al. 2020, D-calibration) and arXiv (Cranmer 2023, PySR); Goldman et al. (1996, the aids trial) could not be verified and is not cited (`docs/references_round14.md`). Authors, affiliations, funding and competing interests are left for the owner to complete. | Owner instruction; D110, D111 |
+| D132 | **Round 14 outcome: manuscript draft and report revision 16 (2026-10-23)** | ADOPTED | **Deliverables:** `docs/manuscript_round14.md` (rendered from `docs/manuscript_round14_template.md` by `scripts/manuscript_round14.py`), `reports/manuscript_round14.pdf`, and report revision 16 (`scripts/build_report_round14.py`; Part A = the manuscript with its verification, decisions and tests; Parts D–Q = revision 15's Parts A–O), copied to `reports/final_research_prototype_report_rev16.pdf`. **No new analysis:** every number is read from saved records; the only new record is the descriptive cohort count (`reports/round14/cohort_summary.json`, no model fitted), which reproduces D129. **Verification:** `scripts/verify_manuscript_round14.py --pdf` ALL_PASS (every logged value re-read and re-formatted by an independent reader; byte-identical re-render; every other number a registered constant or convention in a registered template context, each traced to a phrase in its source document; all references cited; sections and figures present; no blank PDF page); wired into `scripts/verify_deliverables.py` together with a check that every logged manuscript value appears in the report PDF and that the revision-16 copy is identical. Tests R14-1..R14-6 (`tests/test_round14_manuscript.py`, including negative controls: a hand-typed number and a changed logged value are detected). **Display figures:** the Round-13 effect figures were cropped and tiled for page width (`scripts/make_manuscript_figures_round14.py`; no re-plotting). **Accuracy pass before the final suite:** gate-history wording, the refit no longer attributed to CoxKAN, PACE scope in B1, B3 wording, and explanations worded as interpretations. **Final suite:** `final_full_suite_round14` was stopped deliberately after 10 tests so that the final suite would test the final manuscript text; `final_full_suite_round14_rerun` was stopped by the session's 2-hour background limit after 207 records (this container ran every test about 44% slower than in Round 13); both partial runs' records are kept. `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, kept visible by D126; the 4f gate's original R1), 16 expected failures, 2 skipped (277), no XPASS. L37 closed. | D110, D111, D131 |
+| D133 | **Round 15 (Phase-2 methods): owner instruction, implementation, development dry run and registration proposal (2026-10-24)** | PROPOSED (awaiting owner approval; no formal seed used) | **Owner instruction:** open a prospective, pre-registered Phase-2 round testing (1) `symbolic_distill` (domain-guarded symbolic substitution + functional-distillation refit, mu in {1e-2, 1e-1, 1} by validation NLPL), (2) `b2s_res_cox` (static KAN edge on the last observed value + gated B2-S on the residual X(t) − X(t_L)), (3) `afcm_ens` (3-resample bootstrap-averaged AFCM, or GCV/Laplace / per-channel lambda_t), with CK-6d on fresh seed 24; dry run on development seeds first; keep Rounds 1–14 intact; commit locally. **Implemented (all options default-off; Rounds 1–14 code paths and records unchanged; fsim scenarios other than the new S-Last generate identical data):** `SymbolicEdge(guard=...)`, `domain_guard` (log, sqrt, 1/x: smooth floor at half the smallest training argument; exp: smooth cap 10 above the training range), `substitute_symbolic(guard=)`, `refit_symbolic(anchor=, mu=)` with `anchor_terms` (B2 surfaces at every training (subject, grid time) plus static edge activations, each normalised by its anchor variance), `refit_distill`; `kanfae.models.fres.ResFKAN` (residual=True: your design; residual=False: the "anchored" variant, full curve + last-value edges) with the validation gate (integrated residual-channel pruning over THETAS_D120 plus "all off", D120 parsimonious rule, tol 0.01); `fit_afcm_bagged`, `fit_afcm(per_channel="t")`, `fit_afcm(rule="parsimonious")`; fsim scenario S-Last (eta = sin(pi X_1(1)/2) + 1.5 tanh(X_2(1)) + 0.3 z_1 − 0.3 z_2). GCV/Laplace selection was not implemented. Tests R15-1..R15-6 (DET). **Dry run (development seeds 961–966 verified unused, plus 914 and the known CK-6c failure seed 22; `reports/round15/dev/`, `docs/round15_dryrun.md`):** symbolic_distill kept the shapes (identifiable RISE S-Add 0.197 → 0.200; S-Sparse 0.503 → 0.502) where the unconstrained refit destroyed them (1.781; 5.184); mu = 1 (grid edge) chosen on both; the guard was not triggered on these seeds. b2s_res_cox (residual) was worse than B2-S Cox on S-Sparse (curve error 0.0924 vs 0.0828) -- a nonlinear effect of X(t) is not an effect of X_last plus one of X(t) − X_last -- and better on S-Last (0.1727 vs 0.1800; gate all off); the anchored variant (dry-run follow-up) was better on both (0.0810; 0.1736). On a small aids-shaped synthetic set the gate switched the functional part off and lost to B2-S Cox (IBS 0.1985 vs 0.1946). afcm_ens did not change seed 22 (phi_1 0.239 vs 0.247; every resample chose lambda_t 0.01); per-channel lambda_t (0.240, phi_2 0.108) and the parsimonious rule (0.247) did not either; on seed 914 all variants were worse than single V3 (0.023 vs 0.056–0.224). **Proposed registration (fresh seeds verified unused: 24; S-Add 3500–3519; S-Sparse 3600–3619; S-Last 3700–3719; 25, 26 unassigned):** H-R15a (symbolic_distill; confirmatory): all 40 distillation refits finite AND S-Add distilled − pruned mean identifiable RISE upper 95% t-bound < +0.05. H-R15b (confirmatory; primary model = the anchored variant, recommended; residual design secondary): S-Last primary − B2-S Cox curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Real data (PBC, prothro, aids; Round-13 splits 0–4; exploratory only). AFCM: owner choice among C1 (CK-6d on seed 24 with afcm_ens, CK-6c criterion; H-R15c conditional on a pass), C2 (recommended: REML/Laplace selection developed first, seed 24 kept), C3 (multi-seed acceptance check). Budget about 25 lane-hours. | Owner instruction; D111 claim policy |
+| D134 | **Owner decisions on the D133 proposal (2026-10-25) and the rules for the two development checks (fixed before they run)** | ADOPTED (owner) | **(1) Family A approved** (H-R15a; S-Add 3500–3519, S-Sparse 3600–3619) with mu in **{1e-2, 1e-1, 1, 10}** (10 added because both dry-run seeds chose the grid edge 1). **(2) Family B approved** (H-R15b; S-Last 3700–3719, S-Sparse 3600–3619) with **`b2s_anchor_cox` primary** and `b2s_res_cox` a registered secondary. **(3) Real data approved as exploratory** on the Round-13 splits 0–4. Development check G (owner): on `dev_aids` seed 965, compare the single-split validation gate with a **cross-validated gate**; rule fixed now: the CV gate is included in the real-data lane (as an additional exploratory model, `b2s_anchor_cox_cvgate`) **if its dev_aids test IBS is lower than the single-split anchored model's (0.1993, dry run)**; simulation families keep the registered single-split gate. CV gate definition (fixed now): pooled training + validation subjects, 5 folds (`split` seed 0, stratified on the event); in each fold the seed-0 anchored model at the tuned (lr, wd) is trained on the other four folds for the tuned model's best epoch count (no early stopping), then each gate setting (theta_rel in THETAS_D120 and "all off", integrated residual-channel pruning) is fine-tuned 200 epochs and scored by the held-out fold's NLPL per event; the D120 parsimonious rule (tol 0.01) on the 5-fold mean picks the gate; the chosen mask is then applied to the three members trained as before. Soft shrinkage toward B2-H was not implemented. **(4) Family C: option C2.** Seed 24 not used until the dev check passes. Development check C2 on seeds 22, 914, 966 (CK-6c procedure, n 2,000): AFCM V3's basis and penalties with lambdas chosen on the same 9 x 5 grid by the **Laplace approximate marginal likelihood (LAML, primary, fixed now)**: LAML(lambda) = l_p(theta_hat) − ½ theta_hat' S theta_hat + ½ log|S| − ½ log|H + S|, with l_p the log partial likelihood (sum), S = 2 E (lambda_x Kx + lambda_t Kt + ridge I) the penalty in the same units (E = number of training events), H the observed information of the partial likelihood (Breslow form) at theta_hat; the effective degrees of freedom tr((H + S)^-1 H) and an AIC-type rule (minimise −l_p + edf) are reported for information only. **Pass rule (fixed now):** C2 passes the development check only if the LAML-selected AFCM meets the CK-6c criterion (identifiable RISE phi_1 < 0.15 and phi_2 < 0.10) on **all three** seeds 22, 914 and 966; only then is CK-6d run on seed 24 with the LAML AFCM (same criterion) and, if CK-6d passes, H-R15c (B2-S Cox ensemble − LAML AFCM on S-Add 3500–3519, the H-R12 rule). Otherwise seed 24 stays unused and AFCM stays "not validated". | Owner instruction |
+| D135 | **Outcome of the two D134 development checks and the locked Round-15 registration (2026-10-25; before any formal seed)** | ADOPTED | **Check C2 (rule fixed in D134): FAIL.** LAML-selected AFCM, identifiable RISE (phi_1 / phi_2): seed 22: 0.158 / 0.094 (V3 0.247 / 0.053; improved but above 0.15); seed 914: 0.057 / 0.058 (V3 0.023 / 0.053); seed 966: 0.190 / 0.048 (V3 0.055 / 0.056). The AIC-type rule (information) gave 0.160 / 0.078, 0.057 / 0.058 and 0.190 / 0.048. So **seed 24 stays unused, CK-6d and H-R15c are not run, and AFCM stays "not validated"**; no AFCM model enters the formal run. **Check G: FAIL.** On dev_aids (seed 965) the cross-validated gate also switched every functional channel off: test IBS 0.1993, identical to the single-split gate (rule: must be lower), so the CV gate is not added to the real-data lane. For information: on S-Sparse 964 the CV gate switched all channels off (curve error 0.1134 vs 0.0810 with the single-split gate); on S-Last 963 it matched the single-split gate (0.1736). Records `reports/round15/dev/results_check_lane*.jsonl`; flags `reports/round15/dev_check_flags.json` ({"C2_pass": false, "G_pass": false}). **Locked registration** (`scripts/run_round15_formal.py`, `run_round15_lanes.py`; docstrings binding; smoke-tested on development data with reduced settings before launch): 80 jobs, 4 single-threaded lanes, one queue. S-Add 3500–3519 and S-Sparse 3600–3619: B2-S Cox ensemble (D112) and the symbolic_distill pipeline (select_lambda_theta D120 on the seed-0 model at the ensemble's tuned lr/wd; stages 1–2, no PySR; after pruning, substituted without refit, old unconstrained refit (200 L-BFGS iterations), guarded substitution, guarded distillation refit at mu 1e-2, 1e-1, 1, 10, and the mu chosen by unpenalised validation NLPL). S-Sparse 3600–3619 and S-Last 3700–3719: B2-S Cox, static CoxKAN (last values + z), landmark Cox, b2s_anchor_cox (primary) and b2s_res_cox (secondary), single-split validation gate. Real data (exploratory): pbc_E2, pbc_E1, prothro, aids × Round-13 splits 0–4: b2s_anchor_cox and b2s_res_cox (with last-value effect curves for the clinical-direction check), plus landmark_cox on split 0 as a reproduction check of the Round-13 records. **Hypotheses (as D133/D134):** H-R15a: all 40 distillation refits finite AND S-Add (distilled − after pruning) mean identifiable RISE upper 95% t-bound < +0.05. H-R15b: S-Last (b2s_anchor_cox − b2s_cox) curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Everything else exploratory, no multiplicity correction; every run reported. | D133, D134 |
+| D136 | **Round 15 outcome (2026-10-25; launched 10:51 UTC, 80/80 jobs ok at 16:32 UTC; records `reports/round15/results_lane*.jsonl`, analysis `reports/round15_summary.json`)** | ADOPTED | **H-R15a (symbolic_distill): NOT SUPPORTED** under its registered rule. Part 1: 39 of 40 distillation refits finite (S-Add 3515: every mu non-finite; the old refit too). Part 2: S-Add distilled − after-pruning mean identifiable RISE +0.026, 95% CI [−0.006, +0.059] (upper bound above +0.05). S-Sparse: +0.002 [−0.001, +0.005]. Against the old unconstrained refit the distilled model was far better (S-Add RISE −0.93, 18/18 finite pairs; S-Sparse −10.5; curve error −0.021 and −0.017). Validation NLPL improved slightly over the unrefitted substitution (−0.0036 and −0.0012 per event); IBS and Uno C unchanged. mu chosen (S-Add / S-Sparse): 0.01: 1/1, 0.1: 7/6, 1: 4/1, 10: 7/12. The guard was active in 5 cells; the one failure (S-Add 3515) was not caused by its guarded edge (below). **H-R15b (b2s_anchor_cox): NOT SUPPORTED.** Part 1 holds: S-Last anchored − B2-S Cox curve error −0.0185 [−0.0222, −0.0149], 20/20. Part 2 fails: S-Sparse +0.0047 [−0.0001, +0.0094] (upper bound above +0.005). Secondary: the residual design is worse than B2-S Cox on S-Sparse (+0.0149, 19/20) and equal to the anchored model on S-Last; anchored vs landmark Cox: S-Last −0.0081, S-Sparse −0.0205; the gate kept the active channels in 16/20 S-Sparse replicates (null channel removed in 6) and switched everything off in 18/20 S-Last replicates. **Post-hoc diagnosis (exploratory; no verdict changes; `scripts/diag_round15_3515.py`, `reports/round15/diag_3515.json`, `reports/round15/posthoc_exploratory.json`):** (i) S-Add 3515 failed because an accepted library formula on a baseline-covariate edge was nearly degenerate (softplus(205.3 x + 384.1) with output scale 0.0018); the first L-BFGS step sent the parameters to about 1e180 and the strong-Wolfe line search cannot recover from a NaN trial -- a numerical, not a domain, failure, which the guard cannot prevent. (ii) At a fixed mu of 1 or 10 the distilled RISE equals the pruned RISE within ±0.002 on both scenarios; part 2 failed because validation NLPL chose a loose anchor (mu 0.1 or 0.01) in 8 S-Add replicates (mean RISE change +0.033 and +0.277). (iii) On S-Sparse the anchored model matched B2-S Cox where the gate kept a channel (+0.0012 [−0.0005, +0.0030], n 16) and lost where it switched everything off (+0.018, n 4). **Real data (exploratory):** the split-0 reproduction of the Round-13 landmark Cox records was exact (difference 0.0 on all four data sets). PBC E2 IBS: anchored 0.135, B2-S Cox 0.150, landmark Cox 0.127; every Nadeau–Bengio interval includes 0. The last-value edges alone were rarely monotone in the clinical direction (albumin 0.2, prothrombin index 0.2, CD4 0.4 of splits; bilirubin 0.8–1.0); when the gate keeps a channel its effect is shared between the last-value edge and the trajectory term, so this edge-level check is not comparable with Round 13's total-effect alignment. AFCM: not run (D135). No novelty or superiority claim (D111). | D133–D135 |
+| D137 | **Report revision 17 and verification (2026-10-25; owner: "build report revision 17 with Round 15 and run the full suite")** | ADOPTED | Report revision 17 (`scripts/build_report_round15.py`): Part A = Round 15 (D133–D136; every number read from `reports/round15_summary.json`, the development records, `reports/round15/posthoc_exploratory.json` and `reports/round15/diag_3515.json`); Part D = revision 16's Part A (Round 14, the manuscript draft); Parts E–Q = revision 16's Parts D–Q, unchanged; copied to `reports/final_research_prototype_report_rev17.pdf` (revision 16's copy kept). `scripts/verify_deliverables.py`: final run `final_full_suite_round15`; Part-A sections R15.1–R15.13 required in addition to all earlier ones; round-15 template values checked; the revision-17 copy must equal the report PDF; allowed final-suite failures unchanged (the 4f gate's original R1, D103; CK-6c, D124/D126). **Final suite `final_full_suite_round15`:** 265 passed, 2 failed (CK-6c, 4f R1), 16 expected failures, 2 skipped (285), no XPASS; Round-15 tests R15-1..R15-8 pass. | Recorded failures stay visible |
 
 ## R13.10 Tests
 
@@ -1779,6 +2518,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -1962,6 +2702,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -1976,19 +2727,19 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts C–P: historical records
+# Parts D–Q: historical records
 
-Part C is revision 14's Part A (Round 12); Parts D and E are the L39 and L38 parts; Parts F–P are the round-11 to
+Part D is revision 14's Part A (Round 12); Parts E and F are the L39 and L38 parts; Parts G–Q are the round-11 to
 round-1 reports, each rendered from its own records. Embedded living documents show their current version.
 
 
-# Part C: revision 14 (Round 12, 2026-10-22), historical record
+# Part D: revision 14 (Round 12, 2026-10-22), historical record
 
 <p class="small">Research prototype report, revision 14 · generated from saved records by
-<code>scripts/build_report_round12c.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round12c.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part C is Round 12, the pre-registered simulation study (D113 as amended by
-D120, D123 and D126; outcome D127). Part D is revision 13's Part A (L39), Part E revision 12's Part A (L38); Parts F–P
+publication-ready; no novelty claim</b>. Part D is Round 12, the pre-registered simulation study (D113 as amended by
+D120, D123 and D126; outcome D127). Part E is revision 13's Part A (L39), Part F revision 12's Part A (L38); Parts G–Q
 are the round-11 to round-1 reports.</p>
 
 ## R12c-0. Round-12 summary (plain English)
@@ -2221,8 +2972,13 @@ Interpretation (D113 rule): **inconclusive** (confirmatory row only).
 | D128 | **Closing L41 (2026-10-22; owner instruction: "Proceed with closing Ledger L41 and start Round 13")** | ADOPTED (owner go-ahead; the three choices below were Claude's defaults under that instruction and were **confirmed and approved by the owner on 2026-10-22**) | **(1) H-R12** stays **inconclusive** as recorded (D127); no re-analysis and no new confirmatory test. Round 13 is exploratory throughout (D114). AFCM V3 stays in Round 13 as a baseline flagged "not validated" (CK-6c). **(2) Symbolic stage:** in Round 13 the **primary** symbolic model is the substituted model **without** the refit (Round 12: substitution kept the shapes, RISE 0.212 vs 0.214, while the unconstrained refit raised it to 1.60); the refitted variant is reported as secondary for continuity with D112. **(3) Round 13** starts on the D114 registration, with an operational plan (D129) committed before any real-data model is fitted. **Data acquired for Round 13 (fact check of D110/D114):** JM 1.5-2 from CRAN (`JM_1.5-2.tar.gz`, sha256 d2afe10c…7a8c; `data/raw/jm/`); `aids` has 467 patients and 1,405 rows (its documentation states 1,408 rows); `prothro` has 488 patients (its documentation says both 488 and 467); times in months (aids) and years (prothro). **Correction:** aids `CD4` is already on the square-root scale (non-integer values, maximum 24.1), although the documentation calls it a count, so D114's "sqrt CD4" means using the variable as provided, not transforming it again. PBC `pbcseq` (survival 3.8-12) and C-MAPSS FD001 are the Round-1 local copies. **Bookkeeping:** the Round-12 final suite (`final_full_suite_round12c`) was killed by a second container restart partway through (its partial records are kept); it is rerun as `final_full_suite_round12c_rerun`, the run that report revision 14 and its verification use. | Owner instruction; D114 |
 | D129 | **Round 13 operational plan (real data; exploratory throughout)** (registered and committed before any model is fitted on real data; `scripts/run_round13.py`, `run_round13_lanes.py`; docstrings binding) | ADOPTED | **Data and cohorts** (descriptive counts only, no fit): PBC `pbcseq` single landmark 730 d, whole history window, 278 patients (E2 135 events primary; E1 107 sensitivity), as Rounds 1–9; `prothro` 1 y, 332 patients, 183 deaths; `aids` 6 months, 403 patients, 126 deaths; median 3 visits in the window everywhere. Baseline covariates: PBC age, female; prothro prednisone; aids ddI, male, prevOI, AZT failure. Outer splits by subject, `split_groups` 60/20/20 stratified on the event, seeds 0–4. **Front end:** per-subject penalised B-spline smoothing (12 functions; held-out-point λ on training subjects; missing channel values masked; a channel never observed takes the training mean curve). PACE (bandwidths widened to 0.05–0.5 for gappy visit designs; default unchanged elsewhere) only for the `b2s_cox_pace` sensitivity. **Single-landmark models** (D114: S-Add's models plus lme2_cox and landmark_cox): b2s_cox, b2s_aft, b2h_cox, b2h_aft, b1_fpca1_cox/aft, b1_sum_cox/aft, static_coxkan, afcm_v3 (flagged not validated), fpca_cox, sum_cox, sum_rsf, lme2_cox (NaN-aware LME, BLUPs → Cox), landmark_cox (last values + z), b2s_cox_pace; every KAN model is the D112 ensemble (seed-0 member also reported); features with missing values take training means. **Pruning and symbolic** on b2s_cox per split (D120 selection; stages 1–2 + PySR as D112). Primary = substituted model **without** refit (D128), with the risk correlation to the pruned model ("fidelity"); refitted model secondary. Formulas in original units. **Metrics:** marginal and conditional IPCW IBS (Cox censoring model on z, penaliser 0.1, weights capped at the 95th percentile), Harrell C, Uno C (τ = q90 of training residual times), D-cal p. **B3** (PBC E2: landmarks 1–4 y, horizon 5 y, window 2 y; prothro 0.5/1/2/3 y, 5 y, 2 y; aids 2/6/12 months, 12 months, whole history): window summaries + z + t_L; b3_coxkan (static KAN ensemble, landmark-stratified Cox, t_L an input edge) and b3_cox (lifelines, strata, penaliser 0.01); per landmark on test rows: IPCW Brier at the horizon, Harrell C within the horizon, time-dependent AUC at the horizon **only with ≥ 10 cases and ≥ 10 controls** (counts recorded; rule set after a development dry run had 1 control). **C-MAPSS FD001 Option B** (split by engine): b2s_aft (Weibull KAN-AFT ensemble on smoothed sensor windows, s/100 covariate), b2s_aft_rc (residual-calibrated twin), sum_aft and fpca_aft (Round-1 grids tuned by validation IBS). **Interpretability** (pbc_E2, prothro, aids; b2s_cox and b1_fpca1_cox): 20 bootstrap resamples of the training subjects per split (5 × 20 = 100 single-seed fits at the split's tuned lr/wd). Effects on a common x-grid (50 points, 5th–95th percentiles of pooled observed values) × 50 grid times. **Stability** = mean pairwise squared Pearson correlation (R²) and cosine of the centred, time-averaged effects over the 100 fits (and of the full surface for B2-S). **Effect plots:** pointwise median and 5–95% band (90%) of centred time-averaged effects, x in clinical units (exp for log channels). **Clinical alignment** (directions fixed in D114: PBC log bilirubin ↑, albumin ↓, log prothrombin time ↑; prothro prothrombin index ↓; aids CD4 ↓): a fit is aligned if its time-averaged centred effect is monotone in the stated direction (every consecutive difference has the stated sign or is within 1% of the effect's range); the channel aligns if ≥ 80% of the 100 fits do. **Contrasts** (exploratory; Nadeau–Bengio corrected t-interval over the 5 splits, factor 1/5 + n_test/n_train): b2s_cox − {afcm_v3, landmark_cox, lme2_cox, sum_cox, fpca_cox, b1_fpca1_cox} in IBS, conditional IBS and Uno C per data set; b3_coxkan − b3_cox per landmark (descriptive) and pooled; C-MAPSS b2s_aft_rc − {b2s_aft, sum_aft, fpca_aft} in IBS and D-cal. **Execution:** 4 single-threaded workers on one queue (single → B3 → C-MAPSS → stability). **Mechanics dry run** without real data: synthetic records shaped like aids (fsim S-Add sparse, development seed 941, 5% missing values) for single/B3/stability, and a synthetic C-MAPSS-format table (seed 942). Problems found and fixed there: Round-1 `fpca_aft`/`sum_aft` need their tuning grids; relative output paths; the tdAUC rule above. | D114, D128 |
 | D130 | **Round 13 outcome (real data; exploratory)** (2026-10-22; launched about 14:5x UTC, last job 20:12 UTC; records `reports/round13/results_lane*.jsonl`, analysis `reports/round13_summary.json`, `reports/tables/r13_single_by_model.csv`, figures `reports/figures/r13_effects_*.png`) | ADOPTED | **Execution:** 420 records; one failed cell (PBC E2 split 1, `b2s_cox_pace`: PACE returned non-finite curves on that split's visit design; recorded, not rerun or patched; the sensitivity model has 4 of 5 PBC E2 splits). **Single landmark:** no functional or KAN model was clearly better than the simple baselines. Every Nadeau–Bengio interval for B2-S Cox minus {afcm_v3, landmark_cox, lme2_cox, sum_cox, fpca_cox, b1_fpca1_cox} in IBS includes 0; the only interval excluding 0 is PBC E1 Uno C against sum_cox (+0.043). Best IBS: PBC E2 landmark_cox 0.127 (B2-S Cox 0.150); PBC E1 landmark_cox / afcm_v3 0.110; prothro b1_fpca1_aft 0.211; aids fpca_cox 0.157. D-cal p < 0.05 in no single-landmark cell. **Selection (B2-S Cox):** PBC E2 selection frequency over 5 splits: bilirubin 1.0, albumin 1.0, alkaline phosphatase 0.2, AST 0.0, platelets 1.0, prothrombin time 0.2. **Symbolic:** acceptance 0.69 (PBC E2), mean validation R² 0.997; substitution **without refit** (primary, D128) preserved the model (risk correlation with the pruned model 0.998–1.000 on all data sets; IBS and Uno C unchanged); the refit changed it (correlation 0.27–0.87; IBS worse on PBC; 3 non-finite refits on PBC). **Stability and clinical alignment** (100 bootstrap fits; aligned = ≥ 80% of fits monotone in the stated direction): B2-S Cox, PBC log bilirubin ↑ 1.00 (aligned), albumin ↓ 0.90 (aligned), log prothrombin time ↑ 0.81 (aligned); prothro prothrombin index ↓ 0.72 (**not aligned**); aids CD4 ↓ 0.99 (aligned). B1-FPCA-1 aligned on every stated channel (prothro 0.98). Stability R² of the time-averaged effects: bilirubin 0.986, albumin 0.966, CD4 0.985, prothrombin index 0.832; 0.64–0.91 for the other PBC markers (AST, alkaline phosphatase, platelets, prothrombin time). **B3:** the KAN supermodel was not consistently better than the linear landmark-stratified Cox supermodel (linear lower Brier at PBC landmarks 1–2 y, KAN at 4 y; other data sets close). **C-MAPSS:** all four models were miscalibrated in every split (D-cal p < 0.05 in 5/5); residual calibration raised the mean p (0.011 vs 0.00005) but did not fix it; IBS equal within the intervals. The within-engine correlation of Option B windows makes the D-cal test anti-conservative. **Conclusion:** no predictive gain from functional or KAN models on these small real-data cohorts. The interpretability measures behave as intended: a stable, clinically plausible PBC marker subset, exact symbolic substitution without refit, and stable aligned leading effects. No novelty or superiority claim (D111). | D114, D129 |
-| D131 | **Owner decisions opening Round 14 (2026-10-23): audit and approval of Round 13 / report revision 15; scope of the paper draft (closing L37 under D110/D111)** | ADOPTED (owner) | **(1) Approval.** Round 13 (D128–D130) and report revision 15 (255 pages; `final_full_suite_round13`: 271 tests, 251 passed, 2 visible failures CK-6c and 4f R1, 16 strict xfails, 2 skipped, no XPASS) are verified and approved by the owner; L36 and L41 are confirmed closed. **(2) Scope.** A complete, self-contained, publication-style manuscript `docs/manuscript_round14.md`, compiled to `reports/manuscript_round14.pdf`, and embedded as Part A of the cumulative report revision 16 (`scripts/build_report_round14.py`, `reports/final_research_prototype_report_rev16.pdf`; Parts D–P = revision 15's Parts A–O, unchanged). Framing (a) = Rounds 10–13 (B1, B2, B3 against AFCM V3/V0 with the CK-6c caveat, fpca_cox, lme2_cox, sum_cox, sum_rsf, landmark_cox); framing (b) = Rounds 1–9 plus the Round-12 S-Int/P0 continuity (KAN-FAE vs MLP-FAE). Claim policy D111: no novelty or "first" claim; no superiority claim where an interval includes 0 or the comparator is not validated. **(3) Number provenance.** Every number in the manuscript is rendered from saved records (`reports/*.json`, `reports/tables/*.csv`, `reports/round14/cohort_summary.json`) through a resolver that logs each value's source (`reports/manuscript_values_round14.json`); a verification script and unit test re-resolve every logged value independently, re-render the manuscript, and require every other numeric token to be a registered design constant or citation year found in its cited source document. **(4) Commit locally only.** **Fact check of the owner's instruction against the records (2026-10-23):** all quoted numbers match the records to the stated precision (H-R12 0.1785 vs 0.1720, +0.0065, CI [−0.0506, +0.0635], p 0.815, TOST p 0.0634; φ₂ TOST p 0.00064; V0 −0.1793, p 6.2e-8; B1-FPCA-1 0.7351, −0.5566, 20/20; S-Misspec D-cal failure shares b2s_aft_rc 0.00/0.00 vs b2s_aft 0.25 (log-normal) / 0.15 (log-logistic), log-normal curve error −0.0049, 19/20; RISE S-Add 0.214 → 0.212 → 1.604, S-Sparse 0.488 → 0.488 → 2.681; H1 +0.0078, p 0.047; P0 −0.0005, TOST p 0.0049; cohorts 278/332/403, median 3 visits, re-derived without any fit by `scripts/describe_cohorts_round14.py`), with these clarifications: (a) the S-Sparse contrast is recorded as flat_ae − B2-S = **+0.0775** (the owner's −0.0775 is the same contrast in the other orientation); (b) Round-9 F1 is −0.000054 in the record (−0.0001 is its 4-decimal rounding); (c) B2-H Cox's 0.122 is its identifiable RISE (0.1220); its registered primary RISE (`rise_1d` for the homogeneous channel 1, D120) is 0.1226; (d) the refitted-model RISE (1.604, 2.681) is a mean over the 18 and 19 replicates whose refit stayed finite; (e) "destroying clinical interpretability" in framing (b) is an interpretation: the records show that KAN-FAE pruning removed 0–1 of 512 risk-encoder edges and that its accepted formulas map abstract front features to latent units (R8.10), so the manuscript says the architecture *does not provide* clinically readable effects, not that a measured quantity was destroyed; (f) "why small cohorts favour simple baselines" is offered as an interpretation consistent with the results, not as a tested finding. **References:** R1.17 listed method references "named but not bibliographically verified (to be verified before any manuscript)"; they were verified on 2026-10-23 by Crossref metadata (Cox 1972; Breslow 1974; Efron 1977; Kaplan & Meier 1958; Harrell et al. 1982; Graf et al. 1999; Uno et al. 2011; Nadeau & Bengio 2003; Ishwaran et al. 2008; Schuirmann 1987; Laird & Ware 1982; Ramsay & Silverman 2005; Andersen et al. 1993; Guo & Carlin 2004; Murtaugh et al. 1994; Therneau & Grambsch 2000; Saxena et al. 2008), the JMLR landing page (Haider et al. 2020, D-calibration) and arXiv (Cranmer 2023, PySR); Goldman et al. (1996, the aids trial) could not be verified and is not cited (`docs/references_round14.md`). Authors, affiliations, funding and competing interests are left for the owner to complete. | Owner instruction; D110, D111 |
-| D132 | **Round 14 outcome: manuscript draft and report revision 16 (2026-10-23)** | ADOPTED | **Deliverables:** `docs/manuscript_round14.md` (rendered from `docs/manuscript_round14_template.md` by `scripts/manuscript_round14.py`), `reports/manuscript_round14.pdf`, and report revision 16 (`scripts/build_report_round14.py`; Part A = the manuscript with its verification, decisions and tests; Parts D–P = revision 15's Parts A–O), copied to `reports/final_research_prototype_report_rev16.pdf`. **No new analysis:** every number is read from saved records; the only new record is the descriptive cohort count (`reports/round14/cohort_summary.json`, no model fitted), which reproduces D129. **Verification:** `scripts/verify_manuscript_round14.py --pdf` ALL_PASS (every logged value re-read and re-formatted by an independent reader; byte-identical re-render; every other number a registered constant or convention in a registered template context, each traced to a phrase in its source document; all references cited; sections and figures present; no blank PDF page); wired into `scripts/verify_deliverables.py` together with a check that every logged manuscript value appears in the report PDF and that the revision-16 copy is identical. Tests R14-1..R14-6 (`tests/test_round14_manuscript.py`, including negative controls: a hand-typed number and a changed logged value are detected). **Display figures:** the Round-13 effect figures were cropped and tiled for page width (`scripts/make_manuscript_figures_round14.py`; no re-plotting). **Accuracy pass before the final suite:** gate-history wording, the refit no longer attributed to CoxKAN, PACE scope in B1, B3 wording, and explanations worded as interpretations. **Final suite:** `final_full_suite_round14` was stopped deliberately after 10 tests so that the final suite would test the final manuscript text; `final_full_suite_round14_rerun` was stopped by the session's 2-hour background limit after 207 records (this container ran every test about 44% slower than in Round 13); both partial runs' records are kept. `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, kept visible by D126; the 4f gate's original R1), 16 expected failures, 2 skipped (277), no XPASS. L37 closed. | D110, D111, D131 |
+| D131 | **Owner decisions opening Round 14 (2026-10-23): audit and approval of Round 13 / report revision 15; scope of the paper draft (closing L37 under D110/D111)** | ADOPTED (owner) | **(1) Approval.** Round 13 (D128–D130) and report revision 15 (255 pages; `final_full_suite_round13`: 271 tests, 251 passed, 2 visible failures CK-6c and 4f R1, 16 strict xfails, 2 skipped, no XPASS) are verified and approved by the owner; L36 and L41 are confirmed closed. **(2) Scope.** A complete, self-contained, publication-style manuscript `docs/manuscript_round14.md`, compiled to `reports/manuscript_round14.pdf`, and embedded as Part A of the cumulative report revision 16 (`scripts/build_report_round14.py`, `reports/final_research_prototype_report_rev16.pdf`; Parts E–Q = revision 15's Parts A–O, unchanged). Framing (a) = Rounds 10–13 (B1, B2, B3 against AFCM V3/V0 with the CK-6c caveat, fpca_cox, lme2_cox, sum_cox, sum_rsf, landmark_cox); framing (b) = Rounds 1–9 plus the Round-12 S-Int/P0 continuity (KAN-FAE vs MLP-FAE). Claim policy D111: no novelty or "first" claim; no superiority claim where an interval includes 0 or the comparator is not validated. **(3) Number provenance.** Every number in the manuscript is rendered from saved records (`reports/*.json`, `reports/tables/*.csv`, `reports/round14/cohort_summary.json`) through a resolver that logs each value's source (`reports/manuscript_values_round14.json`); a verification script and unit test re-resolve every logged value independently, re-render the manuscript, and require every other numeric token to be a registered design constant or citation year found in its cited source document. **(4) Commit locally only.** **Fact check of the owner's instruction against the records (2026-10-23):** all quoted numbers match the records to the stated precision (H-R12 0.1785 vs 0.1720, +0.0065, CI [−0.0506, +0.0635], p 0.815, TOST p 0.0634; φ₂ TOST p 0.00064; V0 −0.1793, p 6.2e-8; B1-FPCA-1 0.7351, −0.5566, 20/20; S-Misspec D-cal failure shares b2s_aft_rc 0.00/0.00 vs b2s_aft 0.25 (log-normal) / 0.15 (log-logistic), log-normal curve error −0.0049, 19/20; RISE S-Add 0.214 → 0.212 → 1.604, S-Sparse 0.488 → 0.488 → 2.681; H1 +0.0078, p 0.047; P0 −0.0005, TOST p 0.0049; cohorts 278/332/403, median 3 visits, re-derived without any fit by `scripts/describe_cohorts_round14.py`), with these clarifications: (a) the S-Sparse contrast is recorded as flat_ae − B2-S = **+0.0775** (the owner's −0.0775 is the same contrast in the other orientation); (b) Round-9 F1 is −0.000054 in the record (−0.0001 is its 4-decimal rounding); (c) B2-H Cox's 0.122 is its identifiable RISE (0.1220); its registered primary RISE (`rise_1d` for the homogeneous channel 1, D120) is 0.1226; (d) the refitted-model RISE (1.604, 2.681) is a mean over the 18 and 19 replicates whose refit stayed finite; (e) "destroying clinical interpretability" in framing (b) is an interpretation: the records show that KAN-FAE pruning removed 0–1 of 512 risk-encoder edges and that its accepted formulas map abstract front features to latent units (R8.10), so the manuscript says the architecture *does not provide* clinically readable effects, not that a measured quantity was destroyed; (f) "why small cohorts favour simple baselines" is offered as an interpretation consistent with the results, not as a tested finding. **References:** R1.17 listed method references "named but not bibliographically verified (to be verified before any manuscript)"; they were verified on 2026-10-23 by Crossref metadata (Cox 1972; Breslow 1974; Efron 1977; Kaplan & Meier 1958; Harrell et al. 1982; Graf et al. 1999; Uno et al. 2011; Nadeau & Bengio 2003; Ishwaran et al. 2008; Schuirmann 1987; Laird & Ware 1982; Ramsay & Silverman 2005; Andersen et al. 1993; Guo & Carlin 2004; Murtaugh et al. 1994; Therneau & Grambsch 2000; Saxena et al. 2008), the JMLR landing page (Haider et al. 2020, D-calibration) and arXiv (Cranmer 2023, PySR); Goldman et al. (1996, the aids trial) could not be verified and is not cited (`docs/references_round14.md`). Authors, affiliations, funding and competing interests are left for the owner to complete. | Owner instruction; D110, D111 |
+| D132 | **Round 14 outcome: manuscript draft and report revision 16 (2026-10-23)** | ADOPTED | **Deliverables:** `docs/manuscript_round14.md` (rendered from `docs/manuscript_round14_template.md` by `scripts/manuscript_round14.py`), `reports/manuscript_round14.pdf`, and report revision 16 (`scripts/build_report_round14.py`; Part A = the manuscript with its verification, decisions and tests; Parts E–Q = revision 15's Parts A–O), copied to `reports/final_research_prototype_report_rev16.pdf`. **No new analysis:** every number is read from saved records; the only new record is the descriptive cohort count (`reports/round14/cohort_summary.json`, no model fitted), which reproduces D129. **Verification:** `scripts/verify_manuscript_round14.py --pdf` ALL_PASS (every logged value re-read and re-formatted by an independent reader; byte-identical re-render; every other number a registered constant or convention in a registered template context, each traced to a phrase in its source document; all references cited; sections and figures present; no blank PDF page); wired into `scripts/verify_deliverables.py` together with a check that every logged manuscript value appears in the report PDF and that the revision-16 copy is identical. Tests R14-1..R14-6 (`tests/test_round14_manuscript.py`, including negative controls: a hand-typed number and a changed logged value are detected). **Display figures:** the Round-13 effect figures were cropped and tiled for page width (`scripts/make_manuscript_figures_round14.py`; no re-plotting). **Accuracy pass before the final suite:** gate-history wording, the refit no longer attributed to CoxKAN, PACE scope in B1, B3 wording, and explanations worded as interpretations. **Final suite:** `final_full_suite_round14` was stopped deliberately after 10 tests so that the final suite would test the final manuscript text; `final_full_suite_round14_rerun` was stopped by the session's 2-hour background limit after 207 records (this container ran every test about 44% slower than in Round 13); both partial runs' records are kept. `final_full_suite_round14_rerun2` (detached): 257 passed, 2 failed (CK-6c, kept visible by D126; the 4f gate's original R1), 16 expected failures, 2 skipped (277), no XPASS. L37 closed. | D110, D111, D131 |
+| D133 | **Round 15 (Phase-2 methods): owner instruction, implementation, development dry run and registration proposal (2026-10-24)** | PROPOSED (awaiting owner approval; no formal seed used) | **Owner instruction:** open a prospective, pre-registered Phase-2 round testing (1) `symbolic_distill` (domain-guarded symbolic substitution + functional-distillation refit, mu in {1e-2, 1e-1, 1} by validation NLPL), (2) `b2s_res_cox` (static KAN edge on the last observed value + gated B2-S on the residual X(t) − X(t_L)), (3) `afcm_ens` (3-resample bootstrap-averaged AFCM, or GCV/Laplace / per-channel lambda_t), with CK-6d on fresh seed 24; dry run on development seeds first; keep Rounds 1–14 intact; commit locally. **Implemented (all options default-off; Rounds 1–14 code paths and records unchanged; fsim scenarios other than the new S-Last generate identical data):** `SymbolicEdge(guard=...)`, `domain_guard` (log, sqrt, 1/x: smooth floor at half the smallest training argument; exp: smooth cap 10 above the training range), `substitute_symbolic(guard=)`, `refit_symbolic(anchor=, mu=)` with `anchor_terms` (B2 surfaces at every training (subject, grid time) plus static edge activations, each normalised by its anchor variance), `refit_distill`; `kanfae.models.fres.ResFKAN` (residual=True: your design; residual=False: the "anchored" variant, full curve + last-value edges) with the validation gate (integrated residual-channel pruning over THETAS_D120 plus "all off", D120 parsimonious rule, tol 0.01); `fit_afcm_bagged`, `fit_afcm(per_channel="t")`, `fit_afcm(rule="parsimonious")`; fsim scenario S-Last (eta = sin(pi X_1(1)/2) + 1.5 tanh(X_2(1)) + 0.3 z_1 − 0.3 z_2). GCV/Laplace selection was not implemented. Tests R15-1..R15-6 (DET). **Dry run (development seeds 961–966 verified unused, plus 914 and the known CK-6c failure seed 22; `reports/round15/dev/`, `docs/round15_dryrun.md`):** symbolic_distill kept the shapes (identifiable RISE S-Add 0.197 → 0.200; S-Sparse 0.503 → 0.502) where the unconstrained refit destroyed them (1.781; 5.184); mu = 1 (grid edge) chosen on both; the guard was not triggered on these seeds. b2s_res_cox (residual) was worse than B2-S Cox on S-Sparse (curve error 0.0924 vs 0.0828) -- a nonlinear effect of X(t) is not an effect of X_last plus one of X(t) − X_last -- and better on S-Last (0.1727 vs 0.1800; gate all off); the anchored variant (dry-run follow-up) was better on both (0.0810; 0.1736). On a small aids-shaped synthetic set the gate switched the functional part off and lost to B2-S Cox (IBS 0.1985 vs 0.1946). afcm_ens did not change seed 22 (phi_1 0.239 vs 0.247; every resample chose lambda_t 0.01); per-channel lambda_t (0.240, phi_2 0.108) and the parsimonious rule (0.247) did not either; on seed 914 all variants were worse than single V3 (0.023 vs 0.056–0.224). **Proposed registration (fresh seeds verified unused: 24; S-Add 3500–3519; S-Sparse 3600–3619; S-Last 3700–3719; 25, 26 unassigned):** H-R15a (symbolic_distill; confirmatory): all 40 distillation refits finite AND S-Add distilled − pruned mean identifiable RISE upper 95% t-bound < +0.05. H-R15b (confirmatory; primary model = the anchored variant, recommended; residual design secondary): S-Last primary − B2-S Cox curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Real data (PBC, prothro, aids; Round-13 splits 0–4; exploratory only). AFCM: owner choice among C1 (CK-6d on seed 24 with afcm_ens, CK-6c criterion; H-R15c conditional on a pass), C2 (recommended: REML/Laplace selection developed first, seed 24 kept), C3 (multi-seed acceptance check). Budget about 25 lane-hours. | Owner instruction; D111 claim policy |
+| D134 | **Owner decisions on the D133 proposal (2026-10-25) and the rules for the two development checks (fixed before they run)** | ADOPTED (owner) | **(1) Family A approved** (H-R15a; S-Add 3500–3519, S-Sparse 3600–3619) with mu in **{1e-2, 1e-1, 1, 10}** (10 added because both dry-run seeds chose the grid edge 1). **(2) Family B approved** (H-R15b; S-Last 3700–3719, S-Sparse 3600–3619) with **`b2s_anchor_cox` primary** and `b2s_res_cox` a registered secondary. **(3) Real data approved as exploratory** on the Round-13 splits 0–4. Development check G (owner): on `dev_aids` seed 965, compare the single-split validation gate with a **cross-validated gate**; rule fixed now: the CV gate is included in the real-data lane (as an additional exploratory model, `b2s_anchor_cox_cvgate`) **if its dev_aids test IBS is lower than the single-split anchored model's (0.1993, dry run)**; simulation families keep the registered single-split gate. CV gate definition (fixed now): pooled training + validation subjects, 5 folds (`split` seed 0, stratified on the event); in each fold the seed-0 anchored model at the tuned (lr, wd) is trained on the other four folds for the tuned model's best epoch count (no early stopping), then each gate setting (theta_rel in THETAS_D120 and "all off", integrated residual-channel pruning) is fine-tuned 200 epochs and scored by the held-out fold's NLPL per event; the D120 parsimonious rule (tol 0.01) on the 5-fold mean picks the gate; the chosen mask is then applied to the three members trained as before. Soft shrinkage toward B2-H was not implemented. **(4) Family C: option C2.** Seed 24 not used until the dev check passes. Development check C2 on seeds 22, 914, 966 (CK-6c procedure, n 2,000): AFCM V3's basis and penalties with lambdas chosen on the same 9 x 5 grid by the **Laplace approximate marginal likelihood (LAML, primary, fixed now)**: LAML(lambda) = l_p(theta_hat) − ½ theta_hat' S theta_hat + ½ log|S| − ½ log|H + S|, with l_p the log partial likelihood (sum), S = 2 E (lambda_x Kx + lambda_t Kt + ridge I) the penalty in the same units (E = number of training events), H the observed information of the partial likelihood (Breslow form) at theta_hat; the effective degrees of freedom tr((H + S)^-1 H) and an AIC-type rule (minimise −l_p + edf) are reported for information only. **Pass rule (fixed now):** C2 passes the development check only if the LAML-selected AFCM meets the CK-6c criterion (identifiable RISE phi_1 < 0.15 and phi_2 < 0.10) on **all three** seeds 22, 914 and 966; only then is CK-6d run on seed 24 with the LAML AFCM (same criterion) and, if CK-6d passes, H-R15c (B2-S Cox ensemble − LAML AFCM on S-Add 3500–3519, the H-R12 rule). Otherwise seed 24 stays unused and AFCM stays "not validated". | Owner instruction |
+| D135 | **Outcome of the two D134 development checks and the locked Round-15 registration (2026-10-25; before any formal seed)** | ADOPTED | **Check C2 (rule fixed in D134): FAIL.** LAML-selected AFCM, identifiable RISE (phi_1 / phi_2): seed 22: 0.158 / 0.094 (V3 0.247 / 0.053; improved but above 0.15); seed 914: 0.057 / 0.058 (V3 0.023 / 0.053); seed 966: 0.190 / 0.048 (V3 0.055 / 0.056). The AIC-type rule (information) gave 0.160 / 0.078, 0.057 / 0.058 and 0.190 / 0.048. So **seed 24 stays unused, CK-6d and H-R15c are not run, and AFCM stays "not validated"**; no AFCM model enters the formal run. **Check G: FAIL.** On dev_aids (seed 965) the cross-validated gate also switched every functional channel off: test IBS 0.1993, identical to the single-split gate (rule: must be lower), so the CV gate is not added to the real-data lane. For information: on S-Sparse 964 the CV gate switched all channels off (curve error 0.1134 vs 0.0810 with the single-split gate); on S-Last 963 it matched the single-split gate (0.1736). Records `reports/round15/dev/results_check_lane*.jsonl`; flags `reports/round15/dev_check_flags.json` ({"C2_pass": false, "G_pass": false}). **Locked registration** (`scripts/run_round15_formal.py`, `run_round15_lanes.py`; docstrings binding; smoke-tested on development data with reduced settings before launch): 80 jobs, 4 single-threaded lanes, one queue. S-Add 3500–3519 and S-Sparse 3600–3619: B2-S Cox ensemble (D112) and the symbolic_distill pipeline (select_lambda_theta D120 on the seed-0 model at the ensemble's tuned lr/wd; stages 1–2, no PySR; after pruning, substituted without refit, old unconstrained refit (200 L-BFGS iterations), guarded substitution, guarded distillation refit at mu 1e-2, 1e-1, 1, 10, and the mu chosen by unpenalised validation NLPL). S-Sparse 3600–3619 and S-Last 3700–3719: B2-S Cox, static CoxKAN (last values + z), landmark Cox, b2s_anchor_cox (primary) and b2s_res_cox (secondary), single-split validation gate. Real data (exploratory): pbc_E2, pbc_E1, prothro, aids × Round-13 splits 0–4: b2s_anchor_cox and b2s_res_cox (with last-value effect curves for the clinical-direction check), plus landmark_cox on split 0 as a reproduction check of the Round-13 records. **Hypotheses (as D133/D134):** H-R15a: all 40 distillation refits finite AND S-Add (distilled − after pruning) mean identifiable RISE upper 95% t-bound < +0.05. H-R15b: S-Last (b2s_anchor_cox − b2s_cox) curve error 95% CI < 0 AND S-Sparse upper 95% bound < +0.005. Everything else exploratory, no multiplicity correction; every run reported. | D133, D134 |
+| D136 | **Round 15 outcome (2026-10-25; launched 10:51 UTC, 80/80 jobs ok at 16:32 UTC; records `reports/round15/results_lane*.jsonl`, analysis `reports/round15_summary.json`)** | ADOPTED | **H-R15a (symbolic_distill): NOT SUPPORTED** under its registered rule. Part 1: 39 of 40 distillation refits finite (S-Add 3515: every mu non-finite; the old refit too). Part 2: S-Add distilled − after-pruning mean identifiable RISE +0.026, 95% CI [−0.006, +0.059] (upper bound above +0.05). S-Sparse: +0.002 [−0.001, +0.005]. Against the old unconstrained refit the distilled model was far better (S-Add RISE −0.93, 18/18 finite pairs; S-Sparse −10.5; curve error −0.021 and −0.017). Validation NLPL improved slightly over the unrefitted substitution (−0.0036 and −0.0012 per event); IBS and Uno C unchanged. mu chosen (S-Add / S-Sparse): 0.01: 1/1, 0.1: 7/6, 1: 4/1, 10: 7/12. The guard was active in 5 cells; the one failure (S-Add 3515) was not caused by its guarded edge (below). **H-R15b (b2s_anchor_cox): NOT SUPPORTED.** Part 1 holds: S-Last anchored − B2-S Cox curve error −0.0185 [−0.0222, −0.0149], 20/20. Part 2 fails: S-Sparse +0.0047 [−0.0001, +0.0094] (upper bound above +0.005). Secondary: the residual design is worse than B2-S Cox on S-Sparse (+0.0149, 19/20) and equal to the anchored model on S-Last; anchored vs landmark Cox: S-Last −0.0081, S-Sparse −0.0205; the gate kept the active channels in 16/20 S-Sparse replicates (null channel removed in 6) and switched everything off in 18/20 S-Last replicates. **Post-hoc diagnosis (exploratory; no verdict changes; `scripts/diag_round15_3515.py`, `reports/round15/diag_3515.json`, `reports/round15/posthoc_exploratory.json`):** (i) S-Add 3515 failed because an accepted library formula on a baseline-covariate edge was nearly degenerate (softplus(205.3 x + 384.1) with output scale 0.0018); the first L-BFGS step sent the parameters to about 1e180 and the strong-Wolfe line search cannot recover from a NaN trial -- a numerical, not a domain, failure, which the guard cannot prevent. (ii) At a fixed mu of 1 or 10 the distilled RISE equals the pruned RISE within ±0.002 on both scenarios; part 2 failed because validation NLPL chose a loose anchor (mu 0.1 or 0.01) in 8 S-Add replicates (mean RISE change +0.033 and +0.277). (iii) On S-Sparse the anchored model matched B2-S Cox where the gate kept a channel (+0.0012 [−0.0005, +0.0030], n 16) and lost where it switched everything off (+0.018, n 4). **Real data (exploratory):** the split-0 reproduction of the Round-13 landmark Cox records was exact (difference 0.0 on all four data sets). PBC E2 IBS: anchored 0.135, B2-S Cox 0.150, landmark Cox 0.127; every Nadeau–Bengio interval includes 0. The last-value edges alone were rarely monotone in the clinical direction (albumin 0.2, prothrombin index 0.2, CD4 0.4 of splits; bilirubin 0.8–1.0); when the gate keeps a channel its effect is shared between the last-value edge and the trajectory term, so this edge-level check is not comparable with Round 13's total-effect alignment. AFCM: not run (D135). No novelty or superiority claim (D111). | D133–D135 |
+| D137 | **Report revision 17 and verification (2026-10-25; owner: "build report revision 17 with Round 15 and run the full suite")** | ADOPTED | Report revision 17 (`scripts/build_report_round15.py`): Part A = Round 15 (D133–D136; every number read from `reports/round15_summary.json`, the development records, `reports/round15/posthoc_exploratory.json` and `reports/round15/diag_3515.json`); Part E = revision 16's Part A (Round 14, the manuscript draft); Parts F–Q = revision 16's Parts E–Q, unchanged; copied to `reports/final_research_prototype_report_rev17.pdf` (revision 16's copy kept). `scripts/verify_deliverables.py`: final run `final_full_suite_round15`; Part-A sections R15.1–R15.13 required in addition to all earlier ones; round-15 template values checked; the revision-17 copy must equal the report PDF; allowed final-suite failures unchanged (the 4f gate's original R1, D103; CK-6c, D124/D126). **Final suite `final_full_suite_round15`:** 265 passed, 2 failed (CK-6c, 4f R1), 16 expected failures, 2 skipped (285), no XPASS; Round-15 tests R15-1..R15-8 pass. | Recorded failures stay visible |
 
 ## R12c.10 Tests
 
@@ -2367,6 +3123,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -2550,6 +3307,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -2564,21 +3332,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts D–P: historical records
+# Parts E–Q: historical records
 
-Part D is revision 13's Part A (L39); Part E is revision 12's Part A (L38); Parts F–P are the round-11 to round-1
+Part E is revision 13's Part A (L39); Part F is revision 12's Part A (L38); Parts G–Q are the round-11 to round-1
 reports, each rendered from its own records. Embedded living documents (ledger, decision rows, reproducibility) show
 their current version.
 
 
-# Part D: revision 13 (L39 decisions, 2026-10-21), historical record
+# Part E: revision 13 (L39 decisions, 2026-10-21), historical record
 
 <p class="small">Research prototype report, revision 13 · generated from saved records by
-<code>scripts/build_report_round12b.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round12b.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part D covers the owner decisions closing L39 (D123), the AFCM diagnosis, the
-repaired tests CK-6c and CK-7b, and the Round-12 gate (D124). <b>Round 12 was not run</b>: CK-6c failed. Part E is
-revision 12's Part A (L38); Parts F–P are the round-11 to round-1 reports.</p>
+publication-ready; no novelty claim</b>. Part E covers the owner decisions closing L39 (D123), the AFCM diagnosis, the
+repaired tests CK-6c and CK-7b, and the Round-12 gate (D124). <b>Round 12 was not run</b>: CK-6c failed. Part F is
+revision 12's Part A (L38); Parts G–Q are the round-11 to round-1 reports.</p>
 
 ## R12b-0. Summary (plain English)
 
@@ -2598,11 +3366,11 @@ revision 12's Part A (L38); Parts F–P are the round-11 to round-1 reports.</p>
 |---|---|---|---|---|---|
 | CK-6c | 22 | repaired AFCM (D123): identifiable RISE φ₂ < 0.10 and φ₁ < 0.15 | FAIL | FAIL | identifiable RISE φ₁ 0.247 (< 0.10: no), φ₂ 0.053 (< 0.10: yes); raw 0.248, 0.053; λ_x 0.0001, λ_t 0.01 |
 | CK-7b | 23 | PACE under DGP v2: \|cos\| > 0.90 and ISE below smoothing, every channel | PASS | PASS | \|cos\| 0.999, 0.985, 0.989; ISE PACE 0.547, 0.508, 0.464 vs smoothing 1.168, 1.247, 1.252 |
-| CK-3b | – | earlier repaired test (D121) | – | PASS | see Part E |
-| CK-5b | – | earlier repaired test (D121) | – | PASS | see Part E |
-| CK-8b | – | earlier repaired test (D121) | – | PASS | see Part E |
-| CK-11b | – | earlier repaired test (D121) | – | PASS | see Part E |
-| CK-6b | – | earlier repaired test (D121) | – | xfailed | see Part E |
+| CK-3b | – | earlier repaired test (D121) | – | PASS | see Part F |
+| CK-5b | – | earlier repaired test (D121) | – | PASS | see Part F |
+| CK-8b | – | earlier repaired test (D121) | – | PASS | see Part F |
+| CK-11b | – | earlier repaired test (D121) | – | PASS | see Part F |
+| CK-6b | – | earlier repaired test (D121) | – | xfailed | see Part F |
 
 ### R12b-0.3 Decision needed from the owner (ledger L40)
 
@@ -2674,7 +3442,7 @@ CK-6c and CK-7b were registered and committed (08292df) before seeds 22 and 23 w
 |---|---|---|---|---|
 | D123 | **Owner decisions closing L39 (2026-10-21): AFCM repair, repaired tests CK-6c (seed 22) and CK-7b (seed 23), Round-12 gate** (registered before any run on seeds 22, 23) | ADOPTED (owner) | **(1) Diagnosis on development seed 914 only** (`scripts/diag_round12_afcm_fix.py`; seeds 22 and 3000–3419 untouched), identifiable RISE: V0 φ₁ 0.473 / φ₂ 0.023; V1 φ₁ 0.101 / φ₂ 0.040; V2 φ₁ 0.077 / φ₂ 0.035; V3 φ₁ 0.023 / φ₂ 0.053; V4 φ₁ 0.040 / φ₂ 0.044; V5 φ₁ 0.171 / φ₂ 0.100; V6 φ₁ 0.200 / φ₂ 0.061 (V0 = Round-12a AFCM, reproducing the D120 dry-run 0.473; V1 λ_x widened to {1e-7, …, 1e1}; V2 + penalties normalised by basis size; V3 + first- plus second-order differences in t; V4 + per-channel λ; V5 V3 + quantile input; V6 V4 + quantile input). **Adopted: V3** (`AFCM_D123`: λ_x {1e-7, …, 1e1} × λ_t {1e-4, 1e-2, 1, 1e2, 1e4}, x penalty / n_t and t penalty / n_x, t penalty D1ᵀD1 + D2ᵀD2, common λ, raw x input; selected λ_x 1e-5, λ_t 1 on seed 914). Per-channel λ cost 4× the fits without improving φ₁, and the quantile input made φ₁ worse (0.171, 0.200). **Disclosed limitation:** the variant was chosen by truth-based RISE on one development seed, which is optimistic; CK-6c on fresh seed 22 is the check. The validation NLPL did not track shape recovery (V6 had the best validation loss, 4.8628, and the worst φ₁). `fit_afcm`'s defaults remain the Round-12a model; CK-6 (Round-11 grid) and CK-6b (Round-12a grids, now pinned explicitly) are strict expected failures. **(2) CK-6c** (seed 22): the CK-6b procedure with `AFCM_D123`; owner criterion identifiable RISE φ₂ < 0.10 and **φ₁ < 0.15** (an owner-approved relaxation for a single fit, D11; the CK-5b members' φ₁ were 0.120 / 0.107 / 0.147); "< 0.10" and the raw RISE are reported beside it. **CK-7b** (seed 23): S-Sparse (S-Add, 3–8 visits), DGP v2, n 1,000: for every channel \|cos(first PACE eigenfunction, first eigenfunction of the DGP v2 population covariance)\| > 0.90 and PACE mean ISE < per-subject smoothing (`tests/test_round12b_ck.py`). Population eigenvalues 0.866, 0.500, 0.233, 0.173, 0.058, 0.044: the leading one is separated (ratio 1.7), so its eigenfunction is well defined. Development mechanics check (seed 916): \|cos\| 0.993 on all channels; ISE 0.463–0.473 vs 1.156–1.196. **(3) Gate:** Round 12 starts only if CK-6c and CK-7b pass. Its operational plan is registered as a separate entry, committed before any seed 3000–3419 is used. **Seed checks:** seeds 22 and 23 appear in no code, test, script or record. **Correction to D120:** seed 21 had been used in Rounds 4–6 as a data seed of the Round-1 simulator (`SynthConfig(seed=21)`, e.g. `scripts/diag_4b_ceiling.py`, `reports/diag_r1_seeds.jsonl`), so D120's "17–21 unused" holds for fsim data only. CK-11b's data come from fsim, so no data overlap. **Fact check:** (a) normalising the penalties by basis size only rescales λ (here both by 1/10), i.e. it shifts the grid by one decade; V2's gain over V1 comes from reaching smaller effective λ_x and λ_t 1e3, not from a new penalty shape. (b) The owner's Kronecker ordering (I_Kt ⊗ D₂ₓᵀD₂ₓ) assumes t-major coefficients; the code uses x-major (D₂ₓᵀD₂ₓ ⊗ I_Kt), which is the same penalty. (c) With D1 + D2 in t, λ_t → ∞ shrinks F towards a function of x alone, so time-homogeneous effects are now in the penalty's limit (this corrects the D120 limitation (e)). (d) The first launch of the four diagnosis lanes wrote to one shared JSON file; it was stopped after a few seconds, before any variant finished, and relaunched with one file per lane. | Owner decisions D123 |
 | D124 | **Outcome of CK-6c and CK-7b and the Round-12 gate (2026-10-21; formal run `round12b_ck_acceptance`, logs `reports/logs/round12b_ck_acceptance_*.log`, numbers in `reports/logs/round12_ck.jsonl`)** | ADOPTED | **CK-7b PASS** (seed 23): \|cos\| 0.999 / 0.985 / 0.989 against the DGP v2 population eigenfunction; mean ISE PACE 0.547 / 0.508 / 0.464 vs per-subject smoothing 1.168 / 1.247 / 1.252; K 4 / 4 / 5; 5.46 visits per subject. **CK-6c FAIL (recorded, not converted)** (seed 22): repaired AFCM identifiable RISE **φ₁ 0.247** (threshold 0.15; not < 0.10 either), φ₂ 0.053 (< 0.10); raw 0.248, 0.053; selected λ_x 1e-4, λ_t 1e-2. **From the recorded validation grid (no new fit):** validation preferred λ_t 1e-2 clearly; the best larger λ_t values (1, 1e2, 1e4, which would force a time-homogeneous surface) were 0.012, 0.011 and 0.014 worse in validation NLPL per event. On development seed 914 the same procedure had chosen λ_t 1 and reached φ₁ 0.023. So the single AFCM fit's φ₁ recovery depends on how its validation-chosen penalties fall on a given data set: the D123 caveat (a variant chosen on one development seed) materialised. **Gate (owner rule): CK-6c failed, so Round 12 was not started; seeds 3000–3419 remain unused.** **Open for the owner (L40):** the AFCM comparator is still not validated for H-R12. | Registered thresholds; owner gate rule |
-| D125 | **Report revision 13 and verification (2026-10-21)** | ADOPTED | Report revision 13: Part A = the L39 decisions, the AFCM diagnosis, CK-6c / CK-7b and the gate (`reports/report_template_round12b.md`, `scripts/build_report_round12b.py`); Part E = revision 12's Part A (L38); Parts F–P = rounds 11–1. `scripts/verify_deliverables.py`: final run `final_full_suite_round12b`; Part-A sections R12b.1–R12b.7 required; allowed final-suite failures = the 4f gate's original R1 (D103) and **CK-6c** (D124). CK-6b is now a strict expected failure (D123). The contents list (13 parts) spilled onto an almost empty second page, so its type was reduced from 8.6 pt to 7.4 pt (`reports/report.css`; layout only, same fix as D90). | Recorded failures stay visible |
+| D125 | **Report revision 13 and verification (2026-10-21)** | ADOPTED | Report revision 13: Part A = the L39 decisions, the AFCM diagnosis, CK-6c / CK-7b and the gate (`reports/report_template_round12b.md`, `scripts/build_report_round12b.py`); Part F = revision 12's Part A (L38); Parts G–Q = rounds 11–1. `scripts/verify_deliverables.py`: final run `final_full_suite_round12b`; Part-A sections R12b.1–R12b.7 required; allowed final-suite failures = the 4f gate's original R1 (D103) and **CK-6c** (D124). CK-6b is now a strict expected failure (D123). The contents list (13 parts) spilled onto an almost empty second page, so its type was reduced from 8.6 pt to 7.4 pt (`reports/report.css`; layout only, same fix as D90). | Recorded failures stay visible |
 | D126 | **Owner decision closing L40 (2026-10-21): Round 12 runs with AFCM flagged as not validated; operational plan of Round 12** (registered and committed before any seed 3000–3419 is generated) | ADOPTED (owner) | **(1) AFCM status.** CK-6c (seed 22: identifiable RISE φ₁ 0.247, φ₂ 0.053) stays a **visible FAIL** in the suite and is shown in every H-R12 table; it is never relabelled. The repaired `AFCM_D123` (V3) is the primary `afcm` comparator for H-R12 (`afcm_v3`); the Round-12a AFCM (V0) runs in S-Add as a sensitivity row (`afcm_v0`). **Fact check of the owner's statement:** (a) correct: V3 recovered both surfaces on development seed 914 (φ₁ 0.023, φ₂ 0.053), so basis and solver can. (b) **Only partly supported:** that CK-6c's φ₁ error reflects validation-NLPL selection of λ_t (1e-2 vs ≥ 1). Exploratory refit on the CK-6c data with λ_t restricted to {1, 1e2, 1e4} (`scripts/explore_round12_ck6c_lamt.py`; after the formal run; CK-6c unchanged): φ₁ 0.133 (from 0.247), but φ₂ rises to 0.096 (from 0.053), and validation NLPL is 4.7832 vs 4.7722. So the λ_t choice explains about half of φ₁'s error; one λ_t shared by a time-constant and a time-varying channel trades φ₁ against φ₂; and φ₁ stays above 0.10 even with λ_t ≥ 1. **(2) Round-12 operational plan** (`scripts/run_round12.py`, `run_round12_p0.py`, `run_round12_lanes.py`, `analyse_round12.py`; module docstrings are the binding detail). DGP v2 for every fsim scenario; n 1,000; `split_groups` 60/20/20 stratified on δ, split seed = data seed; S-Add 3000–3019, S-Int 3100–3119, S-Sparse 3200–3219 (3–8 visits), S-Misspec 3300–3319 (log-normal from SeedSequence([s, 0]), log-logistic from SeedSequence([s, 1])), S-Int/P0 3400–3419 (Round-1 simulator P0; fae_mlp/fae_kan C4F strategy S3, exactly the Round-9 cells). **Front ends:** per-subject B-spline smoothing (12 functions, held-out-point λ on training subjects); S-Sparse also PACE (fitted on training subjects). **Models:** every KAN model is the D112 ensemble (lr × wd tuned at seed 0 on validation loss, seeds 0–2); the seed-0 member is also reported ("single-seed"). S-Add and S-Sparse: b2s_cox, b2s_aft, b2h_cox, b2h_aft, b1_fpca1_cox/aft, b1_sum_cox/aft, static_coxkan (last values + z), afcm_v3, fpca_cox, sum_cox, sum_rsf (RSF 200 trees, min leaf 10); S-Add also afcm_v0; S-Sparse runs the functional and FPCA models on both front ends (afcm and fpca_cox on PACE as well, for information). S-Int adds b1_fpca2_cox ([p → 4 → 1]) and b2deep_cox. S-Misspec: b2s_cox, b2s_aft (Weibull), b2s_aft_rc (the same fitted ensemble, residual-calibrated) and afcm_v3. **Pruning and symbolic** (S-Add, and S-Sparse with B-spline curves): b2s_cox at the ensemble's tuned (lr, wd), seed 0, through `select_lambda_theta` (D120 rule); recall and FDR of channel selection; stages 1–2 on every active edge, PySR (60 s) on edges with ≥ 5% of their layer's score (at most 10); linear/library formulas substituted, refitted by L-BFGS (200 iterations); metrics after pruning, after substitution before the refit (added for information after a development seed showed the refit degrading RISE from 0.115 to 0.843) and after the refit. PySR-accepted edges keep their spline (no PySR substitution path). **Metrics** (test split): survival-curve error against the oracle on [0, q90 of training times] (101 points), marginal-IPCW IBS, Harrell C, Uno C (τ = q90 of training times), D-calibration p; identifiable RISE (primary; B2-H channel 1: 1-D RISE) and raw RISE of φ₁, φ₂ at the true test curves for functional and FPCA models (S-Add, S-Sparse, S-Misspec; none in S-Int). B1 and fpca_cox shapes are β-type: x·Σ_k b_dk ψ_dk(t), with b_dk the least-squares slope of the fitted score effect. S-Misspec shapes are on the DGP's η scale: AFT estimates as −1.5 × the AFT edge, Cox as is. B2 quantile-input sensitivity: b2s_cox on x̃ = F̂_t(X̂(t)) in S-Add, shapes mapped back. **H-R12** and its interpretation as in D113 (two-sided paired t; 95% CI; exact Wilcoxon; sign counts; TOST ±0.05), quantity b2s_cox (ensemble) − afcm_v3 in mean identifiable RISE over channels 1–2; sensitivity rows (not confirmatory): single-seed b2s_cox, afcm_v0, raw RISE, φ₁ and φ₂ separately. Secondary contrasts as D113 (exploratory). P0: TOST of fae_kan_s3 − fae_mlp_s3 in survival-curve error at ±0.005 (90% CI). **Execution:** 4 single-threaded workers on one priority queue: S-Add core first (b2s_cox and afcm_v3 are the first cells of each replicate), then S-Int, S-Sparse, S-Misspec log-normal and P0 interleaved by replicate, then phase-2 cells in reverse drop order (flat_ae, S-Misspec log-logistic, B2 quantile sensitivity). **Budget (D113):** 12 h from the launch time; after it no phase-2 cell starts (recorded as dropped_budget); core cells and H-R12 always run. Development dry-run (seeds 931–934; timing and mechanics only): per replicate about 26 min S-Add (including 12 min pruning + symbolic), 27 min S-Int, 64 min S-Sparse, 10 min per S-Misspec sub-scenario, plus about 14 min per P0 replicate (Round 9). That projects about 47 core-hours for the core (≈ 11.8 h on 4 workers), so some phase-2 cells may be dropped by the rule. Every cell, including failures, is recorded. **Seeds 3000–3419 re-verified unused** (no record; the code matches are epoch counts and array sizes). | Owner decision D126; D113 |
 | D127 | **Round 12 outcome (2026-10-22; launched 19:12 UTC on 2026-10-21, all 160 jobs finished 06:49 UTC, before the 12 h budget; records `reports/round12/results_*.jsonl`, `p0_lane*.jsonl`; analysis `reports/round12_summary.json`, `reports/tables/r12_summary_by_model.csv`)** | ADOPTED | **Execution:** 1243 fsim records (every registered cell, phase-2 included; none dropped by the budget rule) and 20 + 20 P0 ensembles. **Failures:** 3 pruning/symbolic cells (S-Add 10, 18; S-Sparse 2) failed because a substituted library formula left its domain during the unconstrained refit (e.g. log of a negative argument), so non-finite risks crashed the cell. **Harness fix** (0eddcc6; evaluation only, no method change): such refits are recorded as `refit_nonfinite`, and a non-finite pre-refit evaluation as `nonfinite`. The three cells were rerun with the fix (`results_rerun_*.jsonl`; deterministic, same seeds); the failed records are kept. **Container restart** at about 04:27 UTC killed the workers with 96 of 100 core jobs complete; the four interrupted jobs (S-Sparse 18 pruning; S-Int 19; S-Sparse 19; P0 19 KAN arm) were resumed by `reports/round12/resume_after_restart.sh` (completed cells skipped, missing cells re-run), then the workers continued with the original deadline. Resumed and later cells ran with the fixed harness. **H-R12 (confirmatory), S-Add, B2-S Cox ensemble − AFCM V3 in mean identifiable RISE (n 20):** +0.0065, 95% CI [-0.0506, +0.0635], paired-t p 0.815, Wilcoxon p 0.43, 8/12 replicates lower/higher; TOST ±0.05 p 0.0634 → **inconclusive** (D113 rule). Means: B2-S 0.1785, AFCM V3 0.1720. **Caveat (D126): AFCM V3 failed its single-seed φ₁ acceptance check CK-6c.** Sensitivity rows (not confirmatory): single-seed B2-S − AFCM V3 +0.0353, 95% CI [-0.0317, +0.1023], paired-t p 0.284, Wilcoxon p 0.123, 6/14 replicates lower/higher; B2-S − AFCM V0 -0.1793, 95% CI [-0.2232, -0.1354], paired-t p 6.2e-08, Wilcoxon p 3.81e-06, 19/1 replicates lower/higher; raw RISE +0.0056, 95% CI [-0.0532, +0.0645], paired-t p 0.843, Wilcoxon p 0.43, 8/12 replicates lower/higher; φ₁ +0.0306, 95% CI [-0.0724, +0.1335], paired-t p 0.542, Wilcoxon p 0.231, 5/15 replicates lower/higher; φ₂ -0.0176, 95% CI [-0.0356, +0.0003], paired-t p 0.0534, Wilcoxon p 0.114, 12/8 replicates lower/higher (TOST p 0.000639, equivalent). **Secondary (exploratory):** S-Add curve error B2-S − AFCM V3 +0.0011; RISE B2-S − B1-FPCA-1 -0.557 (20/0); S-Int curve error B2-deep − B2-S +0.0043 (p 0.0219), B1-FPCA-2 − B1-FPCA-1 -0.0038; S-Sparse PACE − B-spline for B2-S: RISE -0.039 (p 0.261), curve error -0.0032; flat_ae − B2-S curve error +0.0775 (0/20); S-Misspec residual-calibrated KAN-AFT − CoxKAN curve error: log-normal -0.0049 (19/1), log-logistic +0.0013. **Selection** (B2-S Cox seed 0, D120 rule): S-Add recall 0.95, FDR 0.133, patterns {'[0, 1, 0]': 2, '[1, 1, 0]': 10, '[1, 1, 1]': 8}; S-Sparse recall 0.80, FDR 0.075, patterns {'[0, 1, 0]': 7, '[0, 1, 1]': 1, '[1, 1, 0]': 9, '[1, 1, 1]': 3}. **Symbolic:** acceptance 0.64 (S-Add) / 0.67 (S-Sparse), mean validation R² 0.997; RISE after pruning 0.214, **after substitution before the refit 0.212, after the refit 1.604** (2 non-finite refits): the formulas preserve the effects and the unconstrained CoxKAN-style refit destroys them. **S-Int/P0 continuity:** fae_kan_s3 − fae_mlp_s3 survival-curve error -0.0005, 90% CI [-0.0032, +0.0023], TOST ±0.005 p 0.0049 → **equivalent** (re-confirms the Round-9 F1 finding on fresh seeds). **Open for the owner (L41):** next steps after an inconclusive H-R12 with an unvalidated comparator; whether the symbolic refit should be dropped or constrained; Round 13 (L36). | Pre-registered analysis (D113, D126) |
 | D128 | **Closing L41 (2026-10-22; owner instruction: "Proceed with closing Ledger L41 and start Round 13")** | ADOPTED (owner go-ahead; the three choices below were Claude's defaults under that instruction and were **confirmed and approved by the owner on 2026-10-22**) | **(1) H-R12** stays **inconclusive** as recorded (D127); no re-analysis and no new confirmatory test. Round 13 is exploratory throughout (D114). AFCM V3 stays in Round 13 as a baseline flagged "not validated" (CK-6c). **(2) Symbolic stage:** in Round 13 the **primary** symbolic model is the substituted model **without** the refit (Round 12: substitution kept the shapes, RISE 0.212 vs 0.214, while the unconstrained refit raised it to 1.60); the refitted variant is reported as secondary for continuity with D112. **(3) Round 13** starts on the D114 registration, with an operational plan (D129) committed before any real-data model is fitted. **Data acquired for Round 13 (fact check of D110/D114):** JM 1.5-2 from CRAN (`JM_1.5-2.tar.gz`, sha256 d2afe10c…7a8c; `data/raw/jm/`); `aids` has 467 patients and 1,405 rows (its documentation states 1,408 rows); `prothro` has 488 patients (its documentation says both 488 and 467); times in months (aids) and years (prothro). **Correction:** aids `CD4` is already on the square-root scale (non-integer values, maximum 24.1), although the documentation calls it a count, so D114's "sqrt CD4" means using the variable as provided, not transforming it again. PBC `pbcseq` (survival 3.8-12) and C-MAPSS FD001 are the Round-1 local copies. **Bookkeeping:** the Round-12 final suite (`final_full_suite_round12c`) was killed by a second container restart partway through (its partial records are kept); it is rerun as `final_full_suite_round12c_rerun`, the run that report revision 14 and its verification use. | Owner instruction; D114 |
@@ -2771,20 +3539,20 @@ CK-6c and CK-7b were registered and committed (08292df) before seeds 22 and 23 w
 | round12b_ck_acceptance | 1 | 1 | 0 | 0 | 2 |
 | final_full_suite_round12b | 248 | 2 | 2 | 16 | 268 |
 
-# Parts E–P: historical records
+# Parts F–Q: historical records
 
-Part E is revision 12's Part A (L38 decisions, 2026-10-21); Parts F–P are the round-11 to round-1 reports, each
+Part F is revision 12's Part A (L38 decisions, 2026-10-21); Parts G–Q are the round-11 to round-1 reports, each
 rendered from its own round's records. Embedded living documents (ledger, decision rows, reproducibility) show their
 current version.
 
 
-# Part E: revision 12 (L38 decisions and repaired tests, 2026-10-21), historical record
+# Part F: revision 12 (L38 decisions and repaired tests, 2026-10-21), historical record
 
 <p class="small">Research prototype report, revision 12 · generated from saved records by
-<code>scripts/build_report_round12.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round12.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part E covers the owner decisions closing L38 (D120), the repaired acceptance
-tests and the Round-12 gate (D121). <b>Round 12 was not run</b>: one repaired test failed. Parts F–P are the round-11
+publication-ready; no novelty claim</b>. Part F covers the owner decisions closing L38 (D120), the repaired acceptance
+tests and the Round-12 gate (D121). <b>Round 12 was not run</b>: one repaired test failed. Parts G–Q are the round-11
 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R12-0. Summary (plain English)
@@ -2897,10 +3665,10 @@ directions removed by the identifiable RISE (tolerance 3e-8) on a test-sized sam
 |---|---|---|---|---|
 | D120 | **Owner decisions closing L38 (2026-10-21) and registration of the repaired acceptance tests CK-3b, CK-5b, CK-6b, CK-8b, CK-11b** (registered before any run on seeds 17–21) | ADOPTED (owner) | **(1) S-Add DGP and RISE (D118 options c + b).** DGP "v2" in `kanfae.data.fsim` (now the default; "v1" kept and pinned in every Round-11 test and script, which reproduce bit for bit): per channel a random level ξ_d0·1 (variance 0.5) and a random linear trend ξ_d,lin·√12(t − 0.5) (variance 0.5) are added to the four Fourier modes, whose variances are scaled by 7/15 so that the time-averaged marginal variance stays 1.875 (as v1); c_max re-calibrated on seed 99 (S-Add 2.687; censoring 0.289–0.292 on a development check). Applies to every Round-12 scenario (amends D113). **Primary shape metric** (CK-5b, CK-6b, H-R12): `fsim.rise_identifiable` = RISE after per-t centring and after projecting error and truth orthogonal to the directions f(x, t) in a 10 × 10 tensor cubic B-spline space whose functional ∫f(X_i(t), t)dt has relative zero variance on the test curves (variance ≤ 3e-8 × mean square of f; tolerance placed inside the gap of the ratio spectrum on development seed 902: about 8e-9 to 3e-7); the raw Round-11 RISE is reported beside it; homogeneous estimate vs homogeneous truth (B2-H channel 1) uses `fsim.rise_1d`. **AFCM** λ_t grid {1e-4, 1e-2, 1, 1e2, 1e4} × λ_x {1e-4, 1e-3, 1e-2, 1e-1, 1}. **(2) CK-3b**: linear-edge CoxKAN on all n 2,000 (seed 19), weight decay 0, no early stopping: 500 Adam epochs, then L-BFGS to convergence (≤ 1,000 iterations); slopes vs lifelines < 0.05. **(3) CK-8b**: channel score S_d = mean \|η̂_id − η̄_d\| of the integrated functional effect (summed over the rank-M terms), normalised by max_d; a channel with S̃_d < θ_rel loses all its functional edges (static edges keep the edge-level rule); grid λ {0, 1e-4, 1e-3, 1e-2, 3e-2} × θ_rel {0, .01, .02, .05, .10, .15, .20, .25}; selection: the largest θ_rel, then the largest λ, among grid points within 0.01 (mean NLPL per event) of the minimum validation loss; seed 20; required [1, 1, 0]. **(4) CK-11b**: scenario "S-Misspec-mixture" (log T = 1 − η/1.5 + ε, ε the Round-2 MIS mixture 0.7 N(−0.6, 0.5²) + 0.3 N(1.4, 1) standardised to SD 0.5, D50), seed 21; residual-calibrated p > 0.05 and Weibull p < 0.05. Seeds 17–21 verified unused (no fsim data, test, script or record uses them); Round-12 seeds 3000–3419 still unused. CK-3, CK-5, CK-6, CK-8, CK-11 stay as strict expected failures (historical records); live checks in `tests/test_round12_ck.py`, plus DET checks ID-1 (the projection removes exactly-unidentified directions and keeps an identified linear one) and ID-2 (the owner's verification below). **Gate:** Round 12 runs only if all five pass. **Fact check (corrections and qualifications):** (a) verified on development seed 902 (`scripts/diag_round12_identifiability.py`): SD_i ∫X_d dt 0.69–0.73 (> 0.5) and SD_i ∫t X_d dt 0.43–0.46 (> 0.1) on all channels (v1: about 1e-16 and 0.23); the homogeneous design now has rank 9 of 10 (only the constant is unidentified). (b) **"Fully identifiable" is not exact for the bivariate class:** the curves still span a 6-dimensional space per channel, so x·c(t) with c orthogonal to span{1, t, ψ₁..ψ₄} still has no effect on η; 4–8 such directions remain on the development seed. This is why the projection (option b) stays necessary for B2-S and AFCM. (c) ψ_lin is not orthogonal to the Fourier sine terms (∫√12(t − ½)·√2 sin 2πt dt = −√6/π ≈ −0.78), so the covariance eigenfunctions under v2 are no longer the ψ_k; CK-7's criterion is specific to v1 (it stays pinned to v1) and PACE has no acceptance test under v2 (a limitation for S-Sparse). (d) The time-averaged variance is 1.875 as in v1, but pointwise Var X_d(t) now ranges 1.09–2.59 (trend term), and the SD of the true η rises from 0.45 to 0.71 (stronger signal). (e) λ_t → ∞ under a second-order difference penalty removes curvature in t, not linear time variation (F → a(x) + b(x)t), in mgcv as here. (f) CK-11's n_test was 400 and its p-values are as stated. **Development dry-runs of the registered procedures (seeds 908–915; mechanics and the CK-11b power check; nothing changed afterwards):** CK-3b seed 908 max error 4.9e-6; CK-11b seeds 909–912 Weibull p 2e-25, 4e-31, 4e-17, 2e-17 and residual-calibrated p 0.590, 0.037, 0.326, 0.109; **CK-5b seed 913 identifiable RISE φ₁ 0.151, φ₂ 0.038; CK-6b seed 914 φ₁ 0.473, φ₂ 0.023** (λ_t 1e4); CK-8b seed 915 selected [1, 1, 0] (36 min single-threaded). These development results predict that CK-5b and CK-6b fail on φ₁ and that CK-11b's calibrated arm fails on about one seed in four; they are stated here, before the registered runs, and no setting was changed because of them. | Owner decisions D120; fact check |
 | D121 | **Outcome of the repaired acceptance tests (2026-10-21; formal run `round12_ck_acceptance`, logs `reports/logs/round12_ck_acceptance_*.log`, numbers in `reports/logs/round12_ck.jsonl`) and the Round-12 gate** | ADOPTED | **PASS:** **CK-3b** (seed 19): converged slopes 0.749 / −0.464 / 0.335 vs lifelines, max error 2.1e-6, final gradient norm 4.3e-9. **CK-5b** (seed 17): B2-S Cox ensemble identifiable RISE φ₁ 0.085, φ₂ 0.031 (raw 0.085, 0.033); the three members alone had φ₁ 0.120, 0.107, 0.147, so the pass rests on ensemble averaging. **CK-8b** (seed 20): selected [1, 1, 0] at λ 1e-2, θ_rel 0.25 (validation NLPL 4.8770; grid minimum 4.8756 at λ 1e-2, θ_rel 0.15, also [1, 1, 0]; only the λ 1e-2 row was within 0.01 of the minimum); normalised channel scores 0.633 / 1.000 / 0.000; at λ 3e-2 and θ 0.25 the grid would also have dropped channel 1. **CK-11b** (seed 21): residual-calibrated D-cal p 0.612, Weibull p 2.2e-22. DET checks ID-1, ID-2 pass. **FAIL (recorded, not converted): CK-6b** (seed 18): AFCM identifiable RISE **φ₁ 0.556**, φ₂ 0.051 (raw 0.556, 0.051); selected λ_x 1e-4 (the smallest value in the grid), λ_t 1e2. Development seed 914 had shown the same pattern (0.473); the development prediction for CK-5b (seed 913, φ₁ 0.151) did not hold at the registered seed. **Gate (owner rule): one repaired test failed, so Round 12 was not started; seeds 3000–3419 remain unused.** **Exploratory diagnosis (not a test; `scripts/explore_round12_afcm_floor.py`):** the best fit of φ₁ within AFCM's 10-function x basis on the CK-6b training range has RISE 0.002 (0.0002 with 15 functions), so basis resolution does not explain the 0.556; the error comes from estimation. Untested candidate explanations: the λ_x selection sits at the lower boundary of its grid; the time-constant φ₁ leaks into weakly identified bivariate directions, which the exact-null projection does not remove (the tensor design has numerical rank about 46 of 100 at 1e-2); AFCM is a single fit while B2-S averages three. **Open for the owner (L39):** how to treat the unvalidated AFCM comparator before H-R12, which compares against it (for example, widen the λ_x grid, use Cui et al.'s quantile-transformed input, a REML-type smoothing selection, or run Round 12 with AFCM flagged as not validated); none taken. | Registered thresholds; owner gate rule |
-| D122 | **Report revision 12 and verification (2026-10-21)** | ADOPTED | Report revision 12: Part A = the L38 decisions, repaired tests and gate (`reports/report_template_round12.md`, `scripts/build_report_round12.py`); Parts F–P = rounds 11–1. Because Round 12 did not run, this entry (not a Round-12 outcome) takes D122. `scripts/verify_deliverables.py`: final run `final_full_suite_round12`; Part-A sections R12.1–R12.9 required; round-11 template values checked; allowed final-suite failures = the 4f gate's original R1 (D103) and **CK-6b** (D121). The Round-11 failures CK-3/5/6/8/11 are now strict expected failures (D120), so they are no longer in the allowed-failure list; if one passed, strict xfail would fail the suite. Reproduction check in `final_full_suite_round12`: every CK-3..CK-11 and CK-3b..CK-11b record is identical to its formal run, except that the CK-8 grid record now marks the selected point (`chosen`, added by the D120 code); its numbers and selection are unchanged. | Recorded failures stay visible |
+| D122 | **Report revision 12 and verification (2026-10-21)** | ADOPTED | Report revision 12: Part A = the L38 decisions, repaired tests and gate (`reports/report_template_round12.md`, `scripts/build_report_round12.py`); Parts G–Q = rounds 11–1. Because Round 12 did not run, this entry (not a Round-12 outcome) takes D122. `scripts/verify_deliverables.py`: final run `final_full_suite_round12`; Part-A sections R12.1–R12.9 required; round-11 template values checked; allowed final-suite failures = the 4f gate's original R1 (D103) and **CK-6b** (D121). The Round-11 failures CK-3/5/6/8/11 are now strict expected failures (D120), so they are no longer in the allowed-failure list; if one passed, strict xfail would fail the suite. Reproduction check in `final_full_suite_round12`: every CK-3..CK-11 and CK-3b..CK-11b record is identical to its formal run, except that the CK-8 grid record now marks the selected point (`chosen`, added by the D120 code); its numbers and selection are unchanged. | Recorded failures stay visible |
 | D123 | **Owner decisions closing L39 (2026-10-21): AFCM repair, repaired tests CK-6c (seed 22) and CK-7b (seed 23), Round-12 gate** (registered before any run on seeds 22, 23) | ADOPTED (owner) | **(1) Diagnosis on development seed 914 only** (`scripts/diag_round12_afcm_fix.py`; seeds 22 and 3000–3419 untouched), identifiable RISE: V0 φ₁ 0.473 / φ₂ 0.023; V1 φ₁ 0.101 / φ₂ 0.040; V2 φ₁ 0.077 / φ₂ 0.035; V3 φ₁ 0.023 / φ₂ 0.053; V4 φ₁ 0.040 / φ₂ 0.044; V5 φ₁ 0.171 / φ₂ 0.100; V6 φ₁ 0.200 / φ₂ 0.061 (V0 = Round-12a AFCM, reproducing the D120 dry-run 0.473; V1 λ_x widened to {1e-7, …, 1e1}; V2 + penalties normalised by basis size; V3 + first- plus second-order differences in t; V4 + per-channel λ; V5 V3 + quantile input; V6 V4 + quantile input). **Adopted: V3** (`AFCM_D123`: λ_x {1e-7, …, 1e1} × λ_t {1e-4, 1e-2, 1, 1e2, 1e4}, x penalty / n_t and t penalty / n_x, t penalty D1ᵀD1 + D2ᵀD2, common λ, raw x input; selected λ_x 1e-5, λ_t 1 on seed 914). Per-channel λ cost 4× the fits without improving φ₁, and the quantile input made φ₁ worse (0.171, 0.200). **Disclosed limitation:** the variant was chosen by truth-based RISE on one development seed, which is optimistic; CK-6c on fresh seed 22 is the check. The validation NLPL did not track shape recovery (V6 had the best validation loss, 4.8628, and the worst φ₁). `fit_afcm`'s defaults remain the Round-12a model; CK-6 (Round-11 grid) and CK-6b (Round-12a grids, now pinned explicitly) are strict expected failures. **(2) CK-6c** (seed 22): the CK-6b procedure with `AFCM_D123`; owner criterion identifiable RISE φ₂ < 0.10 and **φ₁ < 0.15** (an owner-approved relaxation for a single fit, D11; the CK-5b members' φ₁ were 0.120 / 0.107 / 0.147); "< 0.10" and the raw RISE are reported beside it. **CK-7b** (seed 23): S-Sparse (S-Add, 3–8 visits), DGP v2, n 1,000: for every channel \|cos(first PACE eigenfunction, first eigenfunction of the DGP v2 population covariance)\| > 0.90 and PACE mean ISE < per-subject smoothing (`tests/test_round12b_ck.py`). Population eigenvalues 0.866, 0.500, 0.233, 0.173, 0.058, 0.044: the leading one is separated (ratio 1.7), so its eigenfunction is well defined. Development mechanics check (seed 916): \|cos\| 0.993 on all channels; ISE 0.463–0.473 vs 1.156–1.196. **(3) Gate:** Round 12 starts only if CK-6c and CK-7b pass. Its operational plan is registered as a separate entry, committed before any seed 3000–3419 is used. **Seed checks:** seeds 22 and 23 appear in no code, test, script or record. **Correction to D120:** seed 21 had been used in Rounds 4–6 as a data seed of the Round-1 simulator (`SynthConfig(seed=21)`, e.g. `scripts/diag_4b_ceiling.py`, `reports/diag_r1_seeds.jsonl`), so D120's "17–21 unused" holds for fsim data only. CK-11b's data come from fsim, so no data overlap. **Fact check:** (a) normalising the penalties by basis size only rescales λ (here both by 1/10), i.e. it shifts the grid by one decade; V2's gain over V1 comes from reaching smaller effective λ_x and λ_t 1e3, not from a new penalty shape. (b) The owner's Kronecker ordering (I_Kt ⊗ D₂ₓᵀD₂ₓ) assumes t-major coefficients; the code uses x-major (D₂ₓᵀD₂ₓ ⊗ I_Kt), which is the same penalty. (c) With D1 + D2 in t, λ_t → ∞ shrinks F towards a function of x alone, so time-homogeneous effects are now in the penalty's limit (this corrects the D120 limitation (e)). (d) The first launch of the four diagnosis lanes wrote to one shared JSON file; it was stopped after a few seconds, before any variant finished, and relaunched with one file per lane. | Owner decisions D123 |
 | D124 | **Outcome of CK-6c and CK-7b and the Round-12 gate (2026-10-21; formal run `round12b_ck_acceptance`, logs `reports/logs/round12b_ck_acceptance_*.log`, numbers in `reports/logs/round12_ck.jsonl`)** | ADOPTED | **CK-7b PASS** (seed 23): \|cos\| 0.999 / 0.985 / 0.989 against the DGP v2 population eigenfunction; mean ISE PACE 0.547 / 0.508 / 0.464 vs per-subject smoothing 1.168 / 1.247 / 1.252; K 4 / 4 / 5; 5.46 visits per subject. **CK-6c FAIL (recorded, not converted)** (seed 22): repaired AFCM identifiable RISE **φ₁ 0.247** (threshold 0.15; not < 0.10 either), φ₂ 0.053 (< 0.10); raw 0.248, 0.053; selected λ_x 1e-4, λ_t 1e-2. **From the recorded validation grid (no new fit):** validation preferred λ_t 1e-2 clearly; the best larger λ_t values (1, 1e2, 1e4, which would force a time-homogeneous surface) were 0.012, 0.011 and 0.014 worse in validation NLPL per event. On development seed 914 the same procedure had chosen λ_t 1 and reached φ₁ 0.023. So the single AFCM fit's φ₁ recovery depends on how its validation-chosen penalties fall on a given data set: the D123 caveat (a variant chosen on one development seed) materialised. **Gate (owner rule): CK-6c failed, so Round 12 was not started; seeds 3000–3419 remain unused.** **Open for the owner (L40):** the AFCM comparator is still not validated for H-R12. | Registered thresholds; owner gate rule |
-| D125 | **Report revision 13 and verification (2026-10-21)** | ADOPTED | Report revision 13: Part A = the L39 decisions, the AFCM diagnosis, CK-6c / CK-7b and the gate (`reports/report_template_round12b.md`, `scripts/build_report_round12b.py`); Part F = revision 12's Part A (L38); Parts G–P = rounds 11–1. `scripts/verify_deliverables.py`: final run `final_full_suite_round12b`; Part-A sections R12b.1–R12b.7 required; allowed final-suite failures = the 4f gate's original R1 (D103) and **CK-6c** (D124). CK-6b is now a strict expected failure (D123). The contents list (13 parts) spilled onto an almost empty second page, so its type was reduced from 8.6 pt to 7.4 pt (`reports/report.css`; layout only, same fix as D90). | Recorded failures stay visible |
+| D125 | **Report revision 13 and verification (2026-10-21)** | ADOPTED | Report revision 13: Part A = the L39 decisions, the AFCM diagnosis, CK-6c / CK-7b and the gate (`reports/report_template_round12b.md`, `scripts/build_report_round12b.py`); Part G = revision 12's Part A (L38); Parts H–Q = rounds 11–1. `scripts/verify_deliverables.py`: final run `final_full_suite_round12b`; Part-A sections R12b.1–R12b.7 required; allowed final-suite failures = the 4f gate's original R1 (D103) and **CK-6c** (D124). CK-6b is now a strict expected failure (D123). The contents list (13 parts) spilled onto an almost empty second page, so its type was reduced from 8.6 pt to 7.4 pt (`reports/report.css`; layout only, same fix as D90). | Recorded failures stay visible |
 | D126 | **Owner decision closing L40 (2026-10-21): Round 12 runs with AFCM flagged as not validated; operational plan of Round 12** (registered and committed before any seed 3000–3419 is generated) | ADOPTED (owner) | **(1) AFCM status.** CK-6c (seed 22: identifiable RISE φ₁ 0.247, φ₂ 0.053) stays a **visible FAIL** in the suite and is shown in every H-R12 table; it is never relabelled. The repaired `AFCM_D123` (V3) is the primary `afcm` comparator for H-R12 (`afcm_v3`); the Round-12a AFCM (V0) runs in S-Add as a sensitivity row (`afcm_v0`). **Fact check of the owner's statement:** (a) correct: V3 recovered both surfaces on development seed 914 (φ₁ 0.023, φ₂ 0.053), so basis and solver can. (b) **Only partly supported:** that CK-6c's φ₁ error reflects validation-NLPL selection of λ_t (1e-2 vs ≥ 1). Exploratory refit on the CK-6c data with λ_t restricted to {1, 1e2, 1e4} (`scripts/explore_round12_ck6c_lamt.py`; after the formal run; CK-6c unchanged): φ₁ 0.133 (from 0.247), but φ₂ rises to 0.096 (from 0.053), and validation NLPL is 4.7832 vs 4.7722. So the λ_t choice explains about half of φ₁'s error; one λ_t shared by a time-constant and a time-varying channel trades φ₁ against φ₂; and φ₁ stays above 0.10 even with λ_t ≥ 1. **(2) Round-12 operational plan** (`scripts/run_round12.py`, `run_round12_p0.py`, `run_round12_lanes.py`, `analyse_round12.py`; module docstrings are the binding detail). DGP v2 for every fsim scenario; n 1,000; `split_groups` 60/20/20 stratified on δ, split seed = data seed; S-Add 3000–3019, S-Int 3100–3119, S-Sparse 3200–3219 (3–8 visits), S-Misspec 3300–3319 (log-normal from SeedSequence([s, 0]), log-logistic from SeedSequence([s, 1])), S-Int/P0 3400–3419 (Round-1 simulator P0; fae_mlp/fae_kan C4F strategy S3, exactly the Round-9 cells). **Front ends:** per-subject B-spline smoothing (12 functions, held-out-point λ on training subjects); S-Sparse also PACE (fitted on training subjects). **Models:** every KAN model is the D112 ensemble (lr × wd tuned at seed 0 on validation loss, seeds 0–2); the seed-0 member is also reported ("single-seed"). S-Add and S-Sparse: b2s_cox, b2s_aft, b2h_cox, b2h_aft, b1_fpca1_cox/aft, b1_sum_cox/aft, static_coxkan (last values + z), afcm_v3, fpca_cox, sum_cox, sum_rsf (RSF 200 trees, min leaf 10); S-Add also afcm_v0; S-Sparse runs the functional and FPCA models on both front ends (afcm and fpca_cox on PACE as well, for information). S-Int adds b1_fpca2_cox ([p → 4 → 1]) and b2deep_cox. S-Misspec: b2s_cox, b2s_aft (Weibull), b2s_aft_rc (the same fitted ensemble, residual-calibrated) and afcm_v3. **Pruning and symbolic** (S-Add, and S-Sparse with B-spline curves): b2s_cox at the ensemble's tuned (lr, wd), seed 0, through `select_lambda_theta` (D120 rule); recall and FDR of channel selection; stages 1–2 on every active edge, PySR (60 s) on edges with ≥ 5% of their layer's score (at most 10); linear/library formulas substituted, refitted by L-BFGS (200 iterations); metrics after pruning, after substitution before the refit (added for information after a development seed showed the refit degrading RISE from 0.115 to 0.843) and after the refit. PySR-accepted edges keep their spline (no PySR substitution path). **Metrics** (test split): survival-curve error against the oracle on [0, q90 of training times] (101 points), marginal-IPCW IBS, Harrell C, Uno C (τ = q90 of training times), D-calibration p; identifiable RISE (primary; B2-H channel 1: 1-D RISE) and raw RISE of φ₁, φ₂ at the true test curves for functional and FPCA models (S-Add, S-Sparse, S-Misspec; none in S-Int). B1 and fpca_cox shapes are β-type: x·Σ_k b_dk ψ_dk(t), with b_dk the least-squares slope of the fitted score effect. S-Misspec shapes are on the DGP's η scale: AFT estimates as −1.5 × the AFT edge, Cox as is. B2 quantile-input sensitivity: b2s_cox on x̃ = F̂_t(X̂(t)) in S-Add, shapes mapped back. **H-R12** and its interpretation as in D113 (two-sided paired t; 95% CI; exact Wilcoxon; sign counts; TOST ±0.05), quantity b2s_cox (ensemble) − afcm_v3 in mean identifiable RISE over channels 1–2; sensitivity rows (not confirmatory): single-seed b2s_cox, afcm_v0, raw RISE, φ₁ and φ₂ separately. Secondary contrasts as D113 (exploratory). P0: TOST of fae_kan_s3 − fae_mlp_s3 in survival-curve error at ±0.005 (90% CI). **Execution:** 4 single-threaded workers on one priority queue: S-Add core first (b2s_cox and afcm_v3 are the first cells of each replicate), then S-Int, S-Sparse, S-Misspec log-normal and P0 interleaved by replicate, then phase-2 cells in reverse drop order (flat_ae, S-Misspec log-logistic, B2 quantile sensitivity). **Budget (D113):** 12 h from the launch time; after it no phase-2 cell starts (recorded as dropped_budget); core cells and H-R12 always run. Development dry-run (seeds 931–934; timing and mechanics only): per replicate about 26 min S-Add (including 12 min pruning + symbolic), 27 min S-Int, 64 min S-Sparse, 10 min per S-Misspec sub-scenario, plus about 14 min per P0 replicate (Round 9). That projects about 47 core-hours for the core (≈ 11.8 h on 4 workers), so some phase-2 cells may be dropped by the rule. Every cell, including failures, is recorded. **Seeds 3000–3419 re-verified unused** (no record; the code matches are epoch counts and array sizes). | Owner decision D126; D113 |
 | D127 | **Round 12 outcome (2026-10-22; launched 19:12 UTC on 2026-10-21, all 160 jobs finished 06:49 UTC, before the 12 h budget; records `reports/round12/results_*.jsonl`, `p0_lane*.jsonl`; analysis `reports/round12_summary.json`, `reports/tables/r12_summary_by_model.csv`)** | ADOPTED | **Execution:** 1243 fsim records (every registered cell, phase-2 included; none dropped by the budget rule) and 20 + 20 P0 ensembles. **Failures:** 3 pruning/symbolic cells (S-Add 10, 18; S-Sparse 2) failed because a substituted library formula left its domain during the unconstrained refit (e.g. log of a negative argument), so non-finite risks crashed the cell. **Harness fix** (0eddcc6; evaluation only, no method change): such refits are recorded as `refit_nonfinite`, and a non-finite pre-refit evaluation as `nonfinite`. The three cells were rerun with the fix (`results_rerun_*.jsonl`; deterministic, same seeds); the failed records are kept. **Container restart** at about 04:27 UTC killed the workers with 96 of 100 core jobs complete; the four interrupted jobs (S-Sparse 18 pruning; S-Int 19; S-Sparse 19; P0 19 KAN arm) were resumed by `reports/round12/resume_after_restart.sh` (completed cells skipped, missing cells re-run), then the workers continued with the original deadline. Resumed and later cells ran with the fixed harness. **H-R12 (confirmatory), S-Add, B2-S Cox ensemble − AFCM V3 in mean identifiable RISE (n 20):** +0.0065, 95% CI [-0.0506, +0.0635], paired-t p 0.815, Wilcoxon p 0.43, 8/12 replicates lower/higher; TOST ±0.05 p 0.0634 → **inconclusive** (D113 rule). Means: B2-S 0.1785, AFCM V3 0.1720. **Caveat (D126): AFCM V3 failed its single-seed φ₁ acceptance check CK-6c.** Sensitivity rows (not confirmatory): single-seed B2-S − AFCM V3 +0.0353, 95% CI [-0.0317, +0.1023], paired-t p 0.284, Wilcoxon p 0.123, 6/14 replicates lower/higher; B2-S − AFCM V0 -0.1793, 95% CI [-0.2232, -0.1354], paired-t p 6.2e-08, Wilcoxon p 3.81e-06, 19/1 replicates lower/higher; raw RISE +0.0056, 95% CI [-0.0532, +0.0645], paired-t p 0.843, Wilcoxon p 0.43, 8/12 replicates lower/higher; φ₁ +0.0306, 95% CI [-0.0724, +0.1335], paired-t p 0.542, Wilcoxon p 0.231, 5/15 replicates lower/higher; φ₂ -0.0176, 95% CI [-0.0356, +0.0003], paired-t p 0.0534, Wilcoxon p 0.114, 12/8 replicates lower/higher (TOST p 0.000639, equivalent). **Secondary (exploratory):** S-Add curve error B2-S − AFCM V3 +0.0011; RISE B2-S − B1-FPCA-1 -0.557 (20/0); S-Int curve error B2-deep − B2-S +0.0043 (p 0.0219), B1-FPCA-2 − B1-FPCA-1 -0.0038; S-Sparse PACE − B-spline for B2-S: RISE -0.039 (p 0.261), curve error -0.0032; flat_ae − B2-S curve error +0.0775 (0/20); S-Misspec residual-calibrated KAN-AFT − CoxKAN curve error: log-normal -0.0049 (19/1), log-logistic +0.0013. **Selection** (B2-S Cox seed 0, D120 rule): S-Add recall 0.95, FDR 0.133, patterns {'[0, 1, 0]': 2, '[1, 1, 0]': 10, '[1, 1, 1]': 8}; S-Sparse recall 0.80, FDR 0.075, patterns {'[0, 1, 0]': 7, '[0, 1, 1]': 1, '[1, 1, 0]': 9, '[1, 1, 1]': 3}. **Symbolic:** acceptance 0.64 (S-Add) / 0.67 (S-Sparse), mean validation R² 0.997; RISE after pruning 0.214, **after substitution before the refit 0.212, after the refit 1.604** (2 non-finite refits): the formulas preserve the effects and the unconstrained CoxKAN-style refit destroys them. **S-Int/P0 continuity:** fae_kan_s3 − fae_mlp_s3 survival-curve error -0.0005, 90% CI [-0.0032, +0.0023], TOST ±0.005 p 0.0049 → **equivalent** (re-confirms the Round-9 F1 finding on fresh seeds). **Open for the owner (L41):** next steps after an inconclusive H-R12 with an unvalidated comparator; whether the symbolic refit should be dropped or constrained; Round 13 (L36). | Pre-registered analysis (D113, D126) |
 | D128 | **Closing L41 (2026-10-22; owner instruction: "Proceed with closing Ledger L41 and start Round 13")** | ADOPTED (owner go-ahead; the three choices below were Claude's defaults under that instruction and were **confirmed and approved by the owner on 2026-10-22**) | **(1) H-R12** stays **inconclusive** as recorded (D127); no re-analysis and no new confirmatory test. Round 13 is exploratory throughout (D114). AFCM V3 stays in Round 13 as a baseline flagged "not validated" (CK-6c). **(2) Symbolic stage:** in Round 13 the **primary** symbolic model is the substituted model **without** the refit (Round 12: substitution kept the shapes, RISE 0.212 vs 0.214, while the unconstrained refit raised it to 1.60); the refitted variant is reported as secondary for continuity with D112. **(3) Round 13** starts on the D114 registration, with an operational plan (D129) committed before any real-data model is fitted. **Data acquired for Round 13 (fact check of D110/D114):** JM 1.5-2 from CRAN (`JM_1.5-2.tar.gz`, sha256 d2afe10c…7a8c; `data/raw/jm/`); `aids` has 467 patients and 1,405 rows (its documentation states 1,408 rows); `prothro` has 488 patients (its documentation says both 488 and 467); times in months (aids) and years (prothro). **Correction:** aids `CD4` is already on the square-root scale (non-integer values, maximum 24.1), although the documentation calls it a count, so D114's "sqrt CD4" means using the variable as provided, not transforming it again. PBC `pbcseq` (survival 3.8-12) and C-MAPSS FD001 are the Round-1 local copies. **Bookkeeping:** the Round-12 final suite (`final_full_suite_round12c`) was killed by a second container restart partway through (its partial records are kept); it is rerun as `final_full_suite_round12c_rerun`, the run that report revision 14 and its verification use. | Owner instruction; D114 |
@@ -3054,6 +3822,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -3237,6 +4006,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -3251,21 +4031,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts F–P: historical records
+# Parts G–Q: historical records
 
-Part F (round 11), Part G (round 10), Part H (round 9), Part I (round 8), Part J (round 7), Part K (round 6), Part L
-(round 5), Part M (round 4), Part N (round 3), Part O (round 2) and Part P (round 1) are regenerated from the same
+Part G (round 11), Part H (round 10), Part I (round 9), Part J (round 8), Part K (round 7), Part L (round 6), Part M
+(round 5), Part N (round 4), Part O (round 3), Part P (round 2) and Part Q (round 1) are regenerated from the same
 records. Each part renders from the test records up to its own round's final suite run. Their numbers are unchanged
 history. Embedded living documents (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part F: round-11 report (2026-10-20), historical record
+# Part G: round-11 report (2026-10-20), historical record
 
 <p class="small">Research prototype report, revision 11 · generated from saved records by
-<code>scripts/build_report_round11.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round11.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part F is round 11 (implementation and acceptance tests CK-1..CK-12, D112):
-code was written and tested; no Round-12 or Round-13 seed was used and no real data were acquired. Parts G–P are the
+publication-ready; no novelty claim</b>. Part G is round 11 (implementation and acceptance tests CK-1..CK-12, D112):
+code was written and tested; no Round-12 or Round-13 seed was used and no real data were acquired. Parts H–Q are the
 round-10 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R11-0. Round-11 summary (plain English)
@@ -3339,7 +4119,7 @@ The deviations from the reference software and the operational choices are liste
 
 ## R11.3 Acceptance-test details
 
-The registered criteria are in the design note §6 (Part G, R10.4). The operational details (splits, curve smoothing,
+The registered criteria are in the design note §6 (Part H, R10.4). The operational details (splits, curve smoothing,
 where RISE is evaluated) were fixed in `tests/test_round11.py` before the formal runs. Formal run: `round11_acceptance`
 (logs in `reports/logs/round11/`); the final suite reproduced every outcome.
 
@@ -3410,7 +4190,7 @@ second did not (0.0515).
 | D116 | **Round 11 implementation (owner: "start round 11"; 2026-10-20) and deviations from the D112 specification** | ADOPTED | **Modules:** `kanfae.survival.cox` (exact Breslow and Efron NLPL, vectorised, optional strata; Breslow baseline; S(t \| x)); `kanfae.data.fsim` (Round-12 simulator, D113 DGPs; censoring c_max calibrated once per scenario on seed 99); `kanfae.functional.pace` (PACE); `kanfae.models.fkan` (B2-H, B2-S rank 2, B2-deep, static CoxKAN / KAN-AFT heads for B1; standardised inputs; Cox/AFT losses; residual-calibrated KAN-AFT; scale-aware pruning and `select_lambda_theta`; `FKANEnsemble` = lr {1e-3, 3e-3} × wd {1e-4, 1e-3} tuning on seed 0 then seeds 0–2; symbolic stages 1–3 per edge in original units, substitution with trainable affine parameters, L-BFGS refit; `edge="linear"` option); `kanfae.models.afcm` (AFCM); `kanfae.models.lme` (LME by EM, BLUPs, `LME2Cox`); `kanfae.data.landmark` (B3 stacked builder); `kanfae.models.fbaselines` (B1-SUM summaries, last values, dense grid FPCA, `LinearCox` for fpca_cox / sum_cox / landmark_cox); `smoothing.pad_ragged`, `curves_on_grid`. Existing modules and defaults unchanged. **Deviations / operational choices (disclosed):** (1) PACE covariance bandwidth by leave-one-subject-out CV on a fixed random subsample of 2,000 raw-covariance targets (computational shortcut); σ² from a local fit quadratic perpendicular to the diagonal (Yao et al. 2003), averaged over t ∈ [0.25, 0.75]; the first version (smoothed raw diagonal minus the linear-smoother diagonal) overestimated σ² (0.288 vs 0.04 on a development check) and was replaced before any CK run. (2) AFCM: x basis on the training range of X_d with constant extrapolation; smoothing grid λ_x, λ_t ∈ {1e-4, 1e-3, 1e-2, 1e-1, 1} on the mean NLPL scale; ridge 1e-6; L-BFGS. (3) LME and AFCM are Python re-implementations (no R). (4) Pruning: every θ_rel, including 0, gets the same 200-epoch fine-tune, so that θ is compared at equal training (a pruned edge outputs 0; its mean is absorbed by the baseline (Cox) or μ (AFT) in the fine-tune). (5) B3 builder: subjects with no observation in the window are excluded (`min_obs` 1; counts reported). (6) B3 supermodel *training* and real-data runs are Round 13 work: the builder (tested, CK-9) and the stratified Cox loss and baseline (implemented; no registered acceptance test covers strata) are in place, and the supermodel is the static or functional head with t_L as an extra input. (7) CK operationalisation written in `tests/test_round11.py` before the formal runs (splits 60/20/20; dense curves by penalised B-spline smoothing with held-out-point λ; RISE at the true test curves; CK-7 on all three channels; CK-10 families with exact identities sin~cos, tanh~sigmoid). **CK-3 revision before its formal run:** the first operationalisation required stage-1 symbolic acceptance of every spline edge; on development seed 905 two of three linear effects were *not* accepted as linear (validation R² 0.9918 library, and none), so the test measured the symbolic stage rather than the Cox machinery. Revised to a CoxKAN whose edges are linear in original units, trained by the standard loop (this finding is itself reported). **Seed disclosures:** development checks used seeds 901–907 and 99; PACE was checked once on reserved unit-test seed 14 during development, before the formal CK-7 run (disclosed; CK-7's code was not changed after that check except the σ² fix above, which was made on seed 901 evidence). **Accidental formal run:** a `-k "CK1 or ..."` filter also matched CK-11, which therefore ran at its registered seed 16 during a deterministic-test session (record in `reports/logs/round11_ck.jsonl`, run id 20261020T123953); the formal run reproduced it exactly. One deterministic-test session failed on a test construction error (CK-10 called `.numpy()` on a tensor requiring grad); fixed, recorded here. | D110, D112 |
 | D117 | **Round 11 acceptance-test outcome (CK-1..CK-12)** (2026-10-20; formal run `round11_acceptance`, logs `reports/logs/round11/`; reproduced in `final_full_suite_round11`) | ADOPTED | **PASS (DET):** CK-1 (Breslow vs direct formula, Efron vs lifelines and a direct formula, < 1e-8), CK-2 (baseline vs lifelines < 1e-6), CK-4 (quadrature < 1e-3), CK-9 (landmark builder), CK-10 (sin, tanh, x² recovered by stages 1–2 with validation R² > 0.99; plus a plumbing test of model-level extraction/substitution/refit), CK-12 (BLUPs vs Henderson equations < 1e-8). **PASS (STAT):** CK-7 (PACE, seed 14: \|cos\| 0.989 / 0.997 / 0.993; mean ISE 0.200 vs 2.256 for per-subject B-spline smoothing). **FAIL (STAT), recorded, not converted:** **CK-3** (seed 11): early-stopped linear-edge CoxKAN slopes 0.759 / −0.454 / 0.322 vs lifelines 0.843 / −0.479 / 0.339, max error 0.084 > 0.05 (training stopped at epoch 294 by validation patience, before the slopes reached the partial-likelihood maximum: early stopping shrinks). **CK-5** (seed 12): B2-S Cox ensemble RISE φ₁ 0.146, φ₂ 0.686 (threshold 0.10). **CK-6** (seed 13): AFCM RISE φ₁ 0.615, φ₂ 1.095. **CK-8** (seed 15): selected channels [1, 1, 1], not [1, 1, 0]: no channel edge fell below θ_rel 0.10 at any λ; selection picked λ 1e-4, θ 0.10 (tie rule) with nothing pruned. **CK-11** (seed 16): the residual-calibrated KAN-AFT is calibrated (D-cal p 0.471 > 0.05), but the Weibull-loss AFT was not miscalibrated at the registered level (p 0.0515, not < 0.05), so the comparison the test requires did not occur. **Per D112, Round 12 does not start: these failures are reported to the owner (D118).** | Registered thresholds; never converted (D11) |
 | D118 | **Finding for the owner before Round 12: an identifiability defect in the registered S-Add design/metric** (2026-10-20; exploratory, development seed 902 and the CK-5/CK-6 seeds; `scripts/diag_round11_identifiability.py`, `scripts/explore_round11_rise.py`) | ADOPTED (finding); OWNER DECISION NEEDED | The S-Add curves are X_d(t) = 0.5 d t + Σ_k ξ_dk ψ_k(t) with Fourier ψ_k that integrate to 0 on [0, 1], so **∫X_d(t)dt is identical for every subject** (across-subject SD 1.4e-16 and 1.7e-16 vs 0.228 and 0.173 for the true ∫φ terms). Hence any component of φ_d linear in x (homogeneous case), and x·c(t) for c outside the span of the curves' variation (bivariate case), has no effect on any subject's η: the likelihood cannot see it, and only the penalty or architecture decides it. The 10 × 10 AFCM design has numerical rank 53 / 48 of 100 at relative tolerance 1e-2 (78 / 75 at 1e-4); the homogeneous 10-function design has rank 8 of 10 (partition of unity and the linear function). The registered RISE removes per-t constants but not this unidentified linear-in-x part. **Exploratory evidence (not a test; determinism check: the registered RISE values were reproduced exactly):** RISE after removing the best per-t affine function of x ("RISE-aff", which removes more than the unidentified part, so optimistic) is B2-S φ₁ 0.139, φ₂ 0.059 (seed 12); AFCM φ₁ 0.538, φ₂ 0.050 (seed 13). So φ₂'s large registered RISE is almost entirely the unidentified linear part; φ₁'s is not. **Consequence:** H-R12 (D113), which compares mean RISE on S-Add, would partly compare how the two methods fill an unidentified direction. **Options for the owner (none taken):** (a) keep the registration and report H-R12 with this caveat; (b) re-register the RISE as error modulo the unidentified subspace (for example, project out per-t affine functions of x, or the exact null space of the population design); (c) re-register the DGP so ∫X dt varies across subjects (for example, a random level ξ_d0 with a constant basis function), then re-check identifiability before any Round-12 seed is used. Also for decision: CK-3 (early stopping vs MLE), CK-8 (θ_rel grid max 0.10 never reached the null channel), CK-11 (Weibull p 0.0515). | Owner rule: report failures before Round 12; no threshold or design change without owner approval |
-| D119 | **Report revision 11 and verification (Round 11)** (2026-10-20) | ADOPTED | Report revision 11: Part A = round 11 (`reports/report_template_round11.md`, `scripts/build_report_round11.py`), Parts G–P = rounds 10–1. `scripts/verify_deliverables.py`: final run `final_full_suite_round11`; Part-A summary subsections 0.1–0.3 and sections R11.1–R11.9 required; the round-10 template values are checked as well; **the allowed final-suite failures are exactly the 4f gate's original R1 (D103) and the five registered CK failures of D117** (CK-3, CK-5, CK-6, CK-8, CK-11), so that a recorded FAIL is never hidden by an xfail marker and any other failure still fails verification. | Recorded failures stay visible |
+| D119 | **Report revision 11 and verification (Round 11)** (2026-10-20) | ADOPTED | Report revision 11: Part A = round 11 (`reports/report_template_round11.md`, `scripts/build_report_round11.py`), Parts H–Q = rounds 10–1. `scripts/verify_deliverables.py`: final run `final_full_suite_round11`; Part-A summary subsections 0.1–0.3 and sections R11.1–R11.9 required; the round-10 template values are checked as well; **the allowed final-suite failures are exactly the 4f gate's original R1 (D103) and the five registered CK failures of D117** (CK-3, CK-5, CK-6, CK-8, CK-11), so that a recorded FAIL is never hidden by an xfail marker and any other failure still fails verification. | Recorded failures stay visible |
 
 ## R11.7 Tests
 
@@ -3558,6 +4338,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -3743,6 +4524,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -3757,21 +4549,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts G–P: historical records
+# Parts H–Q: historical records
 
-Part G (round 10), Part H (round 9), Part I (round 8), Part J (round 7), Part K (round 6), Part L (round 5), Part M
-(round 4), Part N (round 3), Part O (round 2) and Part P (round 1) are regenerated from the same records. Each part
+Part H (round 10), Part I (round 9), Part J (round 8), Part K (round 7), Part L (round 6), Part M (round 5), Part N
+(round 4), Part O (round 3), Part P (round 2) and Part Q (round 1) are regenerated from the same records. Each part
 renders from the test records up to its own round's final suite run. Their numbers are unchanged history. Embedded
 living documents (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part G: round-10 report (2026-10-19), historical record
+# Part H: round-10 report (2026-10-19), historical record
 
 <p class="small">Research prototype report, revision 10 · generated from saved records by
-<code>scripts/build_report_round10.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round10.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part G is round 10 (owner decisions D110): the literature review, the design
-note and the pre-registration of Rounds 11–13. No model was fitted and no data were acquired in this round. Parts H–P
+publication-ready; no novelty claim</b>. Part H is round 10 (owner decisions D110): the literature review, the design
+note and the pre-registration of Rounds 11–13. No model was fitted and no data were acquired in this round. Parts I–Q
 are the round-9 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R10-0. Round-10 summary (plain English)
@@ -4208,7 +5000,7 @@ Unit-test seeds 11–16 are training/data seeds for tests only (never used for R
 
 | ID | Decision | Status | Content | Rationale |
 |---|---|---|---|---|
-| D110 | **Owner decisions, Round 10 (2026-10-19): Rounds 10–14 roadmap** | ADOPTED (owner) | (1) **Framing (a) + (b):** primary focus is a methods and interpretability study of **Functional CoxKAN and Functional KAN-AFT** (B1, B2, plus the stacked multi-landmark B3 on real data), evaluated against existing functional survival methods, with no novelty claim where classical functional additive models exist. Rounds 1–9 (KAN-FAE) become the motivating architectural section. (2) **Scope:** a real CoxKAN (Efron/Breslow ties, Breslow baseline, validation-tuned scale-aware pruning, 3-stage symbolic); B1 (FPCA/PACE → CoxKAN/KAN-AFT; trajectory summaries → CoxKAN/KAN-AFT); B2 (∫φ_d(X_d(t), t)dt and the homogeneous case, under the Cox and AFT losses); B3 (stacked landmark supermodel). (3) **Baselines:** fpca_cox, sum_cox/sum_aft, the additive functional Cox model of Cui, Crainiceanu & Leroux, two-stage mixed-effects + Cox and landmark Cox, sum_rsf, static CoxKAN/KAN-AFT, locked MLP-/KAN-FAE (S2, S3, Mode A). (4) **Simulation (Round 12, N ≥ 20):** S-Add (shape recovery, selection, symbolic R², survival metrics), S-Int (interaction, plus a fresh-seed re-confirmation of the frozen S3 autoencoder comparison), S-Sparse (3–8 visits; PACE vs fixed B-splines), S-Misspec (CoxKAN vs KAN-AFT with and without residual calibration). (5) **Real data (Round 13):** PBC `pbcseq` (single 730-day landmark E2/E1, and multi-landmark B3), `prothro` and/or `aids` (R package JM), C-MAPSS FD001 secondary with an AFT calibration fix; measured interpretability (split/bootstrap stability, effect plots, clinical alignment, symbolic formulas in clinical units). (6) **Round 10 itself:** literature review, design note and pre-registration of Rounds 11–13; report revision 10 (Part A = Round 10; Parts H–P = Rounds 9–1); local commits only. **Fact check:** every cited work exists as named (`docs/literature_review_round10.md`). The AFCM form ∫F(X(s), s)ds with penalised tensor-product splines is correct. `aids` and `prothro` are in JM 1.5-2 (CRAN tarball reachable); the prothro documentation is internally inconsistent (488 vs 467 patients), to be checked on acquisition. CoxKAN's published loss uses a fast approximation under ties, so the exact Efron/Breslow implementation is a deviation (an improvement) to disclose. R is not installed, so AFCM and the joint-model-style baseline will be Python re-implementations (D112). | Owner decision; facts verified |
+| D110 | **Owner decisions, Round 10 (2026-10-19): Rounds 10–14 roadmap** | ADOPTED (owner) | (1) **Framing (a) + (b):** primary focus is a methods and interpretability study of **Functional CoxKAN and Functional KAN-AFT** (B1, B2, plus the stacked multi-landmark B3 on real data), evaluated against existing functional survival methods, with no novelty claim where classical functional additive models exist. Rounds 1–9 (KAN-FAE) become the motivating architectural section. (2) **Scope:** a real CoxKAN (Efron/Breslow ties, Breslow baseline, validation-tuned scale-aware pruning, 3-stage symbolic); B1 (FPCA/PACE → CoxKAN/KAN-AFT; trajectory summaries → CoxKAN/KAN-AFT); B2 (∫φ_d(X_d(t), t)dt and the homogeneous case, under the Cox and AFT losses); B3 (stacked landmark supermodel). (3) **Baselines:** fpca_cox, sum_cox/sum_aft, the additive functional Cox model of Cui, Crainiceanu & Leroux, two-stage mixed-effects + Cox and landmark Cox, sum_rsf, static CoxKAN/KAN-AFT, locked MLP-/KAN-FAE (S2, S3, Mode A). (4) **Simulation (Round 12, N ≥ 20):** S-Add (shape recovery, selection, symbolic R², survival metrics), S-Int (interaction, plus a fresh-seed re-confirmation of the frozen S3 autoencoder comparison), S-Sparse (3–8 visits; PACE vs fixed B-splines), S-Misspec (CoxKAN vs KAN-AFT with and without residual calibration). (5) **Real data (Round 13):** PBC `pbcseq` (single 730-day landmark E2/E1, and multi-landmark B3), `prothro` and/or `aids` (R package JM), C-MAPSS FD001 secondary with an AFT calibration fix; measured interpretability (split/bootstrap stability, effect plots, clinical alignment, symbolic formulas in clinical units). (6) **Round 10 itself:** literature review, design note and pre-registration of Rounds 11–13; report revision 10 (Part A = Round 10; Parts I–Q = Rounds 9–1); local commits only. **Fact check:** every cited work exists as named (`docs/literature_review_round10.md`). The AFCM form ∫F(X(s), s)ds with penalised tensor-product splines is correct. `aids` and `prothro` are in JM 1.5-2 (CRAN tarball reachable); the prothro documentation is internally inconsistent (488 vs 467 patients), to be checked on acquisition. CoxKAN's published loss uses a fast approximation under ties, so the exact Efron/Breslow implementation is a deviation (an improvement) to disclose. R is not installed, so AFCM and the joint-model-style baseline will be Python re-implementations (D112). | Owner decision; facts verified |
 | D111 | **Literature review, Round 10 (2026-10-19): result and claim policy** | ADOPTED | Targeted (not systematic) review: 14 search strings and per-item verification (`docs/literature_review_round10.md`). **Findings:** (i) Functional-covariate survival: functional linear Cox (Gellar et al. 2015; FLCRM, Kong et al. 2018), the **additive functional Cox model** (Cui, Crainiceanu & Leroux 2021: ∫F(X(s), s)ds, penalised tensor-product splines), FGAM (McLean et al. 2014), the time-varying functional Cox (Du & Leroux 2024 preprint), PACE for sparse data (Yao, Müller & Wang 2005). (ii) Dynamic prediction: joint models (Wulfsohn & Tsiatis 1997; Tsiatis & Davidian 2004; JM, Rizopoulos 2010), landmarking (van Houwelingen 2007) and the landmark supermodel (van Houwelingen & Putter 2012), Landmarking 2.0 (Putter & van Houwelingen 2022), Dynamic-DeepHit (Lee et al. 2020), DeepONet hazard (Hu & Nan 2025 preprint), FCRN (Gao et al. 2025 preprint). (iii) KAN survival models (CoxKAN 2025; KAN-AFT 2025/26; SurvKAN 2026; KAPLAN 2026) all use **static** covariates; JM-KAN (Lundin et al. 2025, conference abstract) combines KAN, longitudinal data and yearly landmarks, but its method details are unavailable. (iv) KAN functional regression: F-KAN (Qin & Li 2026, Computational Statistics; FPC scores → KAN, scalar response); FunKAN (thesis). **Gap assessment:** the real CoxKAN is not new; B1 is a composition of published components (FLCRM/F-KAN + CoxKAN/KAN-AFT); **single-layer B2 under the Cox loss has the same model form as AFCM** and differs only in parametrisation, training, pruning, symbolic extraction and composability; an additive functional *AFT* model was not found (not proof of absence); B3 is partly covered by JM-KAN. **Claim policy:** no novelty claim. The contributions are to be stated as a pre-registered empirical comparison with AFCM and other functional methods, shape-recovery/selection/symbolic evaluation, the KAN-FAE negative result and a reproducible benchmark. "First"-type wording requires a systematic review including the full texts of JM-KAN, F-KAN, FunKAN and KAPLAN. | Owner rule: no novelty claim without a documented review |
 | D112 | **Pre-registration: Round 11, implementation and acceptance tests** (registered 2026-10-19, before any Round-11 code) | ADOPTED | Specification: `docs/design_note_round10.md` §§1–3 and §6. **New modules:** Cox partial likelihood (exact Breslow and Efron) and Breslow baseline, a CoxKAN head, scale-aware pruning (centred, layer-normalised edge scores; the grid λ {0, 1e-4, 1e-3, 1e-2} × θ_rel {0, 0.01, 0.02, 0.05, 0.10} selected by validation loss with 200-epoch masked fine-tuning), symbolic stages 1–3 (PySR on at most 10 edges carrying ≥ 5% of the score, 60 s), `kanfae.functional.pace` (PACE), `kanfae.models.fkan` (B2-H, B2-S rank 2, B2-deep), B1 heads (FPCA-1, FPCA-2, SUM), residual-calibrated KAN-AFT, the B3 stacked-landmark builder and supermodel, and baselines `afcm` (10 × 10 tensor-product cubic B-splines with difference penalties; smoothing by validation partial likelihood on a 5 × 5 grid, **instead of mgcv REML**, because R is unavailable), `lme2_cox` (random intercept + slope LME by EM, BLUPs → Cox), `landmark_cox`, static CoxKAN/KAN-AFT. **Acceptance tests CK-1..CK-12** with fixed thresholds and seeds 11–16 (design note §6); a STAT failure is recorded as FAIL, never converted. Round 12 starts only after CK-1..CK-12 have run, with any failure reported to the owner. Existing modules keep their defaults: the rounds 1–9 tests must still pass. | Owner decision D110 |
 | D113 | **Pre-registration: Round 12, simulation study** (registered 2026-10-19) | ADOPTED | Design note §4. DGPs: S-Add (φ₁(x) = sin(πx/2) homogeneous; φ₂(x, t) = tanh(x)(1 + t); channel 3 null; z effects ±0.3; Weibull PH shape 1.5), S-Int (+0.8 × a product of channel-1 and channel-2 functional summaries), S-Int/P0 (round-1 P0; fae_kan_s3 vs fae_mlp_s3), S-Sparse (S-Add with 3–8 visits), S-Misspec (AFT log-normal / log-logistic with the same additive location). n 1,000; D 3; 4-term Fourier curves with noise 0.2; about 30% censoring. **N = 20 replicates per scenario; fresh seeds** S-Add 3000–3019, S-Int 3100–3119, S-Sparse 3200–3219, S-Misspec 3300–3319, S-Int/P0 3400–3419 (verified unused in all records and code, 2026-10-19). Training ensembles of seeds 0–2. **Metrics:** survival-curve error, IBS, Harrell C, Uno C, D-calibration; RISE (density-weighted, centred) per active channel; selection recall/FDR; symbolic acceptance and R². **Single confirmatory test H-R12:** S-Add, B2-S (Cox) − afcm in mean RISE over the active channels; two-sided paired t, α 0.05, N 20. Interpretation fixed: CI < 0 means better, CI > 0 worse, CI within ±0.05 equivalent (TOST), otherwise inconclusive. **Secondary (exploratory, no multiplicity correction):** as in design note §4, including the **S-Int/P0 TOST equivalence of fae_kan_s3 vs fae_mlp_s3 in curve error, margin ±0.005**. Budget 12 h with a pre-registered drop order (B2 quantile sensitivity, S-Misspec log-logistic, flat_ae, sum_rsf); the H-R12 cells are never dropped. Every run reported. | Owner decision D110 |
@@ -4356,6 +5148,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -4541,6 +5334,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -4555,20 +5359,20 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts H–P: historical records
+# Parts I–Q: historical records
 
-Part H (round 9), Part I (round 8), Part J (round 7), Part K (round 6), Part L (round 5), Part M (round 4), Part N
-(round 3), Part O (round 2) and Part P (round 1) are regenerated from the same records. Each part renders from the test
+Part I (round 9), Part J (round 8), Part K (round 7), Part L (round 6), Part M (round 5), Part N (round 4), Part O
+(round 3), Part P (round 2) and Part Q (round 1) are regenerated from the same records. Each part renders from the test
 records up to its own round's final suite run. Their numbers are unchanged history. Embedded living documents (audit,
 ledger, decision rows, reproducibility) show their current version.
 
 
-# Part H: round-9 report (2026-10-19), historical record
+# Part I: round-9 report (2026-10-19), historical record
 
 <p class="small">Research prototype report, revision 9 · generated from saved records by
-<code>scripts/build_report_round9.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round9.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part H is round 9 (owner decisions D107, closing L32). Parts I–P are the
+publication-ready; no novelty claim</b>. Part I is round 9 (owner decisions D107, closing L32). Parts J–Q are the
 round-8 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R9-0. Round-9 summary (plain English)
@@ -4608,7 +5412,7 @@ round-8 to round-1 reports, each regenerated from its own round's records.</p>
 | The conventional MLP functional autoencoder learns the synthetic representation and survival structure (gate) | **Confirmed** under pre-registered criteria on fresh seeds (Revision 4f, round 8) |
 | **H1 (primary, confirmatory): KAN-FAE improves on a parameter-matched MLP-FAE** | **Not supported.** Under C4F the KAN arm had higher survival-curve error (R8.8, repeated below); this is the protocol's single confirmatory test |
 | KAN-fairness contrasts F1–F3 (round 9) | Exploratory, without multiplicity correction (R9.3–R9.6) |
-| H2, H3, controls, secondary settings, AB1–AB8, pruning and symbolic extraction, real data | Exploratory (Part I) |
+| H2, H3, controls, secondary settings, AB1–AB8, pruning and symbolic extraction, real data | Exploratory (Part J) |
 | Novelty | **No claim** |
 
 ### R9-0.4 Evidence, kept separate by kind
@@ -4875,7 +5679,7 @@ the conclusions only.
 
 | ID | Decision | Status | Content | Rationale |
 |---|---|---|---|---|
-| D107 | **Owner decisions, Round 9 (2026-10-19): closing L32** | ADOPTED (owner) | (1) **KAN-fairness sensitivity study** on P0 (D108). (2) **Reporting scope:** H1 under C4F (R8.8) stays the single pre-registered primary confirmatory test. The round-9 fairness contrasts F1–F3, H2, H3, controls, secondary settings, AB1–AB8, KAN-FAE pruning/symbolic extraction and the real-data runs are secondary/exploratory evidence without multiplicity correction. **No novelty claim.** (3) **PBC endpoint:** E2 (death or transplantation) stays the primary reported endpoint and E1 (death; transplantation censored) the sensitivity analysis; final clinical sign-off with the supervising professor is external to the codebase. (4) Same discipline: pre-registration committed before any fit; single-threaded; Rounds 1–8 intact; `build_report_round9.py` (Round 9 = Part A, Rounds 8–1 = Parts I–P); full suite; PDF verified; local commits only. **Fact check:** (i) fae_mlp encoder 32·64 + 64 + 64·16 + 16 = 3,152 and decoder 16·64 + 64 + 64·36 + 36 = 3,428, total 6,580; the single KAN encoder layer 32 → 16 (grid 5, order 3) has 5,136; the D31 decoder 16 → 3 → 36 has 1,599, total 6,735 (+2.4%). All correct (`kan_match`, `mlp_block_params`). (ii) R8.9 controls (untuned C4F): S3 KAN/MLP C 0.8656 / 0.8669, curve error 0.0922 / 0.0933; S1 KAN 0.7438 vs MLP 0.8274. Correct. The bottleneck explanation for S1 is the owner's hypothesis; round 9 tests it only indirectly (Mode B). (iii) **PBC invariance, qualified:** the *conclusions* are the same under E1 and E2. KAN-AFT vs linear AFT: \|ΔC\| ≤ 0.003, with no consistent sign (`reports/kanaft_pbc.jsonl`). fae_kan vs fae_mlp: every Nadeau–Bengio CI includes 0 (D106). The *point estimates* are not invariant: KAN-AFT − linear Harrell C is −0.0031 (E1) vs +0.0004 (E2), and IBS +0.0017 vs −0.0005. The ledger records invariance at the conclusion level only. | Owner decision; facts verified, one qualified |
+| D107 | **Owner decisions, Round 9 (2026-10-19): closing L32** | ADOPTED (owner) | (1) **KAN-fairness sensitivity study** on P0 (D108). (2) **Reporting scope:** H1 under C4F (R8.8) stays the single pre-registered primary confirmatory test. The round-9 fairness contrasts F1–F3, H2, H3, controls, secondary settings, AB1–AB8, KAN-FAE pruning/symbolic extraction and the real-data runs are secondary/exploratory evidence without multiplicity correction. **No novelty claim.** (3) **PBC endpoint:** E2 (death or transplantation) stays the primary reported endpoint and E1 (death; transplantation censored) the sensitivity analysis; final clinical sign-off with the supervising professor is external to the codebase. (4) Same discipline: pre-registration committed before any fit; single-threaded; Rounds 1–8 intact; `build_report_round9.py` (Round 9 = Part A, Rounds 8–1 = Parts J–Q); full suite; PDF verified; local commits only. **Fact check:** (i) fae_mlp encoder 32·64 + 64 + 64·16 + 16 = 3,152 and decoder 16·64 + 64 + 64·36 + 36 = 3,428, total 6,580; the single KAN encoder layer 32 → 16 (grid 5, order 3) has 5,136; the D31 decoder 16 → 3 → 36 has 1,599, total 6,735 (+2.4%). All correct (`kan_match`, `mlp_block_params`). (ii) R8.9 controls (untuned C4F): S3 KAN/MLP C 0.8656 / 0.8669, curve error 0.0922 / 0.0933; S1 KAN 0.7438 vs MLP 0.8274. Correct. The bottleneck explanation for S1 is the owner's hypothesis; round 9 tests it only indirectly (Mode B). (iii) **PBC invariance, qualified:** the *conclusions* are the same under E1 and E2. KAN-AFT vs linear AFT: \|ΔC\| ≤ 0.003, with no consistent sign (`reports/kanaft_pbc.jsonl`). fae_kan vs fae_mlp: every Nadeau–Bengio CI includes 0 (D106). The *point estimates* are not invariant: KAN-AFT − linear Harrell C is −0.0031 (E1) vs +0.0004 (E2), and IBS +0.0017 vs −0.0005. The ledger records invariance at the conclusion level only. | Owner decision; facts verified, one qualified |
 | D108 | **Pre-registration: KAN-fairness sensitivity study (Round 9)** (registered 2026-10-19, before any fairness fit) | ADOPTED | **Mechanisms** (defaults unchanged): `dec_block="mlp"` (**Mode B**) gives fae_kan the MLP decoder [16, 64, 36] (3,428 parameters, the same architecture as fae_mlp's) and keeps the C4F single-layer KAN encoder (5,136; its initialisation is bit-identical to C4F fae_kan's); encoder + decoder 8,564, i.e. +30% vs fae_mlp, so Mode B is decoder-matched, not total-matched (disclosed). `kan_dec="single"` (**Mode A**) gives fae_kan a single-layer KAN decoder 16 → 36 (5,796; no hidden width below r), total 10,932. **fae_mlp_wide** = fae_mlp with hidden width 107 (encoder + decoder 10,966, +0.3% vs Mode A; widths 100–110 span 10,252–11,272, and 107 is the closest). Tests FC-1..FC-5 pass (`reports/logs/fc_tests_dev2.log`; a first run failed on a construction error in FC-2's setup, `fc_tests_dev.log`, kept). `runner.reconstruction_eval`: test reconstruction error = individual-weighted MSE of the objective-state model on the observed test points (standardised scale), averaged over ensemble members. **Cells** (`scripts/run_kan_fairness.py`; P0, replicates 1000–1004, n 1000; C4F; protocol 2.1 tuning lr {1e-3, 3e-3} × wd {1e-4, 1e-3} at seed 0 by validation IBS; seeds 1–2 of the selected configuration; primary = 3-seed ensemble on test; single-threaded): arms mlp, kan, kan_shared (Mode B), kan_unb (Mode A), mlp_wide, each under **S2** and **S3** (10 cells). The mlp/kan S2 cells repeat H1 exactly (same data, configuration and tuning) in order to add reconstruction error. Their survival metrics must be bit-identical to the H1 records (a determinism check); if they are not, the H1 records are used for the survival metrics and the discrepancy is reported. **Contrasts** (paired over the 5 replicates; mean, SD, 95% t-CI df 4, paired-t p, exact Wilcoxon p, sign counts; metrics curve error, IBS, Harrell C, Uno C, D-calibration p, test reconstruction): **F1** kan(S3) − mlp(S3). **F2** kan_shared − mlp under S2 and S3, and kan_shared − kan under S2 and S3 (bottleneck effect within KAN). **F3** kan_unb − mlp_wide under S2 and S3. Supplementary: S3 − S2 within each arm. All are exploratory, without multiplicity correction (D107); H1 stays the only confirmatory test. Results in `reports/round9/*.jsonl`; analysis `scripts/analyse_round9.py`. | Owner decision D107 |
 | D109 | **Outcome: KAN-fairness sensitivity study (Round 9)** (2026-10-19; lanes 07:28–08:58 UTC; 400 runs, all ok) | ADOPTED | **Determinism:** the repeated mlp/kan S2 cells reproduce the round-8 H1 records bit for bit (survival metrics, ensembles and all per-seed records). **F1** (tuned S3, D31 matching), kan − mlp: curve error −0.0001 [−0.0030, +0.0028], Harrell C +0.0005 [−0.0032, +0.0042], IBS −0.0023 [−0.0069, +0.0023]. **No survival difference: the H1 deficit vanishes under S3.** KAN's test reconstruction is much worse: 0.532 vs 0.102, +0.429 [+0.136, +0.723], 5/5. **F2** (Mode B, shared MLP decoder): kan_shared − mlp curve error +0.0050 [−0.0008, +0.0108] (S2) and **+0.0061 [+0.0018, +0.0105] (S3, 5/5)**. kan_shared − kan: −0.0028 [−0.0064, +0.0008] (S2) and **+0.0062 [+0.0032, +0.0092] (S3, 5/5)**. Reconstruction improves strongly with the MLP decoder (−0.162 S2, −0.398 S3, 5/5 each). So removing the bottleneck fixes reconstruction but does not make the KAN encoder match the MLP on survival; under S3 it makes survival slightly worse. **F3** (Mode A, single-layer KAN decoder vs wide MLP, parameter-matched): curve error +0.0055 [−0.0004, +0.0114] (S2; KAN worse 5/5, exact Wilcoxon p 0.0625) and −0.0020 [−0.0070, +0.0031] (S3); Harrell C −0.0048 (S2) and +0.0012 (S3), CIs include 0. Under S3, reconstruction is worse for KAN (+0.085 [+0.050, +0.120]) and its D-calibration p lower (−0.306 [−0.544, −0.068]). **S3 − S2** lowers curve error in every arm: −0.0077 mlp, −0.0156 kan, −0.0066 kan_shared, −0.0130 kan_unb, −0.0056 mlp_wide; the CI excludes 0 in all but kan_shared. **Reading:** (i) the round-8 H1 deficit is a training-strategy effect, not a decoder-bottleneck effect. Removing the bottleneck under S2 narrows the curve-error gap from +0.0078 to +0.0050/+0.0055 without closing it, while S3 closes it with or without the bottleneck. (ii) In no arm or strategy is KAN better than the MLP on survival with a CI excluding 0. (iii) The bottleneck severely limits reconstruction (KAN D31 decoder 0.31–0.53 vs 0.12–0.16 for the unbottlenecked KAN decoders), consistent with the owner's S1 hypothesis (D107) for the reconstruction path. All exploratory, without multiplicity correction; H1 (R8.8) remains the only confirmatory test (D107). | Results as obtained; none omitted |
 
@@ -5014,6 +5818,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -5197,6 +6002,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -5211,20 +6027,20 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts I–P: historical records
+# Parts J–Q: historical records
 
-Part I (round 8), Part J (round 7), Part K (round 6), Part L (round 5), Part M (round 4), Part N (round 3), Part O
-(round 2) and Part P (round 1) are regenerated from the same records. Each part renders from the test records up to
+Part J (round 8), Part K (round 7), Part L (round 6), Part M (round 5), Part N (round 4), Part O (round 3), Part P
+(round 2) and Part Q (round 1) are regenerated from the same records. Each part renders from the test records up to
 its own round's final suite run. Their numbers are unchanged history. Embedded living documents (audit, ledger,
 decision rows, reproducibility) show their current version.
 
 
-# Part I: round-8 report (2026-10-18), historical record
+# Part J: round-8 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 8 · generated from saved records by
-<code>scripts/build_report_round8.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round8.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no novelty claim</b>. Part I is round 8 (owner decisions D99). Parts J–P are the round-7 to round-1
+publication-ready; no novelty claim</b>. Part J is round 8 (owner decisions D99). Parts K–Q are the round-7 to round-1
 reports, each regenerated from its own round's records.</p>
 
 ## R8-0. Round-8 summary (plain English)
@@ -5886,6 +6702,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -6071,6 +6888,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -6085,21 +6913,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts J–P: historical records
+# Parts K–Q: historical records
 
-Part J (round 7), Part K (round 6), Part L (round 5), Part M (round 4), Part N (round 3), Part O (round 2) and Part P
+Part K (round 7), Part L (round 6), Part M (round 5), Part N (round 4), Part O (round 3), Part P (round 2) and Part Q
 (round 1) are regenerated from the same records. Each part renders from the test records up to its own round's final
 suite run. Their numbers are unchanged history. Embedded living documents (audit, ledger, decision rows,
 reproducibility) show their current version.
 
 
-# Part J: round-7 report (2026-10-18), historical record
+# Part K: round-7 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 7 · generated from saved records by
-<code>scripts/build_report_round7.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round7.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part J is round 7 (owner decisions D91).
-Parts K–P are the round-6 to round-1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part K is round 7 (owner decisions D91).
+Parts L–Q are the round-6 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R7-0. Round-7 summary (plain English)
 
@@ -6548,6 +7376,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -6733,6 +7562,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -6747,21 +7587,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts K–P: historical records
+# Parts L–Q: historical records
 
-Part K (round 6), Part L (round 5), Part M (round 4), Part N (round 3), Part O (round 2) and Part P (round 1) are
+Part L (round 6), Part M (round 5), Part N (round 4), Part O (round 3), Part P (round 2) and Part Q (round 1) are
 regenerated from the same records. Each part renders from the test records up to its own round's final suite run.
 Their numbers are unchanged history; their conclusions on R2 are superseded by Part A. Embedded living documents
 (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part K: round-6 report (2026-10-18), historical record
+# Part L: round-6 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 6 · generated from saved records by
-<code>scripts/build_report_round6.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round6.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part K is round 6 (owner decisions D86).
-Parts L–P are the round-5 to round-1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part L is round 6 (owner decisions D86).
+Parts M–Q are the round-5 to round-1 reports, each regenerated from its own round's records.</p>
 
 ## R6-0. Round-6 summary (plain English)
 
@@ -7092,6 +7932,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -7277,6 +8118,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -7291,21 +8143,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts L–P: historical records
+# Parts M–Q: historical records
 
-Part L (round 5), Part M (round 4), Part N (round 3), Part O (round 2) and Part P (round 1) are regenerated from the
+Part M (round 5), Part N (round 4), Part O (round 3), Part P (round 2) and Part Q (round 1) are regenerated from the
 same records. Each part renders from the test records up to its own round's final suite run. Their numbers are
 unchanged history; their conclusions on R2 are superseded by Part A. Embedded living documents (audit, ledger,
 decision rows, reproducibility) show their current version.
 
 
-# Part L: round-5 report (2026-10-18), historical record
+# Part M: round-5 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 5 · generated from saved records by
-<code>scripts/build_report_round5.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round5.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part L is round 5 (owner decisions D80).
-Parts M–P are the round-4, 3, 2 and 1 reports, each regenerated from its own round's records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part M is round 5 (owner decisions D80).
+Parts N–Q are the round-4, 3, 2 and 1 reports, each regenerated from its own round's records.</p>
 
 ## R5-0. Round-5 summary (plain English)
 
@@ -7708,6 +8560,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -7893,6 +8746,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -7907,21 +8771,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts M–P: historical records
+# Parts N–Q: historical records
 
-Part M (round 4), Part N (round 3), Part O (round 2) and Part P (round 1) are regenerated from the same records. Each
+Part N (round 4), Part O (round 3), Part P (round 2) and Part Q (round 1) are regenerated from the same records. Each
 part renders from the test records up to its own round's final suite run. Their numbers are unchanged history;
 their conclusions on R2 are superseded by Part A. Embedded living documents (audit, ledger, decision rows,
 reproducibility) show their current version.
 
 
-# Part M: round-4 report (2026-10-18), historical record
+# Part N: round-4 report (2026-10-18), historical record
 
 <p class="small">Research prototype report, revision 4 · generated from saved records by
-<code>scripts/build_report_round4.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round4.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part M is round 4 (owner decisions D67–D69).
-Parts N–P are the round-3, round-2 and round-1 reports, kept unchanged as historical records.</p>
+publication-ready; no successful KAN-FAE model; no novelty claim</b>. Part N is round 4 (owner decisions D67–D69).
+Parts O–Q are the round-3, round-2 and round-1 reports, kept unchanged as historical records.</p>
 
 ## R4-0. Round-4 summary (plain English)
 
@@ -8404,6 +9268,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -8589,6 +9454,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -8603,21 +9479,21 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts N–P: historical records (round 3, 2, 1)
+# Parts O–Q: historical records (round 3, 2, 1)
 
-Part N (round 3), Part O (round 2) and Part P (round 1) are regenerated from the same records, with their sections
+Part O (round 3), Part P (round 2) and Part Q (round 1) are regenerated from the same records, with their sections
 numbered R3.x, R2.x and R1.x. Their numbers are unchanged history; their conclusions on R2 are superseded by Part A.
 Test counts quoted in their summaries are those of each round's own final suite run. Embedded living documents
 (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part N: round-3 report (2026-10-17), historical record
+# Part O: round-3 report (2026-10-17), historical record
 
 <p class="small">Research prototype report, revision 3 · generated from saved records by
-<code>scripts/build_report_round3.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round3.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready</b> · <b>no novelty claim</b>. Part N is round 3 (owner decisions D57–D59, frequency-aware
-representation, revised gate). Parts O and P are the round-2 and round-1 reports, kept as historical records;
+publication-ready</b> · <b>no novelty claim</b>. Part O is round 3 (owner decisions D57–D59, frequency-aware
+representation, revised gate). Parts P and Q are the round-2 and round-1 reports, kept as historical records;
 where they disagree, Part A supersedes them.</p>
 
 ## R3-0. Round-3 summary (plain English)
@@ -9214,6 +10090,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -9399,6 +10276,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -9413,22 +10301,22 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 
 
 
-# Parts O and P: historical records (round 2, round 1)
+# Parts P and Q: historical records (round 2, round 1)
 
-In this revision, Part O is the round-2 report and Part P, nested at its end, is the round-1 report. Both are regenerated from the
+In this revision, Part P is the round-2 report and Part Q, nested at its end, is the round-1 report. Both are regenerated from the
 same records, with their sections renumbered R2.x and R1.x. Their conclusions on R2 are superseded by Part A; their
 tables and numbers are unchanged history. Test counts quoted in their summaries are those of each round's own final
 full-suite run. Embedded living documents (audit, ledger, decision rows, reproducibility) show their current version.
 
 
-# Part O: round-2 report (2026-10-17), historical record
+# Part P: round-2 report (2026-10-17), historical record
 
 <p class="small">Research prototype report, revision 2 · generated from saved records by
-<code>scripts/build_report_round2.py</code> · git <code>11fa635</code> (local branch
+<code>scripts/build_report_round2.py</code> · git <code>5ec6014</code> (local branch
 <code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype, not
-publication-ready</b> · <b>no novelty claim</b> (see I.3). Part O (sections R2.x) covers round 2 (reference-based audit, failure
-recovery, symbolic extraction). Part P (sections R1.x) is the round-1 report, kept as the historical record; where the two
-disagree, Part P supersedes it.</p>
+publication-ready</b> · <b>no novelty claim</b> (see I.3). Part P (sections R2.x) covers round 2 (reference-based audit, failure
+recovery, symbolic extraction). Part Q (sections R1.x) is the round-1 report, kept as the historical record; where the two
+disagree, Part Q supersedes it.</p>
 
 ## R2-0. Final summary (plain English)
 
@@ -10024,7 +10912,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 - With 5 splits and 22 (E1) or 27 (E2) test events per split, the KAN-AFT and linear AFT cannot be told apart. The
   sign of the difference varies between splits.
 - No superiority is claimed in either direction.
-- The round-1 baselines (Part PP, §II.10.4) used different (summary) features, so they are not a like-for-like
+- The round-1 baselines (Part QQ, §II.10.4) used different (summary) features, so they are not a like-for-like
   comparison.
 
 ## R2.8 C-MAPSS FD003 (real simulated turbofan data; RUL benchmark; baselines; D51)
@@ -10068,7 +10956,7 @@ The diagnostic below (D54, registered before running; not used for selection) ex
 | KM null (reference) | 0.382 ± 0.203 | 0.500 ± 0.000 | 105.3 ± 36.7 | 103.5 ± 7.6 | 53 ± 2 | 5 |
 
 Summary + AFT diverged in all 15 of its records under artificial censoring (recorded with status "diverged"), as it
-did on FD001 (Part PP, §II.10.3.3), so it has no row above. Every failed and diverged record is kept in
+did on FD001 (Part QQ, §II.10.3.3), so it has no row above. Every failed and diverged record is kept in
 `reports/experiment_results.csv`.
 
 ## R2.9 Interval (integer-cycle) likelihood (L14)
@@ -10242,6 +11130,7 @@ statuses come from `reports/FINAL_STATUS.md` (commit `a918a56`) and the gate re-
 | L39 | Owner decision: AFCM comparator not validated (CK-6b FAIL, D121) before H-R12 / Round 12 | NEW (D121) | D121 | – | – | **DECIDED (D123)**; CK-7b PASS, CK-6c FAIL (D124) | – | |
 | L40 | Owner decision: AFCM comparator still not validated (CK-6c FAIL, φ₁ 0.247; D124) before H-R12 / Round 12 | NEW (D124) | D124 | – | – | **DECIDED (D126)**: Round 12 with AFCM flagged | – | |
 | L41 | Owner decisions after Round 12: inconclusive H-R12 with an unvalidated comparator; symbolic refit (substitution preserves shapes, the unconstrained refit destroys them); Round 13 go-ahead | NEW (D127) | D127 | – | – | **DECIDED (D128)** | – | |
+| L42 | Round 15 (Phase-2 methods): symbolic_distill, landmark-anchored functional CoxKAN, afcm_ens; CK-6d | NEW (D133) | owner approval of the D133 registration and the AFCM option (C1/C2/C3) | anchored vs residual design (dry run); REML/Laplace for AFCM | dry run done (`docs/round15_dryrun.md`) | **DONE (D136)**: H-R15a and H-R15b not supported under their registered rules (one non-finite refit; validation-chosen mu; gate false all-off on 4 S-Sparse replicates); S-Last part of H-R15b holds; seed 24 unused | `reports/round15_summary.json`, `docs/round15_outcome.md` | AFCM still not validated; distillation with a fixed large mu and a NaN-safe refit, and a less conservative gate, are untested candidates |
 
 
 
@@ -10451,6 +11340,17 @@ setsid nohup env KANFAE_RUN_ID=final_full_suite_round14_rerun2 scripts/run_logge
 .venv/bin/python scripts/build_report_round14.py              # report revision 16 (Part A = the manuscript)
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev16.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+### Round 15 (2026-10-24/25; owner D133/D134): Phase-2 methods (code default-off), dry run on development seeds only
+R15_OUT=reports/round15/dev/results_lane1.jsonl .venv/bin/python scripts/run_round15.py --job distill_S-Add_961   # etc.; see D133
+R15_ANCHORED=1 R15_GATE=cv .venv/bin/python scripts/run_round15.py --job res_dev_real_965 --job afcmlaml_22       # D134 checks
+.venv/bin/python scripts/analyse_round15_dev.py                     # reports/round15/dev_summary.json, dev_tables.md
+for k in 1 2 3 4; do scripts/run_logged.sh r15_lane$k .venv/bin/python scripts/run_round15_lanes.py --lane $k & done   # 80 jobs
+scripts/run_logged.sh round15_analysis .venv/bin/python scripts/analyse_round15.py   # reports/round15_summary.json
+.venv/bin/python scripts/diag_round15_3515.py                       # post-hoc diagnosis (exploratory)
+KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_round15 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 ### report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 ### report (round 2 part + round 1 part)
@@ -10570,7 +11470,7 @@ are in `reports/logs/*.log`. The resumable narrative log is `reports/logs/execut
 | E2 | 4 | age | library | `-0.617361*gaussian(0.998016*x + -2.11707) + 0.193193` | 5 | 0.9967 | 0.9966 | 0.9959 | 0.0087 | 0.0523 | [-2.10, 2.76] |
 | E2 | 4 | sex(f=1) | linear | `0.0955712*x + 0.0403551` | 1 | 1.0000 | 1.0000 | 0.4907 | 0.0000 | 0.2197 | [-2.97, 0.34] |
 
-# Part P: round-1 report (2026-10-16), historical record
+# Part Q: round-1 report (2026-10-16), historical record
 
 The text below is the round-1 report, regenerated from the same records. Its gate and baseline sections are
 unchanged history. Its "unfinished work" items are now tracked in the ledger (I.12), and its R2 conclusion is
@@ -10578,7 +11478,7 @@ superseded by I.1.
 
 
 <p class="small">Research prototype report · generated 2026-10-16 from saved results by <code>scripts/build_report.py</code> ·
-git <code>11fa635</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
+git <code>5ec6014</code> (local branch <code>claude/blissful-faraday-2unozw</code>, not pushed) · status:
 <b>research prototype, not publication-ready</b> · no novelty claim is made.</p>
 
 ## R1.1 Executive summary (plain English)

@@ -3,7 +3,7 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "11fa635ad4b4b22a4ec863cf3285ba73050f2464",
+  "head": "5ec60141c302183a5003ae9fac1f54da5049fc48",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
@@ -2717,6 +2717,276 @@
    "elapsed_s": 70.034,
    "git_head": "11fa635",
    "log": "reports/logs/round14_build_pdf.log"
+  },
+  {
+   "name": "round14_build_manifest",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-23T19:46:39Z",
+   "end_utc": "2026-10-23T19:46:43Z",
+   "elapsed_s": 3.229,
+   "git_head": "11fa635",
+   "log": "reports/logs/round14_build_manifest.log"
+  },
+  {
+   "name": "round14_verify",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-23T19:46:43Z",
+   "end_utc": "2026-10-23T19:46:56Z",
+   "elapsed_s": 13.511,
+   "git_head": "11fa635",
+   "log": "reports/logs/round14_verify.log"
+  },
+  {
+   "name": "r15_dev_lane4",
+   "command": ".venv/bin/python scripts/run_round15.py --job afcm_914 --job afcm_22 --job afcm_966",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T09:40:59Z",
+   "end_utc": "2026-10-24T10:02:25Z",
+   "elapsed_s": 1285.994,
+   "git_head": "499c722",
+   "log": "reports/logs/r15_dev_lane4.log"
+  },
+  {
+   "name": "r15_dev_lane2",
+   "command": ".venv/bin/python scripts/run_round15.py --job distill_S-Sparse_962",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T09:40:59Z",
+   "end_utc": "2026-10-24T10:02:36Z",
+   "elapsed_s": 1296.287,
+   "git_head": "499c722",
+   "log": "reports/logs/r15_dev_lane2.log"
+  },
+  {
+   "name": "r15_dev_lane1",
+   "command": ".venv/bin/python scripts/run_round15.py --job distill_S-Add_961",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T09:40:59Z",
+   "end_utc": "2026-10-24T10:05:15Z",
+   "elapsed_s": 1455.844,
+   "git_head": "499c722",
+   "log": "reports/logs/r15_dev_lane1.log"
+  },
+  {
+   "name": "r15_dev_lane3",
+   "command": ".venv/bin/python scripts/run_round15.py --job res_S-Last_963 --job res_S-Sparse_964 --job res_dev_real_965",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T09:40:59Z",
+   "end_utc": "2026-10-24T10:05:34Z",
+   "elapsed_s": 1474.745,
+   "git_head": "499c722",
+   "log": "reports/logs/r15_dev_lane3.log"
+  },
+  {
+   "name": "r15_dev_followup_lane3",
+   "command": ".venv/bin/python scripts/run_round15.py --job res_dev_real_965",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T11:43:11Z",
+   "end_utc": "2026-10-24T11:46:23Z",
+   "elapsed_s": 191.826,
+   "git_head": "2b77487",
+   "log": "reports/logs/r15_dev_followup_lane3.log"
+  },
+  {
+   "name": "r15_dev_followup_lane4",
+   "command": ".venv/bin/python scripts/run_round15.py --job afcmpars_914 --job afcmpars_22 --job afcmpars_966",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T11:43:11Z",
+   "end_utc": "2026-10-24T11:47:29Z",
+   "elapsed_s": 258.361,
+   "git_head": "2b77487",
+   "log": "reports/logs/r15_dev_followup_lane4.log"
+  },
+  {
+   "name": "r15_dev_followup_lane1",
+   "command": ".venv/bin/python scripts/run_round15.py --job res_S-Last_963",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T11:43:11Z",
+   "end_utc": "2026-10-24T11:52:00Z",
+   "elapsed_s": 529.358,
+   "git_head": "2b77487",
+   "log": "reports/logs/r15_dev_followup_lane1.log"
+  },
+  {
+   "name": "r15_dev_followup_lane2",
+   "command": ".venv/bin/python scripts/run_round15.py --job res_S-Sparse_964",
+   "exit_code": 0,
+   "start_utc": "2026-10-24T11:43:11Z",
+   "end_utc": "2026-10-24T11:58:06Z",
+   "elapsed_s": 894.653,
+   "git_head": "f180351",
+   "log": "reports/logs/r15_dev_followup_lane2.log"
+  },
+  {
+   "name": "r15_dev_check_lane3",
+   "command": ".venv/bin/python scripts/run_round15.py --job afcmlaml_966",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:05:00Z",
+   "end_utc": "2026-10-25T10:07:42Z",
+   "elapsed_s": 161.781,
+   "git_head": "accd680",
+   "log": "reports/logs/r15_dev_check_lane3.log"
+  },
+  {
+   "name": "r15_dev_check_lane4",
+   "command": ".venv/bin/python scripts/run_round15.py --job res_dev_real_965",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:05:00Z",
+   "end_utc": "2026-10-25T10:13:54Z",
+   "elapsed_s": 533.823,
+   "git_head": "accd680",
+   "log": "reports/logs/r15_dev_check_lane4.log"
+  },
+  {
+   "name": "r15_dev_check_lane2",
+   "command": ".venv/bin/python scripts/run_round15.py --job afcmlaml_914 --job res_S-Last_963",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:05:00Z",
+   "end_utc": "2026-10-25T10:28:54Z",
+   "elapsed_s": 1434.352,
+   "git_head": "accd680",
+   "log": "reports/logs/r15_dev_check_lane2.log"
+  },
+  {
+   "name": "r15_dev_check_lane1",
+   "command": ".venv/bin/python scripts/run_round15.py --job afcmlaml_22 --job res_S-Sparse_964",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:05:00Z",
+   "end_utc": "2026-10-25T10:44:43Z",
+   "elapsed_s": 2383.029,
+   "git_head": "accd680",
+   "log": "reports/logs/r15_dev_check_lane1.log"
+  },
+  {
+   "name": "r15_lane1",
+   "command": ".venv/bin/python scripts/run_round15_lanes.py --lane 1",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:51:04Z",
+   "end_utc": "2026-10-25T16:29:55Z",
+   "elapsed_s": 20331.353,
+   "git_head": "b8e8fc8",
+   "log": "reports/logs/r15_lane1.log"
+  },
+  {
+   "name": "r15_lane2",
+   "command": ".venv/bin/python scripts/run_round15_lanes.py --lane 2",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:51:04Z",
+   "end_utc": "2026-10-25T16:31:00Z",
+   "elapsed_s": 20396.12,
+   "git_head": "b8e8fc8",
+   "log": "reports/logs/r15_lane2.log"
+  },
+  {
+   "name": "r15_lane4",
+   "command": ".venv/bin/python scripts/run_round15_lanes.py --lane 4",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:51:04Z",
+   "end_utc": "2026-10-25T16:31:17Z",
+   "elapsed_s": 20413.268,
+   "git_head": "b8e8fc8",
+   "log": "reports/logs/r15_lane4.log"
+  },
+  {
+   "name": "r15_lane3",
+   "command": ".venv/bin/python scripts/run_round15_lanes.py --lane 3",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T10:51:04Z",
+   "end_utc": "2026-10-25T16:32:04Z",
+   "elapsed_s": 20460.88,
+   "git_head": "b8e8fc8",
+   "log": "reports/logs/r15_lane3.log"
+  },
+  {
+   "name": "round15_analysis",
+   "command": ".venv/bin/python scripts/analyse_round15.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T16:33:10Z",
+   "end_utc": "2026-10-25T16:33:11Z",
+   "elapsed_s": 1.192,
+   "git_head": "b8e8fc8",
+   "log": "reports/logs/round15_analysis.log"
+  },
+  {
+   "name": "round15_diag_3515",
+   "command": ".venv/bin/python scripts/diag_round15_3515.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T16:33:44Z",
+   "end_utc": "2026-10-25T16:53:02Z",
+   "elapsed_s": 1157.711,
+   "git_head": "0012322",
+   "log": "reports/logs/round15_diag_3515.log"
+  },
+  {
+   "name": "final_full_suite_round15",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-25T17:21:36Z",
+   "end_utc": "2026-10-25T18:34:01Z",
+   "elapsed_s": 4344.214,
+   "git_head": "5ec6014",
+   "log": "reports/logs/final_full_suite_round15.log"
+  },
+  {
+   "name": "round15_compile_test_results",
+   "command": ".venv/bin/python scripts/compile_test_results.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:35:07Z",
+   "end_utc": "2026-10-25T18:35:07Z",
+   "elapsed_s": 0.085,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_compile_test_results.log"
+  },
+  {
+   "name": "round15_build_report",
+   "command": ".venv/bin/python scripts/build_report_round15.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:35:07Z",
+   "end_utc": "2026-10-25T18:35:10Z",
+   "elapsed_s": 3.139,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_build_report.log"
+  },
+  {
+   "name": "round15_build_pdf",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:35:10Z",
+   "end_utc": "2026-10-25T18:36:06Z",
+   "elapsed_s": 55.352,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_build_pdf.log"
+  },
+  {
+   "name": "round15_build_manifest",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:36:06Z",
+   "end_utc": "2026-10-25T18:36:08Z",
+   "elapsed_s": 2.629,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_build_manifest.log"
+  },
+  {
+   "name": "round15_verify",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:36:08Z",
+   "end_utc": "2026-10-25T18:36:21Z",
+   "elapsed_s": 12.841,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_verify.log"
+  },
+  {
+   "name": "round15_build_pdf_toc",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:36:36Z",
+   "end_utc": "2026-10-25T18:37:29Z",
+   "elapsed_s": 52.813,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_build_pdf_toc.log"
   }
  ],
  "deliverables": {
