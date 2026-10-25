@@ -160,14 +160,19 @@ class FKANSurv:
         self._finalise(train)
         return self
 
-    def refit_symbolic(self, max_iter=500, anchor=None, mu=0.0):
+    def refit_symbolic(self, max_iter=500, anchor=None, mu=0.0, safe=False):
         """CoxKAN-style refit after substitution: all remaining parameters (including the substituted formulas'
         affine parameters) by L-BFGS on the unpenalised training loss, then the baseline is re-estimated.
         D133 (Round 15) option: with `anchor` (the pruned model before substitution) and mu > 0, the objective adds
         mu * sum over anchored terms of mean((term - term_anchor)^2) / var(term_anchor) on the training inputs
-        (functional distillation, see anchor_terms); val_loss stays the unpenalised validation loss."""
+        (functional distillation, see anchor_terms); val_loss stays the unpenalised validation loss.
+        safe (D138, Round 16; default False): if the refit leaves any parameter or the objective non-finite, or does not
+        lower the training objective it minimises, every parameter is restored to its pre-refit value (the guarded
+        substituted model); self.refit_fallback records whether this happened."""
         dd = self.data
         params = self._params()
+        if safe:
+            snap = [q.detach().clone() for q in params]
         opt = torch.optim.LBFGS(params, lr=1.0, max_iter=max_iter, tolerance_grad=1e-10, tolerance_change=1e-14,
                                 history_size=50, line_search_fn="strong_wolfe")
         ref = None
@@ -175,17 +180,33 @@ class FKANSurv:
             with torch.no_grad():
                 ref = [(r.detach().clone(), max(float(r.var()), 1e-8)) for r in anchor_terms(anchor.net, dd["Xtr"], dd["Ztr"])]
 
-        def closure():
-            opt.zero_grad()
+        def objective():
             loss = self._loss(self.net(dd["Xtr"], dd["Ztr"]), dd["ytr"], dd["dtr"], dd["str"])
             if ref is not None:
                 cur = anchor_terms(self.net, dd["Xtr"], dd["Ztr"])
                 loss = loss + mu * sum(((c - r) ** 2).mean() / v for c, (r, v) in zip(cur, ref))
+            return loss
+
+        def closure():
+            opt.zero_grad()
+            loss = objective()
             loss.backward()
             return loss
 
+        if safe:
+            with torch.no_grad():
+                obj0 = float(objective())                 # objective before the refit
         opt.step(closure)
         loss = closure()
+        self.refit_fallback = False
+        if safe:
+            ok = np.isfinite(float(loss.detach())) and all(bool(torch.isfinite(q).all()) for q in params)
+            if not ok or not float(loss.detach()) < obj0:
+                with torch.no_grad():
+                    for q, s in zip(params, snap):
+                        q.copy_(s)
+                self.refit_fallback = True
+                loss = closure()
         self.refit_grad_norm = float(torch.sqrt(sum((q.grad ** 2).sum() for q in params if q.grad is not None)))
         self.refit_train_loss = float(self._loss(self.net(dd["Xtr"], dd["Ztr"]), dd["ytr"], dd["dtr"], dd["str"]).detach())
         self.refit_objective = float(loss.detach())
@@ -512,7 +533,7 @@ def _edge_inputs(model):
 
 
 @torch.no_grad()
-def symbolic_edges(model, use_pysr=False, pysr_timeout=60, max_pysr=10, min_share=0.05, seed=0):
+def symbolic_edges(model, use_pysr=False, pysr_timeout=60, max_pysr=10, min_share=0.05, seed=0, max_abs_arg=None):
     """Fit stages 1-2 (and, if use_pysr, stage 3 on edges with >= min_share of the layer's total centred score, at
     most max_pysr per model) to every active edge, in original input units. Returns a list of records."""
     from ..symbolic.fit import fit_symbolic
@@ -538,7 +559,8 @@ def symbolic_edges(model, use_pysr=False, pysr_timeout=60, max_pysr=10, min_shar
                 return layer.edge_activations(full)[:, i, o].numpy()
 
             pysr_ok = use_pysr and sh >= min_share and n_pysr < max_pysr
-            res = fit_symbolic(xo, yv, func, seed=seed, use_pysr=pysr_ok, pysr_budget={"timeout": pysr_timeout})
+            res = fit_symbolic(xo, yv, func, seed=seed, use_pysr=pysr_ok, pysr_budget={"timeout": pysr_timeout},
+                               max_abs_arg=max_abs_arg)
             n_pysr += int(pysr_ok and res.stage in ("pysr", "none"))
             recs.append(dict(layer=name, i=i, o=o, share=sh, offset=off, scale=scl, result=res))
     return recs

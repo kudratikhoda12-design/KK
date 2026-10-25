@@ -46,13 +46,31 @@ def _gate(m, theta, train, epochs):
     return m
 
 
+def choose_gate(losses, thetas, tol=0.01, rule="parsimonious"):
+    """Index of the chosen gate setting. "parsimonious" (D133): the largest theta (all off counts as the largest) whose
+    loss is within tol of the minimum. "noncliff" (D138, Round 16): the same rule restricted to the settings that keep
+    at least one functional channel (theta in THETAS_D120; their tolerance stays tol), and "all off" only if its loss is
+    strictly below the best of those settings (tolerance 0), so the gate removes every trajectory channel only when
+    the trajectory part makes the validation loss worse."""
+    if rule == "parsimonious":
+        vmin = min(losses)
+        return max((i for i, v in enumerate(losses) if v <= vmin + tol), key=lambda i: thetas[i])
+    on = [i for i, th in enumerate(thetas) if th != ALL_OFF]
+    off = [i for i, th in enumerate(thetas) if th == ALL_OFF]
+    vmin = min(losses[i] for i in on)
+    k = max((i for i in on if losses[i] <= vmin + tol), key=lambda i: thetas[i])
+    if off and losses[off[0]] < vmin:
+        return off[0]
+    return k
+
+
 class ResFKAN:
     """b2s_res_cox: FKANEnsemble (D112 protocol) on residual inputs, then the validation gate."""
 
     def __init__(self, thetas=THETAS_D120, tol=0.01, fine_tune_epochs=200, lrs=(1e-3, 3e-3), wds=(1e-4, 1e-3),
-                 seeds=(0, 1, 2), residual=True, gate="split", cv_folds=5, **kw):
+                 seeds=(0, 1, 2), residual=True, gate="split", cv_folds=5, gate_rule="parsimonious", **kw):
         self.thetas, self.tol, self.ft, self.residual = tuple(thetas) + (ALL_OFF,), tol, fine_tune_epochs, residual
-        self.gate, self.cv_folds, self.kw = gate, cv_folds, kw
+        self.gate, self.cv_folds, self.kw, self.gate_rule = gate, cv_folds, kw, gate_rule
         self.ens_kw = dict(lrs=lrs, wds=wds, seeds=seeds, kind="b2s", loss="cox", **kw)
 
     def fit(self, train, val):
@@ -72,9 +90,7 @@ class ResFKAN:
             for g, s in zip(self.gate_grid, cvs):
                 g["cv_loss"] = s
             score = "cv_loss"
-        vmin = min(g[score] for g in self.gate_grid)
-        ok = [i for i, g in enumerate(self.gate_grid) if g[score] <= vmin + self.tol]
-        k = max(ok, key=lambda i: self.thetas[i])
+        k = choose_gate([g[score] for g in self.gate_grid], self.thetas, self.tol, self.gate_rule)
         self.gate_grid[k]["chosen"] = True
         mask = cand[k].net.g.mask.clone()
         self.residual_on = self.gate_grid[k]["residual_on"]

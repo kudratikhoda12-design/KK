@@ -125,9 +125,12 @@ def _evaluate(pred, x_fit, y_fit, x_val, y_val, x_grid, y_grid):
                 rmse_val=float(np.sqrt(np.mean((y_val - pv) ** 2))), maxabs_grid=float(np.max(np.abs(y_grid - pg))))
 
 
-def fit_symbolic(x, y, func, seed=0, use_pysr=True, pysr_budget=None, val_frac=0.3):
+def fit_symbolic(x, y, func, seed=0, use_pysr=True, pysr_budget=None, val_frac=0.3, max_abs_arg=None):
     """x, y: samples of the learned function on its training inputs; func: callable giving the learned function
-    exactly (used for a dense held-out grid over [min x, max x]). Returns SymbolicResult."""
+    exactly (used for a dense held-out grid over [min x, max x]). Returns SymbolicResult.
+    max_abs_arg (D138, Round 16; default None = off): a library candidate c f(a x + b) + d whose inner argument
+    |a x + b| exceeds this bound anywhere on [min x, max x] is rejected as degenerate (for example
+    softplus(205 x + 384), a step disguised as a smooth formula)."""
     x, y = np.asarray(x, float), np.asarray(y, float)
     rng = np.random.default_rng(seed)
     idx = rng.permutation(len(x))
@@ -153,6 +156,8 @@ def fit_symbolic(x, y, func, seed=0, use_pysr=True, pysr_budget=None, val_frac=0
         tried += 1
         if p is None:
             continue
+        if max_abs_arg is not None and np.max(np.abs(p[0] * np.array(rng_x) + p[1])) > max_abs_arg:
+            continue                                       # degenerate inner argument (D138)
         ev2 = _evaluate(_predictor(name, f, p), x[f_], y[f_], x[v], y[v], x_grid, y_grid)
         if ev2:
             cands.append((name, comp, p, ev2))
