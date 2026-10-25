@@ -42,8 +42,16 @@ W.LITERALS += [
     ("10", "smooth cap 10 above", D, "smooth cap 10 above"),
     ("3", "3–8 visits", D, "3–8 visits"), ("8", "3–8 visits", D, "3–8 visits"),
     ("40", "all 40 distillation refits", D, "all 40 distillation refits"),
-    ("5", "5 folds", D, "5 folds"),
+    ("1", "sqrt or 1/x", D, "1/x"), ("1", "X₁(1)/2", D, "X_1(1)/2"), ("2", "X₁(1)/2", D, "X_1(1)/2"),
+    ("1.5", "1.5 tanh", D, "1.5 tanh"), ("1", "tanh(X₂(1))", D, "tanh(X_2(1))"),
+    ("20", "over 20 replicates per scenario", D, "N = 20 replicates per scenario"),
+    ("22", "improved seed 22", D, "seed 22"), ("914", "seeds 914 and 966", D, "seed 914"),
+    ("966", "seeds 914 and 966", D, "seed 966"), ("24", "Seed 24 was", D, "seed 24"),
+    ("3515", "seed 3515", D, "S-Add 3515"), ("0.1", "chose μ = 0.1", D, "mu 0.1"),
+    ("95", "upper 95% bound", CONV, None), ("95", "has a 95% CI entirely", CONV, None),
 ]
+# "Phase 1" / "Phase 2" are labels, like "Round 12"
+W.SKIP_LABEL = re.compile(W.SKIP_LABEL.pattern.replace("(?:Tables?|", "(?:Phases?|Tables?|"))
 for _ph in ("S-Add 3500–3519", "S-Sparse 3600–3619", "S-Last 3700–3719", "S-Add **3800–3819**", "S-Sparse **3900–3919**",
             "S-Last **4000–4019**", "seeds 22, 914, 966", "seed 24"):
     _ctx = _ph.replace("**", "")
@@ -51,9 +59,9 @@ for _ph in ("S-Add 3500–3519", "S-Sparse 3600–3619", "S-Last 3700–3719", "
         W.LITERALS.append((_tok, _ctx, D, _ph))
 W.BUILDER_LITERALS += [
     ("0.05", "(rule: < +0.05)", D, "< +0.05"), ("0.005", "(rule: < +0.005)", D, "< +0.005"),
-    ("0", "(rule: below 0)", CONV, None), ("95", "95% bound", CONV, None), ("95", "95% CI, (rule", CONV, None),
+    ("0", "(rule: below 0)", CONV, None), ("95", "95% bound", CONV, None), ("95", "95% CI (rule", CONV, None),
     ("3", "3-resample bag", D, "3-resample"), ("10", "μ = 10", D, "mu = 10"),
-    ("0.15", "(rule: φ₁ < 0.15, φ₂ < 0.10)", D, "phi_1 < 0.15"), ("0.10", "(rule: φ₁ < 0.15, φ₂ < 0.10)", D, "phi_2 < 0.10"),
+    ("0.15", "rule: φ₁ < 0.15, φ₂ < 0.10)", D, "phi_1 < 0.15"), ("0.10", "rule: φ₁ < 0.15, φ₂ < 0.10)", D, "phi_2 < 0.10"),
 ]
 FIGURES = W.FIGURES
 

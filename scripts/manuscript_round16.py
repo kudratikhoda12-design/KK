@@ -81,13 +81,18 @@ def t_anchor():
     return md_table(["Model (survival-curve error, mean over replicates)", "Round 15", "Round 16"], rows)
 
 
+NAMES = {"b2s_anchor_cox_noncliff - b2s_cox": "anchored (non-cliff gate) − B2-S Cox",
+         "b2s_anchor_cox_noncliff - landmark_cox": "anchored (non-cliff gate) − landmark Cox",
+         "b2s_anchor_cox_noncliff - b2s_anchor_cox_d133": "anchored, non-cliff − D133 gate"}
+
+
 def t_anchor_contrasts():
     rows = []
     for kind, lab in (("last", "S-Last"), ("sparse", "S-Sparse")):
         b = f"{S16}/family_b/{kind}/contrasts"
         for k in ("b2s_anchor_cox_noncliff - b2s_cox", "b2s_anchor_cox_noncliff - landmark_cox",
                   "b2s_anchor_cox_noncliff - b2s_anchor_cox_d133"):
-            rows.append(prow(f"R16 {lab}: {k.replace(' - ', ' − ')}", f"{b}/{k}"))
+            rows.append(prow(f"R16 {lab}: {NAMES[k]}", f"{b}/{k}"))
     rows += [[f"R16 {lab}: replicates with every trajectory channel off (non-cliff / D133 gate)",
               f"{V(f'{S16}/family_b/{k}/gate_all_off/b2s_anchor_cox_noncliff', 'd')} / {V(f'{S16}/family_b/{k}/gate_all_off/b2s_anchor_cox_d133', 'd')}",
               "", "", "", ""] for k, lab in (("last", "S-Last"), ("sparse", "S-Sparse"))]
