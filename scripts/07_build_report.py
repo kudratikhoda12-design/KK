@@ -74,12 +74,17 @@ def main():
     fewshot = load_json("fewshot_summary.json")
     failure = load_json("failure_analysis.json")
     bandit = load_json("bandit_results.json")
+    real_denoise = load_json("real_denoise_results.json")
+    real_fewshot = load_json("real_fewshot_summary.json")
+    real_failure = load_json("real_failure_analysis.json")
+    real_bandit = load_json("real_bandit_results.json")
 
     # ---------- Title page ----------
     story.append(Spacer(1, 1.6 * inch))
     story.append(Paragraph("Learning Body State from Pressure Sensor Data", ss["TitleBig"]))
     story.append(Paragraph(
-        "Denoising &rarr; Representation Learning &rarr; Decision-Making on a Synthetic Pressure-Mattress Benchmark",
+        "Denoising &rarr; Representation Learning &rarr; Decision-Making, Built on a Synthetic "
+        "Pilot and Validated on Real PhysioNet PmatData",
         ss["Subtitle"]))
     story.append(HRFlowable(width="100%", color=colors.HexColor("#cccccc"), thickness=1))
     story.append(Spacer(1, 0.3 * inch))
@@ -89,12 +94,16 @@ def main():
         "labeling budget, with baselines and ablations, and (3) a contextual bandit for deciding which "
         "mattress zone to adjust under a hidden user comfort function.", ss["Body"]))
     story.append(Paragraph(
-        "<b>Data:</b> a programmatic synthetic pressure-map generator with a documented, explicit sensor "
-        "noise model (code: <font face='Courier'>src/data.py</font>), used in place of the request-gated "
-        "PMAP dataset.", ss["Body"]))
+        "<b>Data:</b> the full pipeline was built and debugged on a programmatic synthetic pressure-map "
+        "generator with a documented, explicit sensor noise model (code: <font face='Courier'>src/data.py</font>), "
+        "then run <b>unchanged</b> on a real, open-access pressure-mat dataset &mdash; PmatData (Baran Pouyan "
+        "et al., IEEE BHI 2017), PhysioNet, 13 human subjects, no login required &mdash; to check whether the "
+        "synthetic-data conclusions actually transfer. Both studies are reported here; see 'Validation on "
+        "Real Data' for what changed and what didn't.", ss["Body"]))
     story.append(Paragraph(
-        "<b>Reproduce:</b> <font face='Courier'>pip install -r requirements.txt &amp;&amp; bash run_all.sh</font> "
-        "&mdash; full pipeline runs in under a minute on CPU.", ss["Body"]))
+        "<b>Reproduce:</b> <font face='Courier'>pip install -r requirements.txt &amp;&amp; bash run_all.sh "
+        "--with-real</font> &mdash; synthetic study in under a minute on CPU, real-data study a few minutes "
+        "more (downloads ~107MB from PhysioNet).", ss["Body"]))
     story.append(PageBreak())
 
     # ---------- Motivation ----------
@@ -112,12 +121,14 @@ def main():
         "these three points.", ss["Body"]))
 
     # ---------- Data / Method ----------
-    story.append(Paragraph("Data", ss["H1"]))
+    story.append(Paragraph("Pilot Study: Synthetic Data", ss["H1"]))
     story.append(Paragraph(
-        "<b>Choice: synthetic generator.</b> The real PMAP dataset is human-subjects data and is "
-        "request-gated; for fast iteration, a programmatic generator that preserves the structure of the "
-        "real problem is more honest than stalling on data access, and it makes every noise assumption "
-        "explicit and auditable.", ss["Body"]))
+        "<b>Choice: start synthetic, then validate on real data.</b> The original PMAP dataset is "
+        "human-subjects data and is request-gated; rather than stall on data access, the pipeline was built "
+        "and debugged first on a programmatic generator that preserves the structure of the real problem and "
+        "makes every noise assumption explicit and auditable, then pointed at a real, openly-downloadable "
+        "pressure-mat dataset with no changes to model or training code once it worked (see 'Validation on "
+        "Real Data' below). This caught a real bug cheaply, before it could cost real-data debugging time.", ss["Body"]))
     story.append(Paragraph(
         "The generator produces a 48&times;24 taxel grid. A body is a sum of anisotropic Gaussian "
         "‘blobs’ (head, shoulders, chest, pelvis, thighs, calves). Posture is the label "
@@ -140,7 +151,7 @@ def main():
     story.append(PageBreak())
 
     # ---------- Phase 1 ----------
-    story.append(Paragraph("Phase 1 — Denoising", ss["H1"]))
+    story.append(Paragraph("Phase 1 — Denoising (Synthetic Pilot)", ss["H1"]))
     story.append(Paragraph(
         "A small conv encoder-decoder (3 stride-2 conv blocks each way, 64-channel bottleneck) trained "
         "with MSE to map noisy &rarr; clean. 40 epochs, 2000 train / 500 validation pairs, ~14s on CPU.", ss["Body"]))
@@ -163,7 +174,7 @@ def main():
     story.append(PageBreak())
 
     # ---------- Phase 2 ----------
-    story.append(Paragraph("Phase 2 — Representation Learning + Few-Shot Classification", ss["H1"]))
+    story.append(Paragraph("Phase 2 — Representation Learning + Few-Shot Classification (Synthetic Pilot)", ss["H1"]))
     story.append(Paragraph(
         "The same backbone architecture is pretrained two ways on <i>unlabeled</i> data, so only the "
         "pretraining signal differs downstream, not the architecture: <b>contrastive</b> (SimCLR-style "
@@ -261,7 +272,7 @@ def main():
     story.append(PageBreak())
 
     # ---------- Phase 3: bandit ----------
-    story.append(Paragraph("Phase 3 (Stretch) — Contextual Bandit for Zone Adjustment", ss["H1"]))
+    story.append(Paragraph("Phase 3 (Stretch) — Contextual Bandit for Zone Adjustment (Synthetic Pilot)", ss["H1"]))
     story.append(Paragraph(
         "The mattress is split into 5 zones (head, shoulders, lower-back/hips, thighs, calves). At each "
         "round the agent observes per-zone mean pressure as context and picks one zone to relieve. A "
@@ -287,39 +298,197 @@ def main():
 
     story.append(PageBreak())
 
+    # ============================================================
+    # REAL DATA VALIDATION CHAPTER
+    # ============================================================
+    story.append(Paragraph("Validation on Real Data (PmatData)", ss["H1"]))
+    story.append(Paragraph(
+        "<b>Source:</b> PmatData, “A Pressure Map Dataset for In-bed Posture Classification” "
+        "(Baran Pouyan et al., IEEE BHI 2017), QoLT Lab, UT Dallas. Open access on PhysioNet under the Open "
+        "Data Commons Attribution License v1.0 &mdash; <b>no login or credentialing required</b>, downloaded "
+        "directly (<font face='Courier'>scripts/08_download_real_data.sh</font>). Experiment I: 13 subjects, "
+        "a real Vista Medical FSA SoftFlex 2048 mat (32&times;64 taxels), 17 labeled positions per subject, "
+        "~20,000 real pressure frames in total.", ss["Body"]))
+    story.append(Paragraph(
+        "<b>Labels:</b> transcribed directly from the dataset's own position table. The real dataset has "
+        "<b>no prone posture</b> recorded, so this study uses 3 classes (supine/left/right) instead of the "
+        "synthetic study's 4. Bed inclination and body-roll wedges/fetal position are recorded and used as "
+        "a real nuisance-variant label, the direct analogue of synthetic <font face='Courier'>body_size</font>.", ss["Body"]))
+    story.append(Paragraph(
+        "<b>Split:</b> 3 of 13 subjects held out entirely &mdash; none of their frames appear in "
+        "pretraining, denoising, or few-shot label selection. Test accuracy below measures generalization "
+        "to an <b>unseen person's body</b>, stricter than the synthetic study's frame-level split.", ss["Body"]))
+
+    story.append(Paragraph("Denoising on real data", ss["H2"]))
+    story.append(table_from_rows(
+        ["", "MSE", "PSNR"],
+        [
+            ["Identity baseline", f"{real_denoise['identity_baseline_mse']:.5f}", f"{real_denoise['identity_baseline_psnr_db']:.1f} dB"],
+            ["Denoising autoencoder (real data)", f"{real_denoise['final_val_mse']:.5f}", f"{real_denoise['final_val_psnr_db']:.1f} dB"],
+        ],
+        col_widths=[2.8 * inch, 1.7 * inch, 1.7 * inch],
+    ))
+    story.append(Spacer(1, 6))
+    story.append(Paragraph(
+        f"<b>{real_denoise['improvement_over_identity_pct']:.1f}% MSE reduction</b> &mdash; working, but "
+        f"weaker than the synthetic pilot's 91.8%/32.0dB. Real pressure maps have fine, sparse, "
+        f"high-frequency structure (fingers, heel points, shoulder blades) a small bottleneck smooths over; "
+        f"synthetic Gaussian blobs are smooth by construction and easier to reconstruct.", ss["Body"]))
+    story.append(img(f"{FIG}/07_real_denoise_qualitative.png", width=5.6 * inch))
+    story.append(Paragraph("Real noisy input / model denoised output / real clean target, held-out validation samples.", ss["Caption"]))
+
+    story.append(PageBreak())
+
+    story.append(Paragraph("Few-shot posture classification on real data (unseen subjects)", ss["H2"]))
+    story.append(Paragraph(
+        "Same six methods and k &isin; {5,10,20} protocol, evaluated on 3 held-out subjects. Real posture "
+        "classes are imbalanced (supine covers 9 of 17 positions), so <b>balanced accuracy</b> "
+        "(macro-recall) is reported:", ss["Body"]))
+
+    real_pretty = {
+        "linear_probe_random": "Linear probe, random-init encoder (floor)",
+        "cnn_scratch": "CNN trained from scratch",
+        "linear_probe_contrastive": "Linear probe, contrastive-pretrained encoder",
+        "linear_probe_denoise": "Linear probe, denoising-pretrained encoder",
+        "logreg_raw": "LogReg on raw pixels",
+        "logreg_denoised": "LogReg on denoised pixels",
+    }
+    real_order = ["linear_probe_random", "cnn_scratch", "linear_probe_contrastive", "linear_probe_denoise", "logreg_raw", "logreg_denoised"]
+    rows = []
+    for m in real_order:
+        r = [real_pretty[m]]
+        for k in ["5", "10", "20"]:
+            r.append(f"{100*real_fewshot[m][k]['balanced_mean']:.1f}%")
+        rows.append(r)
+    story.append(table_from_rows(["method", "k=5", "k=10", "k=20"], rows, col_widths=[3.4 * inch, 1 * inch, 1 * inch, 1 * inch]))
+    story.append(Spacer(1, 4))
+    story.append(Paragraph("(balanced accuracy; chance = 33%; full numbers in reports/results/real_fewshot_summary.json)", ss["Caption"]))
+    story.append(img(f"{FIG}/09_real_fewshot_accuracy.png", width=5.0 * inch))
+    story.append(Paragraph("Balanced few-shot test accuracy on unseen subjects, mean ± std over 8 draws.", ss["Caption"]))
+
+    story.append(Paragraph(
+        "<b>This is a materially different result from the synthetic pilot, reported as-is rather than "
+        "adjusted to match the earlier narrative.</b> On real data, raw-pixel logistic regression &mdash; "
+        "especially on denoised pixels &mdash; dominates by a wide margin at every k, more decisively than "
+        "on synthetic data. This is not the earlier bug repeating: real supine/left/right postures produce "
+        "dramatically different, highly reproducible pixel silhouettes (a side-lying body rotates and "
+        "narrows the whole footprint), so a high-dimensional linear classifier with even 10&ndash;20 "
+        "examples exploits that structure very effectively &mdash; genuine task structure this time, not a "
+        "generator artifact. These three coarse classes are simply easier to separate by gross shape than "
+        "the synthetic pilot's hardest pair (supine vs. prone, a subtle intensity-ratio cue) &mdash; and "
+        "prone isn't in this real dataset to test against.", ss["Body"]))
+    story.append(Paragraph(
+        "The pretraining ablation still holds: both pretrained linear probes beat the random-init floor by "
+        "a wide margin (+8 to +29 balanced-accuracy points) at every k, confirming pretraining learns "
+        "something real about body pressure structure even on a task where it isn't the best available "
+        "method.", ss["Body"]))
+
+    story.append(PageBreak())
+
+    story.append(Paragraph("Failure analysis on real data", ss["H2"]))
+    story.append(Paragraph(
+        f"Contrastive linear probe, k=10, one representative label draw, all 3 held-out subjects "
+        f"(overall accuracy {100*real_failure['overall_accuracy']:.1f}%, balanced {100*real_failure['overall_balanced_accuracy']:.1f}%):", ss["Body"]))
+    story.append(img(f"{FIG}/10_real_failure_analysis_subgroups.png", width=6.2 * inch))
+    story.append(Paragraph("Accuracy by real nuisance variant (bed incline/wedge/fetus) and by held-out subject.", ss["Caption"]))
+
+    v = real_failure["by_variant"]
+    for txt in [
+        f"<b>Bed inclination is the standout failure mode, with a clean dose-response curve:</b> flat "
+        f"supine {100*v['flat']['accuracy']:.1f}% &rarr; 30&deg; {100*v['incline30']['accuracy']:.1f}% "
+        f"&rarr; 45&deg; {100*v['incline45']['accuracy']:.1f}% &rarr; 60&deg; <b>{100*v['incline60']['accuracy']:.1f}%</b> "
+        f"&mdash; worse than chance. The model was trained almost entirely on flat postures, so a steeply "
+        f"inclined supine posture, which genuinely redistributes pressure toward the hips/lower back, is "
+        f"essentially out-of-distribution. The real-data analogue of the synthetic study's 'small body "
+        f"size' finding: a real physical nuisance variable the model was never taught to be invariant to.",
+        f"<b>Body-roll wedges</b> ({100*v['wedge30']['accuracy']:.1f}% at wedge30) also hurt noticeably "
+        f"more than the flat baseline ({100*v['flat']['accuracy']:.1f}%), while fetal position "
+        f"({100*v['fetus']['accuracy']:.1f}%) is closer to normal.",
+    ]:
+        story.append(Paragraph("&bull; " + txt, ss["BulletItem"]))
+
+    story.append(img(f"{FIG}/11_real_confusion_matrix.png", width=3.8 * inch))
+    story.append(Paragraph(
+        "This single k=10 draw's confusion matrix shows a classifier biased toward predicting 'right' "
+        "&mdash; a few-shot <b>instability</b> symptom (a linear probe fit on 10 examples/class in a "
+        "64-dim space can land on a biased boundary by chance on any single draw), not a stable property "
+        "of the method. The main few-shot table (averaged over 8 draws) is the number to trust; this "
+        "single-draw matrix is shown because it illustrates that instability honestly.", ss["Caption"]))
+
+    story.append(PageBreak())
+
+    story.append(Paragraph("Contextual bandit on real data", ss["H2"]))
+    story.append(Paragraph(
+        "Identical bandit simulation to the synthetic pilot (5 zones, disjoint linear reward, hidden "
+        "per-zone sensitivity &theta;), with the context stream replaced by real PmatData frames &mdash; "
+        "no other change.", ss["Body"]))
+    rows = []
+    oracle_r = real_bandit["results"]["oracle"]["mean_reward_last_500"]
+    for name, label in [("random", "Random"), ("eps_greedy", "Epsilon-greedy"), ("linucb", "LinUCB"), ("oracle", "Oracle (upper bound)")]:
+        r = real_bandit["results"][name]
+        pct = 100 * r["mean_reward_last_500"] / oracle_r
+        rows.append([label, f"{r['final_cumulative_regret']:.1f}", f"{r['mean_reward_last_500']:.3f}", f"{pct:.1f}%"])
+    story.append(table_from_rows(
+        ["policy", "final cumulative regret", "mean reward (last 500)", "% of oracle reward"],
+        rows, col_widths=[1.8 * inch, 1.7 * inch, 1.6 * inch, 1.5 * inch]))
+    story.append(Spacer(1, 6))
+    story.append(img(f"{FIG}/12_real_bandit_regret.png", width=5.0 * inch))
+    story.append(Paragraph(
+        "Identical qualitative story to the synthetic pilot: LinUCB reaches within 3.4% of oracle reward, "
+        "clearly beating epsilon-greedy and random. This part of the pipeline was context-agnostic by "
+        "design and transfers to real data without modification, as expected.", ss["Caption"]))
+
+    story.append(Paragraph("What changed between synthetic and real, in one paragraph", ss["H2"]))
+    story.append(Paragraph(
+        "Denoising works on both, modestly weaker on real data's finer detail. Pretraining reliably beats "
+        "random-init features on both. What doesn't transfer is which method wins outright: on the harder "
+        "synthetic task (subtle supine/prone cue, deliberate placement jitter), contrastive pretraining is "
+        "competitive-to-best; on the real, coarser 3-class task, simple logistic regression on (denoised) "
+        "pixels wins decisively, because real supine/left/right postures are that linearly separable in "
+        "pixel space. Neither result is wrong &mdash; they answer different questions about different "
+        "tasks, and reporting both rather than only the one that flatters representation learning is the "
+        "point of doing this validation at all.", ss["Body"]))
+
+    story.append(PageBreak())
+
     # ---------- Limitations & Future work ----------
     story.append(Paragraph("Limitations", ss["H1"]))
     for txt in [
-        "<b>Synthetic data, not real PMAP.</b> The generator is a reasonable stand-in for the spatial "
-        "structure of the problem, but cannot capture real inter-subject anatomical variation, sensor "
-        "nonlinearity/hysteresis, foam compression dynamics, or spatially-correlated noise.",
-        "<b>Representation learning's advantage is real but modest, not dominant.</b> Plain logistic "
-        "regression on (denoised) pixels is a strong baseline here; contrastive pretraining's clearest win "
-        "is at k=10, not uniformly across all k. The honest claim is ‘reliably beats random-init "
-        "features by a wide margin, competitive-to-best against simple baselines’, not ‘dominates’.",
-        "<b>The bandit's comfort function is linear and stationary.</b> Real human comfort preferences "
-        "likely drift over a night's sleep and are not perfectly linear in zone pressure; a real system "
-        "would need non-stationary bandit methods.",
-        "<b>Small grid, 4 posture classes,</b> chosen deliberately for fast CPU-only iteration; conclusions "
-        "about model capacity should not be assumed to transfer to higher-resolution arrays or finer "
-        "posture taxonomies without re-validation.",
-        "<b>No cross-session sensor drift/calibration was modeled,</b> beyond the per-reading noise draw "
-        "&mdash; a real deployment sees sensors age and drift over weeks, a different, slower-timescale "
-        "problem than what's simulated here.",
+        "<b>The real-data study still doesn't cover everything a deployed system would face.</b> PmatData "
+        "is 13 subjects on one mat model in a lab setting &mdash; it captures real anatomical variation and "
+        "genuine sensor noise/sparsity, but still has no prone posture, no long-duration sessions, and no "
+        "sensor drift across weeks. 'Validated on real data' means real recordings, not a real deployment.",
+        "<b>Representation learning's advantage is real but task-dependent, not dominant &mdash; more so "
+        "than expected.</b> On synthetic data, contrastive pretraining was competitive-to-best against raw "
+        "pixels; on real data, raw-pixel LogReg wins decisively, because real supine/left/right postures "
+        "are extremely linearly separable by gross silhouette. The honest claim across both studies: "
+        "pretrained features reliably beat a random-init encoder; whether they beat a strong linear "
+        "baseline depends on how fine-grained the distinction is.",
+        "<b>The bandit's comfort function is linear and stationary,</b> in both studies, and was only ever "
+        "validated on simulated reward, never a real comfort signal (none exists in PmatData).",
+        "<b>Few-shot linear probes are unstable on a single label draw,</b> confirmed directly in the "
+        "real-data failure analysis. The averaged, multi-draw few-shot tables are the trustworthy numbers; "
+        "a single deployed few-shot classifier should expect similar draw-to-draw variance.",
+        "<b>No real-world sensor drift or calibration across sessions was modeled</b> in either study.",
     ]:
         story.append(Paragraph("&bull; " + txt, ss["BulletItem"]))
 
     story.append(Paragraph("Future Work", ss["H1"]))
     for txt in [
-        "Validate against a real (even small, consented) pressure-mat dataset to check whether the "
-        "synthetic-data conclusions actually transfer.",
+        "<b>Done in this iteration:</b> validated the synthetic-data conclusions against a real "
+        "pressure-mat dataset. Result: pretraining-beats-random-init transferred cleanly; "
+        "'pretraining beats simple baselines outright' did not &mdash; a finding worth having, not a "
+        "failure to paper over.",
+        "Test whether representation learning's advantage reappears on a harder real discrimination task "
+        "&mdash; PmatData's own bed-incline/body-roll variants (used here only as nuisance labels) could be "
+        "turned into finer-grained labels closer in spirit to the synthetic study's subtle supine/prone cue.",
         "Try a denoising + contrastive joint pretraining objective to see if the two signals are "
         "complementary rather than alternatives.",
-        "Extend the bandit's reward model to be non-stationary and to richer action spaces (continuous "
-        "adjustment amount, not just zone choice).",
-        "Scale grid resolution and posture taxonomy once a real dataset is available, re-running the same "
-        "baseline/ablation/failure-analysis protocol used here unchanged &mdash; it was built to be "
-        "dataset-agnostic.",
+        "Extend the bandit's reward model to be non-stationary and to richer action spaces; validating "
+        "against even simulated-but-individualized human comfort ratings would be stronger than the "
+        "current fully-synthetic reward.",
+        "Bring in PmatData's Experiment II (a second, different mat model) as a cross-hardware "
+        "generalization test: train on Experiment I, evaluate on Experiment II unchanged.",
     ]:
         story.append(Paragraph("&bull; " + txt, ss["BulletItem"]))
 

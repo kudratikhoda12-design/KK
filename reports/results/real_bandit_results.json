@@ -1,0 +1,40 @@
+{
+  "zones": [
+    "head",
+    "shoulders",
+    "lower_back_hips",
+    "thighs",
+    "calves"
+  ],
+  "T": 3000,
+  "theta_sensitivities": [
+    1.660934072833945,
+    1.1583176596280784,
+    1.7878968798670738,
+    1.546052043589046,
+    0.6412660218314743
+  ],
+  "results": {
+    "random": {
+      "final_cumulative_regret": 232.5275380882951,
+      "mean_reward": 0.03609725715732181,
+      "mean_reward_last_500": 0.041317369873560196
+    },
+    "eps_greedy": {
+      "final_cumulative_regret": 30.907331366388128,
+      "mean_reward": 0.10330399273129075,
+      "mean_reward_last_500": 0.10274144338140778
+    },
+    "linucb": {
+      "final_cumulative_regret": 24.347875341752342,
+      "mean_reward": 0.10549047807283601,
+      "mean_reward_last_500": 0.10994133150786092
+    },
+    "oracle": {
+      "final_cumulative_regret": 0.0,
+      "mean_reward": 0.11360643652008681,
+      "mean_reward_last_500": 0.11376428422587953
+    }
+  },
+  "context_source": "real PmatData train-subject frames"
+}

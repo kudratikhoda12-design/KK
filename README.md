@@ -1,29 +1,49 @@
 # Learning Body State from Pressure Sensor Data
 
-A small research-style project on pressure-mattress sensor data: denoise raw
+A research-style project on pressure-mattress sensor data: denoise raw
 readings, learn a representation with limited labels, and act on the result
-with a contextual bandit. Built end-to-end on **synthetic** data (see
-[Data](#step-1--data) for why), with the same rigor the real PMAP dataset
-would demand: documented noise model, baselines, ablations, and an honest
-failure analysis.
+with a contextual bandit. The full pipeline (denoising &rarr; representation
+learning &rarr; few-shot classification &rarr; bandit) was built and
+validated on **synthetic data first** (documented noise model, baselines,
+ablations, honest failure analysis), then run **unchanged** on a **real**
+pressure-mat dataset: **PmatData** &mdash; "A Pressure Map Dataset for
+In-bed Posture Classification" (Baran Pouyan et al., IEEE BHI 2017),
+open-access on [PhysioNet](https://physionet.org/content/pmd/1.0.0/), real
+recordings from 13 human subjects. See [Validation on Real
+Data](#validation-on-real-data-pmatdata) for the real-data results, and
+[Step 1](#step-1--data-synthetic-pilot) for why the project started
+synthetic before moving to real data.
 
 ```
-src/data.py            synthetic pressure-map generator + sensor noise model
-src/models.py           shared conv backbone / decoder / projection head / CNN baseline
-src/augment.py           label-preserving augmentations for contrastive pretraining
-scripts/01_generate_data.py     cache all dataset splits (fixed seeds, no leakage)
-scripts/02_train_denoise.py     Phase 1: denoising autoencoder
-scripts/03_train_pretrain.py    Phase 2a: contrastive (SimCLR-style) pretraining
-scripts/04_fewshot_eval.py      Phase 2b: few-shot posture classification, baselines, ablations
-scripts/05_failure_analysis.py  Step 3: subgroup accuracy + confusion matrix
-scripts/06_bandit.py            Phase 3 (stretch): contextual bandit zone-adjustment sim
-scripts/07_build_report.py      renders reports/final_report.pdf from all results/figures
+src/data.py              synthetic pressure-map generator + sensor noise model
+src/real_data.py          real PmatData loader + posture-label mapping
+src/models.py              shared conv backbone / decoder / projection head / CNN baseline
+src/augment.py              label-preserving augmentations for contrastive pretraining
+
+scripts/01_generate_data.py       synthetic: cache all dataset splits
+scripts/02_train_denoise.py       synthetic Phase 1: denoising autoencoder
+scripts/03_train_pretrain.py      synthetic Phase 2a: contrastive pretraining
+scripts/04_fewshot_eval.py        synthetic Phase 2b: few-shot eval, baselines, ablations
+scripts/05_failure_analysis.py    synthetic: subgroup accuracy + confusion matrix
+scripts/06_bandit.py              synthetic Phase 3 (stretch): contextual bandit
+
+scripts/08_download_real_data.sh  downloads real PmatData from PhysioNet (no login needed)
+scripts/09_prepare_real_data.py   real: parse + cache subject-level splits (held-out humans)
+scripts/10_real_denoise.py        real Phase 1: denoising autoencoder
+scripts/11_real_pretrain.py       real Phase 2a: contrastive pretraining
+scripts/12_real_fewshot_eval.py   real Phase 2b: few-shot eval on unseen subjects
+scripts/13_real_failure_analysis.py  real: subgroup accuracy (bed incline, subject) + confusion matrix
+scripts/14_real_bandit.py         real Phase 3: contextual bandit on real pressure contexts
+
+scripts/07_build_report.py        renders reports/final_report.pdf (both studies)
 reports/figures/, reports/results/   all generated plots and metrics (checked in)
-checkpoints/                    trained weights (checked in, ~400KB total)
+checkpoints/                      trained weights (checked in, ~1.2MB total)
 ```
 
 Reproduce everything: `pip install -r requirements.txt && bash run_all.sh`
-(~1 minute on CPU, no GPU needed).
+(~1 minute for the synthetic study; add `bash scripts/08_download_real_data.sh`
+first to also run the real-data scripts, which take a few more minutes on
+CPU and download ~107MB from PhysioNet).
 
 ## Motivation
 
@@ -47,14 +67,23 @@ classification task:
 
 The three phases below map directly onto these three points.
 
-## Step 1 — Data
+## Step 1 — Data (synthetic pilot)
 
-**Choice: synthetic generator** (`src/data.py`). The real PMAP dataset is
-human-subjects data and is request-gated; for a learning project that needs
-fast iteration, a programmatic generator that preserves the structure of
-the real problem is the more honest choice than stalling on data access —
-and it makes every noise assumption explicit and auditable, which a
-downloaded dataset would not.
+**Choice: start with a synthetic generator** (`src/data.py`), then validate
+on real data once the pipeline works. The original PMAP dataset is
+request-gated; rather than stall on data access, the project started with a
+programmatic generator that preserves the structure of the real problem and
+makes every noise assumption explicit and auditable — then, once the full
+pipeline (denoise &rarr; pretrain &rarr; few-shot &rarr; bandit) was working
+end-to-end and debugged on synthetic data, it was pointed at a real,
+openly-downloadable pressure-mat dataset with **no code changes to the
+model or training logic** (see [Validation on Real
+Data](#validation-on-real-data-pmatdata)). This two-stage approach caught a
+real bug cheaply: the synthetic generator's first version made the
+classification task nearly trivial, which would have been far more
+expensive to notice and debug on real data (see the ["honest
+surprise"](#honest-surprise-raw-pixels-are-a-strong-baseline) section
+below).
 
 **What it generates.** A 48×24 taxel grid. A body is a sum of anisotropic
 Gaussian "blobs" (head, shoulders, chest, pelvis, thighs, calves) whose
@@ -247,49 +276,240 @@ averaging 98% of oracle's reward, vs. 91% for epsilon-greedy and 57% for
 random. Regret is visibly sublinear (concave) for both learning policies
 and linear for random, exactly as the theory predicts.
 
+## Validation on Real Data (PmatData)
+
+**Source:** [PmatData](https://physionet.org/content/pmd/1.0.0/), "A
+Pressure Map Dataset for In-bed Posture Classification" (Baran Pouyan et
+al., IEEE BHI 2017), QoLT Lab, UT Dallas. Open-access on PhysioNet under
+the Open Data Commons Attribution License v1.0 &mdash; **no login or
+credentialing required**, downloaded directly via `scripts/08_download_real_data.sh`.
+Experiment I: 13 subjects, a real Vista Medical FSA SoftFlex 2048 pressure
+mat (32&times;64 taxels, reshaped here to 64&times;32 to match this
+project's length-along-body convention), 17 labeled positions per subject,
+~70&ndash;120 frames per position at 1Hz &mdash; **~20,000 real pressure
+frames** in total.
+
+**Posture labels**, transcribed directly from the dataset's own
+`experiment-info.docx` position table: the real dataset has **no prone
+posture** (none was recorded), so this study uses 3 classes &mdash;
+`supine`, `left`, `right` &mdash; instead of the synthetic study's 4. Bed
+inclination (0&ndash;60&deg;) and body-roll wedges/fetal position are
+recorded per-file and used as a real **nuisance variant** label, the direct
+analogue of the synthetic study's `body_size`.
+
+**Split (subject-level, stricter than the synthetic study):** 3 of 13
+subjects are held out **entirely** &mdash; none of their frames appear in
+pretraining, denoising, or few-shot label selection. Test accuracy below
+therefore measures generalization to an **unseen person's body**, not just
+an unseen frame.
+
+**Denoising is on genuinely real signal, but the noise is still injected:**
+PmatData has no paired clean/noisy recordings, so the same documented
+synthetic noise model from Step 1 is applied on top of each real frame to
+make the "noisy" input, and the model is trained to recover the original
+real reading. The target is real; the corruption process is the same
+auditable one used throughout.
+
+### Denoising on real data
+
+| | MSE | PSNR |
+|---|---|---|
+| identity baseline | 0.00770 | 21.1 dB |
+| **denoising autoencoder (real data)** | **0.00204** | **26.9 dB** |
+
+**73.4% MSE reduction** &mdash; clearly working, but *weaker* than the
+synthetic study's 91.8%/32.0dB. This is an honest, explicable gap: real
+body pressure maps have fine, sparse, high-frequency structure (individual
+fingers, heel points, shoulder blades) that a small 3-layer bottleneck
+smooths over, whereas the synthetic generator's Gaussian blobs are smooth
+by construction and easier to reconstruct. See
+`reports/figures/07_real_denoise_qualitative.png`: the model recovers
+overall body shape and major pressure concentrations well, but loses some
+fine detail the synthetic study didn't have to deal with in the first
+place.
+
+### Few-shot posture classification on real data (unseen subjects)
+
+Same six methods, same k &isin; {5, 10, 20} protocol, 8 random label draws,
+evaluated on the 3 **held-out subjects**. Because real posture classes are
+imbalanced (supine covers 9 of 17 recorded positions), **balanced accuracy**
+(macro-averaged recall) is reported here rather than raw accuracy:
+
+| method | k=5 | k=10 | k=20 |
+|---|---|---|---|
+| Linear probe, random-init encoder (floor) | 34.3% | 35.8% | 40.3% |
+| CNN from scratch | 40.2% | 47.2% | 50.7% |
+| Linear probe, contrastive-pretrained encoder | 42.2% | 56.1% | 69.0% |
+| Linear probe, denoising-pretrained encoder | 51.7% | 62.3% | 67.8% |
+| LogReg on raw pixels | 62.0% | 79.8% | 84.1% |
+| **LogReg on denoised pixels** | **72.4%** | **84.7%** | **87.4%** |
+
+(chance = 33%; full numbers in `reports/results/real_fewshot_summary.json`)
+
+![real few-shot accuracy](reports/figures/09_real_fewshot_accuracy.png)
+
+**This is a materially different result from the synthetic study, and it's
+reported as-is rather than adjusted to match the earlier narrative.** On
+real data, raw-pixel logistic regression &mdash; especially on *denoised*
+pixels &mdash; dominates by a wide margin at every k, more decisively than
+on synthetic data. This is not the same bug as before: real supine/left/right
+postures produce dramatically different, highly reproducible 2048-pixel
+silhouettes (a side-lying body rotates and narrows the whole pressure
+footprint), so a high-dimensional linear classifier with even 10&ndash;20
+examples exploits that structure very effectively &mdash; the real analogue
+of the n&#8810;d regime flagged earlier, except here it reflects genuine
+task structure, not a generator artifact. The three coarse classes used
+here are simply easier to tell apart by gross shape than the synthetic
+study's hardest pair (supine vs. prone, which differed only by a subtle
+intensity ratio) &mdash; and prone isn't in this real dataset to test
+against.
+
+The pretraining ablation still holds, though: both pretrained linear probes
+beat the random-init floor by a wide margin (+8 to +29 balanced-accuracy
+points), confirming pretraining is still learning something real about
+body pressure structure, even on a task where it isn't the best available
+method. The denoising-pretrained encoder is the stronger of the two
+pretrained options at k=5/10; the contrastive encoder catches up and
+slightly passes it by k=20 (the contrastive encoder was trained for 35
+epochs on ~14K unlabeled real frames &mdash; comparable gradient-step
+budget to the synthetic study's 60 epochs on ~3K samples).
+
+### Failure analysis on real data
+
+Contrastive linear probe, k=10, a single representative label draw,
+evaluated on all 3 held-out subjects (overall accuracy 51.0%, balanced
+50.1%):
+
+![real subgroup accuracy](reports/figures/10_real_failure_analysis_subgroups.png)
+
+- **Bed inclination is the standout failure mode, with a clean dose-response
+  curve:** accuracy on flat supine is 60.4%, dropping to 54.9% at 30&deg;
+  incline, 35.6% at 45&deg;, and collapsing to **4.9% at 60&deg;** &mdash;
+  worse than chance. The model was trained almost entirely on flat postures
+  (incline variants are a small minority of the training pool), so a
+  steeply inclined supine posture &mdash; which genuinely redistributes
+  pressure toward the hips/lower back, changing the pressure map's shape
+  substantially &mdash; is essentially out-of-distribution for it. This is
+  the real-data analogue of the synthetic study's "small body size" finding:
+  a real, physical nuisance variable the model was never taught to be
+  invariant to.
+- **Body-roll wedges** (`wedge30`: 36.8%) also hurt noticeably more than
+  the `flat` baseline, while `fetus` position (53.3%) is closer to normal
+  &mdash; consistent with wedges producing an intermediate, less-represented
+  body shape between the canonical "left"/"right" templates the model saw
+  most often.
+- **By held-out subject:** 44.0%&ndash;59.7% across the three unseen
+  people &mdash; real but modest person-to-person variation, no catastrophic
+  single-subject failure.
+
+![real confusion matrix](reports/figures/11_real_confusion_matrix.png)
+
+This single k=10 draw's confusion matrix shows a classifier biased toward
+predicting `right` (1291 of 3031 true-supine frames misclassified as
+right; 848 of 1324 true-left frames too). This is a **few-shot instability
+symptom**, not a stable property of the method: a linear probe fit on only
+10 examples per class in a 64-dimensional feature space can land on a
+biased decision boundary by chance on any single draw. The main few-shot
+table above, averaged over 8 independent draws, is the number to trust;
+this single-draw confusion matrix is shown specifically *because* it
+illustrates that instability honestly rather than cherry-picking a
+flattering draw.
+
+### Contextual bandit on real data
+
+Same bandit simulation as the synthetic study (5 zones, disjoint linear
+reward, hidden per-zone sensitivity &theta;), with the context stream
+replaced by real PmatData frames instead of synthetic ones — no other
+change.
+
+| policy | final cumulative regret | mean reward (last 500 rounds) | % of oracle reward |
+|---|---|---|---|
+| random | 232.5 | 0.041 | 36.3% |
+| epsilon-greedy | 30.9 | 0.103 | 90.2% |
+| **LinUCB** | **24.4** | **0.110** | **96.6%** |
+| oracle (upper bound) | 0.0 | 0.114 | 100% |
+
+![real bandit regret](reports/figures/12_real_bandit_regret.png)
+
+The qualitative story is identical to the synthetic study: LinUCB's
+confidence-bound exploration reaches within 3.4% of oracle reward, clearly
+beating undirected epsilon-greedy exploration (9.8% gap) and random action
+selection (63.7% gap). This part of the pipeline was context-agnostic by
+design and transfers to real data without modification, as expected.
+
+### What changed between synthetic and real, in one paragraph
+
+Denoising works on both, modestly weaker on real data's finer detail.
+Pretraining reliably beats random-init features on both. What *doesn't*
+transfer is which method wins outright: on the harder synthetic task
+(subtle supine/prone cue, deliberate placement jitter), contrastive
+pretraining is competitive-to-best; on the real, coarser 3-class task,
+simple logistic regression on (denoised) pixels wins decisively, because
+real supine/left/right postures are that linearly separable in pixel space.
+Neither result is wrong — they're answering different questions about
+different tasks, and reporting both rather than only the one that favors
+representation learning is the point of doing this validation at all.
+
 ## Limitations
 
-- **Synthetic data, not real PMAP.** The generator is a reasonable stand-in
-  for the spatial structure of the problem (and the near-perfect raw-pixel
-  baseline it produced before adding placement jitter is a cautionary tale
-  about synthetic data hiding real difficulty) but it cannot capture real
-  inter-subject anatomical variation, real sensor nonlinearity/hysteresis,
-  mattress foam compression dynamics, or correlated (non-i.i.d.) noise
-  across neighboring taxels — all of which would make the real problem
-  harder than this one.
-- **Representation learning's advantage is real but modest, not dominant.**
-  On this task, a plain logistic regression on (denoised) pixels is a
-  strong baseline; contrastive pretraining's clearest win is at k=10, not
-  uniformly across all k. A reviewer should not walk away thinking
-  self-supervised pretraining is a silver bullet here — the honest
-  claim is "it reliably beats random-init features by a wide margin, and
-  is competitive-to-best against simple baselines," not "it dominates."
-- **The bandit's comfort function is linear and stationary.** Real human
-  comfort preferences likely drift over a night's sleep and are not
-  perfectly linear in zone pressure. LinUCB is the right tool for the
-  linear-stationary version of the problem; a real system would need to
-  handle non-stationarity (e.g. sliding-window or discounted LinUCB).
-- **Small grid, 4 posture classes.** 48×24 and four coarse postures is a
-  deliberately small problem to keep CPU-only iteration fast; it will not
-  by itself transfer conclusions about model capacity to higher-resolution
-  real sensor arrays or finer-grained posture taxonomies.
+- **The real-data study still doesn't cover everything a deployed system
+  would face.** PmatData is 13 subjects on one mat model in a lab setting —
+  it does capture real inter-subject anatomical variation and genuine
+  sensor noise/sparsity, which the synthetic study couldn't, but it still
+  has no prone posture, no long-duration sessions, no sensor drift across
+  weeks, and no mattress-foam compression dynamics changing over time.
+  "Validated on real data" here means real recordings, not a real
+  deployment.
+- **Representation learning's advantage is real but task-dependent, not
+  dominant — more so than expected.** On synthetic data, contrastive
+  pretraining was competitive-to-best against raw-pixel logistic
+  regression. On real data, raw-pixel LogReg (especially on denoised
+  pixels) wins decisively at every k, because real supine/left/right
+  postures are extremely linearly separable by gross silhouette shape. The
+  honest claim across both studies is "pretrained features reliably and
+  substantially beat a random-init encoder; whether they beat a strong
+  linear baseline depends on how fine-grained the distinction is" — not
+  "pretraining dominates."
+- **The bandit's comfort function is linear and stationary,** in both
+  studies. Real human comfort preferences likely drift over a night's
+  sleep and are not perfectly linear in zone pressure. LinUCB is the right
+  tool for the linear-stationary version of the problem; a real system
+  would need to handle non-stationarity (e.g. sliding-window or discounted
+  LinUCB), and the bandit itself was only ever validated on simulated
+  reward, never a real comfort signal (none exists in PmatData).
+- **Few-shot linear probes are unstable on a single label draw,**
+  confirmed directly in the real-data failure analysis (one k=10 draw
+  produced a classifier biased toward predicting "right"). The averaged,
+  multi-draw few-shot tables are the trustworthy numbers in this project;
+  any single deployed few-shot classifier should expect similar draw-to-draw
+  variance unless it's retrained on multiple label sets and selected/ensembled.
 - **No real-world sensor drift or calibration across sessions was modeled**
-  beyond the per-sample noise draw — a real deployment sees a sensor array
-  age and drift over weeks, which is a different, slower-timescale problem
-  than the per-reading noise simulated here.
+  in either study — a real deployment sees a sensor array age and drift
+  over weeks, a different, slower-timescale problem than either the
+  per-reading synthetic noise or PmatData's single-session recordings.
 
 ## Future work
 
-- Validate against a real (even small, consented) pressure-mat dataset to
-  check whether the synthetic-data conclusions — pretraining helps
-  meaningfully but doesn't dominate strong baselines, supine/prone is the
-  hard pair — actually transfer.
+- **Done in this iteration:** validated the synthetic-data conclusions
+  against a real pressure-mat dataset (PhysioNet PmatData). Result:
+  pretraining-beats-random-init transferred cleanly; "pretraining beats
+  simple baselines outright" did not — real coarse postures are easier to
+  linearly separate than the synthetic study's hardest pair. That's a
+  finding worth having, not a failure to paper over.
+- Test whether representation learning's advantage reappears on a *harder*
+  real discrimination task — PmatData's own additional within-posture
+  states (e.g. the bed-incline and body-roll variants used here only as
+  nuisance labels) could be turned into finer-grained labels closer in
+  spirit to the synthetic study's subtle supine/prone cue.
 - Try a denoising **+** contrastive joint objective (denoise as the
   pretraining task *and* a contrastive loss on the clean/denoised
   reconstruction) to see if they're complementary rather than alternatives.
 - Extend the bandit's reward model to be non-stationary (user comfort
   drifting over a session) and to richer action spaces (continuous
-  adjustment amount, not just zone choice).
-- Scale the grid resolution and posture taxonomy once a real dataset is in
-  hand, and re-run the same baseline/ablation/failure-analysis protocol
-  used here unchanged — it was built to be dataset-agnostic.
+  adjustment amount, not just zone choice); validating it against even
+  simulated-but-individualized human comfort ratings would be stronger
+  than the current fully-synthetic reward.
+- Bring in PmatData's Experiment II (a second, different mat model/sensor)
+  as a cross-hardware generalization test: train on Experiment I, evaluate
+  on Experiment II unchanged, to see whether these representations transfer
+  across sensor hardware, not just across subjects.

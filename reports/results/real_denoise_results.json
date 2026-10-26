@@ -1,0 +1,9 @@
+{
+  "final_val_mse": 0.002044993219897151,
+  "final_val_psnr_db": 26.8930812754228,
+  "identity_baseline_mse": 0.007698311470448971,
+  "identity_baseline_psnr_db": 21.136045215136097,
+  "improvement_over_identity_pct": 73.43582124798225,
+  "n_epochs": 15,
+  "data_source": "real PmatData Experiment I (PhysioNet), noise injected synthetically on top of real frames"
+}

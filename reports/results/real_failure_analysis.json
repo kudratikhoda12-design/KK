@@ -1,0 +1,72 @@
+{
+  "overall_accuracy": 0.5099770439696274,
+  "overall_balanced_accuracy": 0.5005476089973145,
+  "k": 10,
+  "by_variant": {
+    "fetus": {
+      "accuracy": 0.5333333333333333,
+      "n": 660
+    },
+    "flat": {
+      "accuracy": 0.6040682891391209,
+      "n": 2753
+    },
+    "incline30": {
+      "accuracy": 0.5488958990536278,
+      "n": 317
+    },
+    "incline45": {
+      "accuracy": 0.3559870550161812,
+      "n": 309
+    },
+    "incline60": {
+      "accuracy": 0.049342105263157895,
+      "n": 304
+    },
+    "wedge30": {
+      "accuracy": 0.3675078864353312,
+      "n": 634
+    },
+    "wedge60": {
+      "accuracy": 0.4970845481049563,
+      "n": 686
+    }
+  },
+  "by_subject": {
+    "S2": {
+      "accuracy": 0.5970873786407767,
+      "n": 1236,
+      "age": 23,
+      "height_cm": 183,
+      "weight_kg": 85
+    },
+    "S7": {
+      "accuracy": 0.4404614750721055,
+      "n": 2427,
+      "age": 27,
+      "height_cm": 179,
+      "weight_kg": 96
+    },
+    "S12": {
+      "accuracy": 0.5405,
+      "n": 2000,
+      "age": 33,
+      "height_cm": 170,
+      "weight_kg": 78
+    }
+  },
+  "by_posture": {
+    "supine": {
+      "accuracy": 0.5334872979214781,
+      "n": 3031
+    },
+    "left": {
+      "accuracy": 0.290785498489426,
+      "n": 1324
+    },
+    "right": {
+      "accuracy": 0.6773700305810397,
+      "n": 1308
+    }
+  }
+}
