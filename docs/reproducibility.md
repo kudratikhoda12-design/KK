@@ -189,6 +189,16 @@ KANFAE_RUN_ID=final_full_suite_round15 scripts/run_logged.sh final_full_suite_ro
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round15.py   # report revision 17
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev17.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+# Round 16 (2026-10-25/26; D138/D139): fixed-mu NaN-safe distillation and the non-cliff gate; manuscript update
+R16_OUT=reports/round16/dev/results_dev3515.jsonl .venv/bin/python scripts/run_round16_formal.py dev_add_3515   # dev check
+for k in 1 2 3 4; do scripts/run_logged.sh r16_lane$k .venv/bin/python scripts/run_round16_lanes.py --lane $k & done   # 60 jobs
+scripts/run_logged.sh round16_analysis .venv/bin/python scripts/analyse_round16.py   # reports/round16_summary.json
+scripts/run_logged.sh round16_posthoc .venv/bin/python scripts/posthoc_round16.py     # exploratory
+.venv/bin/python scripts/manuscript_round16.py && bash scripts/build_manuscript16_pdf.sh && .venv/bin/python scripts/verify_manuscript.py --pdf
+KANFAE_RUN_ID=final_full_suite_round16 scripts/run_logged.sh final_full_suite_round16 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round16.py   # report revision 18
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev18.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)

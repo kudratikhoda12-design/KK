@@ -37,7 +37,15 @@ symbolic formulas preserved the learned shapes (S-Add RISE {{V:reports/round12_s
 before and {{V:reports/round12_summary.json/selection_symbolic/S-Add/rise_after_substitution_before_refit|.3f}} after
 substitution), whereas the customary unconstrained refit degraded them ({{V:reports/round12_summary.json/selection_symbolic/S-Add/rise_after_substitution|.3f}}).
 On the real data no functional or KAN model predicted clearly better than simple landmark baselines; every
-Nadeau–Bengio interval for the integrated Brier score of B2-S Cox minus a baseline included 0. Pruning selected a
+Nadeau–Bengio interval for the integrated Brier score of B2-S Cox minus a baseline included 0. In Phase 2, a
+distillation refit with a fixed anchor weight, a NaN-safe fallback and a bound on formula arguments kept all {{V:reports/round16_summary.json/family_a/H_R16a/n_finite|d}} refits
+finite and preserved the pruned shapes (H-R16a supported, S-Add RISE difference
+{{V:reports/round16_summary.json/family_a/add/distill_minus_pruned_rise/mean_diff|+.4f}}; its validation-tuned predecessor H-R15a had
+failed). A landmark-anchored model that adds the last observed values to B2-S was clearly better than B2-S Cox when
+risk depended on the last values (S-Last, {{V:reports/round16_summary.json/family_b/last/contrasts/b2s_anchor_cox_noncliff - b2s_cox/mean_diff|+.4f}})
+but slightly worse when it depended on the whole trajectory (S-Sparse,
+{{V:reports/round16_summary.json/family_b/sparse/contrasts/b2s_anchor_cox_noncliff - b2s_cox/mean_diff|+.4f}}), so H-R15b and H-R16b were
+not supported. Pruning selected a
 stable, clinically plausible set of PBC markers, and the leading effects were stable over
 {{V:reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/n_fits|d}} bootstrap fits and
 aligned with the pre-stated clinical directions, with one exception (prothrombin index under B2-S). In the motivating
@@ -49,7 +57,9 @@ and the autoencoder's KAN edges acted on abstract features rather than on clinic
 **Conclusions.** Direct functional KAN survival models are a workable, interpretable parametrisation of the additive
 functional Cox model, with usable pruning and symbolic summaries when the formulas are substituted without refitting.
 We found no evidence of a predictive advantage over established methods, and placing KAN blocks inside a functional
-autoencoder gave neither better prediction nor readable effects. All findings beyond H1 and H-R12 are exploratory.
+autoencoder gave neither better prediction nor readable effects. A strongly anchored refit makes the symbolic
+summaries safe to refit but does not improve on substitution alone. All findings beyond the registered hypotheses (H1,
+H-R12, H-R15a/b, H-R16a/b) are exploratory.
 
 ## Keywords
 
@@ -598,7 +608,16 @@ S-Add RISE change was {{V:reports/round15/posthoc_exploratory.json/add: distill_
 replicates in which validation chose μ = 0.1 changed by {{V:reports/round15/posthoc_exploratory.json/add: RISE change by chosen mu/0.1|+.3f}}
 on average. These post-hoc observations motivated Round 16's three changes, which were then tested on fresh seeds.
 
-<!-- R16A -->
+In Round 16 all 40 distillation refits were finite and the fallback was never needed; the bound on |a x + b|
+rejected {{V:reports/round16_summary.json/family_a/add/n_rejected_total|d}} (S-Add) and {{V:reports/round16_summary.json/family_a/sparse/n_rejected_total|d}}
+(S-Sparse) previously accepted formulas. At μ = 10 the distilled model reproduced the pruned shapes (S-Add RISE
+difference {{V:reports/round16_summary.json/family_a/add/distill_minus_pruned_rise/mean_diff|+.4f}},
+{{V:reports/round16_summary.json/family_a/add/distill_minus_pruned_rise/ci95|+.4f}}), so **H-R16a is supported**. The anchor that makes the
+refit safe also makes it nearly inert: relative to the substituted model without refit, neither the survival-curve
+error ({{V:reports/round16_summary.json/family_a/add/distill_minus_noguard_curve_error/ci95|+.4f}} on S-Add) nor the validation loss
+({{V:reports/round16_summary.json/family_a/add/distill_minus_noguard_val_loss/ci95|+.4f}}) changed. The result therefore shows that a refit,
+if one is wanted, can be made safe by anchoring it strongly; it does not show that a refit adds anything to
+substitution alone.
 
 ### 5.3 A landmark-anchored functional model (H-R15b, H-R16b)
 
@@ -629,7 +648,23 @@ from {{V:reports/round16/dev/gate_rule_on_round15_records.json/sparse/old_all_of
 strictly better on the validation data, so a repeat failure of the second part was anticipated
 and recorded (D138, D139).
 
-<!-- R16B -->
+In Round 16 the S-Last part held again ({{V:reports/round16_summary.json/family_b/H_R16b/part1_ci95|+.4f}}), and the non-cliff rule kept
+trajectory channels more often on S-Last (every channel off in {{V:reports/round16_summary.json/family_b/last/gate_all_off/b2s_anchor_cox_noncliff|d}}
+replicates, against {{V:reports/round16_summary.json/family_b/last/gate_all_off/b2s_anchor_cox_d133|d}} under the D133 rule) without
+changing the curve error. On S-Sparse, however, both rules switched every channel off in only
+{{V:reports/round16_summary.json/family_b/sparse/gate_all_off/b2s_anchor_cox_noncliff|d}} replicate and made identical decisions, and the
+anchored model was still slightly worse than B2-S Cox
+({{V:reports/round16_summary.json/family_b/sparse/contrasts/b2s_anchor_cox_noncliff - b2s_cox/mean_diff|+.4f}},
+{{V:reports/round16_summary.json/family_b/sparse/contrasts/b2s_anchor_cox_noncliff - b2s_cox/ci95|+.4f}}; worse in
+{{V:reports/round16_summary.json/family_b/sparse/contrasts/b2s_anchor_cox_noncliff - b2s_cox/n_pos|d}} of
+{{V:reports/round16_summary.json/family_b/sparse/contrasts/b2s_anchor_cox_noncliff - b2s_cox/n|d}} replicates), so **H-R16b is not
+supported**. The anticipated mechanism was therefore wrong: post hoc, the loss was
+{{V:reports/round16/posthoc_exploratory.json/sparse: anchor - b2s, gate kept >= 1 channel/mean_diff|+.4f}}
+({{V:reports/round16/posthoc_exploratory.json/sparse: anchor - b2s, gate kept >= 1 channel/ci95|+.4f}}) in the
+{{V:reports/round16/posthoc_exploratory.json/sparse: anchor - b2s, gate kept >= 1 channel/n|d}} replicates in which the gate kept a channel. Adding
+static last-value edges costs a little accuracy when the effect runs through the whole trajectory and gains much more
+when the risk is carried by the last value (S-Last); a gate on the trajectory term cannot remove that cost, which
+would require gating the last-value edges as well (not tested).
 
 ### 5.4 Real data (Round 15, exploratory)
 
@@ -665,12 +700,16 @@ unvalidated comparator**.
 2. **Interpretability tools work when used conservatively.** Channel-level pruning found the active channels (with
    imperfect removal of the null one); symbolic formulas substituted without refit reproduced the model; leading
    real-data effects were stable and pointed in clinically expected directions. An unconstrained refit after
-   substitution should be avoided or constrained.
+   substitution should be avoided; a refit anchored to the pruned model at a fixed weight, with a fallback and a bound
+   on formula arguments, was safe in every replicate (H-R16a) but did not improve prediction.
 3. **No predictive advantage on small real cohorts.** Simple landmark models were at least as good; with so few
    visits per subject, the last observed value plausibly carried most of the information (an interpretation, not a
    tested finding).
 4. **KAN blocks inside an autoencoder did not help.** KAN-FAE was worse than or equivalent to MLP-FAE in every
    comparison, and its edges were not readable as clinical effects.
+5. **Anchoring to the last observed value is a trade-off, not a free gain.** The anchored model was better than B2-S
+   Cox and landmark Cox when risk depended on the last values, and slightly worse than B2-S Cox when it depended on
+   the trajectory, in both rounds. Changing the gate rule did not change this.
 
 ### 6.2 Relation to prior work
 
@@ -685,7 +724,11 @@ to work we could read only in abstract.
 
 - **Unvalidated comparator.** AFCM V3 failed its single-fit acceptance check; its shape recovery depends on how the
   validation-chosen penalties fall on a given data set (one λ_t shared by a time-homogeneous and a time-varying
-  channel trades one against the other). AFCM is a Python re-implementation without REML.
+  channel trades one against the other). AFCM is a Python re-implementation without REML; Laplace marginal-likelihood
+  selection did not repair it (Section 5.5).
+- **Phase 2 was motivated post hoc.** The Round-15 and Round-16 revisions were designed after looking at earlier
+  rounds' failures (on other seeds), tested on one simulator, and the Round-16 changes were not run on real data; the
+  Round-15 real-data analyses used the same data that motivated the anchored design.
 - **One simulator, {{V:reports/round12_summary.json/H_R12/n|d}} replicates.** H-R12 rests on one DGP with three channels and n = 1,000.
 - **Small real-data cohorts with few visits**, so all intervals are wide; five outer splits give limited resolution.
 - **PACE failed on one PBC split** (non-finite curves on a gappy visit design); the PACE sensitivity row has
@@ -712,7 +755,10 @@ functional effects, support channel selection and give accurate symbolic summari
 without refitting. In our pre-registered comparisons they were not better than the additive functional Cox model
 (whose re-implementation could not itself be validated) or than simple landmark baselines on small clinical cohorts,
 and burying KAN blocks inside a functional autoencoder gave neither better prediction nor clinically readable
-effects. These negative and equivalence findings, with the full record behind them, are the contribution.
+effects. A second, pre-registered phase made the symbolic refit safe (a strongly anchored, NaN-safe distillation
+refit), at the cost of making it nearly inert, and showed that anchoring a functional model to the last observed
+values helps when the last value carries the risk and costs a little when the trajectory does. These negative,
+equivalence and trade-off findings, with the full record behind them, are the contribution.
 
 ## Declarations
 

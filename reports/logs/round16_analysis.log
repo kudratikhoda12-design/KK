@@ -1,0 +1,22 @@
+{
+ "H_R16a": {
+  "part1_all_finite": true,
+  "n_finite": 40,
+  "n_cells": 40,
+  "part2_upper95": 0.0005502586225379015,
+  "part2_noninferior": true,
+  "supported": true
+ },
+ "H_R16b": {
+  "part1_ci95": [
+   -0.0211767037651013,
+   -0.013955394531417267
+  ],
+  "part1_better": true,
+  "part2_upper95": 0.005311649913669289,
+  "part2_noninferior": false,
+  "supported": false
+ },
+ "n_records": 60,
+ "n_failed": 0
+}

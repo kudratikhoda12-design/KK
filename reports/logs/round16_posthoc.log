@@ -1,0 +1,76 @@
+{
+ "sparse: anchor - b2s, gate kept >= 1 channel": {
+  "n": 19,
+  "mean_diff": 0.0024104473657452145,
+  "ci95": [
+   0.0010066144216278369,
+   0.003814280309862592
+  ],
+  "n_pos": 16
+ },
+ "sparse: anchor - b2s, gate all off": {
+  "n": 1,
+  "mean_diff": null,
+  "ci95": null,
+  "n_pos": null
+ },
+ "sparse: gate pattern counts (channels 1, 2, 3)": {
+  "110": 5,
+  "111": 13,
+  "010": 1,
+  "000": 1
+ },
+ "last: anchor - b2s, gate kept >= 1 channel": {
+  "n": 5,
+  "mean_diff": -0.01216063865797803,
+  "ci95": [
+   -0.023033416597111108,
+   -0.0012878607188449506
+  ],
+  "n_pos": 0
+ },
+ "last: anchor - b2s, gate all off": {
+  "n": 15,
+  "mean_diff": -0.019367852645019702,
+  "ci95": [
+   -0.023080821501742257,
+   -0.015654883788297148
+  ],
+  "n_pos": 0
+ },
+ "last: gate pattern counts (channels 1, 2, 3)": {
+  "000": 15,
+  "011": 1,
+  "111": 3,
+  "110": 1
+ },
+ "rejected_formulas": [
+  {
+   "job": "sparse_3908",
+   "layer": "h",
+   "i": 0,
+   "o": 3,
+   "stage": "library",
+   "formula": "0.000900408*softplus(-2092.76*x + 1073.75) + -1.01346",
+   "r2_val": 0.9922808404659083
+  },
+  {
+   "job": "add_3807",
+   "layer": "g",
+   "i": 1,
+   "o": 0,
+   "stage": "library",
+   "formula": "-7.7766e-05*softplus(9.56056*x + -0.6613) + 0.000283516",
+   "r2_val": 0.9943334542793717
+  },
+  {
+   "job": "add_3814",
+   "layer": "h",
+   "i": 0,
+   "o": 2,
+   "stage": "library",
+   "formula": "-3.46655e-08*softplus(361.283*x + -220.345) + -1.05324e-06",
+   "r2_val": 0.9910801730761168
+  }
+ ]
+}
