@@ -1,0 +1,9 @@
+{
+  "final_val_mse": 0.0006305017741397023,
+  "final_val_psnr_db": 32.00313687048079,
+  "identity_baseline_mse": 0.007691952399909496,
+  "identity_baseline_psnr_db": 21.139634119687383,
+  "improvement_over_identity_pct": 91.80309833759344,
+  "n_epochs": 40,
+  "noise_model": "gaussian(sigma in {0.02,0.05,0.09}) + dead-cell dropout(p in {0.01,0.03,0.06}) + salt spikes(p in {0.002,0.006,0.012}) + quantization({64,32,16} levels), uniformly mixed over low/medium/high noise_level buckets"
+}

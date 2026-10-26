@@ -1,0 +1,39 @@
+{
+  "zones": [
+    "head",
+    "shoulders",
+    "lower_back_hips",
+    "thighs",
+    "calves"
+  ],
+  "T": 3000,
+  "theta_sensitivities": [
+    1.660934072833945,
+    1.1583176596280784,
+    1.7878968798670738,
+    1.546052043589046,
+    0.6412660218314743
+  ],
+  "results": {
+    "random": {
+      "final_cumulative_regret": 321.77150511554004,
+      "mean_reward": 0.1358581936957764,
+      "mean_reward_last_500": 0.13908417763993156
+    },
+    "eps_greedy": {
+      "final_cumulative_regret": 79.95666794025395,
+      "mean_reward": 0.21646313942087203,
+      "mean_reward_last_500": 0.2219820902047253
+    },
+    "linucb": {
+      "final_cumulative_regret": 32.452708970610665,
+      "mean_reward": 0.23229779241075307,
+      "mean_reward_last_500": 0.23899833499395937
+    },
+    "oracle": {
+      "final_cumulative_regret": 0.0,
+      "mean_reward": 0.2431153620676233,
+      "mean_reward_last_500": 0.24419095924882936
+    }
+  }
+}

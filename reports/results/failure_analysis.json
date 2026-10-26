@@ -1,0 +1,58 @@
+{
+  "overall_accuracy": 0.61375,
+  "k": 10,
+  "by_body_size": {
+    "small": {
+      "accuracy": 0.5130111524163569,
+      "n": 269
+    },
+    "medium": {
+      "accuracy": 0.6654135338345865,
+      "n": 266
+    },
+    "large": {
+      "accuracy": 0.6641509433962264,
+      "n": 265
+    }
+  },
+  "by_noise_level": {
+    "low": {
+      "accuracy": 0.6452830188679245,
+      "n": 265
+    },
+    "medium": {
+      "accuracy": 0.7090909090909091,
+      "n": 275
+    },
+    "high": {
+      "accuracy": 0.4807692307692308,
+      "n": 260
+    }
+  },
+  "by_posture": {
+    "supine": {
+      "accuracy": 0.457286432160804,
+      "n": 199
+    },
+    "prone": {
+      "accuracy": 0.5482233502538071,
+      "n": 197
+    },
+    "left_lateral": {
+      "accuracy": 0.680365296803653,
+      "n": 219
+    },
+    "right_lateral": {
+      "accuracy": 0.772972972972973,
+      "n": 185
+    }
+  },
+  "worst_case_large_body_high_noise": {
+    "accuracy": 0.5671641791044776,
+    "n": 67
+  },
+  "best_case_small_body_low_noise": {
+    "accuracy": 0.5853658536585366,
+    "n": 82
+  }
+}
