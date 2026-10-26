@@ -3,7 +3,7 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "5ec60141c302183a5003ae9fac1f54da5049fc48",
+  "head": "251598fa30e8e779e56ea6a3b17a5131b73cef1e",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
@@ -2987,6 +2987,216 @@
    "elapsed_s": 52.813,
    "git_head": "5ec6014",
    "log": "reports/logs/round15_build_pdf_toc.log"
+  },
+  {
+   "name": "round15_build_manifest",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:37:44Z",
+   "end_utc": "2026-10-25T18:37:44Z",
+   "elapsed_s": 0.104,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_build_manifest.log"
+  },
+  {
+   "name": "round15_verify",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T18:37:44Z",
+   "end_utc": "2026-10-25T18:37:55Z",
+   "elapsed_s": 10.439,
+   "git_head": "5ec6014",
+   "log": "reports/logs/round15_verify.log"
+  },
+  {
+   "name": "r16_dev_3515",
+   "command": ".venv/bin/python scripts/run_round16_formal.py dev_add_3515",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T20:07:37Z",
+   "end_utc": "2026-10-25T20:25:17Z",
+   "elapsed_s": 1060.465,
+   "git_head": "cea64cf",
+   "log": "reports/logs/r16_dev_3515.log"
+  },
+  {
+   "name": "r16_lane4",
+   "command": ".venv/bin/python scripts/run_round16_lanes.py --lane 4",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T20:25:40Z",
+   "end_utc": "2026-10-26T00:53:56Z",
+   "elapsed_s": 16095.634,
+   "git_head": "5cf4919",
+   "log": "reports/logs/r16_lane4.log"
+  },
+  {
+   "name": "r16_lane1",
+   "command": ".venv/bin/python scripts/run_round16_lanes.py --lane 1",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T20:25:40Z",
+   "end_utc": "2026-10-26T00:56:40Z",
+   "elapsed_s": 16260.003,
+   "git_head": "5cf4919",
+   "log": "reports/logs/r16_lane1.log"
+  },
+  {
+   "name": "r16_lane2",
+   "command": ".venv/bin/python scripts/run_round16_lanes.py --lane 2",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T20:25:40Z",
+   "end_utc": "2026-10-26T01:02:37Z",
+   "elapsed_s": 16617.051,
+   "git_head": "5cf4919",
+   "log": "reports/logs/r16_lane2.log"
+  },
+  {
+   "name": "r16_lane3",
+   "command": ".venv/bin/python scripts/run_round16_lanes.py --lane 3",
+   "exit_code": 0,
+   "start_utc": "2026-10-25T20:25:40Z",
+   "end_utc": "2026-10-26T01:07:41Z",
+   "elapsed_s": 16920.663,
+   "git_head": "5cf4919",
+   "log": "reports/logs/r16_lane3.log"
+  },
+  {
+   "name": "round16_analysis",
+   "command": ".venv/bin/python scripts/analyse_round16.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T01:08:06Z",
+   "end_utc": "2026-10-26T01:08:07Z",
+   "elapsed_s": 1.033,
+   "git_head": "5cf4919",
+   "log": "reports/logs/round16_analysis.log"
+  },
+  {
+   "name": "round16_posthoc",
+   "command": ".venv/bin/python scripts/posthoc_round16.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T01:08:34Z",
+   "end_utc": "2026-10-26T01:08:35Z",
+   "elapsed_s": 1.102,
+   "git_head": "5cf4919",
+   "log": "reports/logs/round16_posthoc.log"
+  },
+  {
+   "name": "manuscript16_pdf",
+   "command": "bash scripts/build_manuscript16_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T01:10:05Z",
+   "end_utc": "2026-10-26T01:10:09Z",
+   "elapsed_s": 4.286,
+   "git_head": "5cf4919",
+   "log": "reports/logs/manuscript16_pdf.log"
+  },
+  {
+   "name": "verify_manuscript16",
+   "command": ".venv/bin/python scripts/verify_manuscript.py --pdf",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T01:10:09Z",
+   "end_utc": "2026-10-26T01:10:10Z",
+   "elapsed_s": 1.046,
+   "git_head": "5cf4919",
+   "log": "reports/logs/verify_manuscript16.log"
+  },
+  {
+   "name": "final_full_suite_round16",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-10-26T01:10:30Z",
+   "end_utc": "2026-10-26T02:34:50Z",
+   "elapsed_s": 5060.201,
+   "git_head": "251598f",
+   "log": "reports/logs/final_full_suite_round16.log"
+  },
+  {
+   "name": "compile_tests_round16",
+   "command": ".venv/bin/python scripts/compile_test_results.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:35:05Z",
+   "end_utc": "2026-10-26T02:35:05Z",
+   "elapsed_s": 0.133,
+   "git_head": "251598f",
+   "log": "reports/logs/compile_tests_round16.log"
+  },
+  {
+   "name": "build_report_round16",
+   "command": ".venv/bin/python scripts/build_report_round16.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:35:05Z",
+   "end_utc": "2026-10-26T02:35:13Z",
+   "elapsed_s": 7.822,
+   "git_head": "251598f",
+   "log": "reports/logs/build_report_round16.log"
+  },
+  {
+   "name": "build_pdf_rev18",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:35:24Z",
+   "end_utc": "2026-10-26T02:36:28Z",
+   "elapsed_s": 63.956,
+   "git_head": "251598f",
+   "log": "reports/logs/build_pdf_rev18.log"
+  },
+  {
+   "name": "build_manifest_rev18",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:36:28Z",
+   "end_utc": "2026-10-26T02:36:31Z",
+   "elapsed_s": 2.815,
+   "git_head": "251598f",
+   "log": "reports/logs/build_manifest_rev18.log"
+  },
+  {
+   "name": "verify_deliverables_rev18",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:36:31Z",
+   "end_utc": "2026-10-26T02:36:50Z",
+   "elapsed_s": 19.876,
+   "git_head": "251598f",
+   "log": "reports/logs/verify_deliverables_rev18.log"
+  },
+  {
+   "name": "build_report_round16",
+   "command": ".venv/bin/python scripts/build_report_round16.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:37:11Z",
+   "end_utc": "2026-10-26T02:37:15Z",
+   "elapsed_s": 3.819,
+   "git_head": "251598f",
+   "log": "reports/logs/build_report_round16.log"
+  },
+  {
+   "name": "build_pdf_rev18",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:37:15Z",
+   "end_utc": "2026-10-26T02:38:16Z",
+   "elapsed_s": 61.213,
+   "git_head": "251598f",
+   "log": "reports/logs/build_pdf_rev18.log"
+  },
+  {
+   "name": "build_manifest_rev18",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:38:16Z",
+   "end_utc": "2026-10-26T02:38:17Z",
+   "elapsed_s": 0.113,
+   "git_head": "251598f",
+   "log": "reports/logs/build_manifest_rev18.log"
+  },
+  {
+   "name": "verify_deliverables_rev18",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-10-26T02:38:17Z",
+   "end_utc": "2026-10-26T02:38:29Z",
+   "elapsed_s": 12.565,
+   "git_head": "251598f",
+   "log": "reports/logs/verify_deliverables_rev18.log"
   }
  ],
  "deliverables": {

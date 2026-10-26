@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, Round 15 (2026-10-25)
+# Final status: KAN-FAE research prototype, Round 16 (2026-10-26)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev18.pdf` (revision 18,
+356 pages: Part A = Round 16 and the updated manuscript; Part B = Round 15; Parts C–R = earlier revisions).
+Manuscript: `docs/manuscript_round16.md`, `reports/manuscript_round16.pdf` (29 pages, Rounds 1–16).
+
+| Item | Result |
+|---|---|
+| D138 | Round-16 pre-registration on fresh seeds (S-Add 3800–3819, S-Sparse 3900–3919, S-Last 4000–4019); development checks: S-Add 3515 finite under the new pipeline; non-cliff rule applied to the Round-15 gate grids |
+| Round 16 (D139) | 60/60 jobs. **H-R16a supported** (40/40 refits finite, no fallback; S-Add upper bound +0.0006 < 0.05), but the refit does not improve on substitution; **H-R16b not supported** (S-Last −0.0176 [−0.0212, −0.0140] holds; S-Sparse +0.0032 [+0.0011, +0.0053], upper bound > 0.005: a small cost of the last-value edges, not the gate cliff) |
+| Manuscript (D140) | 1614 values logged with their sources; `scripts/verify_manuscript.py --pdf` ALL_PASS |
+| Tests | `final_full_suite_round16`: 273 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (293); no XPASS. `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner decision; untested candidate: gating the last-value edges as well as the trajectory term |
+
+---
+
+# Round 15 status (2026-10-25), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev17.pdf` (revision 17,
