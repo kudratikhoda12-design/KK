@@ -45,7 +45,7 @@ torch.set_default_dtype(torch.float64)
 OUT = Path(os.environ.get("R17_OUT", ROOT / "reports/round17/dev/results_dev.jsonl"))
 MU, MAX_ABS_ARG, ITERS = 10.0, 50.0, 200
 FAMILY = "lognormal"
-LAST_TOL = {"dev": {"cox": 0.0, "aft": 0.0}, "formal": {"cox": None, "aft": None}}    # formal values: D141
+LAST_TOL = {"dev": {"cox": 0.0, "aft": 0.0}, "formal": {"cox": 0.01, "aft": 0.04}}    # formal values: D141 (devplan §4)
 DEV = {"devsparse": range(3900, 3920), "devlast": range(4000, 4020), "devmisspec": range(961, 970)}
 FORMAL = {"last": range(4100, 4120), "sparse": range(4200, 4220), "misspec": range(4300, 4320)}
 SCEN = {"sparse": "S-Sparse", "last": "S-Last", "misspec": "S-Misspec"}
