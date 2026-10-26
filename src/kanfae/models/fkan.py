@@ -18,7 +18,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from ..survival.aft import aft_nll
+from ..survival.aft import aft_nll, get_family
 from ..survival.cox import breslow_baseline, cox_nll, cox_survival
 from .kan import KANLayer
 
@@ -291,7 +291,10 @@ class FKANSurv:
             idx = np.searchsorted(self.res_grid, w, side="right") - 1
             S = np.where(idx >= 0, self.res_S[np.clip(idx, 0, None)], 1.0)
         else:
-            S = np.exp(-np.exp(w))                                # Weibull: S = exp(-exp(w))
+            if self.cfg["family"] == "weibull":
+                S = np.exp(-np.exp(w))                            # Weibull: S = exp(-exp(w))
+            else:                                                 # D141: the fitted family (was Weibull for all)
+                S = np.exp(get_family(self.cfg["family"]).log_S(torch.tensor(w)).numpy())
         return np.where(times[None, :] <= 0, 1.0, S)
 
     # ---- shapes --------------------------------------------------------------------------------------------------

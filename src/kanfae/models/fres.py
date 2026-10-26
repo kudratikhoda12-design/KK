@@ -12,6 +12,18 @@ landmark model), each followed by the same 200-epoch masked fine-tune; the parsi
 theta (all off counts as the largest) whose validation loss is within `tol` (0.01, mean NLPL per event) of the
 minimum. The chosen residual mask is applied to every ensemble member, each then fine-tuned for 200 epochs with the
 mask fixed. Residual trajectory effects therefore enter only where validation loss supports them.
+
+Two-way gate (D141, Round 17; gate_last_value=True, anchored variant only, Cox or AFT loss): the last-value edges
+psi_d(X_d,last) are gated as well, and the plain B2-S ensemble fitted on the same split (`ref`, the b2s_cox / b2s_aft
+comparator) is itself a candidate. Candidates (all on the tuned seed-0 anchored member, each with the 200-epoch masked
+fine-tune; identical masks are fitted once):
+  joint   for theta in THETAS_D120: trajectory channels pruned by the integrated score at theta (as D133) AND each
+          last-value edge pruned if its score, normalised by the largest last-value edge score, is below theta;
+  static  for theta in THETAS_D120: every trajectory channel off, last-value edges pruned at theta.
+Rule: (1) among the joint states that keep at least one trajectory channel, the D120 parsimonious rule (tol, largest
+theta); a static state replaces it only if its validation loss is strictly lower (the Round-16 non-cliff guard); (2)
+the chosen anchored state is used only if its validation loss is below the comparator's seed-0 validation loss minus
+`last_tol`; otherwise the model IS the comparator ensemble (exact reduction to b2s_cox / b2s_aft).
 """
 from __future__ import annotations
 
@@ -64,20 +76,59 @@ def choose_gate(losses, thetas, tol=0.01, rule="parsimonious"):
     return k
 
 
+def _lv_prune(m, theta, D):
+    """Mask the last-value edges (static inputs 0..D-1) whose score, normalised by the largest last-value edge
+    score, is below theta (D141)."""
+    _, s = m.edge_scores()["stat"]
+    s = s[:D, 0]
+    s = s / max(float(s.max()), 1e-12)
+    for d in range(D):
+        if s[d] < theta:
+            m.net.stat.mask[d, 0] = 0.0
+
+
+def choose_twoway(grid, tol=0.01, last_tol=0.0, ref_loss=None):
+    """D141 two-way rule on candidate records {kind: "joint"|"static", theta, val_loss, traj_on}. Returns the index of
+    the chosen anchored state, or None for the pure-trajectory comparator (see the module docstring)."""
+    joint = [i for i, g in enumerate(grid) if g["kind"] == "joint" and sum(g["traj_on"]) > 0]
+    static = [i for i, g in enumerate(grid) if g["kind"] == "static"]
+    vmin = min(grid[i]["val_loss"] for i in joint)
+    k = max((i for i in joint if grid[i]["val_loss"] <= vmin + tol), key=lambda i: grid[i]["theta"])
+    if static:
+        s = min(static, key=lambda i: (grid[i]["val_loss"], -grid[i]["theta"]))
+        if grid[s]["val_loss"] < vmin:
+            k = s
+    if ref_loss is not None and not grid[k]["val_loss"] < ref_loss - last_tol:
+        return None
+    return k
+
+
 class ResFKAN:
     """b2s_res_cox: FKANEnsemble (D112 protocol) on residual inputs, then the validation gate."""
 
     def __init__(self, thetas=THETAS_D120, tol=0.01, fine_tune_epochs=200, lrs=(1e-3, 3e-3), wds=(1e-4, 1e-3),
-                 seeds=(0, 1, 2), residual=True, gate="split", cv_folds=5, gate_rule="parsimonious", **kw):
+                 seeds=(0, 1, 2), residual=True, gate="split", cv_folds=5, gate_rule="parsimonious", loss="cox",
+                 gate_last_value=False, last_tol=0.0, **kw):
         self.thetas, self.tol, self.ft, self.residual = tuple(thetas) + (ALL_OFF,), tol, fine_tune_epochs, residual
         self.gate, self.cv_folds, self.kw, self.gate_rule = gate, cv_folds, kw, gate_rule
-        self.ens_kw = dict(lrs=lrs, wds=wds, seeds=seeds, kind="b2s", loss="cox", **kw)
+        self.gate_last_value, self.last_tol, self.loss = gate_last_value, last_tol, loss
+        self.ens_kw = dict(lrs=lrs, wds=wds, seeds=seeds, kind="b2s", loss=loss, **kw)
+        self.ref, self.reduced = None, False
 
-    def fit(self, train, val):
+    def fit(self, train, val, ref=None):
+        """ref (two-way gate only): the plain B2-S ensemble already fitted on the same split (the comparator); fitted
+        here with the same settings if None."""
         tr, va = residual_pack(train, self.residual), residual_pack(val, self.residual)
         self.D = train["last"].shape[1]
         ens = FKANEnsemble(**self.ens_kw).fit(tr, va)
         self.lr, self.wd, self.tuning = ens.lr, ens.wd, ens.tuning
+        if self.gate_last_value:
+            if self.residual:
+                raise ValueError("the two-way gate is defined for the anchored variant (residual=False)")
+            if ref is None:
+                ref = FKANEnsemble(**self.ens_kw).fit({k: train[k] for k in ("xg", "z", "y", "d")},
+                                                      {k: val[k] for k in ("xg", "z", "y", "d")})
+            return self._fit_twoway(ens, tr, ref)
         cand, self.gate_grid = [], []
         for th in self.thetas:
             m = _gate(ens.members[0], th, tr, self.ft)
@@ -103,6 +154,70 @@ class ResFKAN:
             self.members.append(m)
         self._tr = None
         return self
+
+    def _fit_twoway(self, ens, tr, ref):
+        m0, D = ens.members[0], self.D
+        states = []
+        for kind in ("joint", "static"):
+            for th in self.thetas[:-1]:
+                m = copy.deepcopy(m0)
+                if kind == "joint":
+                    if th > 0:
+                        m.prune(th, "integrated", only=("g",))
+                else:
+                    m.net.g.mask[:] = 0.0
+                if th > 0:
+                    _lv_prune(m, th, D)
+                states.append((kind, th, m))
+        fitted, self.gate_grid, cand = {}, [], []
+        for kind, th, m in states:
+            key = (tuple(m.net.g.mask.flatten().tolist()), tuple(m.net.stat.mask[:D, 0].tolist()))
+            if key not in fitted:
+                m.fine_tune(self.ft)
+                m._finalise(tr)
+                fitted[key] = m
+            m = fitted[key]
+            cand.append(m)
+            self.gate_grid.append(dict(kind=kind, theta=th, val_loss=float(m.val_loss),
+                                       traj_on=[int((m.net.g.mask[d] > 0).any()) for d in range(D)],
+                                       last_on=[int(m.net.stat.mask[d, 0] > 0) for d in range(D)]))
+        self.n_fine_tunes = len(fitted)
+        self.ref, self.ref_loss = ref, float(ref.members[0].val_loss)
+        k_anch = choose_twoway(self.gate_grid, self.tol)                  # the anchored state, before step (2)
+        k = choose_twoway(self.gate_grid, self.tol, self.last_tol, self.ref_loss)
+        self.anchored_choice = dict(self.gate_grid[k_anch], index=k_anch)
+        self.reduced = k is None
+        self.residual_on = [0] * D if self.reduced else self.gate_grid[k]["traj_on"]
+        self.last_on = [0] * D if self.reduced else self.gate_grid[k]["last_on"]
+        self._ens, self._k_anch, self._cand_anch = ens, k_anch, cand[k_anch]
+        self.members = None
+        if not self.reduced:
+            self.gate_grid[k]["chosen"] = True
+            self.members = self._finish(ens, cand[k], tr)
+        self._tr = tr
+        return self
+
+    def _finish(self, ens, m0, tr):
+        gm, sm = m0.net.g.mask.clone(), m0.net.stat.mask.clone()
+        out = [m0]
+        for m in ens.members[1:]:
+            m = copy.deepcopy(m)
+            m.net.g.mask[:] = gm
+            m.net.stat.mask[:] = sm
+            m.fine_tune(self.ft)
+            m._finalise(tr)
+            out.append(m)
+        return out
+
+    def anchored_alternative(self):
+        """Two-way gate: the anchored ensemble at the anchored state chosen in step (1), whatever step (2) decided
+        (for development analysis: lets every last_tol be evaluated from one fit)."""
+        alt = copy.copy(self)
+        alt.reduced = False
+        if self.members is None:                       # step (2) chose the comparator: finish the anchored state
+            alt.members = self._finish(self._ens, self._cand_anch, self._tr)
+        alt.residual_on, alt.last_on = self.anchored_choice["traj_on"], self.anchored_choice["last_on"]
+        return alt
 
     def _cv_scores(self, tr, va, ens):
         """D134 CV gate: pooled training + validation subjects, `cv_folds` folds (seed 0, stratified on the event);
@@ -130,13 +245,22 @@ class ResFKAN:
         return p["xg"], p["z"]
 
     def eta(self, xg, last, z):
+        if self.reduced:
+            return self.ref.eta(xg, z)
         X, Z = self._inp(xg, last, z)
         return np.mean([m.eta(X, Z) for m in self.members], 0)
 
     def predict_risk(self, xg, last, z):
-        return self.eta(xg, last, z)
+        if self.reduced:
+            return self.ref.predict_risk(xg, z)
+        if self.loss == "cox":
+            return self.eta(xg, last, z)
+        X, Z = self._inp(xg, last, z)
+        return np.mean([m.predict_risk(X, Z) for m in self.members], 0)
 
     def predict_survival(self, xg, last, z, times):
+        if self.reduced:
+            return self.ref.predict_survival(xg, z, times)
         X, Z = self._inp(xg, last, z)
         return np.mean([m.predict_survival(X, Z, times) for m in self.members], 0)
 
