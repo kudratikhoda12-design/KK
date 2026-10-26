@@ -23,7 +23,22 @@ the round-11 to round-1 reports.</p>
 
 ### 0.2 What the results say
 
-<!-- R16 SUMMARY -->
+1. **The symbolic refit is now safe, and nearly inert.**
+   - The fixed anchor (μ = 10), the bound on formula arguments and the NaN-safe fallback kept every refit finite; the
+     fallback was never needed.
+   - The distilled model reproduced the pruned shapes on both scenarios (H-R16a supported).
+   - It did not improve the survival-curve error, IBS, Uno C or validation loss over substitution without refit
+     (R16.5), so substitution alone remains a sufficient symbolic summary.
+2. **The anchored model's S-Sparse loss is not the gate cliff.**
+   - The non-cliff rule worked as designed: on S-Last it kept channels more often, without changing accuracy.
+   - On S-Sparse "all off" occurred in only 1 of 20 replicates under either rule, yet the anchored model was slightly
+     but consistently worse than B2-S Cox (17 of 20; post hoc +0.0024 where channels were kept).
+   - The registered prediction ("all off" would cause the repeat failure) was wrong about the mechanism.
+3. **Anchoring is a trade-off.** In both rounds the last-value edges gained about 0.018 in curve error when risk is
+   carried by the last value (S-Last) and cost about 0.003–0.005 when it runs through the trajectory (S-Sparse). Gating
+   the last-value edges themselves was not tested.
+4. **The manuscript** now covers Rounds 1–16 and reports both Phase-2 verdicts as registered; every number is traced
+   to a record (R16.8).
 
 # Part A: Round 16
 
@@ -69,7 +84,13 @@ Four single-threaded lanes, one queue. The harness was smoke-tested on developme
 
 ## R16.7 Limitations
 
-<!-- R16 LIMITATIONS -->
+- **One simulator, 20 replicates per scenario**; the Round-16 changes were not run on real data.
+- **The revisions were motivated post hoc** by Round-15 failures (on other seeds) and by a development check on the
+  saved Round-15 gate grids; the formal seeds were fresh and unused.
+- **H-R16a is a safety result, not an accuracy gain**: at μ = 10 the refit barely moves the model.
+- **AFCM is still not validated** (Round 15, D135); no AFCM model was run in Round 16.
+- **The rounded summary figures in 0.2** (about 0.018; 0.003–0.005; 17 of 20; +0.0024) are read from the tables
+  in R16.5, R16.6 and `reports/round16/posthoc_exploratory.json`.
 
 # Part A (continued): the standalone manuscript, Rounds 1–16
 
