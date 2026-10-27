@@ -23,7 +23,7 @@ is Round 12; Parts G–H are the L39 and L38 parts; Parts I–S are the round-11
 
 ### 0.2 What the results say
 
-1. **The two-way gate fixed nothing on fresh S-Sparse seeds.** On the Round-16 seeds it was tuned on, it removed most
+1. **The two-way gate did not close the S-Sparse gap on fresh seeds.** On the Round-16 seeds it was tuned on, it removed most
    of the penalty. On fresh seeds it fell back to B2-S Cox in about half of the S-Sparse replicates but anchored in the
    rest, mostly for the worse. The upper bound missed the margin by the same 0.0003 as in Round 16. The S-Last gain
    was the largest yet.
