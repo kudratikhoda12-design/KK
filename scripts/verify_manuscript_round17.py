@@ -8,6 +8,7 @@ entry). Result: reports/manuscript_verification_round17.json.
 import argparse
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -23,11 +24,20 @@ W.LEDGER = ROOT / "reports/manuscript_values_round17.json"
 W.PDF = ROOT / "reports/manuscript_round17.pdf"
 W.OUT = ROOT / "reports/manuscript_verification_round17.json"
 W.REQUIRED_SECTIONS = [s.replace("(Rounds 15–16)", "(Rounds 15–17)") for s in W.REQUIRED_SECTIONS] + \
-    ["5.4 Gated landmark anchoring for Cox and log-normal KAN-AFT models (H-R17a, H-R17b)"]
+    ["5.4 Two-way gated anchoring and a log-normal KAN-AFT (H-R17a, H-R17b)"]
 D, CONV = W.D, W.CONV
 W.LITERALS += [
-    # Round-17 design constants (D141)
+    # Round-17 design constants and conventions (D141)
+    ("0", "difference of exactly 0", CONV, None), ("0", "at last_tol 0 and", D, "last_tol 0"),
+    ("20", "seed-0 member, 20 replicates", D, "N = 20 replicates per scenario"),
+    ("20", "all 20 distillation refits", D, "20/20 AFT distillation refits"),
+    ("95", "and a 95% CI entirely", CONV, None),
 ]
+for _ph in ("S-Last **4100–4119**", "S-Sparse **4200–4219**", "S-Misspec-lognormal **4300–4319**"):
+    _ctx = _ph.replace("**", "")
+    for _tok in W.tokens(" " + _ctx + " "):
+        W.LITERALS.append((_tok, _ctx, D, _ph))
+W.SKIP_LABEL = re.compile(W.SKIP_LABEL.pattern.replace("(?:Phases?|", "(?:Phases?|parts?|"))
 W.BUILDER_LITERALS += [
     ("0", "(rule: upper < 0)", CONV, None), ("0.005", "(rule: upper < +0.005)", D, "< +0.005"),
     ("0.05", "(rule: < +0.05)", D, "< +0.05"), ("10", "μ = 10, NaN-safe", D, "mu = 10"),

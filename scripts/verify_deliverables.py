@@ -41,7 +41,7 @@ MS_SECTIONS = ["Abstract", "Keywords", "1. Introduction", "2. Models and estimat
                "Appendix A. Number provenance and verification"]
 MS16_SECTIONS = ["5. Phase 2: pre-registered methodological revisions (Rounds 15–16)", "6. Discussion", "7. Conclusions",
                  "5. Phase 2: pre-registered methodological revisions (Rounds 15–17)",
-                 "5.4 Gated landmark anchoring for Cox and log-normal KAN-AFT models (H-R17a, H-R17b)",
+                 "5.4 Two-way gated anchoring and a log-normal KAN-AFT (H-R17a, H-R17b)",
                  "5.2 Symbolic summaries: functional distillation (H-R15a, H-R16a)",
                  "5.3 A landmark-anchored functional model (H-R15b, H-R16b)"]
 res["pdf_has_manuscript_sections"] = all(s in T for s in MS_SECTIONS + MS16_SECTIONS)

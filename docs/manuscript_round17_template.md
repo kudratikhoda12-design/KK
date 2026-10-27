@@ -22,9 +22,10 @@ functional principal component scores or trajectory summaries (B1); and stacked 
 were a re-implementation of AFCM, an FPCA Cox model, a two-stage mixed-effects Cox model, summary-based Cox and random
 survival forest models and a landmark Cox model. A simulation study (four scenarios, {{V:reports/round12_summary.json/H_R12/n|d}} replicates each) had a single
 confirmatory test (H-R12): B2-S Cox minus AFCM in identifiable shape error (RISE). Real-data analyses (PBC, two JM
-data sets, C-MAPSS) were exploratory. A second phase (Rounds 15–16) tested, on fresh simulation seeds and with
-pre-registered two-part criteria, a distillation refit for the symbolic summaries and a landmark-anchored functional
-model that adds the last observed values to B2-S.
+data sets, C-MAPSS) were exploratory. A second phase (Rounds 15–17) tested, on fresh simulation seeds and with
+pre-registered multi-part criteria, a distillation refit for the symbolic summaries, a landmark-anchored functional
+model that adds the last observed values to B2-S, a two-way gate that can fall back to B2-S, and both tools in a
+log-normal KAN-AFT.
 
 **Results.** H-R12 was **inconclusive**: B2-S Cox minus AFCM V3 was {{V:reports/round12_summary.json/H_R12/mean_diff|+.4f}}
 (95% CI {{V:reports/round12_summary.json/H_R12/ci95|+.4f}}; paired-t p {{V:reports/round12_summary.json/H_R12/p_t|.3f}};
@@ -45,7 +46,10 @@ failed). A landmark-anchored model that adds the last observed values to B2-S wa
 risk depended on the last values (S-Last, {{V:reports/round16_summary.json/family_b/last/contrasts/b2s_anchor_cox_noncliff - b2s_cox/mean_diff|+.4f}})
 but slightly worse when it depended on the whole trajectory (S-Sparse,
 {{V:reports/round16_summary.json/family_b/sparse/contrasts/b2s_anchor_cox_noncliff - b2s_cox/mean_diff|+.4f}}), so H-R15b and H-R16b were
-not supported. Pruning selected a
+not supported. A two-way gate that falls back to B2-S unless anchoring wins on validation kept the S-Last gain but
+again missed the S-Sparse margin on fresh seeds (upper bound {{V:reports/round17_summary.json/H_R17a/part2_upper95|+.4f}}; H-R17a not supported),
+while for a log-normal KAN-AFT the distillation refit and a more conservative two-way gate met every registered
+criterion (H-R17b supported). Pruning selected a
 stable, clinically plausible set of PBC markers, and the leading effects were stable over
 {{V:reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/n_fits|d}} bootstrap fits and
 aligned with the pre-stated clinical directions, with one exception (prothrombin index under B2-S). In the motivating
@@ -58,8 +62,9 @@ and the autoencoder's KAN edges acted on abstract features rather than on clinic
 functional Cox model, with usable pruning and symbolic summaries when the formulas are substituted without refitting.
 We found no evidence of a predictive advantage over established methods, and placing KAN blocks inside a functional
 autoencoder gave neither better prediction nor readable effects. A strongly anchored refit makes the symbolic
-summaries safe to refit but does not improve on substitution alone. All findings beyond the registered hypotheses (H1,
-H-R12, H-R15a/b, H-R16a/b) are exploratory.
+summaries safe to refit but does not improve on substitution alone, for Cox and AFT models alike; anchoring to the last
+observed values helps when they carry the risk and is hard to switch off reliably when they do not. All findings
+beyond the registered hypotheses (H1, H-R12, H-R15a/b, H-R16a/b, H-R17a/b) are exploratory.
 
 ## Keywords
 
@@ -546,11 +551,11 @@ which are correlated, so the D-calibration test is anti-conservative here.
 
 Phase 1 left three open problems: the refit after symbolic substitution was unusable (Section 3.6), so the symbolic
 model could only be used without refit; on the real data the last observed value appeared to carry most of the
-information (Section 4.2); and the AFCM comparator was not validated (Section 2.4). Two further rounds tested targeted
+information (Section 4.2); and the AFCM comparator was not validated (Section 2.4). Three further rounds tested targeted
 revisions prospectively. Each was registered in the decision log before its seeds were used, after a development dry
-run on other seeds: Round 15 on S-Add 3500–3519, S-Sparse 3600–3619 and S-Last 3700–3719, and Round 16 on S-Add 3800–3819,
-S-Sparse 3900–3919 and S-Last 4000–4019. The simulator, sample size, splits, front end and ensembles were those of
-Section 3.
+run on other seeds: Round 15 on S-Add 3500–3519, S-Sparse 3600–3619 and S-Last 3700–3719, Round 16 on S-Add 3800–3819,
+S-Sparse 3900–3919 and S-Last 4000–4019, and Round 17 on S-Last 4100–4119, S-Sparse 4200–4219 and S-Misspec-lognormal
+4300–4319. The simulator, sample size, splits, front end and ensembles were those of Section 3.
 
 - **Domain guard.** A substituted formula containing log, sqrt or 1/x is evaluated with a smooth floor at half the
   smallest argument seen in training, and exp with a smooth cap 10 above the training range, so a formula cannot leave
@@ -570,6 +575,13 @@ Section 3.
   **non-cliff** rule applies the same rule only among settings that keep a channel, and takes "all off" only if its
   validation loss is strictly lower than the best of them. A residual variant (`b2s_res_cox`; the curve term acts on
   X(t) − X(t_L)) was a registered secondary in Round 15.
+- **Two-way gate (Round 17).** The gate also prunes the last-value edges ("joint" states: both branches pruned at the
+  same θ_rel; "static" states: every trajectory channel off) and keeps the plain B2-S model, fitted on the same split,
+  as a candidate. The joint and static states are compared as in Round 16 (non-cliff); the chosen anchored state is
+  used only if its validation loss is below the B2-S model's by more than a tolerance last_tol, and otherwise the model
+  is the B2-S model itself.
+- **A log-normal KAN-AFT (Round 17).** log T = μ + η + σε with ε standard normal, for the comparator (B2-S AFT) and the
+  anchored model, with the same two-way gate and the Round-16 distillation refit (Section 2.2 used a Weibull AFT).
 - **A last-value scenario (S-Last).** η = sin(πX₁(1)/2) + 1.5 tanh(X₂(1)) + 0.3z₁ − 0.3z₂ with 3–8 visits: the risk
   depends only on the channels' values at the end of the window, so a static model on the last values is close to
   correctly specified.
@@ -578,8 +590,10 @@ Section 3.
 and the S-Add mean difference in identifiable RISE (distilled minus after pruning, paired over replicates) has an
 upper 95% bound below +0.05. H-R15b and H-R16b: on S-Last the survival-curve error of the anchored model minus B2-S
 Cox has a 95% CI entirely below 0, and on S-Sparse the same difference has an upper 95% bound below +0.005 (the
-anchored model may not lose to B2-S Cox where the trajectory matters). Both parts must hold. Everything else is
-exploratory.
+anchored model may not lose to B2-S Cox where the trajectory matters). H-R17a repeats this test for the two-way gate.
+H-R17b, for the log-normal KAN-AFT: all 20 distillation refits on S-Misspec finite with the same RISE bound, and for
+the two-way AFT model an upper bound below +0.005 on S-Misspec and a 95% CI entirely below 0 on S-Last. All parts of a
+hypothesis must hold. Everything else is exploratory.
 
 **Table 19. Phase-2 hypotheses.**
 
@@ -666,11 +680,60 @@ static last-value edges costs a little accuracy when the effect runs through the
 when the risk is carried by the last value (S-Last); a gate on the trajectory term cannot remove that cost, which
 would require gating the last-value edges as well (not tested).
 
-<!-- R17 SECTION -->
+### 5.4 Two-way gated anchoring and a log-normal KAN-AFT (H-R17a, H-R17b)
+
+Round 17 asked whether the small cost of anchoring on S-Sparse disappears if the last-value edges are gated as well,
+and whether the Phase-2 tools carry over to a KAN-AFT. The two-way gate (Section 5.1) can fall back to the plain B2-S
+model itself, so a replicate in which anchoring is not chosen contributes a difference of exactly 0. The tolerance
+last_tol was chosen by a rule fixed before the development runs, on already-used Round-16 seeds for Cox
+({{V:reports/round17/dev_summary.json/last_tol/cox|g}}) and on those seeds plus development seeds for the log-normal AFT
+({{V:reports/round17/dev_summary.json/last_tol/aft|g}}, the largest value of the grid); the registration was locked afterwards (D141).
+
+**Table 24. Development check** (already-used seeds; the two-way model at last_tol 0 and at the chosen value; in-sample,
+since last_tol was chosen on these replicates).
+
+{{T:r17_dev}}
+
+**Table 25. Round-17 hypotheses** (fresh seeds).
+
+{{T:r17_hyp}}
+
+**Table 26. Two-way gated anchoring, Round 17** (survival-curve error, means over the replicates; paired contrasts below;
+the anchored alternative is the anchored state the gate would have used without last_tol).
+
+{{T:r17_twoway}}
+
+On the development seeds the Cox two-way model removed most of the Round-16 penalty on S-Sparse
+({{V:reports/round17/dev_summary.json/sweep/cox/sparse/0.01/mean_diff|+.4f}}, {{V:reports/round17/dev_summary.json/sweep/cox/sparse/0.01/ci95|+.4f}}). On fresh seeds it did not:
+the gate fell back to B2-S Cox in {{V:reports/round17_summary.json/cox/sparse/gates/n_reduced|d}} of {{V:reports/round17_summary.json/cox/sparse/gates/n|d}} S-Sparse
+replicates but anchored in the others, and those anchored models were mostly worse
+({{V:reports/round17_summary.json/cox/sparse/contrast/n_pos|d}} worse, {{V:reports/round17_summary.json/cox/sparse/contrast/n_neg|d}} better). The upper bound
+({{V:reports/round17_summary.json/H_R17a/part2_upper95|+.4f}}) again exceeded the margin, so **H-R17a is not supported**, although the S-Last gain
+was the largest of the three rounds ({{V:reports/round17_summary.json/H_R17a/part1_ci95|+.4f}}). The tolerance tuned on the development seeds
+did not transfer. A plausible reason, not tested: the anchored state's validation loss is the best of many fine-tuned
+candidates while the comparator's is that of a single model, so the comparison that decides whether to anchor is biased
+toward anchoring; an independent confirmation split, or comparing equally selected candidates, would remove that bias.
+
+**Table 27. Symbolic distillation for the log-normal KAN-AFT** (S-Misspec-lognormal, seed-0 member, 20 replicates; shapes on
+the η scale of the data-generating model, as in Section 3.5).
+
+{{T:r17_aftsym}}
+
+For the log-normal KAN-AFT, **H-R17b is supported**. All {{V:reports/round17_summary.json/H_R17b/part1_n_finite|d}} distillation refits were
+finite and reproduced the pruned shapes ({{V:reports/round17_summary.json/aft_symbolic/distill_minus_pruned_rise/ci95|+.4f}}), where the
+unanchored refit raised the mean RISE to {{V:reports/round17_summary.json/aft_symbolic/rise_means/refit_plain|.3f}} from
+{{V:reports/round17_summary.json/aft_symbolic/rise_means/after_pruning|.3f}}; as for Cox, the distilled model did not predict better than the
+substituted one. The two-way AFT model did not lose on the trajectory-driven S-Misspec data
+({{V:reports/round17_summary.json/H_R17b/part2_misspec_ci95|+.4f}}) and improved on S-Last ({{V:reports/round17_summary.json/H_R17b/part2_last_ci95|+.4f}}). Its strict
+tolerance made it conservative: it fell back to B2-S AFT in {{V:reports/round17_summary.json/aft/last/gates/n_reduced|d}} of the S-Last replicates,
+kept about a third of the gain of the anchored alternative ({{V:reports/round17_summary.json/aft/last/alternative_minus_comparator/mean_diff|+.4f}}),
+and remained worse than landmark Cox there ({{V:reports/round17_summary.json/aft/last/twoway_minus_landmark/mean_diff|+.4f}}). The success of
+H-R17b thus rests on a gate that anchors cautiously: the same trade-off as for Cox, resolved in favour of not losing.
+
 
 ### 5.5 Real data (Round 15, exploratory)
 
-**Table 27. Anchored model on the real data** (Round-13 splits; Nadeau–Bengio corrected 95% intervals).
+**Table 28. Anchored model on the real data** (Round-13 splits; Nadeau–Bengio corrected 95% intervals).
 
 {{T:real15}}
 
@@ -684,12 +747,12 @@ To repair the comparator, smoothing parameters were chosen by a Laplace approxim
 the Breslow observed information) instead of validation loss. The registered pass rule (D134) required the CK-6c
 criterion, φ₁ below 0.15 and φ₂ below 0.10, on all three seeds 22, 914, 966 before seed 24 would be used.
 
-**Table 28. AFCM variants on the development seeds.**
+**Table 29. AFCM variants on the development seeds.**
 
 {{T:afcm_dev}}
 
 LAML improved seed 22 but not enough, and was worse than validation selection on seeds 914 and 966; no variant met
-the criterion on every seed. Seed 24 was therefore not used, no AFCM model entered Rounds 15–16, and **AFCM remains an
+the criterion on every seed. Seed 24 was therefore not used, no AFCM model entered Rounds 15–17, and **AFCM remains an
 unvalidated comparator**.
 
 ## 6. Discussion
@@ -711,7 +774,11 @@ unvalidated comparator**.
    comparison, and its edges were not readable as clinical effects.
 5. **Anchoring to the last observed value is a trade-off, not a free gain.** The anchored model was better than B2-S
    Cox and landmark Cox when risk depended on the last values, and slightly worse than B2-S Cox when it depended on
-   the trajectory, in both rounds. Changing the gate rule did not change this.
+   the trajectory, in Rounds 15 and 16. Neither the non-cliff rule nor a two-way gate that could fall back to B2-S
+   (Round 17) removed the cost reliably on fresh seeds; only a strict tolerance (the log-normal AFT gate) avoided it,
+   at the price of most of the gain.
+6. **The Phase-2 tools carry over to KAN-AFT.** For a log-normal KAN-AFT the anchored distillation refit was finite in
+   every replicate and preserved the shapes (H-R17b part 1), as for Cox.
 
 ### 6.2 Relation to prior work
 
@@ -728,9 +795,12 @@ to work we could read only in abstract.
   validation-chosen penalties fall on a given data set (one λ_t shared by a time-homogeneous and a time-varying
   channel trades one against the other). AFCM is a Python re-implementation without REML; Laplace marginal-likelihood
   selection did not repair it (Section 5.6).
-- **Phase 2 was motivated post hoc.** The Round-15 and Round-16 revisions were designed after looking at earlier
-  rounds' failures (on other seeds), tested on one simulator, and the Round-16 changes were not run on real data; the
-  Round-15 real-data analyses used the same data that motivated the anchored design.
+- **Phase 2 was motivated post hoc.** The Round-15 to Round-17 revisions were designed after looking at earlier
+  rounds' failures (on other seeds), tested on one simulator, and the Round-16 and Round-17 changes were not run on
+  real data; the Round-15 real-data analyses used the same data that motivated the anchored design.
+- **Tolerances tuned on few seeds.** Round 17's last_tol values were chosen on the already-used Round-16 replicates (and
+  development seeds for S-Misspec); the Cox value did not transfer to fresh seeds (H-R17a), and the AFT value
+  lies at the edge of its grid.
 - **One simulator, {{V:reports/round12_summary.json/H_R12/n|d}} replicates.** H-R12 rests on one DGP with three channels and n = 1,000.
 - **Small real-data cohorts with few visits**, so all intervals are wide; five outer splits give limited resolution.
 - **PACE failed on one PBC split** (non-finite curves on a gappy visit design); the PACE sensitivity row has
@@ -759,8 +829,9 @@ without refitting. In our pre-registered comparisons they were not better than t
 and burying KAN blocks inside a functional autoencoder gave neither better prediction nor clinically readable
 effects. A second, pre-registered phase made the symbolic refit safe (a strongly anchored, NaN-safe distillation
 refit), at the cost of making it nearly inert, and showed that anchoring a functional model to the last observed
-values helps when the last value carries the risk and costs a little when the trajectory does. These negative,
-equivalence and trade-off findings, with the full record behind them, are the contribution.
+values helps when the last value carries the risk and costs a little when the trajectory does; a two-way gate did
+not remove that cost reliably for Cox, and a cautious gate for a log-normal KAN-AFT avoided it only by giving up
+most of the gain. These negative, equivalence and trade-off findings, with the full record behind them, are the contribution.
 
 ## Declarations
 
@@ -780,8 +851,8 @@ equivalence and trade-off findings, with the full record behind them, are the co
 
 - **Generation.** `scripts/manuscript_round17.py` renders `docs/manuscript_round17_template.md` into this manuscript
   with the Round-16 builder and the Round-14 resolver (loaded as separate module instances, so the earlier drafts and
-  their ledgers are unchanged). Every number is read, without computation, from a saved record: the Round-12, -13, -15,
-  -16 and -17 analysis summaries, their per-model tables and development records, the Round-8/9 summaries, the gate
+  their ledgers are unchanged). Every number is read, without computation, from a saved record: the Round-12, Round-13,
+  Round-15, Round-16 and Round-17 analysis summaries, their per-model tables and development records, the Round-8/9 summaries, the gate
   verdict files, the descriptive cohort record and the reference table. Each value is logged with its source path and
   format in `reports/manuscript_values_round17.json`.
 - **Verification.** `scripts/verify_manuscript_round17.py` (also run by `tests/test_round17_manuscript.py`), which
