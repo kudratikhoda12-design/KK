@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, Round 16 (2026-10-26)
+# Final status: KAN-FAE research prototype, Round 17 (2026-10-27)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev19.pdf` (revision 19,
+390 pages: Part A = Round 17 and the updated manuscript; Part B = Round 16 and its manuscript; Parts C–S = earlier revisions).
+Manuscript: `docs/manuscript_round17.md`, `reports/manuscript_round17.pdf` (32 pages, Rounds 1–17).
+
+| Item | Result |
+|---|---|
+| D141 | Two-way gate (default off) and log-normal AFT prediction fix; development check on already-used Round-16 seeds and development seeds 961–969 (49/49 ok; Round-16 b2s_cox reproduced exactly); last_tol Cox 0.01, AFT 0.04 by the pre-fixed rule; GO; registration locked on fresh seeds 4100–4119, 4200–4219, 4300–4319 |
+| Round 17 (D142) | 60/60 jobs (4 re-run after a container restart). **H-R17a not supported** (S-Last −0.0198 [−0.0232, −0.0164] holds; S-Sparse +0.0026 [−0.0002, +0.0053], upper bound > 0.005). **H-R17b supported** (20/20 AFT distillation refits finite, RISE unchanged; S-Misspec +0.0008 [−0.0008, +0.0023]; S-Last −0.0059 [−0.0095, −0.0023]) |
+| Manuscript (D143) | 1830 values logged with their sources; `scripts/verify_manuscript_round17.py --pdf` ALL_PASS |
+| Tests | `final_full_suite_round17`: 283 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (303); no XPASS. `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner decision; untested candidate: decide anchoring on an independent confirmation split (or equally selected candidates) instead of the best-of-many validation loss |
+
+---
+
+# Round 16 status (2026-10-26), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev18.pdf` (revision 18,
