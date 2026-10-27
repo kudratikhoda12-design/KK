@@ -23,13 +23,36 @@ is Round 12; Parts G–H are the L39 and L38 parts; Parts I–S are the round-11
 
 ### 0.2 What the results say
 
-<!-- R17 SUMMARY -->
+1. **The two-way gate fixed nothing on fresh S-Sparse seeds.** On the Round-16 seeds it was tuned on, it removed most
+   of the penalty. On fresh seeds it fell back to B2-S Cox in about half of the S-Sparse replicates but anchored in the
+   rest, mostly for the worse. The upper bound missed the margin by the same 0.0003 as in Round 16. The S-Last gain
+   was the largest yet.
+2. **Why it probably failed (an interpretation, not tested).** The anchored side's validation loss is the best of up to
+   16 fine-tuned candidates, the comparator's that of one model, so the decision to anchor is biased toward anchoring.
+   An independent confirmation split, or equally selected candidates, would be the next fix to test.
+3. **The log-normal KAN-AFT met every registered criterion (H-R17b).** The anchored distillation refit was finite in all
+   20 S-Misspec replicates and kept the shapes; the two-way AFT gate did not lose on S-Misspec and gained on S-Last.
+   Its development-tuned tolerance (the grid edge) made it cautious: it kept about a third of the possible S-Last gain
+   and stayed worse than landmark Cox there.
+4. **Implementation fix.** Log-normal (and log-logistic) KAN-AFT survival predictions used the Weibull formula; no
+   earlier round was affected because none used those families.
+5. **The manuscript** now covers Rounds 1–17 and reports both verdicts as registered (R17.8).
 
 # Part A: Round 17
 
 ## R17.1 Owner instruction (D141) and fact check
 
-<!-- R17 FACTCHECK -->
+- **Instruction.** Implement two-way gating of the last-value edges for b2s_anchor_cox and a log-normal KAN-AFT
+  counterpart; tune last_tol only on already-used Round-15/16 records and development seeds 961–969; verify the fresh
+  seed blocks; pre-register (D141), run (D142), deliver (D143); commit locally, do not push.
+- **Fact check** (`docs/round17_devplan.md` §1, D141): the Round-16 figures quoted (+0.0053 against +0.0050; +0.0024
+  in the replicates that kept a channel) are correct. The existing B2-S KAN-AFT was Weibull, and the AFT survival
+  prediction used the Weibull function for every family (fixed; no earlier record affected). `_rc` means residual
+  calibration in this project, not recurrent-event weighting, so no `b2s_anchor_aft_rc` was registered. S-Last is a
+  Weibull proportional-hazards scenario, so the log-normal AFT is misspecified there for both compared models. The
+  seed blocks 4100–4119, 4200–4219, 4300–4319 and development seeds 967–969 were unused.
+- **Execution.** A container restart interrupted 4 formal jobs, which had written nothing and were re-run from the start
+  on the same seeds (D142).
 
 ## R17.2 Methods (as implemented)
 
@@ -66,7 +89,12 @@ Four single-threaded lanes, one queue. The registration was locked in D141 befor
 
 ## R17.7 Limitations
 
-<!-- R17 LIMITATIONS -->
+- **last_tol was tuned on few, already-used replicates** and the Cox value did not transfer to fresh seeds; the AFT
+  value lies at the edge of its grid.
+- **The validation comparison between the comparator and the anchored states is not like for like** (one model against
+  the best of several); this is the most likely reason for H-R17a's failure, but it was not tested.
+- **One simulator, 20 replicates per scenario; no real data in Round 17.**
+- **AFCM is still not validated** (Round 15, D135).
 
 # Part A (continued): the standalone manuscript, Rounds 1–17
 
