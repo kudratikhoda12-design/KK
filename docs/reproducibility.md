@@ -199,6 +199,16 @@ KANFAE_RUN_ID=final_full_suite_round16 scripts/run_logged.sh final_full_suite_ro
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round16.py   # report revision 18
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev18.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+# Round 17 (2026-10-26/27; D141-D143): two-way gated anchoring (Cox, log-normal KAN-AFT); AFT symbolic distillation
+for k in 1 2 3 4; do R17_MODE=dev scripts/run_logged.sh r17dev_lane$k .venv/bin/python scripts/run_round17_lanes.py --lane $k & done   # 49 dev jobs
+.venv/bin/python scripts/analyse_round17_dev.py                       # reports/round17/dev_summary.json (last_tol, go/no-go)
+for k in 1 2 3 4; do R17_MODE=formal scripts/run_logged.sh r17_lane$k .venv/bin/python scripts/run_round17_lanes.py --lane $k & done   # 60 jobs
+scripts/run_logged.sh round17_analysis .venv/bin/python scripts/analyse_round17.py   # reports/round17_summary.json
+.venv/bin/python scripts/manuscript_round17.py && bash scripts/build_manuscript17_pdf.sh && .venv/bin/python scripts/verify_manuscript_round17.py --pdf
+KANFAE_RUN_ID=final_full_suite_round17 scripts/run_logged.sh final_full_suite_round17 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round17.py   # report revision 19
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev19.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)

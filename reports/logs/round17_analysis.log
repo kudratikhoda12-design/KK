@@ -1,0 +1,37 @@
+{
+ "H_R17a": {
+  "part1_ci95": [
+   -0.023181943148513257,
+   -0.016422010071958943
+  ],
+  "part1_better": true,
+  "part2_ci95": [
+   -0.00015369744066673656,
+   0.005322620355071046
+  ],
+  "part2_upper95": 0.005322620355071046,
+  "part2_noninferior": false,
+  "supported": false
+ },
+ "H_R17b": {
+  "part1_n_finite": 20,
+  "part1_n_cells": 20,
+  "part1_all_finite": true,
+  "part1_upper95": 1.4905432404278243e-05,
+  "part1_noninferior": true,
+  "part2_misspec_ci95": [
+   -0.0008245672318766963,
+   0.002333348724015153
+  ],
+  "part2_misspec_upper95": 0.002333348724015153,
+  "part2_misspec_noninferior": true,
+  "part2_last_ci95": [
+   -0.009450482492841477,
+   -0.002344937730939001
+  ],
+  "part2_last_better": true,
+  "supported": true
+ },
+ "n_records": 60,
+ "n_failed": 0
+}
