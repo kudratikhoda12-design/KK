@@ -44,7 +44,7 @@ torch.set_num_threads(1)
 torch.set_default_dtype(torch.float64)
 OUT = Path(os.environ.get("R18_OUT", ROOT / "reports/round18/dev/results_dev.jsonl"))
 FAMILY = "lognormal"
-LAST_TOL = {"dev": {"cox": 0.0, "aft": 0.0}, "formal": {"cox": None, "aft": None}}    # formal values: D144
+LAST_TOL = {"dev": {"cox": 0.0, "aft": 0.0}, "formal": {"cox": 0.02, "aft": 0.02}}    # formal values: D144 (devplan §4)
 DEV = {"devlast": range(4100, 4120), "devsparse": range(4200, 4220), "devmisspec": range(4300, 4320)}
 FORMAL = {"last": range(4400, 4420), "sparse": range(4500, 4520), "misspec": range(4600, 4620)}
 SCEN = R17.SCEN
