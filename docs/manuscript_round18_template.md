@@ -49,7 +49,10 @@ but slightly worse when it depended on the whole trajectory (S-Sparse,
 not supported. A two-way gate that falls back to B2-S unless anchoring wins on validation kept the S-Last gain but
 again missed the S-Sparse margin on fresh seeds (upper bound {{V:reports/round17_summary.json/H_R17a/part2_upper95|+.4f}}; H-R17a not supported),
 while for a log-normal KAN-AFT the distillation refit and a more conservative two-way gate met every registered
-criterion (H-R17b supported). Pruning selected a
+criterion (H-R17b supported). Deciding on held-out validation subjects whether to anchor (Round 18) met every
+registered criterion for Cox and for the AFT model (H-R18a and H-R18b supported; S-Sparse bound for Cox
+{{V:reports/round18_summary.json/H_R18a/part2_upper95|+.4f}}), although against B2-S trained on the whole validation set the S-Sparse bound was
+wider. Pruning selected a
 stable, clinically plausible set of PBC markers, and the leading effects were stable over
 {{V:reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/n_fits|d}} bootstrap fits and
 aligned with the pre-stated clinical directions, with one exception (prothrombin index under B2-S). In the motivating
@@ -64,7 +67,7 @@ We found no evidence of a predictive advantage over established methods, and pla
 autoencoder gave neither better prediction nor readable effects. A strongly anchored refit makes the symbolic
 summaries safe to refit but does not improve on substitution alone, for Cox and AFT models alike; anchoring to the last
 observed values helps when they carry the risk and is hard to switch off reliably when they do not. All findings
-beyond the registered hypotheses (H1, H-R12, H-R15a/b, H-R16a/b, H-R17a/b) are exploratory.
+beyond the registered hypotheses (H1, H-R12, H-R15a/b, H-R16a/b, H-R17a/b, H-R18a/b) are exploratory.
 
 ## Keywords
 
@@ -738,7 +741,59 @@ and remained worse than landmark Cox there ({{V:reports/round17_summary.json/aft
 H-R17b thus rests on a gate that anchors cautiously: the same trade-off as for Cox, resolved in favour of not losing.
 
 
-<!-- R18 SECTION -->
+### 5.5 Anchoring decided on a confirmation split (H-R18a, H-R18b)
+
+In Round 17 the anchored state was the best of many fine-tuned candidates on the validation data, and the same
+validation data then decided whether it beat the single B2-S model. Round 18 tested whether deciding on held-out
+subjects removes that optimism (Section 5.1). The development check on the already-used Round-17 seeds showed the
+expected pattern (gaps are comparator minus anchored loss, so positive favours anchoring): on S-Sparse the chosen
+anchored state looked better than B2-S Cox on val_select
+({{V:reports/round18/dev_summary.json/diagnostics/cox%2Fsparse/select_gap_mean|+.4f}} in mean loss) but worse on val_confirm
+({{V:reports/round18/dev_summary.json/diagnostics/cox%2Fsparse/confirm_gap_mean|+.4f}}), while on S-Last its advantage held up
+({{V:reports/round18/dev_summary.json/diagnostics/cox%2Flast/select_gap_mean|+.4f}} and {{V:reports/round18/dev_summary.json/diagnostics/cox%2Flast/confirm_gap_mean|+.4f}}).
+A zero margin still left the Cox S-Sparse bound at {{V:reports/round18/dev_summary.json/sweep/cox/sparse/0.0/ci95/1|+.4f}}, and the rule fixed before
+the development runs chose a margin of {{V:reports/round18/dev_summary.json/margin/cox|g}} for Cox and {{V:reports/round18/dev_summary.json/margin/aft|g}} for the AFT
+model, the largest value of the grid in both cases.
+
+**Table 28. Development check** (already-used Round-17 seeds; the confirmation-gated model at margin 0 and at the chosen
+margin; in-sample).
+
+{{T:r18_dev}}
+
+**Table 29. Round-18 hypotheses** (fresh seeds).
+
+{{T:r18_hyp}}
+
+**Table 30. Confirmation-gated anchoring, Round 18** (survival-curve error, means over 20 replicates; the registered
+comparator is B2-S tuned and early-stopped on val_select; the B2-S model trained on the whole validation set, as in
+earlier rounds, is shown for comparison).
+
+{{T:r18_main}}
+
+On fresh seeds both hypotheses were supported. For Cox the gate anchored in
+{{V:reports/round18_summary.json/cox/last/anchor_rate/n_anchored|d}} of {{V:reports/round18_summary.json/cox/last/anchor_rate/n|d}} S-Last replicates and kept a clear
+gain ({{V:reports/round18_summary.json/H_R18a/part1_ci95|+.4f}}); on S-Sparse it anchored in {{V:reports/round18_summary.json/cox/sparse/anchor_rate/n_anchored|d}},
+tied B2-S Cox exactly in {{V:reports/round18_summary.json/cox/sparse/contrast/n_zero|d}} and stayed within the margin
+({{V:reports/round18_summary.json/H_R18a/part2_ci95|+.4f}}): **H-R18a is supported**. For the log-normal AFT model the gate almost never anchored
+on S-Misspec ({{V:reports/round18_summary.json/aft/misspec/anchor_rate/n_anchored|d}} of {{V:reports/round18_summary.json/aft/misspec/anchor_rate/n|d}};
+{{V:reports/round18_summary.json/H_R18b/part1_misspec_ci95|+.4f}}) but anchored in {{V:reports/round18_summary.json/aft/last/anchor_rate/n_anchored|d}} S-Last replicates,
+more than the Round-17 gate, with a larger gain ({{V:reports/round18_summary.json/H_R18b/part2_last_ci95|+.4f}}): **H-R18b is supported**.
+
+Two qualifications matter. First, the registered comparator is itself trained on half the usual validation data.
+Against B2-S Cox trained as in earlier rounds on the whole validation set, the confirmation-gated model remained
+better on S-Last ({{V:reports/round18_summary.json/cox/last/confirm_minus_fullval/ci95|+.4f}}) but its S-Sparse bound was
+{{V:reports/round18_summary.json/cox/sparse/confirm_minus_fullval/ci95/1|+.4f}}, which would not meet the margin; the cost of setting
+val_confirm aside falls on the comparator as much as on the anchored model. Second, the margins were tuned in-sample
+and lie at the edge of their grid. The optimism diagnostic did not repeat cleanly on the formal Cox S-Sparse seeds
+(mean advantage {{V:reports/round18_summary.json/cox/sparse/diagnostics/select_gap_mean|+.4f}} on val_select and
+{{V:reports/round18_summary.json/cox/sparse/diagnostics/confirm_gap_mean|+.4f}} on val_confirm), so the evidence that selection optimism alone caused Round 17's
+failure is mixed.
+
+**Table 31. Selection optimism** (mean comparator − anchored loss on val_select and on val_confirm; positive favours
+anchoring; and the anchored alternative's test difference).
+
+{{T:r18_diag}}
+
 
 ### 5.6 Real data (Round 15, exploratory)
 
@@ -784,8 +839,9 @@ unvalidated comparator**.
 5. **Anchoring to the last observed value is a trade-off, not a free gain.** The anchored model was better than B2-S
    Cox and landmark Cox when risk depended on the last values, and slightly worse than B2-S Cox when it depended on
    the trajectory, in Rounds 15 and 16. Neither the non-cliff rule nor a two-way gate that could fall back to B2-S
-   (Round 17) removed the cost reliably on fresh seeds; only a strict tolerance (the log-normal AFT gate) avoided it,
-   at the price of most of the gain.
+   (Round 17) removed the cost reliably on fresh seeds; deciding on a held-out confirmation split with a margin
+   (Round 18) kept most of the gain and stayed within the registered margin, against a comparator that also used only
+   half of the validation data.
 6. **The Phase-2 tools carry over to KAN-AFT.** For a log-normal KAN-AFT the anchored distillation refit was finite in
    every replicate and preserved the shapes (H-R17b part 1), as for Cox.
 
@@ -809,7 +865,9 @@ to work we could read only in abstract.
   real data; the Round-15 real-data analyses used the same data that motivated the anchored design.
 - **Tolerances tuned on few seeds.** Round 17's last_tol values were chosen on the already-used Round-16 replicates (and
   development seeds for S-Misspec); the Cox value did not transfer to fresh seeds (H-R17a), and the AFT value
-  lies at the edge of its grid.
+  lies at the edge of its grid. Round 18's margins were also tuned in-sample and also lie at the edge of the grid.
+- **The confirmation split halves the validation data.** Round 18's comparator was trained on val_select; against the
+  usual full-validation B2-S Cox, the S-Sparse non-inferiority of the confirmation-gated model was not shown.
 - **One simulator, {{V:reports/round12_summary.json/H_R12/n|d}} replicates.** H-R12 rests on one DGP with three channels and n = 1,000.
 - **Small real-data cohorts with few visits**, so all intervals are wide; five outer splits give limited resolution.
 - **PACE failed on one PBC split** (non-finite curves on a gappy visit design); the PACE sensitivity row has
@@ -840,7 +898,9 @@ effects. A second, pre-registered phase made the symbolic refit safe (a strongly
 refit), at the cost of making it nearly inert, and showed that anchoring a functional model to the last observed
 values helps when the last value carries the risk and costs a little when the trajectory does; a two-way gate did
 not remove that cost reliably for Cox, and a cautious gate for a log-normal KAN-AFT avoided it only by giving up
-most of the gain. These negative, equivalence and trade-off findings, with the full record behind them, are the contribution.
+most of the gain; deciding on a held-out confirmation split met every registered criterion for both, at the price of
+halving the validation data available to each model. These negative, equivalence and trade-off findings, with the full
+record behind them, are the contribution.
 
 ## Declarations
 

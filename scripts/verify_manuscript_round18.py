@@ -28,6 +28,8 @@ W.REQUIRED_SECTIONS = [s.replace("(Rounds 15–17)", "(Rounds 15–18)") for s i
 D, CONV = W.D, W.CONV
 W.LITERALS += [
     # Round-18 design constants and conventions (D144)
+    ("0", "model at margin 0 and at", D, "margin 0"), ("20", "means over 20 replicates; the registered", D,
+                                                             "N = 20 replicates per scenario"),
 ]
 for _ph in ("S-Last **4400–4419**", "S-Sparse **4500–4519**", "S-Misspec-lognormal **4600–4619**"):
     _ctx = _ph.replace("**", "")
