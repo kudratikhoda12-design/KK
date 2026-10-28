@@ -1,0 +1,32 @@
+{
+ "H_R18a": {
+  "part1_ci95": [
+   -0.018727006507694523,
+   -0.00902515285075026
+  ],
+  "part1_better": true,
+  "part2_ci95": [
+   -0.005737198677800372,
+   0.0027704143780795595
+  ],
+  "part2_upper95": 0.0027704143780795595,
+  "part2_noninferior": true,
+  "supported": true
+ },
+ "H_R18b": {
+  "part1_misspec_ci95": [
+   -0.00015026527338931402,
+   0.0004252185514681899
+  ],
+  "part1_misspec_upper95": 0.0004252185514681899,
+  "part1_noninferior": true,
+  "part2_last_ci95": [
+   -0.015131861445372954,
+   -0.005574215305574543
+  ],
+  "part2_last_better": true,
+  "supported": true
+ },
+ "n_records": 60,
+ "n_failed": 0
+}

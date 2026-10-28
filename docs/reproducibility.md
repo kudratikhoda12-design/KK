@@ -209,6 +209,16 @@ KANFAE_RUN_ID=final_full_suite_round17 scripts/run_logged.sh final_full_suite_ro
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round17.py   # report revision 19
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev19.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+# Round 18 (2026-10-28; D144-D146): landmark anchoring decided on a confirmation split
+for k in 1 2 3 4; do R18_MODE=dev scripts/run_logged.sh r18dev_lane$k .venv/bin/python scripts/run_round18_lanes.py --lane $k & done   # 60 dev jobs
+.venv/bin/python scripts/analyse_round18_dev.py                       # reports/round18/dev_summary.json (margins, go/no-go)
+for k in 1 2 3 4; do R18_MODE=formal scripts/run_logged.sh r18_lane$k .venv/bin/python scripts/run_round18_lanes.py --lane $k & done   # 60 jobs
+scripts/run_logged.sh round18_analysis .venv/bin/python scripts/analyse_round18.py   # reports/round18_summary.json
+.venv/bin/python scripts/manuscript_round18.py && bash scripts/build_manuscript18_pdf.sh && .venv/bin/python scripts/verify_manuscript_round18.py --pdf
+KANFAE_RUN_ID=final_full_suite_round18 scripts/run_logged.sh final_full_suite_round18 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round18.py   # report revision 20
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev20.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)
