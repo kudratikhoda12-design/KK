@@ -1,0 +1,6 @@
+{
+ "job": "last_4100 (Round 17 formal record) re-run with the Round-18 code (scripts/run_round17.py, R17_MODE=formal)",
+ "values_compared": 381,
+ "differences": 0,
+ "excluded": "fields ending in seconds (run time)"
+}
