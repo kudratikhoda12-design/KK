@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, Round 17 (2026-10-27)
+# Final status: KAN-FAE research prototype, Round 18 (2026-10-28)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev20.pdf` (revision 20,
+430 pages: Part A = Round 18 and the updated manuscript; Part B = Round 17 and its manuscript; Parts C–T = earlier revisions).
+Manuscript: `docs/manuscript_round18.md`, `reports/manuscript_round18.pdf` (36 pages, Rounds 1–18).
+
+| Item | Result |
+|---|---|
+| D144 | Confirmation-split gate (default off; Round 17 reproduced exactly); development check on the already-used Round-17 seeds (60/60 ok): on S-Sparse the anchored state's validation advantage reversed on held-out data (+0.0171 on val_select, −0.0115 on val_confirm); margins Cox 0.02, AFT 0.02 (grid edge); GO; registration locked on fresh seeds 4400–4419, 4500–4519, 4600–4619 |
+| Round 18 (D145) | 60/60 jobs. **H-R18a supported** (S-Last −0.0139 [−0.0187, −0.0090]; S-Sparse −0.0015 [−0.0057, +0.0028]). **H-R18b supported** (S-Misspec +0.0001 [−0.0002, +0.0004]; S-Last −0.0104 [−0.0151, −0.0056]). Exploratory: against the full-validation B2-S Cox the S-Sparse bound is +0.0093 |
+| Manuscript (D146) | 2087 values logged with their sources; `scripts/verify_manuscript_round18.py --pdf` ALL_PASS |
+| Tests | `final_full_suite_round18`: 294 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (314); no XPASS. `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner decision; open question: whether the confirmation gate beats the usual full-validation B2-S, e.g. by refitting the chosen model on the whole validation set after the decision |
+
+---
+
+# Round 17 status (2026-10-27), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev19.pdf` (revision 19,

@@ -19,5 +19,5 @@ nav#TOC { font-size: 6.0pt; line-height: 1.12; page-break-after: always; }
 nav#TOC ul { list-style: none; padding-left: 12pt; }
 /* Round 6 (D90): the contents list grew past one page with six parts; set it in two columns so it fits on one page
    instead of spilling a few lines onto an almost empty second page. */
-nav#TOC > ul { columns: 2; column-gap: 16pt; padding-left: 0; }
+nav#TOC > ul { columns: 3; column-gap: 12pt; padding-left: 0; }
 nav#TOC ul ul li { break-inside: avoid; }
