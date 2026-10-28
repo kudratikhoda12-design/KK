@@ -24,6 +24,12 @@ Rule: (1) among the joint states that keep at least one trajectory channel, the 
 theta); a static state replaces it only if its validation loss is strictly lower (the Round-16 non-cliff guard); (2)
 the chosen anchored state is used only if its validation loss is below the comparator's seed-0 validation loss minus
 `last_tol`; otherwise the model IS the comparator ensemble (exact reduction to b2s_cox / b2s_aft).
+
+Confirmation split (D144, Round 18; `confirm=` in fit, default None = the Round-17 rule): the caller splits its
+validation subjects into val_select (passed as `val`: early stopping, (lr, wd) tuning, candidate fine-tunes and the
+step-(1) choice, for the anchored model AND the comparator `ref`) and val_confirm (passed as `confirm`, never used
+before step (2)). Step (2) then compares, on val_confirm only, the step-(1) anchored candidate with the comparator's
+seed-0 member (one model against one model): anchored iff loss_confirm(anchored) < loss_confirm(comparator) - last_tol.
 """
 from __future__ import annotations
 
@@ -103,6 +109,14 @@ def choose_twoway(grid, tol=0.01, last_tol=0.0, ref_loss=None):
     return k
 
 
+def heldout_loss(m, pk):
+    """Unpenalised loss of a fitted FKANSurv on a held-out set {xg, z, y, d} (inputs as the model sees them): mean NLPL
+    per event (Cox) or mean NLL per subject (AFT), the units of val_loss (D144)."""
+    X, Z = m._tensors(pk["xg"], pk["z"])
+    with torch.no_grad():
+        return float(m._loss(m.net(X, Z), torch.tensor(pk["y"]), torch.tensor(pk["d"])))
+
+
 class ResFKAN:
     """b2s_res_cox: FKANEnsemble (D112 protocol) on residual inputs, then the validation gate."""
 
@@ -115,9 +129,11 @@ class ResFKAN:
         self.ens_kw = dict(lrs=lrs, wds=wds, seeds=seeds, kind="b2s", loss=loss, **kw)
         self.ref, self.reduced = None, False
 
-    def fit(self, train, val, ref=None):
+    def fit(self, train, val, ref=None, confirm=None):
         """ref (two-way gate only): the plain B2-S ensemble already fitted on the same split (the comparator); fitted
-        here with the same settings if None."""
+        here with the same settings if None. confirm (two-way gate only, D144): held-out confirmation subjects
+        {xg, last, z, y, d}, used only for the step-(2) decision; None keeps the Round-17 rule."""
+        self._confirm = confirm
         tr, va = residual_pack(train, self.residual), residual_pack(val, self.residual)
         self.D = train["last"].shape[1]
         ens = FKANEnsemble(**self.ens_kw).fit(tr, va)
@@ -184,7 +200,13 @@ class ResFKAN:
         self.n_fine_tunes = len(fitted)
         self.ref, self.ref_loss = ref, float(ref.members[0].val_loss)
         k_anch = choose_twoway(self.gate_grid, self.tol)                  # the anchored state, before step (2)
-        k = choose_twoway(self.gate_grid, self.tol, self.last_tol, self.ref_loss)
+        if self._confirm is None:
+            k = choose_twoway(self.gate_grid, self.tol, self.last_tol, self.ref_loss)
+        else:                                                              # D144: one-vs-one on val_confirm
+            c = self._confirm
+            self.confirm_loss_anchored = heldout_loss(cand[k_anch], residual_pack(c, self.residual))
+            self.confirm_loss_ref = heldout_loss(ref.members[0], {q: c[q] for q in ("xg", "z", "y", "d")})
+            k = k_anch if self.confirm_loss_anchored < self.confirm_loss_ref - self.last_tol else None
         self.anchored_choice = dict(self.gate_grid[k_anch], index=k_anch)
         self.reduced = k is None
         self.residual_on = [0] * D if self.reduced else self.gate_grid[k]["traj_on"]
