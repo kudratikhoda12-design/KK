@@ -23,13 +23,31 @@ and L38 parts; Parts J–T are the round-11 to round-1 reports.</p>
 
 ### 0.2 What the results say
 
-<!-- R18 SUMMARY -->
+1. **Both registered hypotheses are supported.** Deciding on held-out validation subjects whether to anchor kept most
+   of the S-Last gain (Cox and AFT) and stayed within the S-Sparse and S-Misspec margins. The AFT gate anchored more
+   often on S-Last than in Round 17 and gained more.
+2. **Selection optimism was real on the development seeds.** On the already-used Round-17 S-Sparse seeds the chosen
+   anchored state looked better than B2-S on the selection half and worse on the held-out half. On the formal S-Sparse
+   seeds the reversal did not recur for Cox, so optimism is only part of the story.
+3. **The comparator paid for the split.** The registered B2-S comparator used only half of the validation data. Against
+   B2-S trained as usual on all of it, the Cox S-Sparse bound was wider than the margin (exploratory, R18.5).
+4. **Margins at the grid edge.** Both margins were tuned in-sample on the development seeds and are the largest values
+   tried.
+5. **The manuscript** now covers Rounds 1–18 and reports both verdicts as registered, with the full-validation contrast
+   alongside (R18.7).
 
 # Part A: Round 18
 
 ## R18.1 Owner instruction (D144) and fact check
 
-<!-- R18 FACTCHECK -->
+- **Instruction.** Implement a confirmation-split gate (default off), verify unused fresh seeds, write deterministic tests
+  that val_confirm is untouched before the decision and that a failed check returns B2-S exactly, run a development
+  check on development or already-used seeds, pre-register (D144) before any formal seed, run (D145), deliver (D146);
+  commit locally, do not push.
+- **Fact check** (`docs/round18_devplan.md` §1, D144): the Round-17 design and figures quoted are correct, except that
+  "+0.0066" is the mean observed validation advantage of the anchored state on S-Sparse, not a measured bias. The seed
+  blocks 4400–4419, 4500–4519 and 4600–4619 were unused.
+- **Reproducibility.** Round-17 job last_4100 re-run with the Round-18 code reproduced its record exactly (381 values).
 
 ## R18.2 Methods (as implemented)
 
@@ -60,7 +78,11 @@ Four single-threaded lanes, one queue. The registration was locked in D144 befor
 
 ## R18.6 Limitations
 
-<!-- R18 LIMITATIONS -->
+- **The comparator used half the validation data.** H-R18a and H-R18b were registered against B2-S tuned on
+  val_select; against the usual full-validation B2-S the Cox S-Sparse non-inferiority was not shown (exploratory).
+- **Margins tuned in-sample at the edge of the grid**, on the Round-17 seeds.
+- **One confirmation decision per replicate on about 100 subjects**; the decision itself is noisy.
+- **One simulator, 20 replicates per scenario; no real data in Round 18. AFCM is still not validated.**
 
 # Part A (continued): the standalone manuscript, Rounds 1–18
 
