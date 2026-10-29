@@ -1,0 +1,6 @@
+{
+ "job": "sparse_4500 (Round 18 formal record) re-run with the Round-19 code (scripts/run_round18.py, R18_MODE=formal)",
+ "values_compared": 397,
+ "differences": 0,
+ "excluded": "fields ending in seconds (run time)"
+}
