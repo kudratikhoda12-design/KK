@@ -301,3 +301,83 @@ class ResFKAN:
     def residual_effect(self, d, r, t):
         """Member-mean residual surface sum_m g_dm(r) h_dm(t) of channel d (r = X_d(t) - X_d,last)."""
         return np.mean([m.effect(d, r, t) for m in self.members], 0)
+
+
+def set_validation(m, pk):
+    """Replace a fitted FKANSurv's validation data (the data its fine-tune early-stops on) by pk {xg, z, y, d}, given
+    as the model sees its inputs (D147)."""
+    Xva, Zva = m._tensors(pk["xg"], pk["z"])
+    m.data.update(Xva=Xva, Zva=Zva, yva=torch.tensor(pk["y"]), dva=torch.tensor(pk["d"]), sva=None)
+
+
+class ConfirmRefitAnchor:
+    """D147 (Round 19): the Round-18 confirmation-split decision, then a full-validation estimator.
+
+    fit(train, val_select, val_confirm, ref_select, ref_full): ref_select is the plain B2-S ensemble tuned and early-stopped
+    on val_select (it takes part in the step-(2) decision only); ref_full is the usual B2-S ensemble tuned and
+    early-stopped on the whole validation set (val_select + val_confirm). Steps (1)-(2) are exactly ResFKAN's two-way gate
+    with confirm= (val_confirm untouched before the decision). Then:
+      not anchored -> the estimator IS ref_full (its predictions are returned unchanged);
+      anchored     -> the chosen state's masks (trajectory channels and last-value edges of the step-(1) candidate) are
+                      applied to an anchored ensemble that uses the whole validation set, then each member is fine-tuned
+                      with the mask fixed, early-stopping on the whole validation set:
+                      refit="retrain": a new anchored ensemble, (lr, wd) tuned and early-stopped on the whole validation
+                                       set (D112 protocol), masked and fine-tuned;
+                      refit="finetune": the step-(1) anchored ensemble (trained on val_select) fine-tuned once more
+                                       with the mask, early-stopping on the whole validation set.
+    The test split is never passed in."""
+
+    def __init__(self, loss="cox", margin=0.0, refit="retrain", fine_tune_epochs=200, **kw):
+        if refit not in ("retrain", "finetune"):
+            raise ValueError(refit)
+        self.loss, self.margin, self.refit, self.ft, self.kw = loss, margin, refit, fine_tune_epochs, kw
+
+    def fit(self, train, val_select, val_confirm, ref_select, ref_full):
+        self.gate = ResFKAN(residual=False, gate_last_value=True, last_tol=self.margin, loss=self.loss,
+                            fine_tune_epochs=self.ft, **self.kw).fit(train, val_select, ref=ref_select, confirm=val_confirm)
+        self.reduced, self.ref_full = self.gate.reduced, ref_full
+        self.val_full = {k: np.concatenate([val_select[k], val_confirm[k]]) for k in ("xg", "last", "z", "y", "d")}
+        self._train = train
+        self.members = None if self.reduced else self.refit_members(self.refit)
+        return self
+
+    def refit_members(self, how):
+        """The full-validation anchored ensemble at the step-(1) state (also used, whatever step (2) decided, by the
+        development analysis)."""
+        g = self.gate
+        tr, vf = residual_pack(self._train, False), residual_pack(self.val_full, False)
+        c = g._cand_anch
+        gm, sm = c.net.g.mask.clone(), c.net.stat.mask.clone()
+        if how == "retrain":
+            base = FKANEnsemble(**g.ens_kw).fit(tr, vf).members
+        else:
+            base = g.anchored_alternative().members
+        out = []
+        for m in base:
+            m = copy.deepcopy(m)
+            m.net.g.mask[:] = gm
+            m.net.stat.mask[:] = sm
+            if how == "finetune":
+                set_validation(m, vf)
+            m.fine_tune(self.ft)
+            m._finalise(tr)
+            out.append(m)
+        return out
+
+    def _inp(self, xg, last, z):
+        p = residual_pack(dict(xg=xg, last=last, z=z, y=None, d=None), False)
+        return p["xg"], p["z"]
+
+    def predict_survival(self, xg, last, z, times, members=None):
+        members = self.members if members is None else members
+        if members is None:
+            return self.ref_full.predict_survival(xg, z, times)
+        X, Z = self._inp(xg, last, z)
+        return np.mean([m.predict_survival(X, Z, times) for m in members], 0)
+
+    def predict_risk(self, xg, last, z, members=None):
+        members = self.members if members is None else members
+        if members is None:
+            return self.ref_full.predict_risk(xg, z)
+        X, Z = self._inp(xg, last, z)
+        return np.mean([m.predict_risk(X, Z) for m in members], 0)
