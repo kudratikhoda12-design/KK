@@ -44,13 +44,13 @@ MS16_SECTIONS = ["5. Phase 2: pre-registered methodological revisions (Rounds 15
                  "5. Phase 2: pre-registered methodological revisions (Rounds 15–18)",
                  "5.5 Anchoring decided on a confirmation split (H-R18a, H-R18b)",
                  "5. Phase 2: pre-registered methodological revisions (Rounds 15–19)",
-                 "5.6 Refitting on the whole validation set (H-R19a, H-R19b)",
+                 "5.6 Refitting on the whole validation set (development check)",
                  "5.4 Two-way gated anchoring and a log-normal KAN-AFT (H-R17a, H-R17b)",
                  "5.2 Symbolic summaries: functional distillation (H-R15a, H-R16a)",
                  "5.3 A landmark-anchored functional model (H-R15b, H-R16b)"]
 res["pdf_has_manuscript_sections"] = all(s in T for s in MS_SECTIONS + MS16_SECTIONS)
 res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 3)) and all(
-    re.search(rf"\bR19\.{k}\s", T) for k in range(1, 11)) and all(
+    re.search(rf"\bR19\.{k}\s", T) for k in range(1, 9)) and all(
     re.search(rf"\bR18\.{k}\s", T) for k in range(1, 11)) and all(
     re.search(rf"\bR17\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR16\.{k}\s", T) for k in range(1, 12)) and all(

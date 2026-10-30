@@ -1,5 +1,5 @@
 """Round 19 (D147-D149): the standalone manuscript updated to integrate Round 19 (the confirmation-split decision with
-a full-validation estimator, tested against the usual full-validation B2-S).
+a full-validation estimator against the usual full-validation B2-S; development check only -- NO-GO, D147/D148).
 
 docs/manuscript_round19_template.md -> docs/manuscript_round19.md (+ reports/manuscript_values_round19.json).
 scripts/manuscript_round18.py (and through it the Round-17/16 builders and the Round-14 resolver) is loaded as a separate
@@ -22,7 +22,7 @@ B.LEDGER_PATH = ROOT / "reports/manuscript_values_round19.json"
 B.TITLE = ("Functional Kolmogorov–Arnold survival models for longitudinal covariates: pre-registered comparisons, "
            "safer symbolic summaries and confirmed landmark anchoring")
 V, md_table, prow4, PH4, verdict = B.V, B.md_table, M18.prow4, M18.PH4, M18.verdict
-S19, DEV19 = "reports/round19_summary.json", "reports/round19/dev_summary.json"
+DEV19 = "reports/round19/dev_summary.json"
 LAB = {"last": "S-Last", "sparse": "S-Sparse", "misspec": "S-Misspec"}
 FAMS = (("cox", ("last", "sparse")), ("aft", ("last", "misspec")))
 
@@ -31,41 +31,19 @@ def fam_label(loss):
     return "Cox" if loss == "cox" else "log-normal AFT"
 
 
-def t_r19_hyp():
-    h = f"{S19}/H_R19a"
-    out = md_table(["Hypothesis (against the full-validation B2-S)", "S-Last, 95% CI (rule: upper < 0)",
-                    "S-Sparse, 95% CI (rule: upper < +0.005)", "Verdict"],
-                   [["H-R19a (Cox)", V(h + "/part1_ci95", "+.4f"), V(h + "/part2_ci95", "+.4f"), verdict(h + "/supported")]])
-    h = f"{S19}/H_R19b"
-    return out + "\n\n" + md_table(["Hypothesis (against the full-validation B2-S)",
-                                    "S-Misspec, 95% CI (rule: upper < +0.005)", "S-Last, 95% CI (rule: upper < 0)", "Verdict"],
-                                   [["H-R19b (log-normal AFT)", V(h + "/part1_misspec_ci95", "+.4f"),
-                                     V(h + "/part2_last_ci95", "+.4f"), verdict(h + "/supported")]])
-
-
-def t_r19_main():
+def t_r19_devcmp():
     rows = []
-    for loss, kinds in FAMS:
-        for k in kinds:
-            b = f"{S19}/{loss}/{k}"
-            rows.append([f"{LAB[k]}, {fam_label(loss)}", V(f"{b}/curve_error_means/b2s_{loss}_fullval", ".4f"),
-                         V(f"{b}/curve_error_means/b2s_{loss}_select", ".4f"),
-                         V(f"{b}/curve_error_means/b2s_anchor_{loss}_confirm_r18", ".4f"),
-                         V(f"{b}/curve_error_means/b2s_anchor_{loss}_refit", ".4f"),
-                         f"{V(b + '/anchor_rate/n_anchored', 'd')} of {V(b + '/anchor_rate/n', 'd')}"])
-    out = md_table(["Scenario, model family", "B2-S, whole validation set (primary comparator)", "B2-S, val_select",
-                    "Round-18 estimator", "Round-19 estimator (refit)", "Anchored"], rows)
-    rows = []
-    for loss, kinds in FAMS:
-        for k in kinds:
-            b = f"{S19}/{loss}/{k}"
-            F = fam_label(loss)
-            rows.append(prow4(f"{LAB[k]}: refit − B2-S {F} (whole validation set; primary)", b + "/contrast"))
-            rows.append(prow4(f"{LAB[k]}: refit − B2-S {F} (val_select)", b + "/vs_select"))
-            rows.append(prow4(f"{LAB[k]}: Round-18 estimator − B2-S {F} (whole validation set)", b + "/r18_vs_fullval"))
-            if loss == "cox":
-                rows.append(prow4(f"{LAB[k]}: refit − landmark Cox", b + "/vs_landmark"))
-    return out + "\n\n" + md_table(PH4, rows)
+    for k, lab in (("cox%2Fsparse", "S-Sparse, Cox"), ("cox%2Flast", "S-Last, Cox"), ("aft%2Fmisspec", "S-Misspec, log-normal AFT"),
+                   ("aft%2Flast", "S-Last, log-normal AFT")):
+        rows.append(prow4(f"{lab}: B2-S on val_select − B2-S on the whole validation set", f"{DEV19}/select_minus_fullval_comparator/{k}"))
+        rows.append(prow4(f"{lab}: Round-18 estimator (margin 0) − B2-S on the whole validation set", f"{DEV19}/r18_estimator_minus_fullval/{k}"))
+    out = md_table(PH4, rows)
+    rows = [[lab, V(f"{DEV19}/diagnostics/{k}/select_gap_mean", "+.4f"), V(f"{DEV19}/diagnostics/{k}/confirm_gap_mean", "+.4f"),
+             V(f"{DEV19}/diagnostics/{k}/alternative_test_diff_mean", "+.4f")]
+            for k, lab in (("cox%2Fsparse", "S-Sparse, Cox"), ("cox%2Flast", "S-Last, Cox"), ("aft%2Fmisspec", "S-Misspec, log-normal AFT"),
+                           ("aft%2Flast", "S-Last, log-normal AFT"))]
+    return out + "\n\n" + md_table(["Development replicates (Round-18 seeds)", "Comparator − anchored loss: val_select",
+                                    "the same on val_confirm", "Refitted anchored state (retrain) − B2-S on the whole validation set, test"], rows)
 
 
 def t_r19_dev():
@@ -93,7 +71,7 @@ def t_tests():
                      ["Skipped", V(b + "/skipped", "s")]])
 
 
-B.TABLES.update(r19_hyp=t_r19_hyp, r19_main=t_r19_main, r19_dev=t_r19_dev, tests=t_tests)
+B.TABLES.update(r19_devcmp=t_r19_devcmp, r19_dev=t_r19_dev, tests=t_tests)
 render, TITLE, LEDGER, CITED, resolve = B.render, B.TITLE, B.LEDGER, B.CITED, B.resolve
 
 

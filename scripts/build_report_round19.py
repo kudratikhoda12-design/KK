@@ -1,5 +1,5 @@
 """Assemble the final report, revision 21: Part A = Round 19 (the confirmation-split decision with a full-validation
-estimator; D147-D149) and the updated standalone manuscript (docs/manuscript_round19.md) with its verification
+estimator; development check only -- NO-GO, closed by the owner as a development result; D147-D149) and the updated standalone manuscript (docs/manuscript_round19.md) with its verification
 (reports/report_template_round19.md); Part B = revision 20's Part A (Round 18 and the Round-18 manuscript); Parts C–U =
 revision 20's Parts B–T. Every Round-19 number is read from the saved records."""
 import json
@@ -36,10 +36,6 @@ def prow(label, p, d=4):
     return [label, str(p["n"]), f"{p['mean_diff']:+.{d}f}", ci(p, d), pt, f"{p['n_neg']} / {p['n_pos']} / {p['n_zero']}"]
 
 
-def S():
-    return json.loads((REP / "round19_summary.json").read_text())
-
-
 def DEVS():
     return json.loads((R19 / "dev_summary.json").read_text())
 
@@ -70,55 +66,6 @@ def dev_checks():
     return out
 
 
-def exec_table():
-    s = S()
-    rr = R17B.recs(R19)
-    rows = []
-    for k in ("last", "sparse", "misspec"):
-        w = [r["wall_seconds"] for r in rr if r["job_name"].startswith(k + "_")]
-        rows.append([LAB[k], str(len(w)), f"{statistics.median(w) / 60:.1f}" if w else "–"])
-    t = (R19 / "started_utc.txt").read_text().strip()
-    return md_table(["Jobs", "Count", "Median minutes"], rows) + \
-        f"\n\nRecords: {s['n_records']}; failed jobs: {s['n_failed']}. Launched {t}."
-
-
-def a_table():
-    s = S()
-    rows = []
-    for loss, kinds in FAMS:
-        for k in kinds:
-            x = s[loss][k]
-            cm = x["curve_error_means"]
-            rows.append([f"{LAB[k]}, {loss.upper()}"] + [f"{cm[m]:.4f}" if m in cm else "–" for m in
-                                                         (f"b2s_{loss}_fullval", f"b2s_{loss}_select",
-                                                          f"b2s_anchor_{loss}_confirm_r18", f"b2s_anchor_{loss}_refit",
-                                                          "landmark_cox")] +
-                        [f"{x['anchor_rate']['n_anchored']} / {x['anchor_rate']['n']}",
-                         str([round(v, 2) for v in x["last_on_frequency"]]), str([round(v, 2) for v in x["traj_on_frequency"]])])
-    out = md_table(["Scenario, family", "B2-S (whole validation; primary)", "B2-S (val_select)", "Round-18 estimator",
-                    "Round-19 estimator", "Landmark Cox", "Anchored", "Last-value edge kept (ch. 1, 2, 3)",
-                    "Trajectory kept (ch. 1, 2, 3)"], rows)
-    rows = []
-    for loss, kinds in FAMS:
-        for k in kinds:
-            x = s[loss][k]
-            L = f"{LAB[k]} {loss.upper()}"
-            rows += [prow(f"{L}: refit − full-validation B2-S (curve error; primary)", x["contrast"]),
-                     prow(f"{L}: refit − full-validation B2-S (IBS)", x["contrast_ibs"]),
-                     prow(f"{L}: refit − val_select B2-S", x["vs_select"]),
-                     prow(f"{L}: Round-18 estimator − full-validation B2-S", x["r18_vs_fullval"]),
-                     prow(f"{L}: val_select B2-S − full-validation B2-S", x["select_vs_fullval"])]
-            if "vs_landmark" in x:
-                rows.append(prow(f"{L}: refit − landmark Cox", x["vs_landmark"]))
-    out += "\n\n" + md_table(PH, rows)
-    rows = [[f"{LAB[k]}, {loss.upper()}", f"{v['select_gap_mean']:+.4f}", f"{v['confirm_gap_mean']:+.4f}",
-             f"{v['alternative_test_diff_mean']:+.4f}", f"{v['n_select_gap_positive']} / {v['n_confirm_gap_positive']}"]
-            for loss, kinds in FAMS for k in kinds for v in [s[loss][k]["diagnostics"]]]
-    return out + "\n\n" + md_table(["Scenario, family", "Comparator − anchored loss: val_select", "val_confirm",
-                                    "Refitted anchored state − full-validation B2-S (test)",
-                                    "Replicates favouring anchoring: val_select / val_confirm"], rows)
-
-
 def ms_verification():
     t = R17B.ms_verification.__globals__["VER"]
     R17B.ms_verification.__globals__["VER"] = VER
@@ -144,7 +91,7 @@ def suite_table():
     return md_table(["Full-suite run", "Passed", "Failed", "Skipped", "Expected failures (xfail)", "Total", "Failed tests"], rows)
 
 
-TABLES = {"dev_checks": dev_checks, "exec_table": exec_table, "a_table": a_table, "ms_verification": ms_verification,
+TABLES = {"dev_checks": dev_checks, "ms_verification": ms_verification,
           "decisions": decisions, "suite_table": suite_table, "test_runs": R2.test_run_history}
 
 
@@ -153,28 +100,24 @@ def verdict(x):
 
 
 def values():
-    s, d = S(), DEVS()
-    ha, hb = s["H_R19a"], s["H_R19b"]
+    d = DEVS()
     led = json.loads(M.B.LEDGER_PATH.read_text())
     ver = json.loads(VER.read_text())
     pages = re.search(r"Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(REP / "manuscript_round19.pdf")],
                                                          capture_output=True, text=True).stdout).group(1)
-    c = lambda p: f"[{p[0]:+.4f}, {p[1]:+.4f}]"  # noqa: E731
-    ar = lambda loss, k: f"{s[loss][k]['anchor_rate']['n_anchored']} of {s[loss][k]['anchor_rate']['n']}"  # noqa: E731
-    out = {"git_head": R2.values()["git_head"], "n_records": str(s["n_records"]), "n_failed": str(s["n_failed"]),
+    g = d["go"]
+    out = {"git_head": R2.values()["git_head"], "n_records": str(d["n_records"]), "n_failed": str(d["n_failed"]),
            "variant": d["variant"], "m_cox": str(d["margin"]["cox"]), "m_aft": str(d["margin"]["aft"]),
-           "go": "GO" if d["go"]["go"] else "NO-GO",
-           "a_verdict": verdict(ha["supported"]), "b_verdict": verdict(hb["supported"]),
-           "a1_ci": c(ha["part1_ci95"]), "a2_ci": c(ha["part2_ci95"]), "b1_ci": c(hb["part1_misspec_ci95"]),
-           "b2_ci": c(hb["part2_last_ci95"]), "ar_cox_last": ar("cox", "last"), "ar_cox_sparse": ar("cox", "sparse"),
-           "ar_aft_last": ar("aft", "last"), "ar_aft_misspec": ar("aft", "misspec"),
+           "go": "GO" if g["go"] else "NO-GO", "u_cox_sparse": f"{g['cox_sparse_upper']:+.4f}",
+           "u_cox_last": f"{g['cox_last_upper']:+.4f}", "u_aft_misspec": f"{g['aft_misspec_upper']:+.4f}",
+           "u_aft_last": f"{g['aft_last_upper']:+.4f}",
            "ms_pages": pages, "ms_values": str(led["n_values"]), "ms_refs": str(len(led["cited"])), "ms_title": M.B.TITLE,
            "ms_check": "verification ALL_PASS" if ver["ALL_PASS"] else "verification FAILED"}
-    g = R1.TA[R1.TA.run_id == FINAL]
-    g = g if len(g) else R1.TL
-    out["n_tests"] = str(len(g))
+    gg = R1.TA[R1.TA.run_id == FINAL]
+    gg = gg if len(gg) else R1.TL
+    out["n_tests"] = str(len(gg))
     for o in ("passed", "failed", "skipped", "xfailed"):
-        out[o] = str(int((g.outcome == o).sum()))
+        out[o] = str(int((gg.outcome == o).sum()))
     return out
 
 

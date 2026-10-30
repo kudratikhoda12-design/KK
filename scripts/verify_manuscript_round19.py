@@ -24,15 +24,12 @@ W.LEDGER = ROOT / "reports/manuscript_values_round19.json"
 W.PDF = ROOT / "reports/manuscript_round19.pdf"
 W.OUT = ROOT / "reports/manuscript_verification_round19.json"
 W.REQUIRED_SECTIONS = [s.replace("(Rounds 15–18)", "(Rounds 15–19)") for s in W.REQUIRED_SECTIONS] + \
-    ["5.6 Refitting on the whole validation set (H-R19a, H-R19b)"]
+    ["5.6 Refitting on the whole validation set (development check)"]
 D, CONV = W.D, W.CONV
 W.LITERALS += [
     # Round-19 design constants and conventions (D147)
+    ("0", "each refit variant at margin 0 and", D, "margin 0"), ("0.005", "below the registered +0.005", D, "< +0.005"),
 ]
-for _ph in ("S-Last **4700–4719**", "S-Sparse **4800–4819**", "S-Misspec-lognormal **4900–4919**"):
-    _ctx = _ph.replace("**", "")
-    for _tok in W.tokens(" " + _ctx + " "):
-        W.LITERALS.append((_tok, _ctx, D, _ph))
 W.BUILDER_LITERALS += [
 ]
 FIGURES = V18.FIGURES
