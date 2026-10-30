@@ -1,0 +1,23 @@
+{
+ "git_head": "bae7444",
+ "n_records": "60",
+ "n_failed": "0",
+ "variant": "finetune",
+ "m_cox": "0.02",
+ "m_aft": "0.0025",
+ "go": "NO-GO",
+ "u_cox_sparse": "+0.0063",
+ "u_cox_last": "-0.0107",
+ "u_aft_misspec": "+0.0018",
+ "u_aft_last": "-0.0075",
+ "ms_pages": "38",
+ "ms_values": "2239",
+ "ms_refs": "46",
+ "ms_title": "Functional Kolmogorov–Arnold survival models for longitudinal covariates: pre-registered comparisons, safer symbolic summaries and confirmed landmark anchoring",
+ "ms_check": "verification ALL_PASS",
+ "n_tests": "324",
+ "passed": "304",
+ "failed": "2",
+ "skipped": "2",
+ "xfailed": "16"
+}

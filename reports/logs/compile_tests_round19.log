@@ -1,0 +1,651 @@
+{
+ "stageA_attempt1": {
+  "passed": 41,
+  "failed": 4,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageA_attempt2": {
+  "passed": 41,
+  "failed": 4,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageA_attempt3": {
+  "passed": 45,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageB_attempt1": {
+  "passed": 40,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageC_attempt1": {
+  "passed": 19,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageD_attempt1": {
+  "passed": 54,
+  "failed": 1,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "stageD_attempt2": {
+  "passed": 7,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageD_attempt3": {
+  "passed": 8,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageD_gate_attempt1": {
+  "passed": 1,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageD_gate_attempt2": {
+  "passed": 1,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageD_gate_attempt3": {
+  "passed": 2,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "stageCDE_final": {
+  "passed": 55,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "stageF_attempt1": {
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "regress_after_penalty_fix": {
+  "passed": 73,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "stageG_attempt1": {
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite": {
+  "passed": 148,
+  "failed": 1,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "rev3_unit_attempt1": {
+  "passed": 50,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "rev3_gate_attempt1": {
+  "passed": 2,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "audit_attempt1": {
+  "passed": 9,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "censored_ls_attempt1": {
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "kan_regress_after_pruning": {
+  "passed": 12,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "kreg_sym_attempt1": {
+  "passed": 10,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "kreg_sym_attempt2": {
+  "passed": 1,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "f7f8_attempt1": {
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "f8_after_cache": {
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "d41_gate_selected": {
+  "passed": 2,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "f9_attempt1": {
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "interval_attempt1": {
+  "passed": 3,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "interval_attempt2": {
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "gate_ext": {
+  "passed": 2,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "cache_regression_oldcode": {
+  "passed": 0,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "cache_regression_fixed": {
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "gate_D53_recompute": {
+  "passed": 2,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round2": {
+  "passed": 90,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round2_rerun": {
+  "passed": 178,
+  "failed": 8,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "models_repair_D56": {
+  "passed": 28,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "final_full_suite_round2_v3": {
+  "passed": 185,
+  "failed": 1,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "fq_attempt1": {
+  "passed": 7,
+  "failed": 4,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "fq_attempt2": {
+  "passed": 9,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "fq_attempt3": {
+  "passed": 10,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "fq_attempt4": {
+  "passed": 11,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "revised_gate_fa": {
+  "passed": 1,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "fq10": {
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round3": {
+  "passed": 198,
+  "failed": 2,
+  "skipped": 1,
+  "xfailed": 1
+ },
+ "hr_attempt1": {
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "revised_gate_fa4b": {
+  "passed": 2,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round4": {
+  "passed": 200,
+  "failed": 5,
+  "skipped": 1,
+  "xfailed": 3
+ },
+ "flat_ae_fix_D78": {
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round4_rerun": {
+  "passed": 203,
+  "failed": 2,
+  "skipped": 1,
+  "xfailed": 3
+ },
+ "rs_attempt1": {
+  "passed": 3,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "rs_attempt2": {
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "ceil_attempt1": {
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "revised_gate_fa4c": {
+  "passed": 2,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round5": {
+  "passed": 212,
+  "failed": 2,
+  "skipped": 1,
+  "xfailed": 5
+ },
+ "gate_fa4c_reproduction": {
+  "passed": 2,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "bi_attempt1": {
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round6": {
+  "passed": 215,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 7
+ },
+ "final_full_suite_round6_rerun": {
+  "passed": 215,
+  "failed": 0,
+  "skipped": 2,
+  "xfailed": 7
+ },
+ "20261018T175917": {
+  "passed": 0,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "revised_gate_fa4e": {
+  "passed": 1,
+  "failed": 3,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round7": {
+  "passed": 216,
+  "failed": 3,
+  "skipped": 2,
+  "xfailed": 7
+ },
+ "nf_tests_dev": {
+  "passed": 4,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "regression_4f_dev": {
+  "passed": 35,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "revised_gate_fa4f": {
+  "passed": 3,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "st_tests_dev": {
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round8": {
+  "passed": 226,
+  "failed": 1,
+  "skipped": 2,
+  "xfailed": 10
+ },
+ "fc_tests_dev": {
+  "passed": 4,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "fc_tests_dev2": {
+  "passed": 15,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round9": {
+  "passed": 231,
+  "failed": 1,
+  "skipped": 2,
+  "xfailed": 10
+ },
+ "final_full_suite_round10": {
+  "passed": 231,
+  "failed": 1,
+  "skipped": 2,
+  "xfailed": 10
+ },
+ "round11_acceptance": {
+  "passed": 10,
+  "failed": 5,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round11": {
+  "passed": 241,
+  "failed": 6,
+  "skipped": 2,
+  "xfailed": 10
+ },
+ "round12_ck_acceptance": {
+  "passed": 6,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round12": {
+  "passed": 247,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 15
+ },
+ "round12b_ck_acceptance": {
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round12b": {
+  "passed": 248,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "final_full_suite_round12c": {
+  "passed": 183,
+  "failed": 1,
+  "skipped": 2,
+  "xfailed": 11
+ },
+ "final_full_suite_round12c_rerun": {
+  "passed": 248,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "final_full_suite_round13": {
+  "passed": 251,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "20261023T152041": {
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round14": {
+  "passed": 9,
+  "failed": 0,
+  "skipped": 1,
+  "xfailed": 0
+ },
+ "final_full_suite_round14_rerun": {
+  "passed": 188,
+  "failed": 1,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "20261023T152406": {
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round14_rerun2": {
+  "passed": 257,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "20261024T093853": {
+  "passed": 4,
+  "failed": 2,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261024T093935": {
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261024T093949": {
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261024T094030": {
+  "passed": 11,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261024T114232": {
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261025T100348": {
+  "passed": 8,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round15": {
+  "passed": 265,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "20261025T200534": {
+  "passed": 11,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round16": {
+  "passed": 273,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "20261026T194923": {
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261026T195000": {
+  "passed": 11,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261027T040936": {
+  "passed": 10,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round17": {
+  "passed": 283,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "20261028T104011": {
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261028T104056": {
+  "passed": 16,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261028T210111": {
+  "passed": 10,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round18": {
+  "passed": 294,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ },
+ "20261029T071512": {
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261029T071612": {
+  "passed": 22,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261030T124545": {
+  "passed": 4,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261030T124610": {
+  "passed": 4,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261030T124616": {
+  "passed": 0,
+  "failed": 1,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "20261030T124623": {
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "xfailed": 0
+ },
+ "final_full_suite_round19": {
+  "passed": 304,
+  "failed": 2,
+  "skipped": 2,
+  "xfailed": 16
+ }
+}
+latest: {'passed': 304, 'failed': 2, 'skipped': 3, 'xfailed': 16}

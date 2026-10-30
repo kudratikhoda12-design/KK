@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, Round 18 (2026-10-28)
+# Final status: KAN-FAE research prototype, Round 19 (2026-10-30)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev21.pdf` (revision 21,
+466 pages: Part A = Round 19 and the updated manuscript; Part B = Round 18 and its manuscript; Parts C–U = earlier revisions).
+Manuscript: `docs/manuscript_round19.md`, `reports/manuscript_round19.pdf` (38 pages, Rounds 1–19).
+
+| Item | Result |
+|---|---|
+| D147 | Full-validation estimator (`ConfirmRefitAnchor`, default off; Round-18 job sparse_4500 reproduced exactly); development check on the already-used Round-18 seeds (60/60 ok), against the full-validation B2-S: the pre-fixed rule chose variant finetune, margins Cox 0.02 (fall-back), AFT 0.0025. Cox S-Sparse +0.0030 [−0.0004, +0.0063] (upper bound above the +0.005 go/no-go limit); Cox S-Last −0.0162 [−0.0218, −0.0107]; AFT S-Misspec +0.0009 [−0.0001, +0.0018]; AFT S-Last −0.0118 [−0.0161, −0.0075]. **NO-GO** |
+| D148 | Owner closed Round 19 as a development-only result: no formal run; H-R19a and H-R19b **not tested**; seeds 4700–4719, 4800–4819, 4900–4919 unused |
+| Manuscript (D149) | 2239 values logged with their sources; `scripts/verify_manuscript_round19.py --pdf` ALL_PASS |
+| Tests | `final_full_suite_round19`: 304 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (324); no XPASS. `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner decision. The confirmation-gated Cox model is not shown to be non-inferior to the usual full-validation B2-S on S-Sparse (development evidence only); the S-Last gains and the AFT results held in development |
+
+---
+
+# Round 18 status (2026-10-28), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev20.pdf` (revision 20,
