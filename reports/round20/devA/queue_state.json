@@ -1,0 +1,205 @@
+{
+ "next": 40,
+ "claims": [
+  {
+   "job": "devsparse_4500",
+   "lane": 0,
+   "utc": "2026-10-31T14:09:05Z"
+  },
+  {
+   "job": "devmisspec_4600",
+   "lane": 1,
+   "utc": "2026-10-31T14:09:05Z"
+  },
+  {
+   "job": "devsparse_4501",
+   "lane": 2,
+   "utc": "2026-10-31T14:09:06Z"
+  },
+  {
+   "job": "devmisspec_4601",
+   "lane": 3,
+   "utc": "2026-10-31T14:16:42Z"
+  },
+  {
+   "job": "devsparse_4502",
+   "lane": 2,
+   "utc": "2026-10-31T14:22:05Z"
+  },
+  {
+   "job": "devmisspec_4602",
+   "lane": 0,
+   "utc": "2026-10-31T14:23:13Z"
+  },
+  {
+   "job": "devsparse_4503",
+   "lane": 2,
+   "utc": "2026-10-31T14:32:26Z"
+  },
+  {
+   "job": "devmisspec_4603",
+   "lane": 1,
+   "utc": "2026-10-31T14:32:51Z"
+  },
+  {
+   "job": "devsparse_4504",
+   "lane": 2,
+   "utc": "2026-10-31T14:56:09Z"
+  },
+  {
+   "job": "devmisspec_4604",
+   "lane": 3,
+   "utc": "2026-10-31T14:56:40Z"
+  },
+  {
+   "job": "devsparse_4505",
+   "lane": 1,
+   "utc": "2026-10-31T15:02:04Z"
+  },
+  {
+   "job": "devmisspec_4605",
+   "lane": 0,
+   "utc": "2026-10-31T15:11:57Z"
+  },
+  {
+   "job": "devsparse_4506",
+   "lane": 2,
+   "utc": "2026-10-31T15:12:29Z"
+  },
+  {
+   "job": "devmisspec_4606",
+   "lane": 1,
+   "utc": "2026-10-31T15:18:00Z"
+  },
+  {
+   "job": "devsparse_4507",
+   "lane": 3,
+   "utc": "2026-10-31T15:31:44Z"
+  },
+  {
+   "job": "devmisspec_4607",
+   "lane": 0,
+   "utc": "2026-10-31T15:39:23Z"
+  },
+  {
+   "job": "devsparse_4508",
+   "lane": 2,
+   "utc": "2026-10-31T15:40:13Z"
+  },
+  {
+   "job": "devmisspec_4608",
+   "lane": 1,
+   "utc": "2026-10-31T15:46:20Z"
+  },
+  {
+   "job": "devsparse_4509",
+   "lane": 3,
+   "utc": "2026-10-31T15:46:49Z"
+  },
+  {
+   "job": "devmisspec_4609",
+   "lane": 3,
+   "utc": "2026-10-31T15:57:32Z"
+  },
+  {
+   "job": "devsparse_4510",
+   "lane": 2,
+   "utc": "2026-10-31T16:09:14Z"
+  },
+  {
+   "job": "devmisspec_4610",
+   "lane": 0,
+   "utc": "2026-10-31T16:12:47Z"
+  },
+  {
+   "job": "devsparse_4511",
+   "lane": 1,
+   "utc": "2026-10-31T16:17:54Z"
+  },
+  {
+   "job": "devmisspec_4611",
+   "lane": 3,
+   "utc": "2026-10-31T16:20:40Z"
+  },
+  {
+   "job": "devsparse_4512",
+   "lane": 2,
+   "utc": "2026-10-31T16:28:05Z"
+  },
+  {
+   "job": "devmisspec_4612",
+   "lane": 1,
+   "utc": "2026-10-31T16:36:58Z"
+  },
+  {
+   "job": "devsparse_4513",
+   "lane": 2,
+   "utc": "2026-10-31T16:40:30Z"
+  },
+  {
+   "job": "devmisspec_4613",
+   "lane": 3,
+   "utc": "2026-10-31T16:41:55Z"
+  },
+  {
+   "job": "devsparse_4514",
+   "lane": 0,
+   "utc": "2026-10-31T16:57:45Z"
+  },
+  {
+   "job": "devmisspec_4614",
+   "lane": 2,
+   "utc": "2026-10-31T17:08:41Z"
+  },
+  {
+   "job": "devsparse_4515",
+   "lane": 1,
+   "utc": "2026-10-31T17:11:36Z"
+  },
+  {
+   "job": "devmisspec_4615",
+   "lane": 3,
+   "utc": "2026-10-31T17:19:41Z"
+  },
+  {
+   "job": "devsparse_4516",
+   "lane": 0,
+   "utc": "2026-10-31T17:21:01Z"
+  },
+  {
+   "job": "devmisspec_4616",
+   "lane": 1,
+   "utc": "2026-10-31T17:29:02Z"
+  },
+  {
+   "job": "devsparse_4517",
+   "lane": 0,
+   "utc": "2026-10-31T17:35:30Z"
+  },
+  {
+   "job": "devmisspec_4617",
+   "lane": 2,
+   "utc": "2026-10-31T17:37:40Z"
+  },
+  {
+   "job": "devsparse_4518",
+   "lane": 0,
+   "utc": "2026-10-31T17:51:49Z"
+  },
+  {
+   "job": "devmisspec_4618",
+   "lane": 3,
+   "utc": "2026-10-31T17:54:28Z"
+  },
+  {
+   "job": "devsparse_4519",
+   "lane": 1,
+   "utc": "2026-10-31T17:56:59Z"
+  },
+  {
+   "job": "devmisspec_4619",
+   "lane": 0,
+   "utc": "2026-10-31T18:06:43Z"
+  }
+ ]
+}

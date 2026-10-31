@@ -1,0 +1,31 @@
+{
+ "n": {
+  "sparse": 20,
+  "misspec": 20
+ },
+ "failed": 0,
+ "means": {
+  "sparse": {
+   "b2s_cox_fullval": 0.08061440758792926,
+   "b2s_npaft_bj_fullval": 0.08494379096133739,
+   "b2s_npaft_rank_fullval": 0.08224221831821832
+  },
+  "misspec": {
+   "b2s_cox_fullval": 0.05216541666533582,
+   "b2s_weibull_fullval": 0.0530359030677124,
+   "b2s_npaft_bj_fullval": 0.03679300090547034,
+   "b2s_npaft_rank_fullval": 0.03742207135582952
+  }
+ },
+ "score": {
+  "bj_km": 0.06086839593340386,
+  "rank_km": 0.05983214483702392
+ },
+ "objective": "rank_km",
+ "go_a": {
+  "misspec_vs_cox_upper": -0.012551929953555873,
+  "misspec_vs_weibull_upper": -0.013762627818350356,
+  "sparse_vs_cox_upper": 0.004002062752825844,
+  "go_a": true
+ }
+}

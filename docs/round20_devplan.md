@@ -112,3 +112,12 @@ only edit between the stages, made by the stage-A rule), `R20_MODE=devB ...`, th
 Cost from the Round-19 timings and a timing run on seed 4600 (one B2-S ensemble: Cox 383 s, NP bj_km 400 s, NP rank_km
 232 s): stage A about 5 h, stage B about 20 h on four lanes. Before the stages: the harness was smoke-tested on five
 development jobs with 5-epoch budgets (scratch output, not a result).
+
+## 8. Execution log (appended; rules above unchanged)
+
+**Stage A (2026-10-31, 40/40 jobs ok, `reports/round20/devA_summary.json`).** Mean survival-curve error, S-Sparse /
+S-Misspec: Cox 0.0806 / 0.0522; NP bj_km 0.0849 / 0.0368; NP rank_km 0.0822 / 0.0374; Weibull AFT – / 0.0530.
+Objective rule: score bj_km 0.06087, rank_km 0.05983 -> **rank_km**. GO-a at rank_km (paired, n = 20): S-Misspec
+NP − Cox −0.0147 [−0.0169, −0.0126], NP − Weibull −0.0156 [−0.0175, −0.0138]; S-Sparse NP − Cox +0.0016
+[−0.0007, +0.0040] (< +0.005) -> **GO-a passes**. These are development seeds on their third use; not a result.
+The only edit before stage B: `run_round20.SETTINGS["devB"]["np_objective"] = "rank_km"`.

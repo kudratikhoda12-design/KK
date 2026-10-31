@@ -43,7 +43,7 @@ torch.set_num_threads(1)
 torch.set_default_dtype(torch.float64)
 OUT = Path(os.environ.get("R20_OUT", ROOT / "reports/round20/dev/results_dev.jsonl"))
 SETTINGS = {"devA": dict(np_objective=None, margin=None, go_a=True, go_b=False),
-            "devB": dict(np_objective=None, margin={"cox": 0.0, "lnaft": 0.0, "npaft": 0.0}, go_a=False, go_b=True),
+            "devB": dict(np_objective="rank_km", margin={"cox": 0.0, "lnaft": 0.0, "npaft": 0.0}, go_a=False, go_b=True),
             "formal": dict(np_objective=None, margin=None, go_a=None, go_b=None)}      # devB objective, formal: D150
 DEV_A = {"devsparse": range(4500, 4520), "devmisspec": range(4600, 4620)}
 DEV_B = {"devlast": range(4400, 4420), "devsparse": range(4500, 4520), "devmisspec": range(4600, 4620)}
