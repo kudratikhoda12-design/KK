@@ -381,3 +381,80 @@ class ConfirmRefitAnchor:
             return self.ref_full.predict_risk(xg, z)
         X, Z = self._inp(xg, last, z)
         return np.mean([m.predict_risk(X, Z) for m in members], 0)
+
+
+def ensemble_heldout_loss(members, pk):
+    """D150: held-out loss of a 3-seed ensemble = the mean of its members' heldout_loss on pk (same units)."""
+    return float(np.mean([heldout_loss(m, pk) for m in members]))
+
+
+def cross_confirm_decision(dirs, margin, relative=False):
+    """D150 rule on the two direction records {loss_anchored, loss_ref, active}: anchored iff in BOTH directions the
+    anchored ensemble's held-out loss is below the B2-S ensemble's minus `margin` (relative=True: minus
+    margin * |loss_ref|, for the NP-AFT losses, whose scale depends on the objective) and the anchored state keeps at
+    least one active channel (trajectory channel or last-value edge)."""
+    return all(r["active"] and r["loss_anchored"] < r["loss_ref"] - (margin * abs(r["loss_ref"]) if relative else margin)
+               for r in dirs)
+
+
+class CrossConfirmRefitAnchor(ConfirmRefitAnchor):
+    """D150 (Round 20): two-half cross-confirmation against the 3-seed B2-S ensembles, then the Round-19 "finetune"
+    full-validation refit.
+
+    fit(train, val_h1, val_h2, ref_h1, ref_h2, ref_full): the validation set is split into halves h1, h2 (the Round-18
+    split: h1 = val_select, h2 = val_confirm); ref_h1 / ref_h2 are the plain B2-S ensembles tuned and early-stopped on
+    h1 / h2; ref_full is the usual B2-S ensemble on the whole validation set. For each direction (select on h1, confirm
+    on h2) and (select on h2, confirm on h1): step (1) is ResFKAN's two-way gate on the selection half (tuning, early
+    stopping, candidate fine-tunes, choice of the anchored state); the anchored ensemble at that state (3 seeds, mask
+    fixed, fine-tuned on the selection half) and the B2-S ensemble of the same half are scored on the other half by the
+    mean member held-out loss. Confirmed iff both directions favour the anchored ensemble by more than `margin` (and keep
+    an active channel; cross_confirm_decision).
+      not confirmed -> the estimator IS ref_full (predictions returned unchanged);
+      confirmed     -> the h1-direction anchored ensemble with its mask, every member fine-tuned once more early-stopping
+                       on the whole validation set (= ConfirmRefitAnchor refit "finetune" with val_select = h1).
+    The test split is never passed in. The h1-direction gate also records the Round-18 one-vs-one confirmation losses."""
+
+    def __init__(self, loss="cox", margin=0.0, fine_tune_epochs=200, relative_margin=False, **kw):
+        super().__init__(loss=loss, margin=margin, refit="finetune", fine_tune_epochs=fine_tune_epochs, **kw)
+        self.relative_margin = relative_margin
+
+    def fit(self, train, val_h1, val_h2, ref_h1, ref_h2, ref_full):
+        q = ("xg", "z", "y", "d")
+        self.dirs, self._alts = [], []
+        for sel, conf, ref in ((val_h1, val_h2, ref_h1), (val_h2, val_h1, ref_h2)):
+            g = ResFKAN(residual=False, gate_last_value=True, last_tol=0.0, loss=self.loss, fine_tune_epochs=self.ft,
+                        **self.kw).fit(train, sel, ref=ref, confirm=conf)
+            alt = g.anchored_alternative()
+            ch = g.anchored_choice
+            self.dirs.append(dict(loss_anchored=ensemble_heldout_loss(alt.members, residual_pack(conf, False)),
+                                  loss_ref=ensemble_heldout_loss(ref.members, {k: conf[k] for k in q}),
+                                  active=bool(sum(ch["traj_on"]) + sum(ch["last_on"]) > 0),
+                                  r18_loss_anchored=g.confirm_loss_anchored, r18_loss_ref=g.confirm_loss_ref,
+                                  anchored_choice=ch, n_fine_tunes=g.n_fine_tunes))
+            self._alts.append((g, alt))
+        self.gate = self._alts[0][0]
+        self.confirmed = cross_confirm_decision(self.dirs, self.margin, self.relative_margin)
+        self.reduced, self.ref_full = not self.confirmed, ref_full
+        self.val_full = {k: np.concatenate([val_h1[k], val_h2[k]]) for k in ("xg", "last", "z", "y", "d")}
+        self._train = train
+        self.members = None if self.reduced else self.refit_members()
+        return self
+
+    def refit_members(self, how="finetune"):
+        """The full-validation refit of the h1-direction anchored ensemble (whatever the decision; development use)."""
+        if how != "finetune":
+            raise ValueError("CrossConfirmRefitAnchor refits by 'finetune' (D150)")
+        g, alt = self._alts[0]
+        tr, vf = residual_pack(self._train, False), residual_pack(self.val_full, False)
+        c = g._cand_anch
+        gm, sm = c.net.g.mask.clone(), c.net.stat.mask.clone()
+        out = []
+        for m in alt.members:
+            m = copy.deepcopy(m)
+            m.net.g.mask[:] = gm
+            m.net.stat.mask[:] = sm
+            set_validation(m, vf)
+            m.fine_tune(self.ft)
+            m._finalise(tr)
+            out.append(m)
+        return out

@@ -101,10 +101,13 @@ class FKANSurv:
 
     def __init__(self, kind="b2s", loss="cox", ties="efron", M=2, hidden=0, lr=3e-3, wd=1e-4, lam=0.0,
                  max_epochs=3000, patience=100, residual_calibration=False, seed=0, family="weibull", edge="spline",
-                 early_stopping=True):
+                 early_stopping=True, np_objective="bj_km", np_tau=0.05):
         self.cfg = dict(kind=kind, loss=loss, ties=ties, M=M, hidden=hidden, lr=lr, wd=wd, lam=lam,
                         max_epochs=max_epochs, patience=patience, residual_calibration=residual_calibration,
                         seed=seed, family=family, edge=edge, early_stopping=early_stopping)
+        self._np = loss == "aft" and family == "np_aft"      # D150: NP-KAN-AFT (fkan_surv.py); other paths unchanged
+        if self._np:
+            self.cfg.update(np_objective=np_objective, np_tau=np_tau)
 
     # ---- data ----------------------------------------------------------------------------------------------------
     def _std_fit(self, xg, z):
@@ -124,6 +127,9 @@ class FKANSurv:
     def _loss(self, eta, y, d, strata=None):
         if self.cfg["loss"] == "cox":
             return cox_nll(eta, y, d, self.cfg["ties"], strata=strata)
+        if self._np:
+            from .fkan_surv import np_loss
+            return np_loss(self, eta, y, d)
         sigma = nn.functional.softplus(self.log_sigma) + 1e-3
         return aft_nll(y, d, self.mu + eta, sigma, self.cfg["family"])
 
@@ -216,6 +222,9 @@ class FKANSurv:
         return self
 
     def _params(self):
+        if self._np:                                  # rank_km: the intercept is not identified (held fixed)
+            return (list(self.net.parameters()) + list(getattr(self, "_sym_params", []))
+                    + ([self.mu] if self.cfg["np_objective"] == "bj_km" else []))
         return (list(self.net.parameters()) + list(getattr(self, "_sym_params", []))
                 + ([self.mu, self.log_sigma] if self.cfg["loss"] == "aft" else []))
 
@@ -225,6 +234,9 @@ class FKANSurv:
         best, best_state, bad, hist = np.inf, None, 0, []
         for ep in range(max_epochs):
             self.net.train()
+            if self._np and c["np_objective"] == "bj_km":
+                from .fkan_surv import np_refresh
+                np_refresh(self)                          # BJ E-step: KM of the current training residuals
             opt.zero_grad()
             loss = self._loss(self.net(dd["Xtr"], dd["Ztr"]), dd["ytr"], dd["dtr"], dd["str"]) + self._reg(dd["Xtr"], dd["Ztr"])
             loss.backward()
@@ -260,6 +272,9 @@ class FKANSurv:
         if self.cfg["loss"] == "cox":
             self.baseline = breslow_baseline(eta_tr, train["y"], train["d"],
                                              None if self.data["str"] is None else np.asarray(self.data["str"]))
+        elif self._np:
+            from .fkan_surv import np_finalise
+            np_finalise(self, train)
         else:
             self.sigma = float(nn.functional.softplus(self.log_sigma.detach()) + 1e-3)
             if self.cfg["residual_calibration"]:
@@ -286,6 +301,9 @@ class FKANSurv:
             if strata is None:
                 return cox_survival(e, self.baseline[None], times)
             return np.vstack([cox_survival(e[i:i + 1], self.baseline[s], times) for i, s in enumerate(strata)])
+        if self._np:
+            from .fkan_surv import np_survival
+            return np.where(times[None, :] <= 0, 1.0, np_survival(self, e, times))
         w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
         if self.cfg["residual_calibration"]:
             idx = np.searchsorted(self.res_grid, w, side="right") - 1
