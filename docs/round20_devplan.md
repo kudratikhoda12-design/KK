@@ -126,3 +126,18 @@ The only edit before stage B: `run_round20.SETTINGS["devB"]["np_objective"] = "r
 (all ok). Four claimed jobs (devlast_4404, devmisspec_4604, devlast_4405, devsparse_4505) were in flight and left no
 record. The queue pointer was reset (logged in `reports/round20/devB/queue_state.json` "interruptions"); completed jobs
 are skipped and the four lost jobs rerun from their fixed seeds. No record was removed or replaced.
+
+**Stage B (2026-11-01, 60/60 jobs ok, `reports/round20/devB_summary.json`; NP objective rank_km).** Margin rule
+(estimator − full-validation B2-S, survival-curve error, mean [95% CI], confirmations of 20):
+Cox: no margin met U(S-Sparse) < +0.0025 -> fall-back, smallest U(S-Sparse) with mean(S-Last) < 0: **0.02** (grid edge;
+S-Last −0.0111 [−0.0170, −0.0052], 10; S-Sparse +0.0014 [−0.0015, +0.0042], 1). Log-normal AFT: **0** (rule; S-Last
+−0.0094 [−0.0140, −0.0048], 12; S-Misspec +0.0006 [−0.0003, +0.0015], 2). NP-AFT: **0** relative (rule; S-Last
+−0.0161 [−0.0223, −0.0098], 13; S-Misspec +0.0005 [−0.0003, +0.0013], 4). **GO-b passes** for all three families.
+Diagnostics: always refitting would cost +0.0052 (Cox S-Sparse), +0.0061 (both AFT families, S-Misspec); on S-Sparse
+the Round-18 one-direction rule (seed-0 member) anchored in 11 of 20 replicates, the cross-confirmation at margin 0 in 2.
+These are development seeds on their third use, the margins were chosen in-sample, and the Cox margin lies at the grid
+edge; the fresh formal seeds are the test.
+
+Before D150 (formal mode only, development stages unaffected): `run_round20.py` also fits the log-normal B2-S on
+S-Misspec when only GO-a passes (needed for the registered exploratory contrast; not triggered, as both GOs passed);
+`scripts/analyse_round20.py` written (dry-run on a copy of partial stage-B records only, as a code check).

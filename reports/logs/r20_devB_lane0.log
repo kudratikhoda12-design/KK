@@ -1,8 +1,16 @@
-[lane 0] devsparse_4500 ok 1118s
-[lane 0] devsparse_4501 ok 1111s
 /home/user/KK/src/kanfae/models/fkan.py:307: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
   w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
-[lane 0] devmisspec_4601 ok 4915s
-[lane 0] devsparse_4503 ok 1165s
-[lane 0] devmisspec_4603 ok 3435s
+[lane 0] devlast_4404 ok 6788s
+[lane 0] devsparse_4507 ok 1045s
+[lane 0] devmisspec_4607 ok 3633s
+[lane 0] devsparse_4509 ok 803s
+[lane 0] devmisspec_4609 ok 2248s
+[lane 0] devsparse_4510 ok 1185s
+[lane 0] devlast_4411 ok 6878s
+[lane 0] devsparse_4513 ok 1447s
+[lane 0] devlast_4414 ok 4129s
+[lane 0] devsparse_4515 ok 1360s
+[lane 0] devlast_4416 ok 8399s
+[lane 0] devsparse_4518 ok 1605s
+[lane 0] devmisspec_4618 ok 3167s

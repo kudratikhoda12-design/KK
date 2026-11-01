@@ -44,7 +44,8 @@ torch.set_default_dtype(torch.float64)
 OUT = Path(os.environ.get("R20_OUT", ROOT / "reports/round20/dev/results_dev.jsonl"))
 SETTINGS = {"devA": dict(np_objective=None, margin=None, go_a=True, go_b=False),
             "devB": dict(np_objective="rank_km", margin={"cox": 0.0, "lnaft": 0.0, "npaft": 0.0}, go_a=False, go_b=True),
-            "formal": dict(np_objective=None, margin=None, go_a=None, go_b=None)}      # devB objective, formal: D150
+            "formal": dict(np_objective="rank_km", margin={"cox": 0.02, "lnaft": 0.0, "npaft": 0.0},
+                           go_a=True, go_b=True)}      # D150 (docs/round20_devplan.md §3-5, stage results in §8)
 DEV_A = {"devsparse": range(4500, 4520), "devmisspec": range(4600, 4620)}
 DEV_B = {"devlast": range(4400, 4420), "devsparse": range(4500, 4520), "devmisspec": range(4600, 4620)}
 FORMAL = {"last": range(4700, 4720), "sparse": range(4800, 4820), "misspec": range(4900, 4920)}
@@ -109,8 +110,9 @@ def job(kind, seed, mode):
                 names.append(("b2s_weibull_fullval", lambda: ens("weibull", tr, va)))
         elif kind == "misspec":
             names = [("b2s_cox_fullval", lambda: ens("cox", tr, va)), ("b2s_weibull_fullval", lambda: ens("weibull", tr, va))]
-            if not st["go_b"]:
-                names.append(("b2s_npaft_fullval", lambda: ens("npaft", tr, va, st["np_objective"])))
+            if not st["go_b"]:      # otherwise both come from the cross-confirmed families below
+                names += [("b2s_npaft_fullval", lambda: ens("npaft", tr, va, st["np_objective"])),
+                          ("b2s_lnaft_fullval", lambda: ens("lnaft", tr, va))]
         elif kind == "sparse":
             names = [("b2s_npaft_fullval", lambda: ens("npaft", tr, va, st["np_objective"]))]
             if not st["go_b"]:
