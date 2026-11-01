@@ -121,3 +121,8 @@ Objective rule: score bj_km 0.06087, rank_km 0.05983 -> **rank_km**. GO-a at ran
 NP − Cox −0.0147 [−0.0169, −0.0126], NP − Weibull −0.0156 [−0.0175, −0.0138]; S-Sparse NP − Cox +0.0016
 [−0.0007, +0.0040] (< +0.005) -> **GO-a passes**. These are development seeds on their third use; not a result.
 The only edit before stage B: `run_round20.SETTINGS["devB"]["np_objective"] = "rank_km"`.
+
+**Stage B interruption (2026-11-01).** The container was reclaimed at about 2026-10-31T21:51Z with 13/60 records written
+(all ok). Four claimed jobs (devlast_4404, devmisspec_4604, devlast_4405, devsparse_4505) were in flight and left no
+record. The queue pointer was reset (logged in `reports/round20/devB/queue_state.json` "interruptions"); completed jobs
+are skipped and the four lost jobs rerun from their fixed seeds. No record was removed or replaced.

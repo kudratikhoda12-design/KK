@@ -1,0 +1,104 @@
+{
+ "next": 0,
+ "claims": [
+  {
+   "job": "devlast_4400",
+   "lane": 2,
+   "utc": "2026-10-31T18:33:42Z"
+  },
+  {
+   "job": "devsparse_4500",
+   "lane": 0,
+   "utc": "2026-10-31T18:33:43Z"
+  },
+  {
+   "job": "devmisspec_4600",
+   "lane": 1,
+   "utc": "2026-10-31T18:33:43Z"
+  },
+  {
+   "job": "devlast_4401",
+   "lane": 3,
+   "utc": "2026-10-31T18:33:43Z"
+  },
+  {
+   "job": "devsparse_4501",
+   "lane": 0,
+   "utc": "2026-10-31T18:52:21Z"
+  },
+  {
+   "job": "devmisspec_4601",
+   "lane": 0,
+   "utc": "2026-10-31T19:10:51Z"
+  },
+  {
+   "job": "devlast_4402",
+   "lane": 1,
+   "utc": "2026-10-31T19:18:24Z"
+  },
+  {
+   "job": "devsparse_4502",
+   "lane": 2,
+   "utc": "2026-10-31T19:49:45Z"
+  },
+  {
+   "job": "devmisspec_4602",
+   "lane": 2,
+   "utc": "2026-10-31T20:06:24Z"
+  },
+  {
+   "job": "devlast_4403",
+   "lane": 1,
+   "utc": "2026-10-31T20:24:05Z"
+  },
+  {
+   "job": "devsparse_4503",
+   "lane": 0,
+   "utc": "2026-10-31T20:32:47Z"
+  },
+  {
+   "job": "devmisspec_4603",
+   "lane": 0,
+   "utc": "2026-10-31T20:52:12Z"
+  },
+  {
+   "job": "devlast_4404",
+   "lane": 3,
+   "utc": "2026-10-31T20:52:22Z"
+  },
+  {
+   "job": "devsparse_4504",
+   "lane": 2,
+   "utc": "2026-10-31T21:26:42Z"
+  },
+  {
+   "job": "devmisspec_4604",
+   "lane": 2,
+   "utc": "2026-10-31T21:45:11Z"
+  },
+  {
+   "job": "devlast_4405",
+   "lane": 0,
+   "utc": "2026-10-31T21:49:27Z"
+  },
+  {
+   "job": "devsparse_4505",
+   "lane": 1,
+   "utc": "2026-10-31T21:51:04Z"
+  }
+ ],
+ "interruptions": [
+  {
+   "utc": "2026-11-01T01:52Z",
+   "reason": "container reclaimed ~2026-10-31T21:51Z; lanes killed",
+   "lost_in_flight": [
+    "devlast_4404",
+    "devmisspec_4604",
+    "devlast_4405",
+    "devsparse_4505"
+   ],
+   "action": "next reset to 0; ok jobs skipped via done-set; lost jobs rerun (deterministic seeds)",
+   "next_before": 17
+  }
+ ]
+}
