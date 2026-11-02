@@ -141,3 +141,6 @@ edge; the fresh formal seeds are the test.
 Before D150 (formal mode only, development stages unaffected): `run_round20.py` also fits the log-normal B2-S on
 S-Misspec when only GO-a passes (needed for the registered exploratory contrast; not triggered, as both GOs passed);
 `scripts/analyse_round20.py` written (dry-run on a copy of partial stage-B records only, as a code check).
+
+**Formal run (2026-11-01 14:25Z – 2026-11-02 ~08:00Z, 60/60 ok, no interruption).** H-R20a supported, H-R20b supported for all
+three families (D151; `reports/round20_summary.json`).
