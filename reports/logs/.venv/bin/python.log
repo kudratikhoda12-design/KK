@@ -1,0 +1,5 @@
+[note written 2026-11-02, not command output] This command record (reports/logs/commands.jsonl, start 2026-10-31T18:33:12Z,
+exit 1, 0.003 s) is a mistyped invocation of scripts/run_logged.sh: the run name was omitted, so ".venv/bin/python" was taken
+as the name and "scripts/analyse_round20_dev.py A" as the command; the log path reports/logs/.venv/bin/python.log could not be
+created and nothing ran. The stage-A analysis was run immediately afterwards as r20_analyse_devA
+(reports/logs/r20_analyse_devA.log, exit 0). The record is kept unchanged.

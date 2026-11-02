@@ -227,6 +227,19 @@ KANFAE_RUN_ID=final_full_suite_round19 scripts/run_logged.sh final_full_suite_ro
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round19.py   # report revision 21
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev21.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+# Round 20 (2026-10-31 .. 2026-11-02; D150-D152): NP-KAN-AFT and the two-half cross-confirmed anchor
+.venv/bin/python -m pytest -q tests/test_round20.py                    # R20-1..R20-6
+for k in 0 1 2 3; do R20_MODE=devA scripts/run_logged.sh r20_devA_lane$k .venv/bin/python scripts/run_round20_lanes.py --lane $k & done   # 40 jobs
+.venv/bin/python scripts/analyse_round20_dev.py A                      # reports/round20/devA_summary.json (objective, GO-a)
+for k in 0 1 2 3; do R20_MODE=devB scripts/run_logged.sh r20_devB_lane$k .venv/bin/python scripts/run_round20_lanes.py --lane $k & done   # 60 jobs
+.venv/bin/python scripts/analyse_round20_dev.py B                      # reports/round20/devB_summary.json (margins, GO-b)
+for k in 0 1 2 3; do R20_MODE=formal scripts/run_logged.sh r20_formal_lane$k .venv/bin/python scripts/run_round20_lanes.py --lane $k & done   # 60 jobs
+.venv/bin/python scripts/analyse_round20.py                            # reports/round20_summary.json (H-R20a, H-R20b)
+.venv/bin/python scripts/manuscript_round20.py && bash scripts/build_manuscript20_pdf.sh && .venv/bin/python scripts/verify_manuscript_round20.py --pdf
+KANFAE_RUN_ID=final_full_suite_round20 scripts/run_logged.sh final_full_suite_round20 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round20.py   # report revision 22
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev22.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)

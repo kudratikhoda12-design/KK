@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, Round 19 (2026-10-30)
+# Final status: KAN-FAE research prototype, Round 20 (2026-11-02)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev22.pdf` (revision 22,
+510 pages: Part A = Round 20 and the updated manuscript; Part B = Round 19 and its manuscript; Parts C–V = earlier revisions).
+Manuscript: `docs/manuscript_round20.md`, `reports/manuscript_round20.pdf` (43 pages, Rounds 1–20).
+
+| Item | Result |
+|---|---|
+| D150 | NP-KAN-AFT (`NPKANAFT`, `family="np_aft"`; Kaplan–Meier error law; default off) and `CrossConfirmRefitAnchor` (two-half cross-confirmation against the 3-seed B2-S ensembles; default off); tests R20-1..R20-6; Round-19 job reproduced exactly. Development (already-used seeds 4400–4619): stage A chose **rank_km**, GO-a passed; stage B chose margins Cox 0.02 (fall-back, grid edge), log-normal AFT 0, NP-AFT 0 (relative), GO-b passed; registration locked before the formal seeds |
+| D151 | Formal run (fresh seeds 4700–4719, 4800–4819, 4900–4919; 60/60 ok). **H-R20a supported**: S-Misspec NP − Cox −0.0135 [−0.0165, −0.0106], NP − Weibull −0.0150 [−0.0189, −0.0111] (20/20 each); not different from the correctly specified log-normal AFT (−0.0010 [−0.0028, +0.0007]). **H-R20b supported** for Cox (S-Last −0.0097 [−0.0153, −0.0042]; S-Sparse +0.0012 [−0.0013, +0.0036]), log-normal AFT and NP-AFT; anchoring confirmed in 1 of 20 trajectory-scenario replicates per family |
+| Manuscript (D152) | 2534 values logged with their sources; `scripts/verify_manuscript_round20.py --pdf` ALL_PASS |
+| Tests | `final_full_suite_round20`: 317 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (337); no XPASS. `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner review. Open points: settings chosen on reused development seeds; Cox margin at the grid edge (conservative: 9/20 S-Last confirmations); NP-KAN-AFT tested under one error law; no real data in Round 20 |
+
+---
+
+# Round 19 status (2026-10-30), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev21.pdf` (revision 21,
