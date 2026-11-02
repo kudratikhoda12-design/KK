@@ -25,7 +25,22 @@ the Round-19 manuscript); Parts C–V are revision 21's Parts B–U.</p>
 
 ### 0.2 What the results say
 
-{{NARRATIVE}}
+1. **A Kaplan–Meier error law works as well as knowing the right error family.** On S-Misspec (log-normal errors) the
+   semiparametric NP-KAN-AFT was better than B2-S Cox and the Weibull KAN-AFT in every one of the 20 fresh replicates,
+   and indistinguishable from the correctly specified log-normal KAN-AFT ({{V:a_ln}}). Its advantage is that it does not
+   need the family to be guessed; it is not better than the right parametric model. On S-Sparse it stayed within the
+   +0.005 margin of B2-S Cox ({{V:a_sparse}}).
+2. **Confirming in both halves of the validation split fixed the Round-19 gap.** Against B2-S trained on the whole
+   validation set, the cross-confirmed anchor kept a clear S-Last gain and stayed within +0.005 on the trajectory
+   scenario for Cox, log-normal AFT and NP-AFT alike. Round 19's Cox S-Sparse bound was +0.0063 in development; on fresh
+   seeds Round 20's is inside the margin.
+3. **It works by deciding less often.** On the trajectory scenarios anchoring was confirmed in one replicate per
+   family; with the conservative Cox margin (0.02, the edge of the grid) Cox anchored in only {{V:b_cox_conf}} of 20
+   S-Last / S-Sparse replicates and gave up part of its S-Last gain (it did not beat landmark Cox there). Always
+   refitting would have cost on every trajectory scenario, so the confirmation step, not the refit, carries the
+   non-inferiority.
+4. **Protocol.** Both go rules passed on the development seeds before any fresh seed was used, every job finished
+   (no failures), and both hypotheses were decided by the rules registered in D150.
 
 # Part A: Round 20
 
@@ -82,7 +97,18 @@ the Round-19 manuscript); Parts C–V are revision 21's Parts B–U.</p>
 
 ## R20.7 Limitations
 
-{{LIMITATIONS}}
+- **Settings chosen on reused seeds.** The NP-AFT objective and all three margins were chosen on development seeds used
+  for the third time (Round-18 formal, Round-19 development, Round-20 development); the Cox margin lies at the edge of
+  its grid.
+- **Cause not established.** The Round-19 miss and the Round-20 pass are on different seeds; the fresh-seed test
+  supports the cross-confirmed estimator, but does not show that the one-member, one-direction comparison caused the
+  Round-19 miss.
+- **One error law.** NP-KAN-AFT was tested under log-normal errors only; its gain over Cox and Weibull reflects their
+  misspecification there. Its survival curve is not extrapolated beyond the largest training residual.
+- **No novelty claim (D111).** The semiparametric AFT model and Buckley–James / rank estimation are classical; a
+  Buckley–James KAN-AFT for static covariates is published. New here is only their use with the functional B2-S
+  location and the anchored gate.
+- **One simulator, 20 replicates per scenario; no real data in Round 20. AFCM is still not validated.**
 
 # Part A (continued): the standalone manuscript, Rounds 1–20
 

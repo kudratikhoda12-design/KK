@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location("verify_manuscript_r20_v19", ROOT / "scripts/verify_manuscript_round19.py")
 V19 = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(V18)
+_spec.loader.exec_module(V19)
 W = V19.W
 
 W.MD = ROOT / "docs/manuscript_round20.md"
@@ -24,11 +24,19 @@ W.LEDGER = ROOT / "reports/manuscript_values_round20.json"
 W.PDF = ROOT / "reports/manuscript_round20.pdf"
 W.OUT = ROOT / "reports/manuscript_verification_round20.json"
 W.REQUIRED_SECTIONS = [s.replace("(Rounds 15–19)", "(Rounds 15–20)") for s in W.REQUIRED_SECTIONS] + \
-    ["5.7 A semiparametric KAN-AFT and two-half cross-confirmation (H-R20a, H-R20b)"]
+    ["5.7 Semiparametric KAN-AFT and cross-confirmation (H-R20a, H-R20b)"]
 D, CONV = W.D, W.CONV
 W.LITERALS += [
-    # Round-20 design constants and conventions (D150), filled in with the Round-20 text
+    # Round-20 design constants and conventions (D150; docs/round20_devplan.md, committed before the development runs)
+    ("0", "has an upper 95% bound below 0", D, "< 0 AND of b2s_npaft_fullval"),
+    ("0", "upper bound below 0 on S-Last", D, "S-Last upper bound < 0"),
+    ("0", "at margin 0 and at the chosen margin", "docs/round20_devplan.md", "margin 0 in the fit"),
+    ("0", "one-direction rule at margin 0", D, "Round-18 one-direction rule at margin 0"),
 ]
+for _ctx, _ph in (("S-Last 4700–4719", "4700–4719 (S-Last)"), ("S-Sparse 4800–4819", "4800–4819 (S-Sparse)"),
+                  ("S-Misspec-lognormal 4900–4919", "4900–4919 (S-Misspec-lognormal)")):
+    for _tok in W.tokens(" " + _ctx + " "):
+        W.LITERALS.append((_tok, _ctx, D, _ph))
 W.BUILDER_LITERALS += [
 ]
 FIGURES = V19.FIGURES
