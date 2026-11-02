@@ -131,7 +131,7 @@ def NPKANAFT(objective="bj_km", kind="b2s", tau=0.05, **kw):
     return FKANEnsemble(kind=kind, loss="aft", family="np_aft", np_objective=objective, np_tau=tau, **kw)
 
 
-def distill_and_replace(model, mu=10.0, max_abs_arg=50.0, max_iter=200, val_tol=0.0):
+def distill_and_replace(model, mu=10.0, max_abs_arg=50.0, max_iter=200, val_tol=0.0, return_edges=False):
     """Symbolic distillation of a fitted FKANSurv (any loss, including np_aft) with a non-degradation rollback guard.
 
     Stages 1-2 without PySR (max_abs_arg 50), guarded substitution, one fixed-mu distillation refit (D138: anchor = the
@@ -140,6 +140,7 @@ def distill_and_replace(model, mu=10.0, max_abs_arg=50.0, max_iter=200, val_tol=
     (after) are computed with the same function (heldout loss on the model's validation split; for bj_km each model's
     own training-residual KM). Rollback: if the distilled model has a non-finite prediction, loss or parameter, or
     loss_after > loss_before + val_tol, the spline model is returned unchanged.
+    return_edges (Round 21, default off): also record each edge's stage, acceptance, formula and validation R^2.
     Returns (model, record)."""
     from .fkan import substitute_symbolic, symbolic_edges
     dd = model.data
@@ -163,4 +164,8 @@ def distill_and_replace(model, mu=10.0, max_abs_arg=50.0, max_iter=200, val_tol=
     rec = dict(n_edges=len(recs), n_accepted=sum(r["result"].accepted for r in recs), n_substituted=n_sub,
                val_loss_before=before, val_loss_after=after, finite=finite, refit_fallback=bool(m.refit_fallback),
                rollback=bool(rollback), val_tol=val_tol)
+    if return_edges:
+        rec["edges"] = [dict(layer=r["layer"], i=r["i"], o=r["o"], share=r.get("share"), stage=r["result"].stage,
+                           accepted=bool(r["result"].accepted), formula=r["result"].formula,
+                           r2_val=r["result"].r2_val) for r in recs]
     return (model if rollback else m), rec
