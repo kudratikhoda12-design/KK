@@ -74,3 +74,13 @@ Tests R21-1..R21-4 (`tests/test_round21_real_npaft.py`) pass before the run. 25 
 single-threaded lanes, file-locked queue, resumable (`scripts/run_round21_lanes.py --lane k`); records
 `reports/round21/results_lane*.jsonl`; analysis `scripts/analyze_round21.py` -> `reports/round21/analysis_summary.json`
 and `docs/round21_results.md`; decisions D154 (outcome) and D155 (deliverables); ledger L48.
+
+## 5. Execution notes (appended; rules above unchanged)
+
+**Interruption (2026-11-03 ~00:42Z).** The container restarted with the 20 clinical jobs recorded (all ok, committed
+in d7445c6) and the four running C-MAPSS jobs (about seven hours each) lost before writing a record. Mechanics changed
+for the rerun only, no model or rule: (1) each C-MAPSS job checkpoints its record after every model family
+(`reports/round21/ckpt/`) and resumes from it; every network is seeded at construction and trained full-batch, so a
+family's fit does not depend on which families ran before (shown by the exact Round-13 reproduction of the Weibull and
+Cox ensembles that now run in a different order); (2) a fifth lane so the five C-MAPSS jobs run concurrently. The
+queue pointer was reset (logged in `reports/round21/queue_state.json` "interruptions"); completed jobs are skipped.

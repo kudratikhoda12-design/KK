@@ -1,5 +1,5 @@
 {
- "next": 24,
+ "next": 0,
  "claims": [
   {
    "job": "real_pbc_E2_0",
@@ -120,6 +120,20 @@
    "job": "cmapss_3",
    "lane": 1,
    "utc": "2026-11-02T18:32:29Z"
+  }
+ ],
+ "interruptions": [
+  {
+   "utc": "2026-11-03T00:43Z",
+   "reason": "container restarted ~00:42Z; lanes killed",
+   "lost_in_flight": [
+    "cmapss_0",
+    "cmapss_1",
+    "cmapss_2",
+    "cmapss_3"
+   ],
+   "action": "next reset to 0; ok jobs skipped via done-set; C-MAPSS jobs rerun from their fixed splits with a per-family checkpoint; 5 lanes",
+   "next_before": 24
   }
  ]
 }
