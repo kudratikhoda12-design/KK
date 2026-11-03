@@ -192,14 +192,14 @@ def job_cmapss(k):
                models={}, alternatives={}, gates={}, symbolic={})
     ck = OUT.parent / "ckpt" / f"cmapss_{k}.json"           # execution checkpoint (2026-11-03): one family at a time
     if ck.exists():
-        rec = json.loads(ck.read_text())
+        rec = dict(json.loads(ck.read_text()), resumed_from_checkpoint=True)
     for f in ("cox", "waft", "lnaft", "npaft"):
         if f"b2s_{f}" in rec["models"]:
             continue                                         # fits are seeded per network and full-batch: skipping a
         fit_family(f, P, metric, rec, cross=f in CROSS_CMAPSS)   # finished family does not change the others
         ck.parent.mkdir(parents=True, exist_ok=True)
         ck.write_text(json.dumps(rec, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o)))
-    rec["resumed_from_checkpoint"] = bool(rec.get("resumed_from_checkpoint", False))
+    rec["resumed_from_checkpoint"] = bool(rec.get("resumed_from_checkpoint", False))   # False: ran in one piece
     return rec
 
 
