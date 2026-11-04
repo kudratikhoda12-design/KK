@@ -92,3 +92,7 @@ the rerun every fitted ensemble and the cross-confirmation model are pickled as 
 `reports/round21/ckpt/cmapss_<k>_fits/`) and reloaded on resume; a test on pbc_E2 split 0 with small budgets
 reproduced identical metrics, gate decisions and alternatives from the reloaded objects. Records mark reloaded parts
 (`reloaded`), whose wall-clock seconds are then not fit times. Mechanics only; no model, setting or rule changed.
+
+**Third interruption (2026-11-04 ~17:09Z).** The container restarted while the session was paused; cmapss_1 and
+cmapss_2 lost only their cross-confirmation gate step. They resume with the full, h1 and h2 NP-AFT ensembles reloaded
+from the cache. Mechanics only.

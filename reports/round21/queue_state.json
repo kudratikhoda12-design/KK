@@ -145,6 +145,16 @@
    "job": "cmapss_4",
    "lane": 1,
    "utc": "2026-11-03T00:44:17Z"
+  },
+  {
+   "job": "cmapss_1",
+   "lane": 0,
+   "utc": "2026-11-04T01:57:41Z"
+  },
+  {
+   "job": "cmapss_2",
+   "lane": 1,
+   "utc": "2026-11-04T01:57:41Z"
   }
  ],
  "interruptions": [
@@ -169,6 +179,16 @@
    ],
    "action": "next reset to 0; finished jobs skipped; cmapss_1/2 resume from their family checkpoints (cox, waft, lnaft); every fitted ensemble now pickled as it finishes (ENS_CACHE, reload tested identical); 2 lanes",
    "next_before": 25
+  },
+  {
+   "utc": "2026-11-04T17:10Z",
+   "reason": "container restarted (session paused at the usage limit); lanes killed",
+   "lost_in_flight": [
+    "cmapss_1 (cross-confirmation gate)",
+    "cmapss_2 (cross-confirmation gate)"
+   ],
+   "action": "next reset to 0; cmapss_1/2 resume with full, h1 and h2 NP-AFT ensembles reloaded from ENS_CACHE; 2 lanes",
+   "next_before": 23
   }
  ]
 }
