@@ -1,0 +1,91 @@
+{
+ "n": 25,
+ "failed": 0,
+ "hypotheses": {
+  "H_R21a": {
+   "part1_all_finite": true,
+   "n_npaft_fits": 20,
+   "part2_mean_vs_cox": -0.009499393076780382,
+   "part2_mean_vs_waft": 0.004397705415390957,
+   "part2": false,
+   "part3_dcal_pass": 5,
+   "part3": true,
+   "supported": false
+  },
+  "H_R21b": {
+   "pbc_E2": {
+    "npaft_mean_shift": -0.004436707442786331,
+    "cox_mean_shift": -0.0005963825206796031,
+    "npaft_ok": true,
+    "cox_ok": true,
+    "fallback_exact": true,
+    "confirmed": {
+     "cox": "1/5",
+     "lnaft": "2/5",
+     "npaft": "1/5"
+    }
+   },
+   "pbc_E1": {
+    "npaft_mean_shift": -0.003051516161155868,
+    "cox_mean_shift": -0.004134133883611976,
+    "npaft_ok": true,
+    "cox_ok": true,
+    "fallback_exact": true,
+    "confirmed": {
+     "cox": "4/5",
+     "lnaft": "0/5",
+     "npaft": "3/5"
+    }
+   },
+   "prothro": {
+    "npaft_mean_shift": -0.0043303264361529035,
+    "cox_mean_shift": 0.0,
+    "npaft_ok": true,
+    "cox_ok": true,
+    "fallback_exact": true,
+    "confirmed": {
+     "cox": "0/5",
+     "lnaft": "1/5",
+     "npaft": "3/5"
+    }
+   },
+   "aids": {
+    "npaft_mean_shift": -0.0017739404998794507,
+    "cox_mean_shift": 0.0006021271704530706,
+    "npaft_ok": true,
+    "cox_ok": true,
+    "fallback_exact": true,
+    "confirmed": {
+     "cox": "1/5",
+     "lnaft": "3/5",
+     "npaft": "1/5"
+    }
+   },
+   "supported": true
+  },
+  "H_R21c": {
+   "criterion": {
+    "b2s_npaft": {
+     "dcal_improved": true,
+     "ibs_le_0055": false,
+     "harrell_ge_088": false,
+     "relative_ibs_ok": true,
+     "relative_c_ok": true,
+     "owner_criterion": false,
+     "relative_criterion": true
+    },
+    "b2s_lnaft": {
+     "dcal_improved": true,
+     "ibs_le_0055": false,
+     "harrell_ge_088": false,
+     "relative_ibs_ok": true,
+     "relative_c_ok": true,
+     "owner_criterion": false,
+     "relative_criterion": true
+    }
+   },
+   "supported": false,
+   "secondary_relative_supported": true
+  }
+ }
+}
