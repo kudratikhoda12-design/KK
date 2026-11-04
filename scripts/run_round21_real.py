@@ -52,6 +52,26 @@ MARGIN = {"cox": (0.02, False), "lnaft": (0.0, False), "npaft": (0.0, True)}    
 CROSS_REAL = ("cox", "lnaft", "npaft")
 CROSS_CMAPSS = ("npaft",)
 ENS_KW = {}                                          # tests may shrink the budgets (never used by the formal jobs)
+ENS_CACHE = None          # C-MAPSS execution cache (2026-11-04): fitted ensembles pickled as they finish, reloaded on resume
+
+
+def cached(name, fn):
+    """Fit (or reload) one deterministic fit; returns (object, reloaded). Every network is seeded at construction and
+    trained full-batch, so a reloaded object is the one a refit would produce."""
+    if ENS_CACHE is None:
+        return fn(), False
+    import pickle
+    pth = Path(ENS_CACHE) / f"{name}.pkl"
+    if pth.exists():
+        with open(pth, "rb") as fh:
+            return pickle.load(fh), True
+    obj = fn()
+    pth.parent.mkdir(parents=True, exist_ok=True)
+    tmp = pth.with_suffix(".tmp")
+    with open(tmp, "wb") as fh:
+        pickle.dump(obj, fh)
+    tmp.rename(pth)
+    return obj, False
 CROSS_KW = {}
 
 
@@ -80,26 +100,27 @@ def fit_family(f, P, metric, rec, cross=True, halves=None):
     """B2-S ensemble on the whole validation set (the unanchored model b2s_<f>), and, if cross, the cross-confirmed
     anchor with its h1/h2 reference ensembles. P: dict tr, va, h1, h2, te packs (with 'last')."""
     t0 = time.time()
-    full = ens(f, P["tr"], P["va"])
+    full, re_full = cached(f"full_{f}", lambda: ens(f, P["tr"], P["va"]))
     S_fn, risk = surv_risk(full.members, P["te"])
     rec["models"][f"b2s_{f}"] = dict(metric(S_fn, risk), **dcal_chi2(S_fn, P["te"]["y"], P["te"]["d"]),
                                      lr=full.lr, wd=full.wd, seconds=round(time.time() - t0, 1),
-                                     finite=bool(np.all(np.isfinite(S_fn(np.array([np.median(P["te"]["y"])]))))))
+                                     finite=bool(np.all(np.isfinite(S_fn(np.array([np.median(P["te"]["y"])]))))),
+                                     reloaded=re_full)
     if not cross:
         return full, None
     t1 = time.time()
-    h1, h2 = ens(f, P["tr"], P["h1"]), ens(f, P["tr"], P["h2"])
+    (h1, re_h1), (h2, re_h2) = cached(f"h1_{f}", lambda: ens(f, P["tr"], P["h1"])), cached(f"h2_{f}", lambda: ens(f, P["tr"], P["h2"]))
     t_ref = time.time() - t1
     margin, rel = MARGIN[f]
     t2 = time.time()
-    m = CrossConfirmRefitAnchor(margin=margin, relative_margin=rel, **FAMILY[f], **CROSS_KW).fit(
-        P["tr"], P["h1"], P["h2"], h1, h2, full)
+    m, re_gate = cached(f"cross_{f}", lambda: CrossConfirmRefitAnchor(margin=margin, relative_margin=rel, **FAMILY[f],
+                                                                      **CROSS_KW).fit(P["tr"], P["h1"], P["h2"], h1, h2, full))
     t_gate = time.time() - t2
     name = f"b2s_anchor_{f}_cross"
     S_c, r_c = surv_risk(m, P["te"], last=True)
     rec["models"][name] = dict(metric(S_c, r_c), **dcal_chi2(S_c, P["te"]["y"], P["te"]["d"]),
                                seconds=round(time.time() - t1, 1), seconds_refs=round(t_ref, 1),
-                               seconds_gate=round(t_gate, 1))
+                               seconds_gate=round(t_gate, 1), reloaded=dict(h1=re_h1, h2=re_h2, gate=re_gate))
     tg = M.ibs_time_grid(P["te"]["y"], P["tr"]["y"])
     gate = dict(confirmed=bool(m.confirmed), margin=margin, relative_margin=rel, dirs=m.dirs,
                 traj_on_h1=m._alts[0][1].residual_on, last_on_h1=m._alts[0][1].last_on)
@@ -190,7 +211,9 @@ def job_cmapss(k):
                n_val=len(P["va"]["y"]), n_h1=len(P["h1"]["y"]), n_h2=len(P["h2"]["y"]), n_test=len(y_te),
                engines={n: int(len(np.unique(g))) for n, g in groups.items()},
                models={}, alternatives={}, gates={}, symbolic={})
+    global ENS_CACHE
     ck = OUT.parent / "ckpt" / f"cmapss_{k}.json"           # execution checkpoint (2026-11-03): one family at a time
+    ENS_CACHE = OUT.parent / "ckpt" / f"cmapss_{k}_fits"
     if ck.exists():
         rec = dict(json.loads(ck.read_text()), resumed_from_checkpoint=True)
     for f in ("cox", "waft", "lnaft", "npaft"):

@@ -120,6 +120,31 @@
    "job": "cmapss_3",
    "lane": 1,
    "utc": "2026-11-02T18:32:29Z"
+  },
+  {
+   "job": "cmapss_0",
+   "lane": 2,
+   "utc": "2026-11-03T00:44:17Z"
+  },
+  {
+   "job": "cmapss_1",
+   "lane": 4,
+   "utc": "2026-11-03T00:44:17Z"
+  },
+  {
+   "job": "cmapss_2",
+   "lane": 0,
+   "utc": "2026-11-03T00:44:17Z"
+  },
+  {
+   "job": "cmapss_3",
+   "lane": 3,
+   "utc": "2026-11-03T00:44:17Z"
+  },
+  {
+   "job": "cmapss_4",
+   "lane": 1,
+   "utc": "2026-11-03T00:44:17Z"
   }
  ],
  "interruptions": [
@@ -134,6 +159,16 @@
    ],
    "action": "next reset to 0; ok jobs skipped via done-set; C-MAPSS jobs rerun from their fixed splits with a per-family checkpoint; 5 lanes",
    "next_before": 24
+  },
+  {
+   "utc": "2026-11-04T01:56Z",
+   "reason": "container restarted ~01:55Z; lanes killed",
+   "lost_in_flight": [
+    "cmapss_1 (NP-AFT family step)",
+    "cmapss_2 (NP-AFT family step)"
+   ],
+   "action": "next reset to 0; finished jobs skipped; cmapss_1/2 resume from their family checkpoints (cox, waft, lnaft); every fitted ensemble now pickled as it finishes (ENS_CACHE, reload tested identical); 2 lanes",
+   "next_before": 25
   }
  ]
 }

@@ -84,3 +84,11 @@ for the rerun only, no model or rule: (1) each C-MAPSS job checkpoints its recor
 family's fit does not depend on which families ran before (shown by the exact Round-13 reproduction of the Weibull and
 Cox ensembles that now run in a different order); (2) a fifth lane so the five C-MAPSS jobs run concurrently. The
 queue pointer was reset (logged in `reports/round21/queue_state.json` "interruptions"); completed jobs are skipped.
+
+**Second interruption (2026-11-04 ~01:55Z).** The container restarted again after cmapss_0, cmapss_3 and cmapss_4 had
+finished (records written); cmapss_1 and cmapss_2 lost their NP-AFT step (the full ensemble, the two half-validation
+references and the cross-confirmation, about 15 hours) but kept their first three families in the checkpoints. For
+the rerun every fitted ensemble and the cross-confirmation model are pickled as each finishes (`ENS_CACHE`,
+`reports/round21/ckpt/cmapss_<k>_fits/`) and reloaded on resume; a test on pbc_E2 split 0 with small budgets
+reproduced identical metrics, gate decisions and alternatives from the reloaded objects. Records mark reloaded parts
+(`reloaded`), whose wall-clock seconds are then not fit times. Mechanics only; no model, setting or rule changed.

@@ -1,17 +1,3 @@
-/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
-  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
-/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
-  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
 /home/user/KK/src/kanfae/models/fkan.py:307: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
   w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
-[lane 0] real_pbc_E2_0 ok 2810s
-[lane 0] real_aids_1 ok 754s
-[lane 0] real_prothro_2 ok 770s
-/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
-  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
-/home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
-  warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
-[lane 0] real_pbc_E1_3 ok 1935s
-[lane 0] real_prothro_3 ok 1666s
-[lane 0] real_aids_4 ok 1735s
