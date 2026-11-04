@@ -928,6 +928,66 @@ On the real data the anchored model had a lower mean IBS than B2-S Cox on both P
 interval included 0, and landmark Cox had the lowest mean IBS on PBC. The Round-16 changes were not run on the real
 data; the Round-20 methods were (Section 5.9).
 
+### 5.9 Round-20 methods on real data (H-R21a, H-R21b, H-R21c)
+
+Round 21 applied the locked Round-20 methods to the real data: the semiparametric KAN-AFT (smoothed Gehan objective),
+the log-normal KAN-AFT and the two-half cross-confirmed anchor (margins as Round 20), on the same five outer splits of
+the four clinical cohorts as Rounds 13 and 15, and on C-MAPSS FD001 Option B as in Section 4.6 (D153). The data and
+splits had been used before, so this is an application of fixed methods to known data, not a test on fresh data, and
+with five splits the comparisons are non-degradation and integrity checks rather than tests of superiority (D111). The
+Round-21 B2-S Cox and Weibull ensembles reproduced the Round-13 records exactly, and fixed-μ distillation was recorded
+as a diagnostic.
+
+**Table 41. Round-21 hypotheses** (criteria fixed before the run).
+
+{{T:r21_hyp}}
+
+**Table 42. Clinical data: means over the five outer splits** (conditional IPCW IBS; landmark Cox and the Round-15
+anchored model from their earlier records on the same splits).
+
+{{T:r21_means}}
+
+**Table 43. NP-KAN-AFT against the other models on the clinical data** (paired over the five splits; Nadeau–Bengio
+corrected intervals and, for reference, plain paired intervals).
+
+{{T:r21_npaft}}
+
+On the primary PBC endpoint NP-KAN-AFT had a lower mean conditional IBS than B2-S Cox
+({{V:reports/round21/analysis_summary.json/hypotheses/H_R21a/part2_mean_vs_cox|+.4f}}) but a higher one than the Weibull KAN-AFT ({{V:reports/round21/analysis_summary.json/hypotheses/H_R21a/part2_mean_vs_waft|+.4f}}),
+so the second part of H-R21a failed and **H-R21a is not supported**, although every fit was finite and NP-KAN-AFT
+was D-calibrated in {{V:reports/round21/analysis_summary.json/hypotheses/H_R21a/part3_dcal_pass|d}} of the PBC splits. Every corrected interval in Table 43 included 0:
+on these cohorts the error-law choice made no detectable difference, and landmark Cox kept the lowest mean on both PBC
+endpoints.
+
+**Table 44. Cross-confirmed anchoring on the clinical data** (number of splits confirming; mean anchored − unanchored B2-S
+conditional IBS; and contrasts with the Round-15 anchored Cox model and landmark Cox).
+
+{{T:r21_cross}}
+
+On every clinical data set the cross-confirmed models stayed within the registered margin of their unanchored B2-S
+models, and wherever anchoring was not confirmed the estimator was the unanchored model exactly: **H-R21b is
+supported**. With validation halves of a few dozen subjects the decisions varied between data sets, and the
+cross-confirmed Cox model was not better than the Round-15 anchored model or landmark Cox.
+
+**Table 45. C-MAPSS FD001 Option B** (means over five engine splits; D-calibration χ² and the number of splits with
+p ≥ 0.05).
+
+{{T:r21_cmapss}}
+
+Both AFT models had a lower D-calibration χ² than B2-S Cox, but no model reached the stated thresholds of mean IBS
+0.055 and Harrell C 0.88, so **H-R21c is not supported**; the registered relative version (IBS and C within small
+margins of B2-S Cox) was met by both AFT models. The cross-confirmed NP anchor never confirmed on C-MAPSS
+({{V:reports/round21/analysis_summary.json/cmapss/gate/n_confirmed|d}} of {{V:reports/round21/analysis_summary.json/cmapss/gate/n|d}} splits), and the windows of one engine are correlated, so the
+D-calibration test is anti-conservative here as in Section 4.6.
+
+**Table 46. Fixed-μ symbolic distillation on the clinical data** (seed-0 member of each ensemble; share of edges
+substituted, rollbacks to the spline model, conditional IBS before and after).
+
+{{T:r21_sym}}
+
+Distillation substituted most edges, rolled back where it would have raised the validation loss, and changed the
+mean conditional IBS by less than 0.001, as in simulation (Section 5.2).
+
 ### 5.10 AFCM smoothing by Laplace marginal likelihood (development check)
 
 To repair the comparator, smoothing parameters were chosen by a Laplace approximate marginal likelihood (LAML, with
@@ -973,6 +1033,8 @@ unvalidated comparator**.
 7. **The AFT error law need not be chosen.** A semiparametric KAN-AFT, whose error law is the Kaplan–Meier estimate of
    the residuals, was better than Cox and Weibull models under log-normal errors and as good as the correctly
    specified log-normal model (H-R20a); it is the classical semiparametric AFT model with a functional KAN location.
+   On the real cohorts it was finite and D-calibrated but did not match the Weibull KAN-AFT on the primary PBC
+   endpoint (H-R21a not supported), and cross-confirmed anchoring stayed within its margin on every cohort (H-R21b).
 
 ### 6.2 Relation to prior work
 
@@ -1008,6 +1070,9 @@ to work we could read only in abstract.
 - **NP-KAN-AFT was tested under one error law.** Its advantage over the Cox and Weibull models reflects their
   misspecification under log-normal errors; it was not better than the correct parametric family, and its predicted
   survival does not extrapolate beyond the largest training residual.
+- **Round-21 real-data results reuse known splits.** The four cohorts and their five outer splits were used in Rounds
+  13 and 15, so Round 21 applied fixed methods to known data; five splits cannot power superiority tests, and the
+  C-MAPSS thresholds of H-R21c were stated before the run without a matching earlier result.
 - **One simulator, {{V:reports/round12_summary.json/H_R12/n|d}} replicates.** H-R12 rests on one DGP with three channels and n = 1,000.
 - **Small real-data cohorts with few visits**, so all intervals are wide; five outer splits give limited resolution.
 - **PACE failed on one PBC split** (non-finite curves on a gappy visit design); the PACE sensitivity row has
@@ -1043,8 +1108,8 @@ halving the validation data available to each model, and against B2-S trained on
 not be shown to avoid the S-Sparse cost for Cox. Confirming the decision in both halves of the validation split
 against three-seed B2-S ensembles closed that gap on fresh seeds, for Cox and AFT models, by anchoring less often, and
 a semiparametric KAN-AFT with a Kaplan–Meier error law performed as well as the correctly specified parametric model
-without having to know it. These negative, equivalence and trade-off findings, with the full record behind them,
-are the contribution.
+without having to know it. On the real cohorts these methods were safe but not better than the simpler models.
+These negative, equivalence and trade-off findings, with the full record behind them, are the contribution.
 
 ## Declarations
 

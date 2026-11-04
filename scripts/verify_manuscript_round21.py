@@ -27,7 +27,11 @@ W.REQUIRED_SECTIONS = [s.replace("(Rounds 15–20)", "(Rounds 15–21)") for s i
     ["5.9 Round-20 methods on real data (H-R21a, H-R21b, H-R21c)"]
 D, CONV = W.D, W.CONV
 W.LITERALS += [
-    # Round-21 design constants and conventions (D153), filled in with the Round-21 text
+    # Round-21 design constants and conventions (D153, D154)
+    ("0.001", "by less than 0.001", D, "changed by less than 0.001"),
+    ("0.05", "splits with p ≥ 0.05", D, "D-cal p ≥ 0.05"),
+    ("0.055", "mean IBS 0.055 and Harrell C 0.88", D, "mean IBS ≤ 0.055 and Harrell C ≥ 0.88"),
+    ("0.88", "mean IBS 0.055 and Harrell C 0.88", D, "mean IBS ≤ 0.055 and Harrell C ≥ 0.88"),
 ]
 W.BUILDER_LITERALS += [
 ]

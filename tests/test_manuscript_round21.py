@@ -56,13 +56,13 @@ def test_R21_8_verifier_detects_hand_typed_numbers_and_changed_values(tmp_path, 
     monkeypatch.undo()
 
     led = json.loads(W.LEDGER.read_text())
-    i = next(k for k, e in enumerate(led["values"]) if e["src"].endswith("H_R20b/cox/traj/contrast/ci95"))
+    i = next(k for k, e in enumerate(led["values"]) if e["src"].endswith("H_R21a/part2_mean_vs_waft"))
     led["values"][i]["text"] = "+0.0099"
     bad = tmp_path / "ledger.json"
     bad.write_text(json.dumps(led, ensure_ascii=False))
     monkeypatch.setattr(W, "LEDGER", bad)
     r = W.check_ledger()
-    assert not r["passed"] and any(e["src"].endswith("H_R20b/cox/traj/contrast/ci95") for e in r["mismatches"])
+    assert not r["passed"] and any(e["src"].endswith("H_R21a/part2_mean_vs_waft") for e in r["mismatches"])
 
 
 @pytest.mark.criterion("R21-9")
