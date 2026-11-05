@@ -18,7 +18,7 @@ REP = ROOT / "reports"
 res = {}
 
 
-FINAL_RUN = "final_full_suite_round20"
+FINAL_RUN = "final_full_suite_round21"
 
 
 def norm(s):
@@ -47,11 +47,14 @@ MS16_SECTIONS = ["5. Phase 2: pre-registered methodological revisions (Rounds 15
                  "5.6 Refitting on the whole validation set (development check)",
                  "5. Phase 2: pre-registered methodological revisions (Rounds 15–20)",
                  "5.7 Semiparametric KAN-AFT and cross-confirmation (H-R20a, H-R20b)",
+                 "5. Phase 2: pre-registered methodological revisions (Rounds 15–21)",
+                 "5.9 Round-20 methods on real data (H-R21a, H-R21b, H-R21c)",
                  "5.4 Two-way gated anchoring and a log-normal KAN-AFT (H-R17a, H-R17b)",
                  "5.2 Symbolic summaries: functional distillation (H-R15a, H-R16a)",
                  "5.3 A landmark-anchored functional model (H-R15b, H-R16b)"]
 res["pdf_has_manuscript_sections"] = all(s in T for s in MS_SECTIONS + MS16_SECTIONS)
 res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 3)) and all(
+    re.search(rf"\bR21\.{k}\s", T) for k in range(1, 11)) and all(
     re.search(rf"\bR20\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR19\.{k}\s", T) for k in range(1, 9)) and all(
     re.search(rf"\bR18\.{k}\s", T) for k in range(1, 11)) and all(
@@ -113,7 +116,8 @@ for tpl, vf in (("report_template_round2.md", "report_values_round2.json"),
                 ("report_template_round17.md", "report_values_round17.json"),
                 ("report_template_round18.md", "report_values_round18.json"),
                 ("report_template_round19.md", "report_values_round19.json"),
-                ("report_template_round20.md", "report_values_round20.json")):
+                ("report_template_round20.md", "report_values_round20.json"),
+                ("report_template_round21.md", "report_values_round21.json")):
     vals2 = json.loads((REP / vf).read_text())
     used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / tpl).read_text()))
     res[f"{tpl}_values_used"] = len(used2)
@@ -246,9 +250,25 @@ led20 = json.loads((REP / "manuscript_values_round20.json").read_text())
 texts20 = {e["text"] for e in led20["values"] if re.search(r"\d", e["text"]) and e["spec"] != "s"}
 res["manuscript20_values_checked_in_report_pdf"] = len(texts20)
 res["manuscript20_values_missing_in_report_pdf"] = sorted(x for x in texts20 if norm(x) not in T)[:50]
-rev22 = REP / "final_research_prototype_report_rev22.pdf"          # round 20: the current revision's copy
-res["rev22_copy_identical"] = rev22.exists() and hashlib.sha256(rev22.read_bytes()).hexdigest() == \
+# Round 21 (D155): the Round-21 manuscript's verification, page renders and logged values; the revision-23 copy
+import verify_manuscript_round21 as VM21  # noqa: E402
+vm21 = dict(ledger=VM21.W.check_ledger(), rerender=VM21.check_rerender(), numbers=VM21.W.check_numbers(),
+            citations=VM21.W.check_citations(), sections=VM21.W.check_sections(),
+            pdf=VM21.W.check_pdf(pdf=VM21.W.PDF, md=VM21.W.MD, sections=VM21.W.REQUIRED_SECTIONS, n_figures=len(VM21.FIGURES)))
+vm21["pdf"]["passed"] = vm21["pdf"]["passed"] and vm21["pdf"].get("images", 0) >= len(VM21.FIGURES)
+res["manuscript21_checks"] = {k: v["passed"] for k, v in vm21.items()}
+res["manuscript21_pdf_pages"] = vm21["pdf"].get("pages")
+ms21_pages = sorted((REP / "logs/manuscript21_pages").glob("page-*.png"))
+res["manuscript21_page_renders"] = len(ms21_pages)
+res["manuscript21_blank_pages"] = [p.name for p in ms21_pages if (np.asarray(Image.open(p).convert("L")) < 200).mean() < 0.002]
+led21 = json.loads((REP / "manuscript_values_round21.json").read_text())
+texts21 = {e["text"] for e in led21["values"] if re.search(r"\d", e["text"]) and e["spec"] != "s"}
+res["manuscript21_values_checked_in_report_pdf"] = len(texts21)
+res["manuscript21_values_missing_in_report_pdf"] = sorted(x for x in texts21 if norm(x) not in T)[:50]
+rev23 = REP / "final_research_prototype_report_rev23.pdf"          # round 21: the current revision's copy
+res["rev23_copy_identical"] = rev23.exists() and hashlib.sha256(rev23.read_bytes()).hexdigest() == \
     hashlib.sha256(pdf.read_bytes()).hexdigest()
+res["rev22_kept"] = (REP / "final_research_prototype_report_rev22.pdf").exists()
 res["rev21_kept"] = (REP / "final_research_prototype_report_rev21.pdf").exists()
 res["rev20_kept"] = (REP / "final_research_prototype_report_rev20.pdf").exists()
 res["rev19_kept"] = (REP / "final_research_prototype_report_rev19.pdf").exists()
@@ -271,7 +291,10 @@ ok = (res["pdf_exists"] and res["pdf_opens"] and res["pdf_text_chars"] > 20000 a
       and all(chk) and not not_run and not res["commands_missing_log_file"] and res["experiment_csv_rows_equal_jsonl"]
       and res["pdf_has_manuscript_sections"] and all(res["manuscript_checks"].values())
       and len(ms_pages) == res["manuscript_pdf_pages"] and not res["manuscript_blank_pages"]
-      and not res["manuscript_values_missing_in_report_pdf"] and res["rev22_copy_identical"] and res["rev21_kept"]
+      and not res["manuscript_values_missing_in_report_pdf"] and res["rev23_copy_identical"] and res["rev22_kept"]
+      and res["rev21_kept"] and all(res["manuscript21_checks"].values())
+      and len(ms21_pages) == res["manuscript21_pdf_pages"] and not res["manuscript21_blank_pages"]
+      and not res["manuscript21_values_missing_in_report_pdf"]
       and all(res["manuscript20_checks"].values())
       and len(ms20_pages) == res["manuscript20_pdf_pages"] and not res["manuscript20_blank_pages"]
       and not res["manuscript20_values_missing_in_report_pdf"] and res["rev20_kept"]
