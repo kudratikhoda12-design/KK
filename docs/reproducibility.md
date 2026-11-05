@@ -240,6 +240,16 @@ KANFAE_RUN_ID=final_full_suite_round20 scripts/run_logged.sh final_full_suite_ro
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round20.py   # report revision 22
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev22.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+# Round 21 (2026-11-02 .. 2026-11-05; D153-D155): Round-20 methods on the real benchmarks and C-MAPSS FD001 Option B
+.venv/bin/python reports/round21/repro/repro_script.py reports/round21/repro   # pre-run reproduction, pbc_E2 split 0 vs Round 13
+.venv/bin/python -m pytest -q tests/test_round21_real_npaft.py         # R21-1..R21-4
+for k in 0 1 2 3; do scripts/run_logged.sh r21_lane$k .venv/bin/python scripts/run_round21_lanes.py --lane $k & done   # 25 jobs, resumable
+.venv/bin/python scripts/analyze_round21.py                            # reports/round21/analysis_summary.json, docs/round21_results.md
+.venv/bin/python scripts/manuscript_round21.py && bash scripts/build_manuscript21_pdf.sh && .venv/bin/python scripts/verify_manuscript_round21.py --pdf
+KANFAE_RUN_ID=final_full_suite_round21 scripts/run_logged.sh final_full_suite_round21 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round21.py   # report revision 23
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev23.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)
