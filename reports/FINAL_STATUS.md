@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, Round 20 (2026-11-02)
+# Final status: KAN-FAE research prototype, Round 21 (2026-11-05)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev23.pdf` (revision 23,
+557 pages: Part A = Round 21 and the updated manuscript; Part B = Round 20 and its manuscript; Parts C–W = earlier revisions).
+Manuscript: `docs/manuscript_round21.md`, `reports/manuscript_round21.pdf` (48 pages, Rounds 1–21).
+
+| Item | Result |
+|---|---|
+| D153 | Pre-registration before any formal real fit: locked B2-S Cox, Weibull, log-normal and NP-KAN-AFT ensembles, cross-confirmed anchors (Round-20 margins), fixed-μ distillation diagnostic; Round-13 splits 0–4 (pbc_E2, pbc_E1, prothro, aids) and C-MAPSS FD001 Option B; pbc_E2 split 0 reproduced Round 13 exactly |
+| D154 | 25/25 jobs ok (three container restarts logged). **H-R21a not supported**: all 20 clinical NP fits finite, D-cal 5/5 on pbc_E2, NP − Cox −0.0095 but NP − Weibull +0.0044 > 0. **H-R21b supported**: anchored − B2-S means ≤ +0.005 on every data set, exact fallback. **H-R21c** owner thresholds (IBS ≤ 0.055, Harrell C ≥ 0.88) not met; registered relative secondary met for NP and log-normal AFT. Distillation: IBS change < 0.001 |
+| Manuscript (D155) | 2909 values logged with their sources; `scripts/verify_manuscript_round21.py --pdf` ALL_PASS |
+| Tests | `final_full_suite_round21`: 326 passed, 2 failed (CK-6c, kept visible by D126; 4f R1), 16 xfailed, 2 skipped (346); no XPASS (first launch interrupted by a container restart, relabelled and rerun). `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner review. No clinical contrast had a Nadeau–Bengio interval excluding 0; five splits cannot power superiority tests (D111); the H-R21c thresholds refer to Round-13 numbers not in the records |
+
+---
+
+# Round 20 status (2026-11-02), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev22.pdf` (revision 22,

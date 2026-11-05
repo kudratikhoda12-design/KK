@@ -24,7 +24,6 @@ md_table = R1.md_table
 FINAL = "final_full_suite_round21"
 VER = REP / "manuscript_verification_round21.json"
 f4, ci = R15.f4, R15.ci
-PH, prow = R19B.PH, R19B.prow
 DS = ("pbc_E2", "pbc_E1", "prothro", "aids")
 MODELS = ("b2s_cox", "b2s_waft", "b2s_lnaft", "b2s_npaft", "b2s_anchor_cox_cross", "b2s_anchor_lnaft_cross",
           "b2s_anchor_npaft_cross", "landmark_cox", "r15_b2s_anchor_cox", "afcm_v3", "fpca_cox", "lme2_cox", "sum_cox",
@@ -82,8 +81,9 @@ def cmapss_table():
     rows = [[m, f4(v["ibs"]), f"{v['harrell_c']:.3f}", f"{v['uno_c']:.3f}", f"{v['dcal_chi2']:.1f}", f"{v['dcal_p']:.4f}",
              str(c["dcal_pass"][m]), str(round(c["seconds_mean"][m]))] for m, v in c["means"].items()]
     out = md_table(["Model", "IBS", "Harrell C", "Uno C", "D-cal χ²", "D-cal p (mean)", "p ≥ 0.05 (of 5)", "Mean seconds"], rows)
-    rows = [prow(k, v["nb"]) for k, v in c["contrasts"].items()]
-    out += "\n\n" + md_table(PH, rows)
+    rows = [[k, str(v["nb"].get("n", "–")), f"{v['nb']['mean_diff']:+.4f}" if "mean_diff" in v["nb"] else "–", ci(v["nb"]),
+             ci(v["paired"]), f"{v['nb'].get('n_neg', '–')} / {v['nb'].get('n_pos', '–')}"] for k, v in c["contrasts"].items()]
+    out += "\n\n" + md_table(["Contrast", "Splits", "Mean", "Nadeau–Bengio 95% CI", "Plain 95% CI", "a < b / a > b"], rows)
     crit = c["criterion"]
     out += "\n\n" + md_table(["Model", "D-cal improved", "IBS ≤ 0.055", "Harrell C ≥ 0.88", "Owner criterion", "Relative criterion"],
                              [[m, str(v["dcal_improved"]), str(v["ibs_le_0055"]), str(v["harrell_ge_088"]),

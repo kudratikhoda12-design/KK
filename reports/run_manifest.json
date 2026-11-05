@@ -3,13 +3,13 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "69b56f20b33906a6a1584f52d488a27ba24ac665",
+  "head": "d892b761bc47389083890b86586243b06117f651",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
  "environment": {
   "python": "3.13.16",
-  "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+  "platform": "Linux-6.18.44-fc-v236-x86_64-with-glibc2.39",
   "venv": ".venv (project-local)",
   "lock_file": "requirements-lock.txt",
   "lock_sha256": "c84359511c49bd2bd91948916ed5eb70d7c79ea188f764fe12484edae9172632",
@@ -4127,6 +4127,176 @@
    "elapsed_s": 143.657,
    "git_head": "69b56f2",
    "log": "reports/logs/build_pdf_round20.log"
+  },
+  {
+   "name": "build_manifest_round20",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-02T10:39:09Z",
+   "end_utc": "2026-11-02T10:39:13Z",
+   "elapsed_s": 3.782,
+   "git_head": "69b56f2",
+   "log": "reports/logs/build_manifest_round20.log"
+  },
+  {
+   "name": "verify_deliverables_round20",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-02T10:39:13Z",
+   "end_utc": "2026-11-02T10:39:58Z",
+   "elapsed_s": 45.052,
+   "git_head": "69b56f2",
+   "log": "reports/logs/verify_deliverables_round20.log"
+  },
+  {
+   "name": "verify_deliverables_round20",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-02T10:40:15Z",
+   "end_utc": "2026-11-02T10:40:47Z",
+   "elapsed_s": 32.469,
+   "git_head": "69b56f2",
+   "log": "reports/logs/verify_deliverables_round20.log"
+  },
+  {
+   "name": "r21_tests_dev",
+   "command": ".venv/bin/python -m pytest -q -p no:cacheprovider tests/test_round21_real_npaft.py -x",
+   "exit_code": 0,
+   "start_utc": "2026-11-02T14:51:38Z",
+   "end_utc": "2026-11-02T15:04:19Z",
+   "elapsed_s": 761.198,
+   "git_head": "992e177",
+   "log": "reports/logs/r21_tests_dev.log"
+  },
+  {
+   "name": "r21_lane1",
+   "command": ".venv/bin/python scripts/run_round21_lanes.py --lane 1",
+   "exit_code": 0,
+   "start_utc": "2026-11-03T00:43:46Z",
+   "end_utc": "2026-11-03T20:22:51Z",
+   "elapsed_s": 70745.667,
+   "git_head": "413b704",
+   "log": "reports/logs/r21_lane1.log"
+  },
+  {
+   "name": "r21_lane2",
+   "command": ".venv/bin/python scripts/run_round21_lanes.py --lane 2",
+   "exit_code": 0,
+   "start_utc": "2026-11-03T00:43:46Z",
+   "end_utc": "2026-11-04T00:36:55Z",
+   "elapsed_s": 85988.773,
+   "git_head": "413b704",
+   "log": "reports/logs/r21_lane2.log"
+  },
+  {
+   "name": "r21_lane3",
+   "command": ".venv/bin/python scripts/run_round21_lanes.py --lane 3",
+   "exit_code": 0,
+   "start_utc": "2026-11-03T00:43:46Z",
+   "end_utc": "2026-11-04T01:04:10Z",
+   "elapsed_s": 87624.699,
+   "git_head": "413b704",
+   "log": "reports/logs/r21_lane3.log"
+  },
+  {
+   "name": "r21_lane0",
+   "command": ".venv/bin/python scripts/run_round21_lanes.py --lane 0",
+   "exit_code": 0,
+   "start_utc": "2026-11-04T17:09:49Z",
+   "end_utc": "2026-11-04T22:31:22Z",
+   "elapsed_s": 19292.553,
+   "git_head": "dcabea2",
+   "log": "reports/logs/r21_lane0.log"
+  },
+  {
+   "name": "r21_lane1",
+   "command": ".venv/bin/python scripts/run_round21_lanes.py --lane 1",
+   "exit_code": 0,
+   "start_utc": "2026-11-04T17:09:49Z",
+   "end_utc": "2026-11-04T22:56:13Z",
+   "elapsed_s": 20783.602,
+   "git_head": "dcabea2",
+   "log": "reports/logs/r21_lane1.log"
+  },
+  {
+   "name": "r21_analysis",
+   "command": ".venv/bin/python scripts/analyze_round21.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-04T22:57:07Z",
+   "end_utc": "2026-11-04T22:57:13Z",
+   "elapsed_s": 6.374,
+   "git_head": "dcabea2",
+   "log": "reports/logs/r21_analysis.log"
+  },
+  {
+   "name": "manuscript21_pdf",
+   "command": "bash scripts/build_manuscript21_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-11-04T22:59:11Z",
+   "end_utc": "2026-11-04T22:59:38Z",
+   "elapsed_s": 27.058,
+   "git_head": "ee6c409",
+   "log": "reports/logs/manuscript21_pdf.log"
+  },
+  {
+   "name": "verify_manuscript21",
+   "command": ".venv/bin/python scripts/verify_manuscript_round21.py --pdf",
+   "exit_code": 0,
+   "start_utc": "2026-11-04T22:59:38Z",
+   "end_utc": "2026-11-04T22:59:39Z",
+   "elapsed_s": 1.283,
+   "git_head": "ee6c409",
+   "log": "reports/logs/verify_manuscript21.log"
+  },
+  {
+   "name": "final_full_suite_round21",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-11-05T00:13:56Z",
+   "end_utc": "2026-11-05T01:38:15Z",
+   "elapsed_s": 5059.16,
+   "git_head": "d892b76",
+   "log": "reports/logs/final_full_suite_round21.log"
+  },
+  {
+   "name": "compile_tests_round21",
+   "command": ".venv/bin/python scripts/compile_test_results.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-05T01:39:03Z",
+   "end_utc": "2026-11-05T01:39:03Z",
+   "elapsed_s": 0.098,
+   "git_head": "d892b76",
+   "log": "reports/logs/compile_tests_round21.log"
+  },
+  {
+   "name": "build_report_round21",
+   "command": ".venv/bin/python scripts/build_report_round21.py",
+   "exit_code": 1,
+   "start_utc": "2026-11-05T01:39:03Z",
+   "end_utc": "2026-11-05T01:39:08Z",
+   "elapsed_s": 5.63,
+   "git_head": "d892b76",
+   "log": "reports/logs/build_report_round21.log"
+  },
+  {
+   "name": "build_report_round21",
+   "command": ".venv/bin/python scripts/build_report_round21.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-05T01:39:22Z",
+   "end_utc": "2026-11-05T01:39:27Z",
+   "elapsed_s": 4.307,
+   "git_head": "d892b76",
+   "log": "reports/logs/build_report_round21.log"
+  },
+  {
+   "name": "build_pdf_round21",
+   "command": "bash scripts/build_pdf.sh",
+   "exit_code": 0,
+   "start_utc": "2026-11-05T01:39:34Z",
+   "end_utc": "2026-11-05T01:41:36Z",
+   "elapsed_s": 121.467,
+   "git_head": "d892b76",
+   "log": "reports/logs/build_pdf_round21.log"
   }
  ],
  "deliverables": {
