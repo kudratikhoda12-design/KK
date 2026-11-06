@@ -117,3 +117,6 @@ then CK-6d, then H-R22a). Expected cost: C-MAPSS dominates (Round 21: about 24 h
 ## 5. Execution notes
 
 (Appended during the run; mechanics only.)
+
+- 2026-11-06: development gate run (`afcmdev_22/914/966`, 425–485 s each): GO, `afcm_reml` (D157). CK-6d run once on
+  seed 24 (`r22_ck6d`): FAIL (φ₁ 0.170); H-R22a not run (D157). Lanes 0–3 launched after the gate commit.
