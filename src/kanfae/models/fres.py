@@ -414,6 +414,12 @@ class CrossConfirmRefitAnchor(ConfirmRefitAnchor):
                        on the whole validation set (= ConfirmRefitAnchor refit "finetune" with val_select = h1).
     The test split is never passed in. The h1-direction gate also records the Round-18 one-vs-one confirmation losses."""
 
+    # Execution cache (Round 22, 2026-11-06; mechanics only): None, or a callable (name, fn) -> fn() that may store
+    # and reload the result of each direction's gate ("dir0", "dir1"), so an interrupted fit resumes after a finished
+    # direction. Every network is seeded at construction, so a reloaded direction is the one a refit would produce
+    # (tests/test_round22.py::test_R22_4b). Default None: unchanged behaviour.
+    dir_cache = None
+
     def __init__(self, loss="cox", margin=0.0, fine_tune_epochs=200, relative_margin=False, **kw):
         super().__init__(loss=loss, margin=margin, refit="finetune", fine_tune_epochs=fine_tune_epochs, **kw)
         self.relative_margin = relative_margin
@@ -421,10 +427,13 @@ class CrossConfirmRefitAnchor(ConfirmRefitAnchor):
     def fit(self, train, val_h1, val_h2, ref_h1, ref_h2, ref_full):
         q = ("xg", "z", "y", "d")
         self.dirs, self._alts = [], []
-        for sel, conf, ref in ((val_h1, val_h2, ref_h1), (val_h2, val_h1, ref_h2)):
-            g = ResFKAN(residual=False, gate_last_value=True, last_tol=0.0, loss=self.loss, fine_tune_epochs=self.ft,
-                        **self.kw).fit(train, sel, ref=ref, confirm=conf)
-            alt = g.anchored_alternative()
+        for i, (sel, conf, ref) in enumerate(((val_h1, val_h2, ref_h1), (val_h2, val_h1, ref_h2))):
+            def _direction(sel=sel, conf=conf, ref=ref):
+                g = ResFKAN(residual=False, gate_last_value=True, last_tol=0.0, loss=self.loss, fine_tune_epochs=self.ft,
+                            **self.kw).fit(train, sel, ref=ref, confirm=conf)
+                return g, g.anchored_alternative()
+            cache = type(self).dir_cache                           # a plain callable stored on the class
+            g, alt = _direction() if cache is None else cache(f"dir{i}", _direction)
             ch = g.anchored_choice
             self.dirs.append(dict(loss_anchored=ensemble_heldout_loss(alt.members, residual_pack(conf, False)),
                                   loss_ref=ensemble_heldout_loss(ref.members, {k: conf[k] for k in q}),

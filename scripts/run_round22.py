@@ -51,6 +51,7 @@ from kanfae.evaluation import metrics as M  # noqa: E402
 from kanfae.models.afcm import AFCM_D123, fit_afcm, fit_afcm_reml_bagged  # noqa: E402
 from kanfae.models.fbaselines import LinearCox  # noqa: E402
 from kanfae.models.fkan import FKANEnsemble  # noqa: E402
+from kanfae.models.fres import CrossConfirmRefitAnchor  # noqa: E402
 
 torch.set_num_threads(1)
 torch.set_default_dtype(torch.float64)
@@ -264,7 +265,12 @@ def job_fd003(k, part):
                models={}, alternatives={}, gates={}, symbolic={})
     if part in R21.FAMILY:
         R21.ENS_CACHE = BASE / "ckpt" / f"fd003_{k}_{part}_fits"      # resumable after a container restart
-        R21.fit_family(part, P, metric, rec, cross=part == "npaft")
+        # 2026-11-06 (mechanics only): the cross-confirmation also stores each finished direction (prereg §5)
+        CrossConfirmRefitAnchor.dir_cache = staticmethod(lambda name, fn: R21.cached(f"cross_{part}_{name}", fn)[0])
+        try:
+            R21.fit_family(part, P, metric, rec, cross=part == "npaft")
+        finally:
+            CrossConfirmRefitAnchor.dir_cache = None
         return rec
     X = {n: np.hstack([P[n]["last"], P[n]["z"]]) for n in ("tr", "te")}
     t0 = time.time()
@@ -291,6 +297,7 @@ def job_fd003(k, part):
 # ----------------------------------------------------------------------------------------------------------- driver
 def run_job(name):
     t0 = time.time()
+    R21.ENS_CACHE = None                                     # never reuse another job's fit cache (2026-11-06)
     try:
         p = name.split("_")
         if p[0] == "afcmdev":

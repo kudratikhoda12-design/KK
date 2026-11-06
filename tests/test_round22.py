@@ -16,6 +16,8 @@ R22-3  loaders: renal (407 patients, 126 graft failures; landmark 1 year: 407 / 
        engine in one part; K4 no input observation after the landmark
 R22-4  the Round 15-21 deterministic tests (tests/test_round15.py .. test_round20.py, test_round21_real_npaft.py; 39
        tests) pass unchanged (subprocess; its records go to a temporary file)
+R22-4b execution cache (2026-11-06, mechanics only): CrossConfirmRefitAnchor resumed from a pickled first direction
+       equals the uninterrupted fit exactly; with no cache the class behaves as before
 """
 import hashlib
 import os
@@ -172,3 +174,54 @@ def test_r22_4_rounds_15_to_21_regression(tmp_path):
                        capture_output=True, text=True, timeout=5400)
     tail = p.stdout.strip().splitlines()[-1]
     assert p.returncode == 0 and "39 passed" in tail and "failed" not in tail, p.stdout[-3000:]
+
+
+@pytest.mark.criterion("R22-4b")
+def test_r22_4b_cross_confirm_direction_cache_resumes_exactly():
+    """Execution cache (2026-11-06, mechanics only; docs/round22_preregistration.md §5): a CrossConfirmRefitAnchor fit
+    that reloads its first direction from a pickle (as after a container restart) and fits the second afresh, with the
+    global random states disturbed in between, equals the uninterrupted fit exactly (decisions, held-out losses, test
+    predictions of the estimator and of the refit alternative); with dir_cache None the class behaves as before."""
+    import pickle
+
+    import test_round20 as T20
+    from kanfae.models.fres import CrossConfirmRefitAnchor
+    torch.set_default_dtype(torch.float64)
+    tr, h1, h2, te = T20._func(seed=6)
+    vf = {k: np.concatenate([h1[k], h2[k]]) for k in ("xg", "last", "z", "y", "d")}
+    refs = (T20._ens("np", tr, h1), T20._ens("np", tr, h2), T20._ens("np", tr, vf))
+    tt = np.quantile(te["y"], [0.25, 0.5, 0.75])
+
+    def out(m):
+        alt = m.refit_members()
+        return dict(dirs=repr(m.dirs), confirmed=m.confirmed,
+                    S=m.predict_survival(te["xg"], te["last"], te["z"], tt),
+                    S_alt=m.predict_survival(te["xg"], te["last"], te["z"], tt, alt),
+                    r_alt=m.predict_risk(te["xg"], te["last"], te["z"], alt))
+
+    assert CrossConfirmRefitAnchor.dir_cache is None
+    a = out(T20._cross("np", 0.0, tr, h1, h2, refs)[0])
+    store = {}
+
+    def save(name, fn):
+        store[name] = pickle.dumps(fn())
+        return pickle.loads(store[name])
+    try:
+        CrossConfirmRefitAnchor.dir_cache = save
+        b = out(T20._cross("np", 0.0, tr, h1, h2, refs)[0])           # writes dir0, dir1
+        store.pop("dir1")                                             # "interrupted" during the second direction
+        torch.manual_seed(12345), np.random.seed(54321), torch.rand(7), np.random.rand(3)
+        calls = []
+
+        def resume(name, fn):
+            calls.append(name)
+            return pickle.loads(store[name]) if name in store else fn()
+        CrossConfirmRefitAnchor.dir_cache = resume
+        c = out(T20._cross("np", 0.0, tr, h1, h2, refs)[0])
+    finally:
+        CrossConfirmRefitAnchor.dir_cache = None
+    assert calls == ["dir0", "dir1"]
+    for x in (b, c):
+        assert x["dirs"] == a["dirs"] and x["confirmed"] == a["confirmed"]
+        for k in ("S", "S_alt", "r_alt"):
+            assert np.array_equal(x[k], a[k]), k

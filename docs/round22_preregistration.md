@@ -126,3 +126,12 @@ then CK-6d, then H-R22a). Expected cost: C-MAPSS dominates (Round 21: about 24 h
 - 2026-11-06 ~13:25–14:56Z: the container was reclaimed while the session was idle (no ensemble saved after 11:13Z); lanes
   relaunched 14:58Z unchanged (logs `r22_lane<k>_r2`, queue state of attempt 2 kept as `queue_state_attempt2.json`).
   From here a session-side watcher stays active so the container is not reclaimed during the run.
+- 2026-11-06 ~22:28Z: container restarted (host change) with the watcher running. FD003 splits 1–3 lost their
+  cross-confirmation step in progress (split 2 about 6 h of it), which was cached only as a whole. Execution change
+  (mechanics only; no model, setting, seed or rule changed): `CrossConfirmRefitAnchor.dir_cache` (default `None`,
+  `src/kanfae/models/fres.py`) lets the harness store each finished direction of the cross-confirmation
+  (`ckpt/fd003_<k>_npaft_fits/cross_npaft_dir0|1.pkl`); test R22-4b shows that a fit resumed from a pickled first
+  direction, with the global random states disturbed, equals the uninterrupted fit exactly; the Round-20 and
+  Round-21 NP-AFT tests pass unchanged (12 passed). The harness also clears the fit cache at the start of every job,
+  so a failed C-MAPSS job can never lend its ensembles to the next job. Lanes relaunched (logs `r22_lane<k>_r3`,
+  queue state of attempt 3 kept as `queue_state_attempt3.json`).
