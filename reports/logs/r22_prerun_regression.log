@@ -1,0 +1,14 @@
+.......................................                                  [100%]
+=============================== warnings summary ===============================
+tests/test_round17.py::test_R17_1_lognormal_survival_prediction
+  /home/user/KK/src/kanfae/models/fkan.py:307: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+    w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+
+tests/test_round21_real_npaft.py::test_r21_1_real_split_npaft_and_lnaft_smoke
+tests/test_round21_real_npaft.py::test_r21_1_real_split_npaft_and_lnaft_smoke
+  /home/user/KK/.venv/lib/python3.13/site-packages/rdata/conversion/_conversion.py:302: UserWarning: Unknown encoding. Assumed ASCII.
+    warnings.warn("Unknown encoding. Assumed ASCII.")  # noqa: B028
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+39 passed, 3 warnings in 524.29s (0:08:44)

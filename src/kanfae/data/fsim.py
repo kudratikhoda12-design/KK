@@ -16,6 +16,12 @@ and the CK-*b tests) adds a random level xi_d0 * 1 (variance 0.5) and a random l
 int X_d dt and int t X_d dt vary across subjects (in v1, int X_d dt was the same for every subject: D118).
 "S-Misspec-mixture" (test-only, CK-11b): log T = 1 - eta/1.5 + eps, eps the Round-2 MIS skewed two-component normal
 mixture (0.7 N(-0.6, 0.5^2) + 0.3 N(1.4, 1)) standardised to SD 0.5.
+Round 22 (D156, H-R22c; added scenarios only, every earlier scenario bit-identical): log T = 1 - eta/1.5 + eps with
+eps of mean 0 and SD 0.5, under which both the Weibull and the log-normal AFT are misspecified:
+  "S-Misspec-bimodal"    symmetric bimodal 0.5 N(-1.1, 0.3^2) + 0.5 N(1.1, 0.3^2), standardised (SD sqrt(1.30))
+  "S-Misspec-studentt3"  Student t, 3 degrees of freedom, standardised (SD sqrt 3)
+  "S-Misspec-logistic05" standard logistic, standardised (SD pi / sqrt 3); unlike "S-Misspec-loglogistic" (0.5 x
+                         standard logistic, SD 0.907; Round 12), its SD is 0.5
 """
 from __future__ import annotations
 
@@ -23,6 +29,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 from scipy.stats import norm
+from scipy.stats import t as student_t
 
 GRID = np.linspace(0.0, 1.0, 50)             # model grid G
 FINE = np.linspace(0.0, 1.0, 401)            # truth quadrature
@@ -30,7 +37,10 @@ LAM = np.array([1.0, 0.5, 0.25, 0.125])
 LAM_V2 = np.r_[0.5, 0.5, LAM * 7.0 / 15.0]               # level, linear trend, Fourier (D120)
 D = 3
 SHAPE = 1.5
-SCENARIOS = ("S-Add", "S-Int", "S-Misspec-lognormal", "S-Misspec-loglogistic", "S-Misspec-mixture", "S-Last")
+SCENARIOS = ("S-Add", "S-Int", "S-Misspec-lognormal", "S-Misspec-loglogistic", "S-Misspec-mixture", "S-Last",
+             "S-Misspec-bimodal", "S-Misspec-studentt3", "S-Misspec-logistic05")
+R22_LAWS = {"S-Misspec-bimodal": float(np.sqrt(0.09 + 1.21)), "S-Misspec-studentt3": float(np.sqrt(3.0)),
+            "S-Misspec-logistic05": float(np.pi / np.sqrt(3.0))}         # SD of the unstandardised error (D156)
 # S-Last (D133, Round 15): the hazard depends on the channels' current values at the landmark t = 1 only,
 # eta = sin(pi X_1(1) / 2) + 1.5 tanh(X_2(1)) + 0.3 z_1 - 0.3 z_2 (channel 3 null); Weibull PH, shape 1.5. With sparse
 # visits X(1) itself is never observed, so the last observed value is a noisy, lagged proxy and the trajectory carries
@@ -98,6 +108,15 @@ class FSimData:
         if self.scenario.startswith("S-Misspec"):
             loc = 1.0 - self.eta / SHAPE
             w = (np.log(np.maximum(g, 1e-300))[None, :] - loc[:, None]) / 0.5
+            if self.scenario in R22_LAWS:                 # eps = 0.5 e / sd_e, so e = sd_e * w (D156)
+                e = R22_LAWS[self.scenario] * w
+                if self.scenario == "S-Misspec-bimodal":
+                    S = 0.5 * norm.sf((e + 1.1) / 0.3) + 0.5 * norm.sf((e - 1.1) / 0.3)
+                elif self.scenario == "S-Misspec-studentt3":
+                    S = student_t.sf(e, 3)
+                else:
+                    S = 1.0 / (1.0 + np.exp(e))
+                return np.where(g[None, :] <= 0, 1.0, S)
             if self.scenario.endswith("lognormal"):
                 S = norm.sf(w)
             elif self.scenario.endswith("loglogistic"):
@@ -140,6 +159,15 @@ def _event_times(scenario, eta, rng):
         comp = rng.random(n) < 0.7
         e = np.where(comp, rng.normal(-0.6, 0.5, n), rng.normal(1.4, 1.0, n))
         return np.exp(1.0 - eta / SHAPE + 0.5 * (e - _MIS_MU) / _MIS_SD)
+    if scenario in R22_LAWS:
+        n = len(eta)
+        if scenario == "S-Misspec-bimodal":
+            e = np.where(rng.random(n) < 0.5, -1.1, 1.1) + 0.3 * rng.normal(size=n)
+        elif scenario == "S-Misspec-studentt3":
+            e = rng.standard_t(3, size=n)
+        else:
+            e = rng.logistic(size=n)
+        return np.exp(1.0 - eta / SHAPE + 0.5 * e / R22_LAWS[scenario])
     if scenario.startswith("S-Misspec"):
         eps = rng.normal(size=len(eta)) if scenario.endswith("lognormal") else rng.logistic(size=len(eta))
         return np.exp(1.0 - eta / SHAPE + 0.5 * eps)

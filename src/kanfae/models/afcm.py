@@ -172,13 +172,20 @@ class AFCM:
         return np.einsum("nj,jk,nk->n", Bx, self.theta[d], Bt).reshape(x.shape)
 
 
-def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, rule="min", tol=0.01, **kw):
+def fit_afcm(train, val, lams_x=LAM_GRID, lams_t=LAM_T_GRID, per_channel=False, rule="min", tol=0.01, selection=None,
+             **kw):
     """Grid over (lam_x, lam_t), selected by validation Efron NLPL. train/val: dicts xg, z, y, d.
+    selection "reml_per_channel" (Round 22, D156; default None = unchanged): per-channel (lam_x_d, lam_t_d) by the
+    Laplace approximate marginal likelihood on the training data (fit_afcm_reml; val is not used).
     per_channel (D123 option): after the common grid, one coordinate sweep over channels, each choosing its own
     (lam_x_d, lam_t_d) on the same grid with the others fixed. per_channel "t" (D133): the same sweep over lam_t only,
     lam_x staying common. rule "parsimonious" (D133 dry run; common grid only): among grid points whose validation
     NLPL is within tol of the minimum, the largest lam_t (smoothest in t), then the largest lam_x -- the D120 rule and
     tolerance. Returns (best model, records)."""
+    if selection == "reml_per_channel":
+        return fit_afcm_reml(train, lams_x=lams_x, lams_t=lams_t, **kw)
+    if selection is not None:
+        raise ValueError(selection)
     torch.set_default_dtype(torch.float64)
     proto = AFCM(**kw)
     proto._set_ranges(train["xg"])
@@ -348,3 +355,147 @@ def fit_afcm_laml(train, lams_x=LAM_GRID, lams_t=LAM_T_GRID, criterion="laml", *
     k = max(ok, key=lambda i: recs[i]["laml"]) if criterion == "laml" else min(ok, key=lambda i: recs[i]["aic"])
     recs[k]["chosen"] = True
     return models[k], recs
+
+
+# ---------------------------------------------------------------------------------------- Round 22 (D156): REML
+REML_BOUNDS = (1e-9, 1e9)
+
+
+def _proto(train, kw):
+    proto = AFCM(**kw)
+    proto._set_ranges(train["xg"])
+    proto.zm = train["z"].mean(0)
+    proto.zs = np.where(train["z"].std(0) > 0, train["z"].std(0), 1.0)
+    return proto
+
+
+def reml_step(m, W, Z, y, d):
+    """One Fellner-Schall update (Wood & Fasiolo 2017) of the per-channel smoothing parameters of a fitted AFCM m.
+    Penalty in log-likelihood units (as laml_terms): S = blockdiag_d 2E (lam_x_d Kx + lam_t_d Kt + ridge I), gamma
+    unpenalised; H the observed Cox information (Breslow form) at theta_hat; A = H + S. For each penalty S_j (S_j =
+    2E K_j in channel block d): lam_j <- lam_j [tr(S^-1 S_j) - tr(A^-1 S_j)] / (theta_d' S_j theta_d), the fixed point
+    of d LAML / d lam_j = 0 with H held fixed. Returns (new lam_x list, new lam_t list, per-channel edf)."""
+    n, D, P = W.shape
+    X = np.hstack([W.reshape(n, D * P), Z])
+    th = np.concatenate([m.theta.reshape(-1), m.gamma])
+    E = float(np.sum(d))
+    Kx, Kt = (k.numpy() for k in m._penalty_mats())
+    lx = [float(m._lam(m.lam_x, k)) for k in range(D)]
+    lt = [float(m._lam(m.lam_t, k)) for k in range(D)]
+    q = X.shape[1]
+    S = np.zeros((q, q))
+    for k in range(D):
+        S[k * P:(k + 1) * P, k * P:(k + 1) * P] = 2 * E * (lx[k] * Kx + lt[k] * Kt + m.ridge * np.eye(P))
+    H = cox_information(X, X @ th, y, d)
+    Ainv = np.linalg.inv(H + S)
+    new_x, new_t, edf = [], [], []
+    for k in range(D):
+        b = slice(k * P, (k + 1) * P)
+        Sinv = np.linalg.inv(S[b, b])
+        tk = m.theta[k].reshape(-1)
+        out = []
+        for lam, K in ((lx[k], Kx), (lt[k], Kt)):
+            Sj = 2 * E * K
+            num = float(np.trace(Sinv @ Sj) - np.trace(Ainv[b, b] @ Sj))
+            den = float(tk @ Sj @ tk)
+            out.append(float(np.clip(lam * num / den, *REML_BOUNDS)) if den > 0 and num > 0 else lam)
+        new_x.append(out[0]); new_t.append(out[1])
+        edf.append(float(np.trace((Ainv @ H)[b, b])))
+    return new_x, new_t, edf
+
+
+def fit_afcm_reml(train, lams_x=LAM_GRID, lams_t=LAM_T_GRID, max_iter=100, tol=0.01, eta_tol=1e-3, **kw):
+    """Round 22 (D156): AFCM with per-channel anisotropic smoothing parameters (lam_x_d, lam_t_d) chosen by the
+    Laplace approximate marginal likelihood (LAML / REML, as mgcv; Wood 2011) on the training data only.
+    Pilot: one common (lam_x, lam_t) on the lams_x x lams_t grid, LAML-selected (the fit_afcm_laml choice); then
+    Fellner-Schall updates (reml_step), each followed by a warm-started refit, until max |delta log lam| < tol, the
+    lambdas clipped to REML_BOUNDS (convergence rule: _reml_core). The null-space ridge (ridge * I in every block, AFCM
+    default 1e-6) stays fixed. If there is no convergence in max_iter updates, the iterate with the largest finite LAML is returned (recorded).
+    Returns (model, record)."""
+    torch.set_default_dtype(torch.float64)
+    proto = _proto(train, kw)
+    W = proto.design(train["xg"])
+    Ztr = proto._z(train["z"], len(W))
+    return _reml_core(proto, kw, W, Ztr, train, lams_x, lams_t, max_iter, tol, eta_tol)
+
+
+def _reml_core(proto, kw, W, Ztr, train, lams_x, lams_t, max_iter=100, tol=0.01, eta_tol=1e-3):
+    """Convergence: max |delta log lam| < tol, or the fitted training linear predictor changed by less than eta_tol
+    (sup norm) since the previous iterate (a lambda whose penalty no longer moves the fit, e.g. lam_t of a channel
+    whose lam_x reached the upper bound, can keep oscillating in a flat direction of LAML)."""
+    y, d = train["y"], train["d"]
+    Xtr = np.hstack([W.reshape(len(W), -1), Ztr])
+    grid, best = [], None
+    for lx in lams_x:
+        for lt in lams_t:
+            m = _fit_one(proto, kw, lx, lt, W, Ztr, train)
+            grid.append(dict(lam_x=lx, lam_t=lt, **laml_terms(m, W, Ztr, y, d)))
+            if np.isfinite(grid[-1]["laml"]) and (best is None or grid[-1]["laml"] > best[0]):
+                best = (grid[-1]["laml"], lx, lt)
+    D = W.shape[1]
+    lx, lt = [float(best[1])] * D, [float(best[2])] * D
+    it_recs, models, theta0, converged, eta_prev = [], [], None, False, None
+    for it in range(max_iter + 1):
+        m = _fit_one(proto, kw, list(lx), list(lt), W, Ztr, train) if theta0 is None else \
+            _fit_one_warm(proto, kw, list(lx), list(lt), W, Ztr, train, theta0)
+        terms = laml_terms(m, W, Ztr, y, d)
+        nx, nt, edf = reml_step(m, W, Ztr, y, d)
+        step = max(abs(np.log(a) - np.log(b)) for a, b in zip(nx + nt, lx + lt))
+        eta = Xtr @ np.concatenate([m.theta.reshape(-1), m.gamma])
+        deta = float(np.max(np.abs(eta - eta_prev))) if eta_prev is not None else float("inf")
+        eta_prev = eta
+        it_recs.append(dict(iter=it, lam_x=list(lx), lam_t=list(lt), laml=terms["laml"], edf=terms["edf"],
+                            edf_channel=edf, max_dlog_lam=float(step), max_deta=deta))
+        models.append(m)
+        if step < tol or deta < eta_tol:
+            converged = True
+            break
+        if it == max_iter:
+            break
+        theta0 = (m.theta.reshape(-1).copy(), m.gamma.copy())
+        lx, lt = nx, nt
+    if converged:
+        k = len(it_recs) - 1
+    else:
+        k = max((i for i, r in enumerate(it_recs) if np.isfinite(r["laml"])), key=lambda i: it_recs[i]["laml"])
+    c = it_recs[k]
+    return models[k], dict(pilot=dict(lam_x=float(best[1]), lam_t=float(best[2]), grid=grid), iterations=it_recs,
+                           converged=converged, chosen_iter=k, lam_x=c["lam_x"], lam_t=c["lam_t"], laml=c["laml"],
+                           edf=c["edf"], edf_channel=c["edf_channel"])
+
+
+def _fit_one_warm(proto, kw, lx, lt, W, Ztr, train, theta0):
+    m = AFCM(**{**kw, "lam_x": lx, "lam_t": lt})
+    m.lo, m.hi, m.bx, m.zm, m.zs = proto.lo, proto.hi, proto.bx, proto.zm, proto.zs
+    if m.xin == "quantile":
+        m.qs, m.qp = proto.qs, proto.qp
+    return m._fit_design(W, Ztr, train["y"], train["d"], theta0=theta0)
+
+
+def fit_afcm_reml_bagged(train, B=3, seed=0, **kw):
+    """Round 22 (D156) afcm_reml_ens: as fit_afcm_bagged (B bootstrap resamples of the training subjects, the same
+    design, coefficients averaged, Breslow baseline re-estimated on the full training set), each resample fitted by
+    fit_afcm_reml on the resampled rows. Returns (averaged model, records)."""
+    torch.set_default_dtype(torch.float64)
+    lams_x, lams_t = kw.pop("lams_x", LAM_GRID), kw.pop("lams_t", LAM_T_GRID)
+    proto = _proto(train, kw)
+    W = proto.design(train["xg"])
+    Ztr = proto._z(train["z"], len(W))
+    rng = np.random.default_rng(seed)
+    n = len(train["y"])
+    thetas, gammas, recs = [], [], []
+    for b in range(B):
+        idx = rng.integers(0, n, n)
+        sub = dict(xg=train["xg"][idx], z=train["z"][idx], y=train["y"][idx], d=train["d"][idx])
+        m, r = _reml_core(proto, kw, W[idx], Ztr[idx], sub, lams_x, lams_t)
+        thetas.append(m.theta); gammas.append(m.gamma)
+        recs.append(dict(resample=b, lam_x=r["lam_x"], lam_t=r["lam_t"], converged=r["converged"], laml=r["laml"]))
+    out = AFCM(**{**kw, "lam_x": np.mean([r["lam_x"] for r in recs], 0).tolist(),
+                  "lam_t": np.mean([r["lam_t"] for r in recs], 0).tolist()})
+    out.lo, out.hi, out.bx, out.zm, out.zs = proto.lo, proto.hi, proto.bx, proto.zm, proto.zs
+    if out.xin == "quantile":
+        out.qs, out.qp = proto.qs, proto.qp
+    out.theta, out.gamma, out.D = np.mean(thetas, 0), np.mean(gammas, 0), W.shape[1]
+    eta = W.reshape(n, -1) @ out.theta.reshape(-1) + Ztr @ out.gamma
+    out.baseline = breslow_baseline(eta, train["y"], train["d"])
+    return out, recs

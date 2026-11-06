@@ -3,13 +3,13 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "d892b761bc47389083890b86586243b06117f651",
+  "head": "6fbbf7557ecc2c05dd76acf93e4c8bf85e67a4f9",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
  "environment": {
   "python": "3.13.16",
-  "platform": "Linux-6.18.44-fc-v236-x86_64-with-glibc2.39",
+  "platform": "Linux-6.18.44-fc-v242-x86_64-with-glibc2.39",
   "venv": ".venv (project-local)",
   "lock_file": "requirements-lock.txt",
   "lock_sha256": "c84359511c49bd2bd91948916ed5eb70d7c79ea188f764fe12484edae9172632",
@@ -64,6 +64,27 @@
    "object": "pbcseq",
    "license": "LGPL (>= 2) (package DESCRIPTION)",
    "kind": "REAL (right-censored, repeated measures)"
+  },
+  "joinerml": {
+   "url": "https://cran.r-project.org/src/contrib/joineRML_0.4.8.tar.gz",
+   "tarball_md5_cran_index": "203e8511edf8a31978fa8ecbb06b4c8e",
+   "tarball_sha256": "5391b059674954c1b31e5c401450737b0c252efdc55876a6514a94f02fdeb6c3",
+   "renal_rda_sha256": "8dc817c5e9c99a1f28eee7d4a54c676d2cd69801968047dcdda29feb3a1180dd",
+   "heart_valve_rda_sha256": "ac7f38ea7c5eb9a4cbfcf06bd627e80856e3f0eebc0372238b1ecf76291b6c6c",
+   "objects": [
+    "renal",
+    "heart.valve"
+   ],
+   "license": "GPL-3 | file LICENSE (package DESCRIPTION)",
+   "kind": "REAL (right-censored, repeated measures)"
+  },
+  "cmapss_fd003": {
+   "files_sha256": {
+    "RUL_FD003.txt": "df1e0566306b174a2de41c67a3e7a51877889598b78643fc3e5685259091b7cb",
+    "test_FD003.txt": "299babd63c8d987cef079c4a425429f33b3a34797d803bbe2ad48c29dbd0d790",
+    "train_FD003.txt": "2abbe9968cc5e8eb091980f51b20f62bb4127336d3482cb52071d53bf23329e2"
+   },
+   "note": "Round 22 (D156); analysed before in Round 3 (D51)"
   }
  },
  "configs": [
@@ -4297,6 +4318,66 @@
    "elapsed_s": 121.467,
    "git_head": "d892b76",
    "log": "reports/logs/build_pdf_round21.log"
+  },
+  {
+   "name": "build_manifest_round21",
+   "command": ".venv/bin/python scripts/build_manifest.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-05T01:41:41Z",
+   "end_utc": "2026-11-05T01:41:44Z",
+   "elapsed_s": 3.103,
+   "git_head": "d892b76",
+   "log": "reports/logs/build_manifest_round21.log"
+  },
+  {
+   "name": "verify_deliverables_round21",
+   "command": ".venv/bin/python scripts/verify_deliverables.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-05T01:41:44Z",
+   "end_utc": "2026-11-05T01:42:10Z",
+   "elapsed_s": 26.397,
+   "git_head": "d892b76",
+   "log": "reports/logs/verify_deliverables_round21.log"
+  },
+  {
+   "name": "r22_prerun_regression",
+   "command": ".venv/bin/python -m pytest -q -p no:cacheprovider tests/test_round15.py tests/test_round16.py tests/test_round17.py tests/test_round18.py tests/test_round19.py tests/test_round20.py tests/test_round21_real_npaft.py",
+   "exit_code": 0,
+   "start_utc": "2026-11-06T07:12:08Z",
+   "end_utc": "2026-11-06T07:21:29Z",
+   "elapsed_s": 560.461,
+   "git_head": "6fbbf75",
+   "log": "reports/logs/r22_prerun_regression.log"
+  },
+  {
+   "name": "r22_tests_dev",
+   "command": ".venv/bin/python -m pytest -q -p no:cacheprovider tests/test_round22.py -k not r22_4 -x",
+   "exit_code": 1,
+   "start_utc": "2026-11-06T07:33:25Z",
+   "end_utc": "2026-11-06T07:34:33Z",
+   "elapsed_s": 67.999,
+   "git_head": "6fbbf75",
+   "log": "reports/logs/r22_tests_dev.log"
+  },
+  {
+   "name": "r22_tests_dev",
+   "command": ".venv/bin/python -m pytest -q -p no:cacheprovider tests/test_round22.py -k not r22_4 -x",
+   "exit_code": 1,
+   "start_utc": "2026-11-06T07:34:39Z",
+   "end_utc": "2026-11-06T07:37:21Z",
+   "elapsed_s": 161.999,
+   "git_head": "6fbbf75",
+   "log": "reports/logs/r22_tests_dev.log"
+  },
+  {
+   "name": "r22_tests_dev",
+   "command": ".venv/bin/python -m pytest -q -p no:cacheprovider tests/test_round22.py -k not r22_4 and not r22_1 -x",
+   "exit_code": 0,
+   "start_utc": "2026-11-06T07:37:29Z",
+   "end_utc": "2026-11-06T07:38:01Z",
+   "elapsed_s": 32.389,
+   "git_head": "6fbbf75",
+   "log": "reports/logs/r22_tests_dev.log"
   }
  ],
  "deliverables": {
