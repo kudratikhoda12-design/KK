@@ -123,3 +123,6 @@ then CK-6d, then H-R22a). Expected cost: C-MAPSS dominates (Round 21: about 24 h
 - 2026-11-06 13:18Z: container restart (no records written yet; ensembles saved up to 11:13Z in `ckpt/`). Lanes
   relaunched 13:19Z unchanged (logs `r22_lane<k>_r1`); the first attempt's queue state kept as
   `queue_state_attempt1.json`; saved ensembles are reloaded, unfinished ones refit from their fixed seeds.
+- 2026-11-06 ~13:25–14:56Z: the container was reclaimed while the session was idle (no ensemble saved after 11:13Z); lanes
+  relaunched 14:58Z unchanged (logs `r22_lane<k>_r2`, queue state of attempt 2 kept as `queue_state_attempt2.json`).
+  From here a session-side watcher stays active so the container is not reclaimed during the run.
