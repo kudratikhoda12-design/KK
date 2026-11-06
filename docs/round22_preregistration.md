@@ -120,3 +120,6 @@ then CK-6d, then H-R22a). Expected cost: C-MAPSS dominates (Round 21: about 24 h
 
 - 2026-11-06: development gate run (`afcmdev_22/914/966`, 425–485 s each): GO, `afcm_reml` (D157). CK-6d run once on
   seed 24 (`r22_ck6d`): FAIL (φ₁ 0.170); H-R22a not run (D157). Lanes 0–3 launched after the gate commit.
+- 2026-11-06 13:18Z: container restart (no records written yet; ensembles saved up to 11:13Z in `ckpt/`). Lanes
+  relaunched 13:19Z unchanged (logs `r22_lane<k>_r1`); the first attempt's queue state kept as
+  `queue_state_attempt1.json`; saved ensembles are reloaded, unfinished ones refit from their fixed seeds.
