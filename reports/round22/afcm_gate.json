@@ -1,0 +1,57 @@
+{
+ "rule": "GO iff one pre-specified variant (priority afcm_reml, then afcm_reml_ens) has identifiable RISE phi_1 < 0.15 and phi_2 < 0.10 on all of seeds 22, 914, 966 (D156)",
+ "complete": true,
+ "seeds": {
+  "22": {
+   "afcm_reml": {
+    "phi1": 0.1411963988810092,
+    "phi2": 0.0571357890288414,
+    "meets": true,
+    "converged": true
+   },
+   "afcm_reml_ens": {
+    "phi1": 0.20504112505806196,
+    "phi2": 0.0815330730067982,
+    "meets": false,
+    "converged": null
+   },
+   "pilot_equals_round15_laml": true
+  },
+  "914": {
+   "afcm_reml": {
+    "phi1": 0.042503071071144725,
+    "phi2": 0.043085666262163404,
+    "meets": true,
+    "converged": true
+   },
+   "afcm_reml_ens": {
+    "phi1": 0.15691679603319186,
+    "phi2": 0.0979274548644542,
+    "meets": false,
+    "converged": null
+   },
+   "pilot_equals_round15_laml": true
+  },
+  "966": {
+   "afcm_reml": {
+    "phi1": 0.14716905716087716,
+    "phi2": 0.028454886132557148,
+    "meets": true,
+    "converged": true
+   },
+   "afcm_reml_ens": {
+    "phi1": 0.19685455671637514,
+    "phi2": 0.05028744302829063,
+    "meets": false,
+    "converged": null
+   },
+   "pilot_equals_round15_laml": true
+  }
+ },
+ "passes": {
+  "afcm_reml": true,
+  "afcm_reml_ens": false
+ },
+ "go": true,
+ "go_variant": "afcm_reml"
+}
