@@ -3,13 +3,13 @@
  "generated_by": "scripts/build_manifest.py",
  "git": {
   "branch": "claude/blissful-faraday-2unozw",
-  "head": "6fbbf7557ecc2c05dd76acf93e4c8bf85e67a4f9",
+  "head": "3d192df88722483639d9fbd71cfa4f06d8b8b246",
   "pushed_to_remote": false,
   "note": "no push to any remote (owner instruction, D21)"
  },
  "environment": {
   "python": "3.13.16",
-  "platform": "Linux-6.18.44-fc-v242-x86_64-with-glibc2.39",
+  "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
   "venv": ".venv (project-local)",
   "lock_file": "requirements-lock.txt",
   "lock_sha256": "c84359511c49bd2bd91948916ed5eb70d7c79ea188f764fe12484edae9172632",
@@ -4378,6 +4378,96 @@
    "elapsed_s": 32.389,
    "git_head": "6fbbf75",
    "log": "reports/logs/r22_tests_dev.log"
+  },
+  {
+   "name": "r22_afcmdev_914",
+   "command": ".venv/bin/python scripts/run_round22.py afcmdev_914",
+   "exit_code": 0,
+   "start_utc": "2026-11-06T07:42:33Z",
+   "end_utc": "2026-11-06T07:49:42Z",
+   "elapsed_s": 428.33,
+   "git_head": "244bbd7",
+   "log": "reports/logs/r22_afcmdev_914.log"
+  },
+  {
+   "name": "r22_afcmdev_966",
+   "command": ".venv/bin/python scripts/run_round22.py afcmdev_966",
+   "exit_code": 0,
+   "start_utc": "2026-11-06T07:42:33Z",
+   "end_utc": "2026-11-06T07:50:24Z",
+   "elapsed_s": 470.783,
+   "git_head": "244bbd7",
+   "log": "reports/logs/r22_afcmdev_966.log"
+  },
+  {
+   "name": "r22_afcmdev_22",
+   "command": ".venv/bin/python scripts/run_round22.py afcmdev_22",
+   "exit_code": 0,
+   "start_utc": "2026-11-06T07:42:33Z",
+   "end_utc": "2026-11-06T07:50:42Z",
+   "elapsed_s": 488.257,
+   "git_head": "244bbd7",
+   "log": "reports/logs/r22_afcmdev_22.log"
+  },
+  {
+   "name": "r22_ck6d",
+   "command": ".venv/bin/python -m pytest -v -rA -s -p no:cacheprovider tests/test_round22_ck.py",
+   "exit_code": 1,
+   "start_utc": "2026-11-06T07:51:21Z",
+   "end_utc": "2026-11-06T07:53:34Z",
+   "elapsed_s": 132.692,
+   "git_head": "e19cf48",
+   "log": "reports/logs/r22_ck6d.log"
+  },
+  {
+   "name": "r22_lane0_r4",
+   "command": ".venv/bin/python scripts/run_round22_lanes.py --lane 0",
+   "exit_code": 0,
+   "start_utc": "2026-11-07T05:00:25Z",
+   "end_utc": "2026-11-07T20:05:00Z",
+   "elapsed_s": 54274.286,
+   "git_head": "c95e96b",
+   "log": "reports/logs/r22_lane0_r4.log"
+  },
+  {
+   "name": "r22_lane3_r4",
+   "command": ".venv/bin/python scripts/run_round22_lanes.py --lane 3",
+   "exit_code": 0,
+   "start_utc": "2026-11-07T05:00:28Z",
+   "end_utc": "2026-11-07T20:06:14Z",
+   "elapsed_s": 54345.585,
+   "git_head": "c95e96b",
+   "log": "reports/logs/r22_lane3_r4.log"
+  },
+  {
+   "name": "r22_lane2_r4",
+   "command": ".venv/bin/python scripts/run_round22_lanes.py --lane 2",
+   "exit_code": 0,
+   "start_utc": "2026-11-07T05:00:27Z",
+   "end_utc": "2026-11-07T20:07:27Z",
+   "elapsed_s": 54419.286,
+   "git_head": "c95e96b",
+   "log": "reports/logs/r22_lane2_r4.log"
+  },
+  {
+   "name": "r22_lane1_r4",
+   "command": ".venv/bin/python scripts/run_round22_lanes.py --lane 1",
+   "exit_code": 0,
+   "start_utc": "2026-11-07T05:00:26Z",
+   "end_utc": "2026-11-07T20:10:17Z",
+   "elapsed_s": 54590.705,
+   "git_head": "c95e96b",
+   "log": "reports/logs/r22_lane1_r4.log"
+  },
+  {
+   "name": "final_full_suite_round22",
+   "command": ".venv/bin/python -m pytest -v -rA -s tests/",
+   "exit_code": 1,
+   "start_utc": "2026-11-07T20:18:48Z",
+   "end_utc": "2026-11-07T21:48:13Z",
+   "elapsed_s": 5365.633,
+   "git_head": "3d192df",
+   "log": "reports/logs/final_full_suite_round22.log"
   }
  ],
  "deliverables": {

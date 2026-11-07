@@ -1,4 +1,23 @@
-# Final status: KAN-FAE research prototype, Round 21 (2026-11-05)
+# Final status: KAN-FAE research prototype, Round 22 (2026-11-07)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev24.pdf` (revision 24,
+611 pages: Part A = Round 22 and its manuscripts; earlier parts = earlier revisions).
+Supplementary Material: `docs/manuscript_round22.md`, `reports/manuscript_round22.pdf` (54 pages, Rounds 1–22).
+Journal main manuscript: `docs/manuscript_journal_main.md`, `reports/manuscript_journal_main.pdf` (18 pages).
+
+| Item | Result |
+|---|---|
+| D156 | Pre-registration: per-channel REML AFCM (CK-6d, H-R22a), external cohorts renal, heart_valve and FD003 Option B (H-R22b; FD003 not untouched), multi-law NP-KAN-AFT simulation (H-R22c); seeds 24 and 5000–5019 unused |
+| D157 | AFCM development gate GO (`afcm_reml`); **CK-6d FAIL** on seed 24 (φ₁ 0.170 ≥ 0.15), so **H-R22a not run** and H-R12 stays inconclusive; the AFCM comparator remains unvalidated |
+| D158 | 95/95 jobs ok (four relaunches after container restarts). **H-R22b not supported**: the summary-feature Cox baseline did not converge on heart_valve split 3 (registered rule: every fit finite); anchoring (≤ +0.005) and distillation (≤ +0.002) passed; no contrast with landmark Cox had an interval excluding 0. **H-R22c supported**: NP-KAN-AFT lower curve error than Cox, Weibull and log-normal B2-S under bimodal, Student-t₃ and logistic laws (simulation only) |
+| Deliverables (D159) | Supplementary 3352 values / 51 references, journal 724 values (all in the Supplementary ledger) / 40 references; both verifiers `--pdf` ALL_PASS |
+| Tests | `final_full_suite_round22`: 340 passed, 3 failed (CK-6c, 4f R1, CK-6d, all kept visible), 16 xfailed, 2 skipped (361); no XPASS. `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner review. Five splits per cohort cannot power superiority tests (D111); landmark Cox remains a strong simple baseline on real data |
+
+---
+
+# Round 21 status (2026-11-05), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev23.pdf` (revision 23,
