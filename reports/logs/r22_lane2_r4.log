@@ -1,0 +1,18 @@
+[lane 2] fd003_4_npaft ok 44720s
+/home/user/KK/src/kanfae/models/fkan.py:307: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[lane 2] sim_studentt3_5002 ok 704s
+[lane 2] sim_bimodal_5004 ok 591s
+[lane 2] sim_studentt3_5005 ok 713s
+[lane 2] sim_bimodal_5006 ok 761s
+[lane 2] sim_studentt3_5007 ok 480s
+[lane 2] sim_studentt3_5008 ok 600s
+[lane 2] sim_studentt3_5009 ok 778s
+[lane 2] sim_bimodal_5011 ok 519s
+[lane 2] sim_bimodal_5012 ok 927s
+[lane 2] sim_logistic05_5013 ok 638s
+[lane 2] sim_logistic05_5014 ok 634s
+[lane 2] sim_bimodal_5016 ok 460s
+[lane 2] sim_logistic05_5016 ok 860s
+[lane 2] sim_logistic05_5018 ok 1011s

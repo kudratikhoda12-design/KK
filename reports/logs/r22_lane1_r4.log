@@ -1,0 +1,33 @@
+[lane 1] fd003_0_npaft ok 13336s
+/home/user/KK/src/kanfae/models/fkan.py:307: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[lane 1] fd003_3_lnaft ok 6399s
+[lane 1] fd003_1_waft ok 7858s
+[lane 1] fd003_0_cox ok 7164s
+[lane 1] fd003_3_cox ok 1827s
+[lane 1] fd003_4_cox ok 4418s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1614: ConvergenceWarning: Newton-Raphson failed to converge sufficiently. Please see the following tips in the lifelines documentation: https://lifelines.readthedocs.io/en/latest/Examples.html#problems-with-convergence-in-the-cox-proportional-hazard-model
+  warnings.warn(
+[lane 1] real_heart_valve_0 ok 367s
+[lane 1] real_renal_1 ok 842s
+[lane 1] real_renal_2 ok 1040s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/fitters/coxph_fitter.py:1614: ConvergenceWarning: Newton-Raphson failed to converge sufficiently. Please see the following tips in the lifelines documentation: https://lifelines.readthedocs.io/en/latest/Examples.html#problems-with-convergence-in-the-cox-proportional-hazard-model
+  warnings.warn(
+[lane 1] real_heart_valve_4 ok 251s
+[lane 1] sim_bimodal_5000 ok 587s
+[lane 1] sim_bimodal_5001 ok 450s
+[lane 1] sim_bimodal_5002 ok 743s
+[lane 1] sim_logistic05_5003 ok 592s
+[lane 1] sim_studentt3_5004 ok 1078s
+[lane 1] sim_studentt3_5006 ok 694s
+[lane 1] sim_logistic05_5007 ok 438s
+[lane 1] sim_logistic05_5008 ok 534s
+[lane 1] sim_logistic05_5009 ok 611s
+[lane 1] sim_logistic05_5010 ok 845s
+[lane 1] sim_studentt3_5012 ok 730s
+[lane 1] sim_bimodal_5014 ok 792s
+[lane 1] sim_bimodal_5015 ok 1267s
+[lane 1] sim_logistic05_5017 ok 508s
+[lane 1] sim_studentt3_5018 ok 637s
+[lane 1] sim_logistic05_5019 ok 562s

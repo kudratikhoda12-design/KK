@@ -141,3 +141,5 @@ then CK-6d, then H-R22a). Expected cost: C-MAPSS dominates (Round 21: about 24 h
   04:44Z) had no saved fit yet and restart from their fixed seeds. No change to code, settings, seeds or rules. Lanes
   relaunched 05:00Z unchanged (logs `r22_lane<k>_r4`, queue state of attempt 4 kept as `queue_state_attempt4.json`);
   finished jobs are skipped.
+- 2026-11-07 ~20:10Z: attempt 4 completed all remaining jobs without a further restart; 95/95 jobs ok, 0 failed.
+  Analysis run (`analyze_round22.py final`); outcome D158.

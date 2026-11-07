@@ -1,0 +1,47 @@
+[lane 0] fd003_1_npaft ok 770s
+/home/user/KK/src/kanfae/models/fkan.py:307: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  w = (np.log(np.maximum(times, 1e-300))[None, :] - float(self.mu) - e[:, None]) / self.sigma
+[lane 0] fd003_1_lnaft ok 9438s
+[lane 0] fd003_2_lnaft ok 8900s
+[lane 0] fd003_0_waft ok 8240s
+[lane 0] fd003_4_waft ok 4602s
+[lane 0] fd003_1_cox ok 8675s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f7'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[lane 0] fd003_0_base ok 56s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f7'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[lane 0] fd003_1_base ok 46s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f7'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[lane 0] fd003_2_base ok 44s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f7'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[lane 0] fd003_3_base ok 42s
+/home/user/KK/.venv/lib/python3.13/site-packages/lifelines/utils/__init__.py:1100: ConvergenceWarning: Column(s) ['f7'] have very low variance. This may harm convergence. 1) Are you using formula's? Did you mean to add '-1' to the end. 2) Try dropping this redundant column before fitting if convergence fails.
+
+  warnings.warn(dedent(warning_text), ConvergenceWarning)
+[lane 0] fd003_4_base ok 41s
+[lane 0] real_renal_0 ok 990s
+[lane 0] real_heart_valve_1 ok 650s
+[lane 0] real_renal_3 ok 1041s
+[lane 0] sim_studentt3_5000 ok 785s
+[lane 0] sim_studentt3_5001 ok 483s
+[lane 0] sim_logistic05_5002 ok 477s
+[lane 0] sim_studentt3_5003 ok 687s
+[lane 0] sim_logistic05_5004 ok 722s
+[lane 0] sim_logistic05_5005 ok 746s
+[lane 0] sim_bimodal_5007 ok 648s
+[lane 0] sim_bimodal_5009 ok 729s
+[lane 0] sim_studentt3_5010 ok 948s
+[lane 0] sim_logistic05_5011 ok 465s
+[lane 0] sim_logistic05_5012 ok 552s
+[lane 0] sim_studentt3_5013 ok 870s
+[lane 0] sim_logistic05_5015 ok 935s
+[lane 0] sim_bimodal_5017 ok 967s
+[lane 0] sim_bimodal_5019 ok 696s
