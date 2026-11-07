@@ -250,6 +250,19 @@ KANFAE_RUN_ID=final_full_suite_round21 scripts/run_logged.sh final_full_suite_ro
 .venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round21.py   # report revision 23
 bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev23.pdf
 .venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
+# Round 22 (2026-11-06 .. 2026-11-07; D156-D159): per-channel REML AFCM, joineRML renal and heart.valve, FD003, three error laws
+.venv/bin/python -m pytest -q tests/test_round22.py                       # R22-1..R22-4
+for s in 22 914 966; do scripts/run_logged.sh r22_afcmdev_$s .venv/bin/python scripts/run_round22.py afcmdev_$s; done   # AFCM development gate
+.venv/bin/python scripts/analyze_round22.py gate    # reports/round22/afcm_gate.json (D156 go rule)
+.venv/bin/python -m pytest -q tests/test_round22_ck.py   # CK-6d on seed 24 (FAIL recorded; H-R22a not run)
+for k in 0 1 2 3; do scripts/run_logged.sh r22_lane$k .venv/bin/python scripts/run_round22_lanes.py --lane $k & done   # 95 jobs, resumable (move queue_state.json aside before a relaunch)
+.venv/bin/python scripts/analyze_round22.py final   # reports/round22/analysis_summary.json, docs/round22_results.md
+.venv/bin/python scripts/manuscript_round22.py && bash scripts/build_manuscript22_pdf.sh && .venv/bin/python scripts/verify_manuscript_round22.py --pdf
+.venv/bin/python scripts/manuscript_journal_main.py && bash scripts/build_manuscript_journal_pdf.sh && .venv/bin/python scripts/verify_manuscript_journal_main.py --pdf
+KANFAE_RUN_ID=final_full_suite_round22 scripts/run_logged.sh final_full_suite_round22 .venv/bin/python -m pytest -v -rA -s tests/
+.venv/bin/python scripts/compile_test_results.py && .venv/bin/python scripts/build_report_round22.py   # report revision 24
+bash scripts/build_pdf.sh && cp reports/final_research_prototype_report.pdf reports/final_research_prototype_report_rev24.pdf
+.venv/bin/python scripts/build_manifest.py && .venv/bin/python scripts/verify_deliverables.py
 # report (round 3 part + round 2 part + round 1 part): replace build_report_round2.py by
 .venv/bin/python scripts/build_report_round3.py
 # report (round 2 part + round 1 part)
