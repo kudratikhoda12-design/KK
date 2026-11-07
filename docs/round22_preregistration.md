@@ -135,3 +135,9 @@ then CK-6d, then H-R22a). Expected cost: C-MAPSS dominates (Round 21: about 24 h
   Round-21 NP-AFT tests pass unchanged (12 passed). The harness also clears the fit cache at the start of every job,
   so a failed C-MAPSS job can never lend its ensembles to the next job. Lanes relaunched (logs `r22_lane<k>_r3`,
   queue state of attempt 3 kept as `queue_state_attempt3.json`).
+- 2026-11-07 ~04:58Z: container restarted (host change) with the watcher running. `fd003_2_npaft` and `fd003_3_npaft`
+  had finished (records ok). Saved fits resume as designed: split 1 from its complete cross-confirmation, split 0
+  from its first direction (`cross_npaft_dir0.pkl`); `fd003_4_npaft` (started 03:52Z) and `fd003_0_lnaft` (started
+  04:44Z) had no saved fit yet and restart from their fixed seeds. No change to code, settings, seeds or rules. Lanes
+  relaunched 05:00Z unchanged (logs `r22_lane<k>_r4`, queue state of attempt 4 kept as `queue_state_attempt4.json`);
+  finished jobs are skipped.
