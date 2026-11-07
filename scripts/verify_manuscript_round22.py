@@ -29,8 +29,21 @@ W.REQUIRED_SECTIONS = [s.replace("(Rounds 15–21)", "(Rounds 15–22)") for s i
     ["5.10 AFCM smoothing by marginal likelihood", "5.11 Untouched external cohorts and C-MAPSS FD003 (H-R22b)",
      "5.12 NP-KAN-AFT under three further error laws (H-R22c)"]
 D, CONV = W.D, W.CONV
+_tpl = re.sub(r"\s+", " ", W._strip(W.TPL.read_text()))
+W.LITERALS = [e for e in W.LITERALS if e[1] in _tpl]      # inherited entries whose context this template still uses
+P22 = "docs/round22_preregistration.md"
 W.LITERALS += [
-    # Round-22 design constants and conventions (D156, D157)
+    # Round-22 design constants and conventions (D156, D157, D158)
+    ("0", "with mean 0 and SD 0.5", P22, "ε of mean 0 and SD 0.5"),
+    ("0.5", "with mean 0 and SD 0.5", P22, "ε of mean 0 and SD 0.5"),
+    ("30", "with 30% censoring", P22, "to 30%"),
+    ("0.15", "above the 0.15 threshold", P22, "φ₁ < 0.15"),
+    ("0.005", "no more than 0.005 worse", P22, "< +0.005"),
+    ("0.005", "within the registered +0.005", P22, "≤ +0.005"),
+    ("0.002", "within the registered +0.002", P22, "at most +0.002"),
+    ("0.4", "joineRML 0.4.8", None, None),     # package version (recorded in P22 and reports/run_manifest.json); a dotted version cannot be matched as one number
+    ("0", "including 0", CONV, None),
+    ("95", "plain 95% intervals", CONV, None),
 ]
 W.BUILDER_LITERALS += [
 ]

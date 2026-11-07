@@ -44,8 +44,17 @@ _tpl = re.sub(r"\s+", " ", W._strip(W.TPL.read_text())) if W.TPL.exists() else "
 W.LITERALS = [e for e in W.LITERALS if e[1] in _tpl]      # the inherited entries this template uses
 W.LITERALS += [
     # journal-only contexts (design constants of D156 and conventions)
+    ("0", "split 0; S4.3", CONV, None),            # split index
+    ("95", ", 95% CI", CONV, None),
+    ("95", "corrected 95% interval", CONV, None),
 ]
 W.BUILDER_LITERALS = [e for e in W.BUILDER_LITERALS if e[1] in re.sub(r"\s+", " ", W.MD.read_text())] if W.MD.exists() else []
+W.BUILDER_LITERALS += [
+    # Round-21 criteria typed by the builder in Table 13 (D154)
+    ("0.055", "IBS ≤ 0.055 and Harrell C ≥ 0.88", D, "IBS ≤ 0.055 and Harrell C ≥ 0.88"),
+    ("0.88", "IBS ≤ 0.055 and Harrell C ≥ 0.88", D, "IBS ≤ 0.055 and Harrell C ≥ 0.88"),
+    ("0.01", "Harrell C ≥ Cox − 0.01", D, "C ≥ Cox − 0.01"),
+]
 
 
 def check_rerender():
@@ -63,7 +72,12 @@ def check_rerender():
 def check_supplement():
     supp = {(e["src"], e["spec"], e["text"]) for e in json.loads(SUPP_LEDGER.read_text())["values"]}
     vals = json.loads(W.LEDGER.read_text())["values"]
-    missing = [dict(src=e["src"], spec=e["spec"], text=e["text"]) for e in vals if (e["src"], e["spec"], e["text"]) not in supp]
+    jr, sr = str(W.REFS.relative_to(ROOT)) + "/", str(SUPP_REFS.relative_to(ROOT)) + "/"
+
+    def key(e):   # reference-list values: the journal rows are checked identical to the supplement's (check_references)
+        src = sr + e["src"][len(jr):] if e["src"].startswith(jr) else e["src"]
+        return (src, e["spec"], e["text"])
+    missing = [dict(src=e["src"], spec=e["spec"], text=e["text"]) for e in vals if key(e) not in supp]
     return dict(passed=not missing and len(vals) > 0, n_values=len(vals), not_in_supplement=missing[:20])
 
 

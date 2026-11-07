@@ -54,7 +54,7 @@ def t_j_hyp():
             ["H-R21a / H-R21b / H-R21c", "Round 21", "Round-20 methods on four clinical cohorts and C-MAPSS FD001",
              " / ".join(yn(f"reports/round21/analysis_summary.json/hypotheses/H_R21{x}/supported") for x in "abc")],
             ["H-R22a", "Round 22", "B2-S Cox − per-channel REML AFCM (run only if CK-6d passed)", "not run (CK-6d failed)"],
-            ["H-R22b", "Round 22", "safety of anchoring and distillation on untouched cohorts",
+            ["H-R22b", "Round 22", "untouched cohorts: every fit finite, anchoring and distillation within their margins",
              yn("reports/round22/analysis_summary.json/H_R22b/supported")],
             ["H-R22c", "Round 22", "NP-KAN-AFT under bimodal, t₃ and logistic errors",
              yn("reports/round22/analysis_summary.json/H_R22c/supported")]]

@@ -65,7 +65,12 @@ set, for Cox and both AFT models (H-R20b supported; S-Sparse bound for Cox {{V:r
 On the real data (Round 21) the semiparametric KAN-AFT was finite, D-calibrated and close to the other B2-S models, but
 on the primary PBC endpoint it did not match the Weibull KAN-AFT ({{V:reports/round21/analysis_summary.json/hypotheses/H_R21a/part2_mean_vs_waft|+.4f}} in
 mean conditional IBS; H-R21a not supported), and cross-confirmed anchoring never cost more than the registered margin
-on any clinical data set (H-R21b supported). Pruning selected a
+on any clinical data set (H-R21b supported). On two cohorts not used before (Round 22) the locked models were again
+close to the baselines, with every interval including 0, and anchoring and distillation met their margins, but one
+baseline fit failed, so the registered all-finite criterion was not met (H-R22b not supported); in simulation the
+semiparametric KAN-AFT was better than all three parametric KAN models under a bimodal error law, and than the Cox
+and Weibull models under heavy-tailed and logistic laws (H-R22c supported); a per-channel marginal-likelihood AFCM
+failed its held-out check, so H-R12 stays inconclusive. Pruning selected a
 stable, clinically plausible set of PBC markers, and the leading effects were stable over
 {{V:reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/n_fits|d}} bootstrap fits and
 aligned with the pre-stated clinical directions, with one exception (prothrombin index under B2-S). In the motivating
@@ -82,7 +87,7 @@ summaries safe to refit but does not improve on substitution alone, for Cox and 
 observed values helps when they carry the risk and is hard to switch off reliably when they do not, unless the
 decision is confirmed on held-out data in both directions. Estimating the AFT error law by Kaplan–Meier removes the
 need to choose an error family. All findings beyond the registered hypotheses (H1, H-R12, H-R15a/b, H-R16a/b,
-H-R17a/b, H-R18a/b, H-R20a/b, H-R21a/b/c) are exploratory.
+H-R17a/b, H-R18a/b, H-R20a/b, H-R21a/b/c, H-R22b/c) are exploratory.
 
 ## Keywords
 
@@ -1047,9 +1052,30 @@ mixed-effects Cox model and the summary Cox and random survival forest models, o
 
 {{T:r22_cohorts}}
 
-<!-- R22B_NARRATIVE -->
+All {{V:reports/round22/analysis_summary.json/jobs/ok|d}} registered Round-22 jobs completed and none failed. Every B2-S model, cross-confirmed
+anchor and distilled model gave finite metrics and survival predictions on every split, and so did every baseline
+except one: the summary Cox model did not converge on heart-valve split {{V:reports/round22/results_lane3.jsonl/job_name=real_heart_valve_3/split|d}} (the lifelines fitter
+stopped with a convergence error), so its heart-valve row in Table 52 averages four splits. Part 1 of H-R22b required
+every model and baseline record to be finite, so **H-R22b is not supported** (Table 50), although parts 2 and 3 were
+met; the failed fit is reported as it occurred and was not refitted with another penalty (D158).
 
-**Table 52. External cohorts: means over the five outer splits.**
+On renal the B2-S Weibull AFT had the lowest mean conditional IPCW IBS ({{V:reports/round22/analysis_summary.json/cohorts/renal/means/b2s_waft/ibs_cond|.4f}})
+and FPCA Cox the highest Harrell C ({{V:reports/round22/analysis_summary.json/cohorts/renal/means/fpca_cox/harrell_c|.3f}}); on heart valve FPCA Cox
+({{V:reports/round22/analysis_summary.json/cohorts/heart_valve/means/fpca_cox/ibs_cond|.4f}}) and the B2-S log-normal AFT
+({{V:reports/round22/analysis_summary.json/cohorts/heart_valve/means/b2s_lnaft/ibs_cond|.4f}}) had the lowest means (Table 52). Every Nadeau–Bengio and
+every plain interval in Table 53 includes 0; five splits cannot support claims of superiority (D111). The renal
+histories were much denser than the heart-valve ones (median {{V:reports/round22/analysis_summary.json/cohorts/renal/cohort/obs_per_subject_median|.1f}}
+against {{V:reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/obs_per_subject_median|.1f}} visits before the landmark; Table 51), and B2-S
+Cox was below landmark Cox by {{V:reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/mean_diff|+.4f}} on renal
+against {{V:reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - landmark_cox/nb/mean_diff|+.4f}} on heart valve; with
+both intervals including 0 this is a description, not a finding. Cross-confirmation accepted the anchor on at most one
+split per family and cohort (Table 54); the largest mean cost was {{V:reports/round22/analysis_summary.json/H_R22b/part2/heart_valve/cox/mean_shift|+.4f}}
+(heart valve, Cox), within the registered +0.005, and every non-confirmed split fell back exactly. Distillation was
+finite on every split and changed the mean conditional IBS by {{V:reports/round22/analysis_summary.json/H_R22b/part3/renal/npaft/mean_change|+.4f}} to
+{{V:reports/round22/analysis_summary.json/H_R22b/part3/heart_valve/cox/mean_change|+.4f}}, within the registered +0.002 (Table 55).
+
+**Table 52. External cohorts: means over the five outer splits** (summary Cox on heart valve: four splits, its fit
+failed on one).
 
 {{T:r22_means}}
 
@@ -1074,27 +1100,42 @@ five splits; Nadeau–Bengio corrected and plain 95% intervals).
 
 {{T:r22_fd003_con}}
 
-<!-- R22B_FD003_NARRATIVE -->
+On FD003 NP-KAN-AFT had the lowest mean IBS ({{V:reports/round22/analysis_summary.json/fd003/means/b2s_npaft/ibs|.4f}}) and, with its
+cross-confirmed version, the highest Harrell C ({{V:reports/round22/analysis_summary.json/fd003/means/b2s_npaft/harrell_c|.3f}}; Table 56). NP-KAN-AFT
+and both parametric KAN-AFT models were below landmark Cox on every split, but of their Nadeau–Bengio intervals only
+that of the Weibull AFT excluded 0 ({{V:reports/round22/analysis_summary.json/fd003/contrasts/ibs b2s_waft - landmark_cox/nb/ci95|+.4f}}), and no
+interval against B2-S Cox excluded 0 (Table 57). D-calibration passed on at most one split for any model and on none
+for the baselines. FD003 had been analysed in Round 3, so these comparisons are not an untouched test (D156).
 
 ### 5.12 NP-KAN-AFT under three further error laws (H-R22c)
 
 Round 20 tested NP-KAN-AFT under log-normal errors only. Round 22 added three error laws with mean 0 and SD 0.5 to the
 S-Misspec design (log T = 1 − η/1.5 + ε): a symmetric bimodal normal mixture, which no parametric family in the
-comparison can represent; a Student t with 3 degrees of freedom (heavy tails); and a logistic law, close to the
-normal. Each law had 20 fresh replicates of n = 1,000 with 30% censoring, and the four B2-S families were fitted as
+comparison can represent; a Student t law with three degrees of freedom (heavy tails); and a logistic law, close to the
+normal. Each law had {{V:reports/round22/analysis_summary.json/sims/bimodal/n|d}} fresh replicates of n = 1,000 with 30% censoring, and the four B2-S families were fitted as
 three-seed ensembles (D156). H-R22c required NP-KAN-AFT to be better than all three parametric models under the
 bimodal law, and better than Cox and Weibull and no more than 0.005 worse than log-normal under the other two
 (Table 50).
 
-**Table 58. Multi-law simulation: means over 20 replicates.**
+**Table 58. Multi-law simulation: means over {{V:reports/round22/analysis_summary.json/sims/bimodal/n|d}} replicates.**
 
 {{T:r22_sims}}
 
-**Table 59. NP-KAN-AFT against the parametric B2-S models** (survival-curve error, paired t over 20 replicates).
+**Table 59. NP-KAN-AFT against the parametric B2-S models** (survival-curve error, paired t over {{V:reports/round22/analysis_summary.json/sims/bimodal/n|d}} replicates).
 
 {{T:r22_sims_con}}
 
-<!-- R22C_NARRATIVE -->
+**H-R22c was supported** (Table 50). Under the bimodal law NP-KAN-AFT more than halved the survival-curve error of
+the parametric models ({{V:reports/round22/analysis_summary.json/sims/bimodal/means/b2s_npaft/curve_error|.4f}} against
+{{V:reports/round22/analysis_summary.json/sims/bimodal/means/b2s_cox/curve_error|.4f}} for Cox, {{V:reports/round22/analysis_summary.json/sims/bimodal/means/b2s_waft/curve_error|.4f}} for
+Weibull and {{V:reports/round22/analysis_summary.json/sims/bimodal/means/b2s_lnaft/curve_error|.4f}} for log-normal), was better in every replicate
+against each, and passed D-calibration in {{V:reports/round22/analysis_summary.json/sims/bimodal/dcal_pass/b2s_npaft|d}} of
+{{V:reports/round22/analysis_summary.json/sims/bimodal/n|d}} replicates, against none for the parametric models (Tables 58 and 59). The advantage was
+smaller under the t₃ law and smallest against the log-normal model under the logistic law, which is close to the
+normal ({{V:reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/mean_diff|+.4f}}, upper bound
+{{V:reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/ci95/1|+.4f}}; better in
+{{V:reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/n_neg|d}} replicates). These are simulated error laws; on
+the real cohorts above NP-KAN-AFT showed no corresponding advantage (Section 5.11).
 
 ## 6. Discussion
 
@@ -1129,6 +1170,12 @@ bimodal law, and better than Cox and Weibull and no more than 0.005 worse than l
    specified log-normal model (H-R20a); it is the classical semiparametric AFT model with a functional KAN location.
    On the real cohorts it was finite and D-calibrated but did not match the Weibull KAN-AFT on the primary PBC
    endpoint (H-R21a not supported), and cross-confirmed anchoring stayed within its margin on every cohort (H-R21b).
+   Under error laws that no parametric family in the comparison represents (a bimodal mixture) it was clearly better
+   than all three parametric KAN models, and its advantage shrank as the law approached the normal (H-R22c).
+8. **The locked methods transferred to new cohorts without gain.** On two cohorts not used in any earlier round they
+   stayed close to the baselines, and anchoring and distillation stayed within their margins; the registered test
+   still failed, because one baseline fit did not converge (H-R22b). A per-channel marginal-likelihood AFCM met the
+   development rule but failed on the held-out seed, so the AFCM comparator remains unvalidated (CK-6d).
 
 ### 6.2 Relation to prior work
 
@@ -1209,7 +1256,8 @@ halving the validation data available to each model, and against B2-S trained on
 not be shown to avoid the S-Sparse cost for Cox. Confirming the decision in both halves of the validation split
 against three-seed B2-S ensembles closed that gap on fresh seeds, for Cox and AFT models, by anchoring less often, and
 a semiparametric KAN-AFT with a Kaplan–Meier error law performed as well as the correctly specified parametric model
-without having to know it. On the real cohorts these methods were safe but not better than the simpler models.
+without having to know it, and was clearly better when no parametric family fitted the error law. On the real
+cohorts, including two not used before, these methods were safe but not better than the simpler models.
 These negative, equivalence and trade-off findings, with the full record behind them, are the contribution.
 
 ## Declarations

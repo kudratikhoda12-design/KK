@@ -36,7 +36,11 @@ refits and preserved the shapes. Cross-confirmed anchoring kept the gain when th
 stayed within the registered margin otherwise (S-Sparse bound for Cox {{V:reports/round20_summary.json/H_R20b/cox/traj_upper|+.4f}}).
 NP-KAN-AFT was better than Cox and Weibull models under log-normal errors ({{V:reports/round20_summary.json/H_R20a/misspec_vs_cox/mean_diff|+.4f}}
 and {{V:reports/round20_summary.json/H_R20a/misspec_vs_weibull/mean_diff|+.4f}} in survival-curve error).
-<!-- J_ABS_R22 -->
+Under a bimodal error law NP-KAN-AFT was better than all three parametric KAN models in every replicate
+({{V:reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_lnaft/mean_diff|+.4f}} against log-normal), and under heavy-tailed and
+logistic laws better than the Cox and Weibull models (H-R22c supported). On two untouched cohorts anchoring and
+distillation met their margins, but one baseline fit did not converge, so the registered all-finite criterion failed
+(H-R22b not supported).
 On every clinical cohort, no functional model was clearly better than landmark Cox on the last observed values.
 
 **Conclusions.** Functional KANs give readable nonlinear trajectory effects, and the three tools make them safe to
@@ -244,7 +248,13 @@ t over replicates).
 
 {{T:r22_sims_con}}
 
-<!-- J_R22C -->
+H-R22c was supported (Table 1). Under the bimodal law, which no parametric family in the comparison can represent,
+NP-KAN-AFT had less than half the survival-curve error of the parametric models
+({{V:reports/round22/analysis_summary.json/sims/bimodal/means/b2s_npaft/curve_error|.4f}} against {{V:reports/round22/analysis_summary.json/sims/bimodal/means/b2s_cox/curve_error|.4f}}
+for B2-S Cox) and was better in every replicate against each. The advantage was smaller under the t₃ law and smallest
+against the log-normal model under the logistic law, which is close to the normal
+({{V:reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/mean_diff|+.4f}}, upper bound
+{{V:reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/ci95/1|+.4f}}; S5.12).
 
 ## 4. Real-data results
 
@@ -291,7 +301,15 @@ primary PBC endpoint (H-R21a not supported), and cross-confirmed anchoring never
 
 {{T:j_ext}}
 
-<!-- J_R22B -->
+On the untouched cohorts every interval in Table 14 includes 0. On renal several functional models had lower mean
+conditional IBS than landmark Cox (B2-S Cox {{V:reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/mean_diff|+.4f}},
+lower on {{V:reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n_neg|d}} of five splits); renal patients
+had a median of {{V:reports/round22/analysis_summary.json/cohorts/renal/cohort/obs_per_subject_median|.1f}} visits before the landmark against
+{{V:reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/obs_per_subject_median|.1f}} for heart valve (Table 11), where the two models were
+almost equal; five splits cannot turn this into a finding. Cross-confirmation accepted the anchor on at most one
+split per family and cohort and cost at most {{V:reports/round22/analysis_summary.json/H_R22b/part2/heart_valve/cox/mean_shift|+.4f}} (Table 15), and
+distillation was finite on every split (Table 16), so parts 2 and 3 of H-R22b were met. Part 1 was not: the summary
+Cox baseline did not converge on one heart-valve split, so **H-R22b is not supported** as registered (S5.11).
 
 **Table 15. Cross-confirmed anchoring on the untouched cohorts** (H-R22b part 2).
 
@@ -305,7 +323,9 @@ primary PBC endpoint (H-R21a not supported), and cross-confirmed anchoring never
 
 {{T:r22_fd003}}
 
-<!-- J_R22B_FD003 -->
+On FD003 NP-KAN-AFT had the lowest mean IBS ({{V:reports/round22/analysis_summary.json/fd003/means/b2s_npaft/ibs|.4f}}, against
+{{V:reports/round22/analysis_summary.json/fd003/means/landmark_cox/ibs|.4f}} for landmark Cox), but D-calibration passed on at most one split for any
+model (S5.11).
 
 ### 4.3 Readable effects
 
@@ -347,12 +367,13 @@ as the additive functional Cox model in our simulation, though the comparison wa
 unvalidated, and far better than linear functional models. Their edges can be pruned, read and summarised by formulas,
 and a strongly anchored distillation refit makes the summaries safe. Landmark anchoring helps when the last value
 carries the risk and, used conditionally with cross-confirmation, costs little when it does not. Estimating the AFT
-error law by Kaplan–Meier removes the need to choose an error family.
+error law by Kaplan–Meier removes the need to choose an error family, and helps most when no parametric family fits
+the error law.
 
 ### 5.2 Where simpler landmark models suffice
 
-On every clinical cohort, including the two untouched ones, landmark Cox on the last observed values was at least as
-good as every functional model. These cohorts have a few hundred subjects and, in most of them, few visits before the
+On every clinical cohort, including the two untouched ones, no functional model was clearly better than landmark Cox
+on the last observed values, and on the earlier cohorts landmark Cox often had the lowest mean. These cohorts have a few hundred subjects and, in most of them, few visits before the
 landmark, so the most recent value carries most of what a curve could add; a functional model earns its cost when the
 shape or history of the trajectory carries the risk, as in our simulated scenarios, and the cross-confirmed anchor is
 the tool that lets one model behave like either. We read this as a statement about the information in these data, not

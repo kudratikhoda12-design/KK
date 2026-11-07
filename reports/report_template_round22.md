@@ -26,7 +26,25 @@ Part B is revision 23's Part A (Round 21 and the Round-21 manuscript); Parts C�
 
 ### 0.2 What the results say
 
-<!-- REPORT_R22_SUMMARY -->
+- **AFCM is still unvalidated.** Giving every channel and direction its own smoothing penalty fixed the development
+  seeds but not the held-out seed 24, so the confirmatory AFCM re-test (H-R22a) was not run and the original
+  comparison of B2-S with AFCM (H-R12) stays inconclusive.
+- **On the two new cohorts the functional models were neither better nor worse than the simple baselines.** Every
+  interval for the difference in conditional IBS includes 0. On renal, where patients have many measurements before
+  the landmark, B2-S Cox had a lower mean than landmark Cox on four of five splits; on heart valve, with about one
+  visit per patient, the two were almost equal. Five splits cannot turn this into a finding.
+- **H-R22b failed on a technicality that the rule makes binding.** Anchoring and distillation met their safety margins
+  on both cohorts (parts 2 and 3), but one baseline, summary Cox, did not converge on one heart-valve split, and part 1
+  required every model and baseline to be finite. The verdict is "not supported" as registered; the failed fit was
+  not rerun with a different penalty (D158).
+- **NP-KAN-AFT is clearly better when no parametric error law fits (H-R22c supported).** Under a bimodal error law it
+  had less than half the survival-curve error of the Cox, Weibull and log-normal KAN models in every replicate; under
+  heavy-tailed (t₃) and logistic errors it was better than Cox and Weibull and close to log-normal, its advantage
+  shrinking as the error law approaches the normal. These are simulated laws only.
+- **FD003** (not untouched) ranked NP-KAN-AFT first in mean IBS, but no model was well calibrated (D-calibration
+  passed on at most one split of five).
+- **Execution.** All 95 jobs finished after four relaunches caused by container restarts; no code, setting, seed or
+  rule was changed by a relaunch (pre-registration §5).
 
 # Part A: Round 22
 
