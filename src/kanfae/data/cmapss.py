@@ -86,3 +86,35 @@ def option_b(df, units, sensors, w=30, step=10, life=None, last_only=False):
 def official_test_life(test_df, rul):
     units = sorted(test_df.unit.unique())
     return {u_: int(test_df[test_df.unit == u_].cycle.max() + rul[k]) for k, u_ in enumerate(units)}
+
+
+def condition_normalise(df, train_units, n_conditions=6, seed=0, tol=1e-8):
+    """Round 23 (D160): per-operating-condition standardisation for the six-condition subsets FD002 / FD004.
+
+    The three operational settings are clustered by k-means (n_conditions clusters, fixed seed, fitted on the rows of
+    the training engines only); each sensor is then z-scored within its condition using the training rows' mean and
+    SD of that condition (SD < tol -> the sensor is set to 0 in that condition). Returns (normalised copy of df,
+    info dict). Not used by FD001 / FD003 (one operating condition)."""
+    from sklearn.cluster import KMeans
+    ops = ["os1", "os2", "os3"]
+    tr = df[df.unit.isin(train_units)]
+    km = KMeans(n_clusters=n_conditions, n_init=10, random_state=seed).fit(tr[ops].to_numpy(float))
+    out = df.copy()
+    lab_all = km.predict(df[ops].to_numpy(float))
+    lab_tr = km.predict(tr[ops].to_numpy(float))
+    mu = np.zeros((n_conditions, len(SENSORS)))
+    sd = np.ones((n_conditions, len(SENSORS)))
+    X_tr = tr[SENSORS].to_numpy(float)
+    X = df[SENSORS].to_numpy(float).copy()
+    for c in range(n_conditions):
+        mu[c] = X_tr[lab_tr == c].mean(0)
+        sd[c] = X_tr[lab_tr == c].std(0)
+    for c in range(n_conditions):
+        m = lab_all == c
+        s = np.where(sd[c] < tol, np.inf, sd[c])
+        X[m] = (X[m] - mu[c]) / s
+    out[SENSORS] = X
+    out["condition"] = lab_all
+    info = dict(centres=km.cluster_centers_.tolist(), n_rows_train=np.bincount(lab_tr, minlength=n_conditions).tolist(),
+                inertia=float(km.inertia_))
+    return out, info
