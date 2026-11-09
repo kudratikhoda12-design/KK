@@ -111,3 +111,25 @@ def test_r23_4_harness_smoke(tmp_path):
         assert all(abs(r["models"]["stack"][k] - r["models"]["b2s_npaft"][k]) < 1e-12 for k in keys)
     rec = [json.loads(x) for x in Path(os.environ["R23_OUT"]).read_text().splitlines()]
     assert rec[-1]["job_name"] == "real_pbc_E2_0"
+
+
+@pytest.mark.criterion("R23-5")
+def test_r23_5_per_seed_ensemble_equals_fkanensemble():
+    """The C-MAPSS ensemble assembled from per-seed fits equals FKANEnsemble at the same fixed setting (small budget,
+    pbc_E2 split 0 inputs, a partition already used)."""
+    os.environ.setdefault("R23_OUT", "/dev/null")
+    import run_round23 as H
+    from kanfae.models.fkan import FKANEnsemble
+    ctx = H.R13.RealCtx("pbc_E2", 0)
+    xg, z, y, d = ctx.front("bspline")["xg"], ctx.lm.z, ctx.y, ctx.d.astype(float)
+    P = {n: dict(xg=xg[i], z=z[i], y=y[i], d=d[i]) for n, i in (("tr", ctx.tr), ("va", ctx.va), ("te", ctx.te))}
+    H.ENS_KW.update(max_epochs=30)
+    try:
+        e1, _ = H.cm_ensemble(P, seeds=(0, 1))
+        e2 = FKANEnsemble(kind="b2s", **H.NP, **H.CM_ENS, max_epochs=30, seeds=(0, 1)).fit(P["tr"], P["va"])
+    finally:
+        H.ENS_KW.clear()
+    tt = np.quantile(P["te"]["y"], [0.25, 0.5, 0.75])
+    S1 = np.mean([m.predict_survival(P["te"]["xg"], P["te"]["z"], tt) for m in e1.members], 0)
+    S2 = e2.predict_survival(P["te"]["xg"], P["te"]["z"], tt)
+    assert len(e1.members) == 2 and np.array_equal(S1, S2) and (e1.lr, e1.wd) == (e2.lr, e2.wd)

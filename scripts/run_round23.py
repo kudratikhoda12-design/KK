@@ -5,9 +5,11 @@ Jobs (one record per job; failures recorded with tracebacks; resumable):
   cm_<fd>_<k>      C-MAPSS FD002 / FD004 Option B (never analysed in this project before Round 23), outer engine splits
                    k = 0..9 (split_groups(units, k), 60/20/20). Six operating conditions: per-condition z-scoring of the
                    sensors (cmapss.condition_normalise, k-means on the training engines' settings), then the Round-13
-                   Option-B pipeline (30-cycle windows every 10 cycles, u = s/100, target T - s, every window an event,
-                   B-spline smoothing lam 1e-4). Models:
-                     b2s_npaft            NP-KAN-AFT B2-S 3-seed ensemble (Round 20, rank_km, tau 0.05; D112 protocol)
+                   Option-B pipeline (30-cycle windows, here every 20 cycles (cost: the rank loss is quadratic in the
+                   number of windows), u = s/100, target T - s, every window an event, B-spline smoothing lam 1e-4).
+                   Models:
+                     b2s_npaft            NP-KAN-AFT B2-S 3-seed ensemble (Round 20, rank_km, tau 0.05) at the fixed
+                                          setting lr 3e-3, wd 1e-4 (no lr x wd tuning on C-MAPSS; cost)
                      landmark_cox_raw     Cox on the last raw sensor values + u
                      landmark_cox_smooth  Cox on the last value of the smoothed curves + u
                      landmark_cox         whichever of the two has the lower validation IBS (rule fixed in advance)
@@ -56,6 +58,8 @@ CLIN_SPLITS = range(5, 25)
 CM = ("FD002", "FD004")
 CM_SPLITS = range(10)
 W_GRID = (0.0, 0.25, 0.5, 0.75, 1.0)
+CM_STEP = 20                                  # Option-B window step for FD002/FD004 (cost; D160 §3)
+CM_ENS = dict(lrs=(3e-3,), wds=(1e-4,))       # fixed setting on C-MAPSS, 3 seeds (cost; D160 §3)
 N_COND = {"FD001": 1, "FD002": 6, "FD003": 1, "FD004": 6}     # operating conditions (C-MAPSS readme); FD001/FD003 = dev mechanics only
 NP = R21.FAMILY["npaft"]
 ENS_KW = {}                                   # tests may shrink the budgets (never used by the formal jobs)
@@ -170,7 +174,7 @@ def cm_data(k, fd):
     utr, uva, ute = split_groups(units, k)
     dn, info = condition_normalise(df, units[utr], n_conditions=N_COND[fd])
     sensors = informative_sensors(dn[dn.unit.isin(units[utr])], units[utr])
-    obs = {n: option_b(dn, units[u], sensors) for n, u in (("tr", utr), ("va", uva), ("te", ute))}
+    obs = {n: option_b(dn, units[u], sensors, step=CM_STEP) for n, u in (("tr", utr), ("va", uva), ("te", ute))}
     basis = BSplineBasis(12, 3, (0.0, 1.0))
     P = {}
     for n, o in obs.items():
@@ -179,6 +183,24 @@ def cm_data(k, fd):
         P[n] = dict(xg=xg, z=o.u, y=o.y_obs, d=o.delta.astype(float),
                     last=o.values[np.arange(len(o)), o.n_obs - 1, :], last_s=xg[:, -1, :])
     return P, sensors, obs, info, {n: len(u) for n, u in (("tr", utr), ("va", uva), ("te", ute))}
+
+
+class _Members:
+    """The 3-seed ensemble at a fixed setting, assembled from per-seed fits (each pickled as it finishes, so a
+    restarted job loses at most one fit). Identical to FKANEnsemble(lrs=(lr,), wds=(wd,), seeds=(0, 1, 2)): with one
+    setting that class fits FKANSurv(lr, wd, seed) for seeds 0, 1, 2 in turn (test R23-5)."""
+
+    def __init__(self, ensembles):
+        self.members = [m for e in ensembles for m in e.members]
+        self.lr, self.wd = ensembles[0].lr, ensembles[0].wd
+
+
+def cm_ensemble(P, seeds=(0, 1, 2)):
+    kw = {**CM_ENS, **ENS_KW}
+    seeds = kw.pop("seeds", seeds)
+    fits = [R21.cached(f"npaft_seed{s}", lambda s=s: FKANEnsemble(kind="b2s", **NP, **kw, seeds=(s,)).fit(P["tr"], P["va"]))
+            for s in seeds]
+    return _Members([f[0] for f in fits]), [f[1] for f in fits]
 
 
 def job_cm(fd, k):
@@ -201,7 +223,7 @@ def job_cm(fd, k):
     # NP-KAN-AFT (fit cache: resumable after a container restart)
     R21.ENS_CACHE = BASE / "ckpt" / f"cm_{fd}_{k}_fits"
     t0 = time.time()
-    e, reloaded = R21.cached("full_npaft", lambda: ens_np(P["tr"], P["va"]))
+    e, reloaded = cm_ensemble(P)
     S_np, r_np = ens_curves(e, P["te"])
     S_np_va, _ = ens_curves(e, P["va"])
     rec["models"]["b2s_npaft"] = dict(metric(S_np, r_np), lr=e.lr, wd=e.wd, finite=finite(S_np, y_te),
