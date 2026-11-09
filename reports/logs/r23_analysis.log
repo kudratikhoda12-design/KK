@@ -1,0 +1,86 @@
+{
+ "n_records": 140,
+ "n_ok": 140,
+ "H_R23a": {
+  "per_dataset": {
+   "FD002": {
+    "evaluable": true,
+    "mean_diff": -0.018330491902018554,
+    "upper": -0.010115469577976622,
+    "met": true
+   },
+   "FD004": {
+    "evaluable": true,
+    "mean_diff": -0.01386181602082041,
+    "upper": -0.0024487455024850384,
+    "met": true
+   }
+  },
+  "evaluable": true,
+  "supported": true
+ },
+ "H_R23b": {
+  "evaluable": true,
+  "mean_diff": -0.0286937383674686,
+  "ci95": [
+   -0.0467818611039864,
+   -0.0106056156309508
+  ],
+  "supported": true
+ },
+ "H_R23c": {
+  "part_i": {
+   "per_cohort": {
+    "pbc_E2": {
+     "evaluable": true,
+     "mean_diff": -0.0031181918957708943,
+     "upper": 0.007853025044373433,
+     "met": false
+    },
+    "pbc_E1": {
+     "evaluable": true,
+     "mean_diff": -0.005153645798760205,
+     "upper": 0.008404144507273018,
+     "met": false
+    },
+    "prothro": {
+     "evaluable": true,
+     "mean_diff": 0.002829483533536757,
+     "upper": 0.01039320526790884,
+     "met": false
+    },
+    "aids": {
+     "evaluable": true,
+     "mean_diff": -0.00016205172272891895,
+     "upper": 0.005470421112427613,
+     "met": false
+    },
+    "renal": {
+     "evaluable": true,
+     "mean_diff": -0.007736484671462959,
+     "upper": 0.006296750818215753,
+     "met": false
+    },
+    "heart_valve": {
+     "evaluable": true,
+     "mean_diff": -0.0013249158179164,
+     "upper": 0.018246830294247486,
+     "met": false
+    }
+   },
+   "margin": 0.005,
+   "evaluable": true,
+   "supported": false
+  },
+  "part_ii": {
+   "cohort": "renal",
+   "mean_diff": -0.007736484671462959,
+   "ci95": [
+    -0.021769720161141672,
+    0.006296750818215753
+   ],
+   "evaluable": true,
+   "supported": false
+  }
+ }
+}

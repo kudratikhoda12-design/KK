@@ -101,3 +101,5 @@ as Rounds 13–22).
 fit is pickled when it finishes so a restarted job reloads it; a reloaded fit is the deterministic fit a refit would
 produce). Expected run time about 12 hours. Tests R23-1..R23-5 (`tests/test_round23.py`) pass before the launch. Relaunches after container restarts are logged here with their time and change nothing.
 Analysis: `scripts/analyze_round23.py` (written before the run ends; it reads the records only).
+
+**Run log (added after the run; no rule changed):** launched 2026-11-09 15:53Z on four lanes; all 140 jobs ok by 21:48Z; no container restart and no relaunch. Outcome: D161, `docs/round23_results.md`.
