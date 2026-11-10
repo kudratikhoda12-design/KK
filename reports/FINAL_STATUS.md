@@ -1,14 +1,19 @@
-# Final status: KAN-FAE research prototype, Round 23 (2026-11-09)
+# Final status: KAN-FAE research prototype, Round 23 (2026-11-10)
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
-The Round-22 report (revision 24) and manuscripts are unchanged; Round 23 results are in `docs/round23_results.md`
-and not yet in any manuscript.
+Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev25.pdf` (revision 25,
+642 pages: Part A = Round 23 and its manuscripts; Part B = revision 24; earlier parts = earlier revisions).
+Supplementary Material: `docs/manuscript_round23.md`, `reports/manuscript_round23.pdf` (58 pages, Rounds 1–23).
+Journal main manuscript: `docs/manuscript_journal_main_round23.md`, `reports/manuscript_journal_main_round23.pdf` (20 pages).
+The Round-22 manuscripts and report revision 24 are kept unchanged.
 
 | Item | Result |
 |---|---|
 | D160 | Pre-registration (`docs/round23_preregistration.md`): untouched C-MAPSS FD002/FD004 (H-R23a), renal history thinning (H-R23b), landmark/NP-KAN-AFT blend on six clinical cohorts with 20 new partitions (H-R23c) |
 | D161 | 140/140 jobs ok, no relaunch. **H-R23a supported**: NP-KAN-AFT − landmark Cox IBS FD002 −0.0183 [−0.0265, −0.0101], FD004 −0.0139 [−0.0253, −0.0024]; also below sum_aft and fpca_aft. **H-R23b supported**: renal NP full − thinned to three visits −0.0287 [−0.0468, −0.0106]. **H-R23c not supported**: blend − landmark means below 0 on 5 of 6 cohorts but every upper bound above the +0.005 margin; renal superiority not shown |
-| Next | Owner review; optionally add Round 23 to the manuscripts (journal story: functional KANs help when histories are long) |
+| Deliverables (D162) | Supplementary 3621 values / 51 references, journal 855 values (all in the Supplementary ledger) / 40 references; both verifiers `--pdf` ALL_PASS |
+| Tests | `final_full_suite_round23`: 355 passed, 3 failed (CK-6c, 4f R1, CK-6d, all kept visible), 16 xfailed, 2 skipped (376); no XPASS. `verify_deliverables.py` ALL_CHECKS_PASS |
+| Next | Owner review. The C-MAPSS gain is on untouched data with long histories but NP-KAN-AFT D-calibration is weak (2/10 FD002, 5/10 FD004); no clinical advantage shown |
 
 ---
 
