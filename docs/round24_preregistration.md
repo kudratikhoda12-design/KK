@@ -89,12 +89,12 @@ renal NP-KAN-AFT 0.1540, landmark Cox 0.1751. A bug check at the default MCMC le
 predicted test survival with the test Kaplan–Meier estimate at the test-time quartiles (`lin` 0.791 / 0.760 / 0.735
 against 0.753 / 0.720 / 0.720; `ns2` 0.872 / 0.849 / 0.828) and gave S = 1 at t_L for every subject; max Rhat of the
 association parameters 1.26 (`lin`) and 1.25 (`ns2`), and fit times 222 s and 299 s. The longer MCMC (§3) was then
-timed on pbc_E2 and renal k = 0, printing only run times and Rhat values.
+timed on pbc_E2 and renal k = 0, printing only run times and Rhat values: pbc_E2 `lin` 213 s (max Rhat 1.07), `ns2` 280 s (1.11); renal `lin` 329 s (1.08), `ns2` 461 s (1.15).
 
 ## 6. Execution
 
 120 jobs (six cohorts × 20 partitions) on four single-threaded lanes from one shared queue
 (`scripts/run_round24_lanes.py`), resumable (a job with a final record, ok or a recorded fit failure, is skipped).
-EXPECTED_RUN_TIME. Tests R24-1..R24-4 (`tests/test_round24.py`) pass before the launch. Relaunches after container
+Expected run time about 3.5–5 hours (about 8 minutes per pbc job and 13 per renal job for both forms; the one-marker cohorts are faster). Tests R24-1..R24-4 (`tests/test_round24.py`) pass before the launch. Relaunches after container
 restarts are logged here with their time and change nothing. Analysis: `scripts/analyze_round24.py` (written before
 the run; it reads the records only).
