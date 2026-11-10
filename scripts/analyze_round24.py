@@ -65,7 +65,7 @@ def failures(jm_all):
 
 def _rhat(Rd, agg):
     """Convergence of the chosen joint model: max Rhat over its association parameters, per partition, aggregated."""
-    v = [max(r["models"]["jm"]["rhat_alphas"]) for r in Rd.values()
+    v = [float(np.max(np.atleast_1d(r["models"]["jm"]["rhat_alphas"]))) for r in Rd.values()   # one-marker cohorts: R writes a scalar
          if r["models"].get("jm", {}).get("rhat_alphas")]
     return agg(v) if v else None
 

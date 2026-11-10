@@ -1,4 +1,21 @@
-# Final status: KAN-FAE research prototype, Round 23 (2026-11-10)
+# Final status: KAN-FAE research prototype, Round 24 (2026-11-10)
+
+Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Round 24 adds the missing standard comparator: a Bayesian joint model (JMbayes2, project-local R in `.rlocal/`) on the
+six clinical cohorts and the Round-23 partitions. Plan `docs/round24_preregistration.md` (D163, committed before the
+run); results `docs/round24_results.md` (D164). The manuscripts and report revision 25 are unchanged; they do not yet
+include Round 24.
+
+| Item | Result |
+|---|---|
+| D163 | Pre-registration: joint model fitted on training subjects only, two trajectory forms chosen on validation, 3 × 6,500 MCMC iterations; NP-KAN-AFT, landmark Cox and blend read from the Round-23 records |
+| Run | 120 jobs, 11:49–14:24 UTC, no relaunch; 117 ok, 3 recorded fit failures (not refitted); all partitions paired |
+| H-R24a (renal) | **Supported**: NP-KAN-AFT − JM conditional IBS −0.0439 [−0.0758, −0.0120]. Caveat: the joint model is also worse than landmark Cox on renal and passes D-calibration on 1/20 partitions, so it fits the long renal histories poorly; not evidence against well-specified joint models |
+| H-R24b (non-inferiority ≤ +0.005, all cohorts) | **Not supported**: met on renal only; elsewhere mean differences −0.002 to +0.005 with upper bounds +0.014 to +0.029 (no detectable difference either way) |
+| Convergence | Max association Rhat > 1.1 on many pbc and heart_valve partitions (11/20, 11/20, 13/18); reported, not excluded |
+| Not done | C-MAPSS joint model (not a joint-model setting); other joint-model specifications; deep dynamic models |
+
+# Round 23 status (2026-11-10), historical
 
 Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev25.pdf` (revision 25,

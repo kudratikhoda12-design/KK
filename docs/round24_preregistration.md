@@ -98,3 +98,10 @@ timed on pbc_E2 and renal k = 0, printing only run times and Rhat values: pbc_E2
 Expected run time about 3.5–5 hours (about 8 minutes per pbc job and 13 per renal job for both forms; the one-marker cohorts are faster). Tests R24-1..R24-4 (`tests/test_round24.py`) pass before the launch. Relaunches after container
 restarts are logged here with their time and change nothing. Analysis: `scripts/analyze_round24.py` (written before
 the run; it reads the records only).
+
+**Run log (added after the run; nothing above changed).** Lanes launched 2026-11-10 11:49:54 UTC; all 120 jobs had a
+final record at 14:24 UTC (117 ok, 3 recorded fit failures: real_heart_valve_8, real_heart_valve_12, real_renal_12,
+both forms failing in `lme` (nlminb "false convergence" or "function evaluation limit"); not refitted). No relaunch.
+One reading bug in `scripts/analyze_round24.py` was fixed before any result was printed: on the one-marker cohorts R
+writes the association Rhat as a scalar, not a list, and the Rhat summary failed on it; the fix
+(`np.atleast_1d`) changes how the records are read, not any rule or number. Results: `docs/round24_results.md`, D164.
