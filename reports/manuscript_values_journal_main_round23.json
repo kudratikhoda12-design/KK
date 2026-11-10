@@ -1,0 +1,5404 @@
+{
+ "template": "docs/manuscript_journal_main_round23_template.md",
+ "output": "docs/manuscript_journal_main_round23.md",
+ "n_values": 855,
+ "cited": [
+  "knottenbelt2025",
+  "jose2025",
+  "cui2021",
+  "vanhouwelingen2007",
+  "vanhouwelingen2012",
+  "laird1982",
+  "wulfsohn1997",
+  "tsiatis2004",
+  "rizopoulos2010",
+  "yao2005",
+  "kong2018",
+  "katzman2018",
+  "lee2020",
+  "liu2025",
+  "mastroleo2026",
+  "boulitsakis2026",
+  "cox1972",
+  "efron1977",
+  "breslow1974",
+  "kaplan1958",
+  "cranmer2023",
+  "ishwaran2008",
+  "graf1999",
+  "harrell1982",
+  "uno2011",
+  "haider2020",
+  "schuirmann1987",
+  "nadeau2003",
+  "wood2011",
+  "wood2017",
+  "murtaugh1994",
+  "fleming1991",
+  "andersen1993",
+  "guo2004",
+  "hickey2018",
+  "rizopoulos2011",
+  "lim2008",
+  "saxena2008",
+  "lundin2025",
+  "putter2022"
+ ],
+ "values": [
+  {
+   "src": "docs/references_journal_main.md/knottenbelt2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/jose2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/cui2021/Year",
+   "spec": "s",
+   "value": "2021",
+   "text": "2021"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/mean_diff",
+   "spec": "+.4f",
+   "value": 0.006468024328965505,
+   "text": "+0.0065"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.050592973650394356,
+    0.06352902230832537
+   ],
+   "text": "[−0.0506, +0.0635]"
+  },
+  {
+   "src": "reports/round22/ck6d.json/shapes/phi1/rise_id",
+   "spec": ".3f",
+   "value": 0.17037359051858492,
+   "text": "0.170"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/H_R16a/n_finite",
+   "spec": "d",
+   "value": 40,
+   "text": "40"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/cox/traj_upper",
+   "spec": "+.4f",
+   "value": 0.003614835962518309,
+   "text": "+0.0036"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.013537136966860524,
+   "text": "−0.0135"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/mean_diff",
+   "spec": "+.4f",
+   "value": -0.014963928750424372,
+   "text": "−0.0150"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_lnaft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.042282594280783896,
+   "text": "−0.0423"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/H_R23a/per_dataset/FD002/mean_diff",
+   "spec": "+.4f",
+   "value": -0.018330491902018554,
+   "text": "−0.0183"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/H_R23a/per_dataset/FD004/mean_diff",
+   "spec": "+.4f",
+   "value": -0.01386181602082041,
+   "text": "−0.0139"
+  },
+  {
+   "src": "docs/references_journal_main.md/vanhouwelingen2007/Year",
+   "spec": "s",
+   "value": "2007",
+   "text": "2007"
+  },
+  {
+   "src": "docs/references_journal_main.md/vanhouwelingen2012/Year",
+   "spec": "s",
+   "value": "2012",
+   "text": "2012"
+  },
+  {
+   "src": "docs/references_journal_main.md/laird1982/Year",
+   "spec": "s",
+   "value": "1982",
+   "text": "1982"
+  },
+  {
+   "src": "docs/references_journal_main.md/wulfsohn1997/Year",
+   "spec": "s",
+   "value": "1997",
+   "text": "1997"
+  },
+  {
+   "src": "docs/references_journal_main.md/tsiatis2004/Year",
+   "spec": "s",
+   "value": "2004",
+   "text": "2004"
+  },
+  {
+   "src": "docs/references_journal_main.md/rizopoulos2010/Year",
+   "spec": "s",
+   "value": "2010",
+   "text": "2010"
+  },
+  {
+   "src": "docs/references_journal_main.md/yao2005/Year",
+   "spec": "s",
+   "value": "2005",
+   "text": "2005"
+  },
+  {
+   "src": "docs/references_journal_main.md/kong2018/Year",
+   "spec": "s",
+   "value": "2018",
+   "text": "2018"
+  },
+  {
+   "src": "docs/references_journal_main.md/cui2021/Year",
+   "spec": "s",
+   "value": "2021",
+   "text": "2021"
+  },
+  {
+   "src": "docs/references_journal_main.md/katzman2018/Year",
+   "spec": "s",
+   "value": "2018",
+   "text": "2018"
+  },
+  {
+   "src": "docs/references_journal_main.md/lee2020/Year",
+   "spec": "s",
+   "value": "2020",
+   "text": "2020"
+  },
+  {
+   "src": "docs/references_journal_main.md/liu2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/knottenbelt2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/jose2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/mastroleo2026/Year",
+   "spec": "s",
+   "value": "2026",
+   "text": "2026"
+  },
+  {
+   "src": "docs/references_journal_main.md/boulitsakis2026/Year",
+   "spec": "s",
+   "value": "2026",
+   "text": "2026"
+  },
+  {
+   "src": "docs/references_journal_main.md/cox1972/Year",
+   "spec": "s",
+   "value": "1972",
+   "text": "1972"
+  },
+  {
+   "src": "docs/references_journal_main.md/efron1977/Year",
+   "spec": "s",
+   "value": "1977",
+   "text": "1977"
+  },
+  {
+   "src": "docs/references_journal_main.md/breslow1974/Year",
+   "spec": "s",
+   "value": "1974",
+   "text": "1974"
+  },
+  {
+   "src": "docs/references_journal_main.md/kaplan1958/Year",
+   "spec": "s",
+   "value": "1958",
+   "text": "1958"
+  },
+  {
+   "src": "docs/references_journal_main.md/cranmer2023/Year",
+   "spec": "s",
+   "value": "2023",
+   "text": "2023"
+  },
+  {
+   "src": "docs/references_journal_main.md/kong2018/Year",
+   "spec": "s",
+   "value": "2018",
+   "text": "2018"
+  },
+  {
+   "src": "docs/references_journal_main.md/laird1982/Year",
+   "spec": "s",
+   "value": "1982",
+   "text": "1982"
+  },
+  {
+   "src": "docs/references_journal_main.md/ishwaran2008/Year",
+   "spec": "s",
+   "value": "2008",
+   "text": "2008"
+  },
+  {
+   "src": "docs/references_journal_main.md/vanhouwelingen2007/Year",
+   "spec": "s",
+   "value": "2007",
+   "text": "2007"
+  },
+  {
+   "src": "docs/references_journal_main.md/graf1999/Year",
+   "spec": "s",
+   "value": "1999",
+   "text": "1999"
+  },
+  {
+   "src": "docs/references_journal_main.md/harrell1982/Year",
+   "spec": "s",
+   "value": "1982",
+   "text": "1982"
+  },
+  {
+   "src": "docs/references_journal_main.md/uno2011/Year",
+   "spec": "s",
+   "value": "2011",
+   "text": "2011"
+  },
+  {
+   "src": "docs/references_journal_main.md/haider2020/Year",
+   "spec": "s",
+   "value": "2020",
+   "text": "2020"
+  },
+  {
+   "src": "docs/references_journal_main.md/schuirmann1987/Year",
+   "spec": "s",
+   "value": "1987",
+   "text": "1987"
+  },
+  {
+   "src": "docs/references_journal_main.md/nadeau2003/Year",
+   "spec": "s",
+   "value": "2003",
+   "text": "2003"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/mean_a",
+   "spec": ".4f",
+   "value": 0.1784974758430961,
+   "text": "0.1785"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/mean_b",
+   "spec": ".4f",
+   "value": 0.17202945151413065,
+   "text": "0.1720"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.050592973650394356,
+    0.06352902230832537
+   ],
+   "text": "[−0.0506, +0.0635]"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/mean_diff",
+   "spec": "+.4f",
+   "value": 0.006468024328965505,
+   "text": "+0.0065"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/p_t",
+   "spec": ".3g",
+   "value": 0.8150021016352406,
+   "text": "0.815"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/p_wilcoxon",
+   "spec": ".3g",
+   "value": 0.4304332733154297,
+   "text": "0.43"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/n_neg",
+   "spec": "d",
+   "value": 8,
+   "text": "8"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/n_pos",
+   "spec": "d",
+   "value": 12,
+   "text": "12"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/p_tost",
+   "spec": ".3g",
+   "value": 0.06340735276000307,
+   "text": "0.0634"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/mean_a",
+   "spec": ".4f",
+   "value": 0.1784974758430961,
+   "text": "0.1785"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/mean_b",
+   "spec": ".4f",
+   "value": 0.3577788710130072,
+   "text": "0.3578"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.22318923832713736,
+    -0.1353735520126849
+   ],
+   "text": "[−0.2232, −0.1354]"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/mean_diff",
+   "spec": "+.4f",
+   "value": -0.17928139516991112,
+   "text": "−0.1793"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/p_t",
+   "spec": ".3g",
+   "value": 6.200152319655266e-08,
+   "text": "6.2e−8"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/p_wilcoxon",
+   "spec": ".3g",
+   "value": 3.814697265625e-06,
+   "text": "3.81e−6"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/n_neg",
+   "spec": "d",
+   "value": 19,
+   "text": "19"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/n_pos",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/b2s_vs_afcm_v0/p_tost",
+   "spec": ".3g",
+   "value": 0.9999968159430487,
+   "text": "1"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/mean_a",
+   "spec": ".4f",
+   "value": 0.2073251974199862,
+   "text": "0.2073"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/mean_b",
+   "spec": ".4f",
+   "value": 0.17202945151413065,
+   "text": "0.1720"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.03170523256213561,
+    0.10229672437384674
+   ],
+   "text": "[−0.0317, +0.1023]"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/mean_diff",
+   "spec": "+.4f",
+   "value": 0.03529574590585557,
+   "text": "+0.0353"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/p_t",
+   "spec": ".3g",
+   "value": 0.2839744956401722,
+   "text": "0.284"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/p_wilcoxon",
+   "spec": ".3g",
+   "value": 0.1230926513671875,
+   "text": "0.123"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/n_neg",
+   "spec": "d",
+   "value": 6,
+   "text": "6"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/n_pos",
+   "spec": "d",
+   "value": 14,
+   "text": "14"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/single_seed_b2s_vs_afcm_v3/p_tost",
+   "spec": ".3g",
+   "value": 0.3256003395191132,
+   "text": "0.326"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/mean_a",
+   "spec": ".4f",
+   "value": 0.1798146943843954,
+   "text": "0.1798"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/mean_b",
+   "spec": ".4f",
+   "value": 0.17418021995597924,
+   "text": "0.1742"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.05320852133796421,
+    0.0644774701947966
+   ],
+   "text": "[−0.0532, +0.0645]"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/mean_diff",
+   "spec": "+.4f",
+   "value": 0.005634474428416201,
+   "text": "+0.0056"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/p_t",
+   "spec": ".3g",
+   "value": 0.8432847332995661,
+   "text": "0.843"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/p_wilcoxon",
+   "spec": ".3g",
+   "value": 0.4304332733154297,
+   "text": "0.43"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/n_neg",
+   "spec": "d",
+   "value": 8,
+   "text": "8"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/n_pos",
+   "spec": "d",
+   "value": 12,
+   "text": "12"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/raw_rise_b2s_vs_afcm_v3/p_tost",
+   "spec": ".3g",
+   "value": 0.06552745659246471,
+   "text": "0.0655"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/mean_a",
+   "spec": ".4f",
+   "value": 0.2758404447764205,
+   "text": "0.2758"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/mean_b",
+   "spec": ".4f",
+   "value": 0.24525638319219598,
+   "text": "0.2453"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.07237595640302547,
+    0.13354407957147452
+   ],
+   "text": "[−0.0724, +0.1335]"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/mean_diff",
+   "spec": "+.4f",
+   "value": 0.03058406158422452,
+   "text": "+0.0306"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/p_t",
+   "spec": ".3g",
+   "value": 0.5415094360030818,
+   "text": "0.542"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/p_wilcoxon",
+   "spec": ".3g",
+   "value": 0.2305126190185547,
+   "text": "0.231"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/n_neg",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/n_pos",
+   "spec": "d",
+   "value": 15,
+   "text": "15"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi1_b2s_vs_afcm_v3/p_tost",
+   "spec": ".3g",
+   "value": 0.34873100498290616,
+   "text": "0.349"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/mean_a",
+   "spec": ".4f",
+   "value": 0.0811545069097718,
+   "text": "0.0812"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/mean_b",
+   "spec": ".4f",
+   "value": 0.09880251983606529,
+   "text": "0.0988"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.03558106723028938,
+    0.0002850413777023726
+   ],
+   "text": "[−0.0356, +0.0003]"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/mean_diff",
+   "spec": "+.4f",
+   "value": -0.017648012926293505,
+   "text": "−0.0176"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/p_t",
+   "spec": ".3g",
+   "value": 0.05338970707645467,
+   "text": "0.0534"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/p_wilcoxon",
+   "spec": ".3g",
+   "value": 0.11398696899414062,
+   "text": "0.114"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/n_neg",
+   "spec": "d",
+   "value": 12,
+   "text": "12"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/n_pos",
+   "spec": "d",
+   "value": 8,
+   "text": "8"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12_sensitivity/phi2_b2s_vs_afcm_v3/p_tost",
+   "spec": ".3g",
+   "value": 0.0006390813283101255,
+   "text": "0.000639"
+  },
+  {
+   "src": "reports/round12_summary.json/H_R12/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.1784974758430961,
+   "text": "0.1785"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.2758404447764204,
+   "text": "0.276"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.0811545069097718,
+   "text": "0.081"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0487028524095482,
+   "text": "0.0487"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1739669883621021,
+   "text": "0.1740"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6628300412449458,
+   "text": "0.6628"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.05,
+   "text": "5%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_aft,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.2211233497602849,
+   "text": "0.2211"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_aft,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.3653503051648985,
+   "text": "0.365"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_aft,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.0768963943556712,
+   "text": "0.077"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_aft,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0496617165192272,
+   "text": "0.0497"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_aft,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1735411442028721,
+   "text": "0.1735"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_aft,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6637888252796946,
+   "text": "0.6638"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_aft,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_cox,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.1225663555089279,
+   "text": "0.1226"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_cox,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.1522319072644791,
+   "text": "0.152"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_cox,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.0929008037533768,
+   "text": "0.093"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_cox,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0469160594435012,
+   "text": "0.0469"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_cox,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1741128489835285,
+   "text": "0.1741"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_cox,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6630912203620365,
+   "text": "0.6631"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_cox,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_aft,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.1579400176054496,
+   "text": "0.1579"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_aft,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.2101493801947188,
+   "text": "0.210"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_aft,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.1057306550161804,
+   "text": "0.106"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_aft,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0483946074156639,
+   "text": "0.0484"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_aft,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1748196112617228,
+   "text": "0.1748"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_aft,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6615925075129223,
+   "text": "0.6616"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2h_aft,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox_quantile,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.2336237767636903,
+   "text": "0.2336"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox_quantile,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.3949746841254279,
+   "text": "0.395"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox_quantile,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.0722728694019526,
+   "text": "0.072"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox_quantile,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0515800579588434,
+   "text": "0.0516"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox_quantile,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1747258289929793,
+   "text": "0.1747"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox_quantile,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6611336105374807,
+   "text": "0.6611"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b2s_cox_quantile,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v3,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.1720294515141306,
+   "text": "0.1720"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v3,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.2452563831921959,
+   "text": "0.245"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v3,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.0988025198360652,
+   "text": "0.099"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v3,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0476054102762185,
+   "text": "0.0476"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v3,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1740309355255935,
+   "text": "0.1740"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v3,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6629086954608177,
+   "text": "0.6629"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v3,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v0,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.3577788710130072,
+   "text": "0.3578"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v0,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.6241955155606213,
+   "text": "0.624"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v0,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.0913622264653931,
+   "text": "0.091"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v0,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0572397862502839,
+   "text": "0.0572"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v0,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1777804356418489,
+   "text": "0.1778"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v0,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6534864236058348,
+   "text": "0.6535"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=afcm_v0,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_cox,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.7351371554980407,
+   "text": "0.7351"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_cox,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 1.0983565781370068,
+   "text": "1.098"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_cox,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.3719177328590747,
+   "text": "0.372"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_cox,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0898046637678088,
+   "text": "0.0898"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_cox,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1871931880649156,
+   "text": "0.1872"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_cox,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6257280257399827,
+   "text": "0.6257"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_cox,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.05,
+   "text": "5%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_aft,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.6825963187942765,
+   "text": "0.6826"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_aft,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 1.0753488693910662,
+   "text": "1.075"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_aft,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.2898437681974865,
+   "text": "0.290"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_aft,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.079463323838131,
+   "text": "0.0795"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_aft,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1826207043652319,
+   "text": "0.1826"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_aft,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6381124417956427,
+   "text": "0.6381"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_fpca1_aft,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=fpca_cox,front=bspline/rise_mean_primary_mean",
+   "spec": ".4f",
+   "value": 0.7082026613286124,
+   "text": "0.7082"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=fpca_cox,front=bspline/rise_phi1.rise_primary_mean",
+   "spec": ".3f",
+   "value": 1.1252409940694603,
+   "text": "1.125"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=fpca_cox,front=bspline/rise_phi2.rise_primary_mean",
+   "spec": ".3f",
+   "value": 0.2911643285877644,
+   "text": "0.291"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=fpca_cox,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0765356927601805,
+   "text": "0.0765"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=fpca_cox,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1820265526315455,
+   "text": "0.1820"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=fpca_cox,front=bspline/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6407340365647132,
+   "text": "0.6407"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=fpca_cox,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_cox,front=raw/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0879365448735804,
+   "text": "0.0879"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_cox,front=raw/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1872675748777838,
+   "text": "0.1873"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_cox,front=raw/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6275917403698548,
+   "text": "0.6276"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_cox,front=raw/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.05,
+   "text": "5%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_aft,front=raw/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0820440387919127,
+   "text": "0.0820"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_aft,front=raw/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1852983894002332,
+   "text": "0.1853"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_aft,front=raw/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.633020729480499,
+   "text": "0.6330"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=b1_sum_aft,front=raw/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.05,
+   "text": "5%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_cox,front=raw/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.074422189275587,
+   "text": "0.0744"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_cox,front=raw/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1822637856196531,
+   "text": "0.1823"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_cox,front=raw/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6393520106604631,
+   "text": "0.6394"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_cox,front=raw/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_rsf,front=raw/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0904435254856207,
+   "text": "0.0904"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_rsf,front=raw/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1850143153556608,
+   "text": "0.1850"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_rsf,front=raw/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.6353229172826972,
+   "text": "0.6353"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=sum_rsf,front=raw/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.1,
+   "text": "10%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=static_coxkan,front=raw/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.1126438332281675,
+   "text": "0.1126"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=static_coxkan,front=raw/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1937470971027916,
+   "text": "0.1937"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=static_coxkan,front=raw/uno_c_mean",
+   "spec": ".4f",
+   "value": 0.5967808468950805,
+   "text": "0.5968"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Add,sub=,model=static_coxkan,front=raw/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "docs/references_journal_main.md/wood2011/Year",
+   "spec": "s",
+   "value": "2011",
+   "text": "2011"
+  },
+  {
+   "src": "docs/references_journal_main.md/wood2017/Year",
+   "spec": "s",
+   "value": "2017",
+   "text": "2017"
+  },
+  {
+   "src": "reports/round22/ck6d.json/shapes/phi1/rise_id",
+   "spec": ".3f",
+   "value": 0.17037359051858492,
+   "text": "0.170"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/H_R16a/n_finite",
+   "spec": "d",
+   "value": 40,
+   "text": "40"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/add/distill_minus_pruned_rise/mean_diff",
+   "spec": "+.4f",
+   "value": -0.00039339533110075917,
+   "text": "−0.0004"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/add/rise_means/after_pruning",
+   "spec": ".3f",
+   "value": 0.23122870296674886,
+   "text": "0.231"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/add/rise_means/after_pruning",
+   "spec": ".3f",
+   "value": 0.22156793792906862,
+   "text": "0.222"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/add/rise_means/sub_noguard",
+   "spec": ".3f",
+   "value": 0.23024129445764657,
+   "text": "0.230"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/add/rise_means/sub_noguard",
+   "spec": ".3f",
+   "value": 0.22188708836137633,
+   "text": "0.222"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/add/rise_means/refit_old",
+   "spec": ".3f",
+   "value": 1.2019127964146896,
+   "text": "1.202"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/add/rise_means/refit_old",
+   "spec": ".3f",
+   "value": 1.213545145852789,
+   "text": "1.214"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/add/rise_means/distill",
+   "spec": ".3f",
+   "value": 0.2616924503129126,
+   "text": "0.262"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/add/rise_means/distill_fixed",
+   "spec": ".3f",
+   "value": 0.22117454259796787,
+   "text": "0.221"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/sparse/rise_means/after_pruning",
+   "spec": ".3f",
+   "value": 0.45319736601521077,
+   "text": "0.453"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/sparse/rise_means/after_pruning",
+   "spec": ".3f",
+   "value": 0.3692927513134023,
+   "text": "0.369"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/sparse/rise_means/sub_noguard",
+   "spec": ".3f",
+   "value": 0.453134849982969,
+   "text": "0.453"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/sparse/rise_means/sub_noguard",
+   "spec": ".3f",
+   "value": 0.3691664585415398,
+   "text": "0.369"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/sparse/rise_means/refit_old",
+   "spec": ".3f",
+   "value": 10.999450192690007,
+   "text": "10.999"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/sparse/rise_means/refit_old",
+   "spec": ".3f",
+   "value": 3.538636714232535,
+   "text": "3.539"
+  },
+  {
+   "src": "reports/round15_summary.json/family_a/sparse/rise_means/distill",
+   "spec": ".3f",
+   "value": 0.45516341662376336,
+   "text": "0.455"
+  },
+  {
+   "src": "reports/round16_summary.json/family_a/sparse/rise_means/distill_fixed",
+   "spec": ".3f",
+   "value": 0.36888660720662647,
+   "text": "0.369"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/last/contrasts/b2s_anchor_cox_noncliff - b2s_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.017566049148259284,
+   "text": "−0.0176"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/sparse/contrasts/b2s_anchor_cox_noncliff - b2s_cox/mean_diff",
+   "spec": "+.4f",
+   "value": 0.003197104824103428,
+   "text": "+0.0032"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/cox/traj/n_confirmed",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/cox/traj/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/last/curve_error_means/b2s_cox",
+   "spec": ".4f",
+   "value": 0.1868493757430376,
+   "text": "0.1868"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/last/curve_error_means/b2s_cox",
+   "spec": ".4f",
+   "value": 0.18687173201423507,
+   "text": "0.1869"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/last/curve_error_means/landmark_cox",
+   "spec": ".4f",
+   "value": 0.1764566110961715,
+   "text": "0.1765"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/last/curve_error_means/landmark_cox",
+   "spec": ".4f",
+   "value": 0.17684229167264956,
+   "text": "0.1768"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/last/curve_error_means/static_coxkan",
+   "spec": ".4f",
+   "value": 0.16902622717183866,
+   "text": "0.1690"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/last/curve_error_means/static_coxkan",
+   "spec": ".4f",
+   "value": 0.16848042411462283,
+   "text": "0.1685"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/last/curve_error_means/b2s_anchor_cox",
+   "spec": ".4f",
+   "value": 0.168314773260813,
+   "text": "0.1683"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/last/curve_error_means/b2s_anchor_cox_d133",
+   "spec": ".4f",
+   "value": 0.16880262974685534,
+   "text": "0.1688"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/last/curve_error_means/b2s_anchor_cox_noncliff",
+   "spec": ".4f",
+   "value": 0.1693056828659758,
+   "text": "0.1693"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/sparse/curve_error_means/b2s_cox",
+   "spec": ".4f",
+   "value": 0.08226240719129432,
+   "text": "0.0823"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/sparse/curve_error_means/b2s_cox",
+   "spec": ".4f",
+   "value": 0.07878389659442032,
+   "text": "0.0788"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/sparse/curve_error_means/landmark_cox",
+   "spec": ".4f",
+   "value": 0.10737516138039283,
+   "text": "0.1074"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/sparse/curve_error_means/landmark_cox",
+   "spec": ".4f",
+   "value": 0.10916230894731023,
+   "text": "0.1092"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/sparse/curve_error_means/static_coxkan",
+   "spec": ".4f",
+   "value": 0.10550374275923272,
+   "text": "0.1055"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/sparse/curve_error_means/static_coxkan",
+   "spec": ".4f",
+   "value": 0.10718495538847257,
+   "text": "0.1072"
+  },
+  {
+   "src": "reports/round15_summary.json/family_b/sparse/curve_error_means/b2s_anchor_cox",
+   "spec": ".4f",
+   "value": 0.08691642777781003,
+   "text": "0.0869"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/sparse/curve_error_means/b2s_anchor_cox_d133",
+   "spec": ".4f",
+   "value": 0.08198100141852376,
+   "text": "0.0820"
+  },
+  {
+   "src": "reports/round16_summary.json/family_b/sparse/curve_error_means/b2s_anchor_cox_noncliff",
+   "spec": ".4f",
+   "value": 0.08198100141852376,
+   "text": "0.0820"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.016490518572934862,
+    -0.010583755360786186
+   ],
+   "text": "[−0.0165, −0.0106]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.018875180705113258,
+    -0.011052676795735485
+   ],
+   "text": "[−0.0189, −0.0111]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/cox/last/contrast/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.015250807431384177,
+    -0.004157435428967113
+   ],
+   "text": "[−0.0153, −0.0042]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/cox/traj/contrast/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0012774238383763763,
+    0.003614835962518309
+   ],
+   "text": "[−0.0013, +0.0036]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/lnaft/last/contrast/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.019033798775624222,
+    -0.010912736802322208
+   ],
+   "text": "[−0.0190, −0.0109]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/lnaft/traj/contrast/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0005453708781369825,
+    0.0015432828196673277
+   ],
+   "text": "[−0.0005, +0.0015]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/npaft/last/contrast/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0241490211109965,
+    -0.01382285734676494
+   ],
+   "text": "[−0.0241, −0.0138]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20b/npaft/traj/contrast/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0005132603370124717,
+    0.0014524168632433917
+   ],
+   "text": "[−0.0005, +0.0015]"
+  },
+  {
+   "src": "reports/round12_summary.json/secondary/S-Misspec-lognormal curve_error b2s_aft_rc - b2s_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.004857216453945814,
+   "text": "−0.0049"
+  },
+  {
+   "src": "reports/round12_summary.json/secondary/S-Misspec-lognormal curve_error b2s_aft_rc - b2s_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_cox,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0493270867171565,
+   "text": "0.0493"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_cox,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1446282308262679,
+   "text": "0.1446"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_cox,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.5665250980752089,
+   "text": "0.567"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_cox,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.052692045094387,
+   "text": "0.0527"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.145163083920444,
+   "text": "0.1452"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.1747601859194467,
+   "text": "0.175"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.25,
+   "text": "25%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft_rc,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0444698702632107,
+   "text": "0.0445"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft_rc,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1443555479930636,
+   "text": "0.1444"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft_rc,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.6442454967572554,
+   "text": "0.644"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=b2s_aft_rc,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=afcm_v3,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0499173467550645,
+   "text": "0.0499"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=afcm_v3,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1450401352760248,
+   "text": "0.1450"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=afcm_v3,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.500472911796843,
+   "text": "0.500"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=lognormal,model=afcm_v3,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_cox,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0579700480512867,
+   "text": "0.0580"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_cox,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1776909496092877,
+   "text": "0.1777"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_cox,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.5414638092665185,
+   "text": "0.541"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_cox,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.05,
+   "text": "5%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0641054889958619,
+   "text": "0.0641"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1792391245087313,
+   "text": "0.1792"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.3081155276853219,
+   "text": "0.308"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.15,
+   "text": "15%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft_rc,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0592449452869615,
+   "text": "0.0592"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft_rc,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1786114788325592,
+   "text": "0.1786"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft_rc,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.5807847611691677,
+   "text": "0.581"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=b2s_aft_rc,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.0,
+   "text": "0%"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=afcm_v3,front=bspline/curve_error_mean",
+   "spec": ".4f",
+   "value": 0.0544053964062425,
+   "text": "0.0544"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=afcm_v3,front=bspline/ibs_mean",
+   "spec": ".4f",
+   "value": 0.1765064600864862,
+   "text": "0.1765"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=afcm_v3,front=bspline/dcal_p_mean",
+   "spec": ".3f",
+   "value": 0.570723914975745,
+   "text": "0.571"
+  },
+  {
+   "src": "reports/tables/r12_summary_by_model.csv/scenario=S-Misspec,sub=loglogistic,model=afcm_v3,front=bspline/dcal_frac_p_lt_005",
+   "spec": "pct",
+   "value": 0.05,
+   "text": "5%"
+  },
+  {
+   "src": "reports/round20_summary.json/means/misspec/b2s_npaft_fullval",
+   "spec": ".4f",
+   "value": 0.03594616014713584,
+   "text": "0.0359"
+  },
+  {
+   "src": "reports/round20_summary.json/means/misspec/b2s_cox_fullval",
+   "spec": ".4f",
+   "value": 0.04948329711399636,
+   "text": "0.0495"
+  },
+  {
+   "src": "reports/round20_summary.json/means/misspec/b2s_weibull_fullval",
+   "spec": ".4f",
+   "value": 0.05091008889756021,
+   "text": "0.0509"
+  },
+  {
+   "src": "reports/round20_summary.json/means/misspec/b2s_lnaft_fullval",
+   "spec": ".4f",
+   "value": 0.036986539535907414,
+   "text": "0.0370"
+  },
+  {
+   "src": "reports/round20_summary.json/means/sparse/b2s_npaft_fullval",
+   "spec": ".4f",
+   "value": 0.08366923221731469,
+   "text": "0.0837"
+  },
+  {
+   "src": "reports/round20_summary.json/means/sparse/b2s_cox_fullval",
+   "spec": ".4f",
+   "value": 0.08245727682417389,
+   "text": "0.0825"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.013537136966860524,
+   "text": "−0.0135"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.016490518572934862,
+    -0.010583755360786186
+   ],
+   "text": "[−0.0165, −0.0106]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/p_t",
+   "spec": ".3g",
+   "value": 1.0224383682084852e-08,
+   "text": "1.02e−8"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/n_zero",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/mean_diff",
+   "spec": "+.4f",
+   "value": -0.014963928750424372,
+   "text": "−0.0150"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.018875180705113258,
+    -0.011052676795735485
+   ],
+   "text": "[−0.0189, −0.0111]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/p_t",
+   "spec": ".3g",
+   "value": 1.6523835219043746e-07,
+   "text": "1.65e−7"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/n_zero",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/sparse_vs_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/sparse_vs_cox/mean_diff",
+   "spec": "+.4f",
+   "value": 0.001211955393140817,
+   "text": "+0.0012"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/sparse_vs_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0007078239756615535,
+    0.0031317347619431875
+   ],
+   "text": "[−0.0007, +0.0031]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/sparse_vs_cox/p_t",
+   "spec": ".3g",
+   "value": 0.20208492841247802,
+   "text": "0.202"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/sparse_vs_cox/n_neg",
+   "spec": "d",
+   "value": 9,
+   "text": "9"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/sparse_vs_cox/n_pos",
+   "spec": "d",
+   "value": 11,
+   "text": "11"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/sparse_vs_cox/n_zero",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/mean_diff",
+   "spec": "+.4f",
+   "value": -0.001040379388771578,
+   "text": "−0.0010"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0027811586586763666,
+    0.0007003998811332107
+   ],
+   "text": "[−0.0028, +0.0007]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/p_t",
+   "spec": ".3g",
+   "value": 0.22615635643699145,
+   "text": "0.226"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/n_neg",
+   "spec": "d",
+   "value": 12,
+   "text": "12"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/n_pos",
+   "spec": "d",
+   "value": 8,
+   "text": "8"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/n_zero",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox_ibs/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox_ibs/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0033579891816343924,
+   "text": "−0.0034"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox_ibs/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.004758556098837728,
+    -0.0019574222644310572
+   ],
+   "text": "[−0.0048, −0.0020]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox_ibs/p_t",
+   "spec": ".3g",
+   "value": 7.633154345279206e-05,
+   "text": "7.63e−5"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox_ibs/n_neg",
+   "spec": "d",
+   "value": 18,
+   "text": "18"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox_ibs/n_pos",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox_ibs/n_zero",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull_ibs/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull_ibs/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0021996162652760222,
+   "text": "−0.0022"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull_ibs/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0037147858434834306,
+    -0.0006844466870686136
+   ],
+   "text": "[−0.0037, −0.0007]"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull_ibs/p_t",
+   "spec": ".3g",
+   "value": 0.00675933578737894,
+   "text": "0.00676"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull_ibs/n_neg",
+   "spec": "d",
+   "value": 14,
+   "text": "14"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull_ibs/n_pos",
+   "spec": "d",
+   "value": 6,
+   "text": "6"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull_ibs/n_zero",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_weibull/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round20_summary.json/H_R20a/misspec_vs_lognormal/mean_diff",
+   "spec": "+.4f",
+   "value": -0.001040379388771578,
+   "text": "−0.0010"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.042212088194293194,
+   "text": "−0.0422"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.045184469608884996,
+    -0.03923970677970139
+   ],
+   "text": "[−0.0452, −0.0392]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_cox/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_cox/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_waft/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_waft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.04431773306187409,
+   "text": "−0.0443"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_waft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.046867781678968504,
+    -0.04176768444477967
+   ],
+   "text": "[−0.0469, −0.0418]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_waft/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_waft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_lnaft/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_lnaft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.042282594280783896,
+   "text": "−0.0423"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_lnaft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.04454596431742799,
+    -0.040019224244139805
+   ],
+   "text": "[−0.0445, −0.0400]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_lnaft/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/contrasts/b2s_npaft - b2s_lnaft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.02849715470546557,
+   "text": "−0.0285"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.03232185106970063,
+    -0.02467245834123051
+   ],
+   "text": "[−0.0323, −0.0247]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_cox/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_cox/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_waft/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_waft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.03848244603056302,
+   "text": "−0.0385"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_waft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.04450196229122107,
+    -0.032462929769904975
+   ],
+   "text": "[−0.0445, −0.0325]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_waft/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_waft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_lnaft/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_lnaft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.02021059576666909,
+   "text": "−0.0202"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_lnaft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.027585867102498655,
+    -0.012835324430839526
+   ],
+   "text": "[−0.0276, −0.0128]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_lnaft/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/studentt3/contrasts/b2s_npaft - b2s_lnaft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.014999799537418484,
+   "text": "−0.0150"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.01780878266897883,
+    -0.012190816405858139
+   ],
+   "text": "[−0.0178, −0.0122]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_cox/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_cox/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_waft/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_waft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.01915922322779185,
+   "text": "−0.0192"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_waft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.022554610479245417,
+    -0.015763835976338285
+   ],
+   "text": "[−0.0226, −0.0158]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_waft/n_neg",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_waft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0034088095856670006,
+   "text": "−0.0034"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.005783635948629748,
+    -0.0010339832227042526
+   ],
+   "text": "[−0.0058, −0.0010]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/n_neg",
+   "spec": "d",
+   "value": 17,
+   "text": "17"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/n_pos",
+   "spec": "d",
+   "value": 3,
+   "text": "3"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/means/b2s_npaft/curve_error",
+   "spec": ".4f",
+   "value": 0.03276826845447286,
+   "text": "0.0328"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/bimodal/means/b2s_cox/curve_error",
+   "spec": ".4f",
+   "value": 0.07498035664876607,
+   "text": "0.0750"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0034088095856670006,
+   "text": "−0.0034"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/sims/logistic05/contrasts/b2s_npaft - b2s_lnaft/ci95/1",
+   "spec": "+.4f",
+   "value": -0.0010339832227042526,
+   "text": "−0.0010"
+  },
+  {
+   "src": "docs/references_journal_main.md/murtaugh1994/Year",
+   "spec": "s",
+   "value": "1994",
+   "text": "1994"
+  },
+  {
+   "src": "docs/references_journal_main.md/fleming1991/Year",
+   "spec": "s",
+   "value": "1991",
+   "text": "1991"
+  },
+  {
+   "src": "docs/references_journal_main.md/rizopoulos2010/Year",
+   "spec": "s",
+   "value": "2010",
+   "text": "2010"
+  },
+  {
+   "src": "docs/references_journal_main.md/andersen1993/Year",
+   "spec": "s",
+   "value": "1993",
+   "text": "1993"
+  },
+  {
+   "src": "docs/references_journal_main.md/guo2004/Year",
+   "spec": "s",
+   "value": "2004",
+   "text": "2004"
+  },
+  {
+   "src": "docs/references_journal_main.md/hickey2018/Year",
+   "spec": "s",
+   "value": "2018",
+   "text": "2018"
+  },
+  {
+   "src": "docs/references_journal_main.md/rizopoulos2011/Year",
+   "spec": "s",
+   "value": "2011",
+   "text": "2011"
+  },
+  {
+   "src": "docs/references_journal_main.md/lim2008/Year",
+   "spec": "s",
+   "value": "2008",
+   "text": "2008"
+  },
+  {
+   "src": "docs/references_journal_main.md/saxena2008/Year",
+   "spec": "s",
+   "value": "2008",
+   "text": "2008"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/landmark",
+   "spec": "g",
+   "value": 730.0,
+   "text": "730"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/unit",
+   "spec": "s",
+   "value": "days",
+   "text": "days"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/n_all",
+   "spec": "d",
+   "value": 312,
+   "text": "312"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/n_cohort",
+   "spec": "d",
+   "value": 278,
+   "text": "278"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/n_events",
+   "spec": "d",
+   "value": 135,
+   "text": "135"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/visits_median",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/visits_q1",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/visits_q3",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/visits_min",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/visits_max",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/landmark",
+   "spec": "g",
+   "value": 730.0,
+   "text": "730"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/unit",
+   "spec": "s",
+   "value": "days",
+   "text": "days"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/n_all",
+   "spec": "d",
+   "value": 312,
+   "text": "312"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/n_cohort",
+   "spec": "d",
+   "value": 278,
+   "text": "278"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/n_events",
+   "spec": "d",
+   "value": 107,
+   "text": "107"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/visits_median",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/visits_q1",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/visits_q3",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/visits_min",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/visits_max",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/landmark",
+   "spec": "g",
+   "value": 1.0,
+   "text": "1"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/unit",
+   "spec": "s",
+   "value": "years",
+   "text": "years"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/n_all",
+   "spec": "d",
+   "value": 488,
+   "text": "488"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/n_cohort",
+   "spec": "d",
+   "value": 332,
+   "text": "332"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/n_events",
+   "spec": "d",
+   "value": 183,
+   "text": "183"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/visits_median",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/visits_q1",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/visits_q3",
+   "spec": "g",
+   "value": 4.0,
+   "text": "4"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/visits_min",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/visits_max",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/landmark",
+   "spec": "g",
+   "value": 6.0,
+   "text": "6"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/unit",
+   "spec": "s",
+   "value": "months",
+   "text": "months"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/n_all",
+   "spec": "d",
+   "value": 467,
+   "text": "467"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/n_cohort",
+   "spec": "d",
+   "value": 403,
+   "text": "403"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/n_events",
+   "spec": "d",
+   "value": 126,
+   "text": "126"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/visits_median",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/visits_q1",
+   "spec": "g",
+   "value": 2.0,
+   "text": "2"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/visits_q3",
+   "spec": "g",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/visits_min",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/visits_max",
+   "spec": "d",
+   "value": 3,
+   "text": "3"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/n_all",
+   "spec": "d",
+   "value": 407,
+   "text": "407"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/t_L",
+   "spec": ".1f",
+   "value": 1.0,
+   "text": "1.0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/n",
+   "spec": "d",
+   "value": 407,
+   "text": "407"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/events",
+   "spec": "d",
+   "value": 126,
+   "text": "126"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/obs_per_subject_median",
+   "spec": ".1f",
+   "value": 97.0,
+   "text": "97.0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/unseen_per_channel/0",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/unseen_per_channel/1",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/n_all",
+   "spec": "d",
+   "value": 256,
+   "text": "256"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/t_L",
+   "spec": ".1f",
+   "value": 1.0,
+   "text": "1.0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/n",
+   "spec": "d",
+   "value": 175,
+   "text": "175"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/events",
+   "spec": "d",
+   "value": 39,
+   "text": "39"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/obs_per_subject_median",
+   "spec": ".1f",
+   "value": 1.0,
+   "text": "1.0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/unseen_per_channel/0",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/unseen_per_channel/1",
+   "spec": "d",
+   "value": 38,
+   "text": "38"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E2: ibs b2s_cox - landmark_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.023265120588624757,
+   "text": "+0.023"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E2: ibs b2s_cox - landmark_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.0261467910263591,
+    0.07267703220360862
+   ],
+   "text": "[−0.026, +0.073]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E2: ibs b2s_cox - lme2_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.016722480557686367,
+   "text": "+0.017"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E2: ibs b2s_cox - lme2_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.0135599477062954,
+    0.047004908821668134
+   ],
+   "text": "[−0.014, +0.047]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E2: ibs b2s_cox - fpca_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.0174784897661803,
+   "text": "+0.017"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E2: ibs b2s_cox - fpca_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.010796194068308833,
+    0.04575317360066943
+   ],
+   "text": "[−0.011, +0.046]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E1: ibs b2s_cox - landmark_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.011338628174678466,
+   "text": "+0.011"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E1: ibs b2s_cox - landmark_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.001658108863468448,
+    0.02433536521282538
+   ],
+   "text": "[−0.002, +0.024]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E1: ibs b2s_cox - lme2_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.005216460621746624,
+   "text": "+0.005"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E1: ibs b2s_cox - lme2_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.005913272041363016,
+    0.016346193284856265
+   ],
+   "text": "[−0.006, +0.016]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E1: ibs b2s_cox - fpca_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.007488775504051951,
+   "text": "+0.007"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/pbc_E1: ibs b2s_cox - fpca_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.008203323744150314,
+    0.023180874752254214
+   ],
+   "text": "[−0.008, +0.023]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/prothro: ibs b2s_cox - landmark_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.002361111812137229,
+   "text": "+0.002"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/prothro: ibs b2s_cox - landmark_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.010998767351471189,
+    0.015720990975745645
+   ],
+   "text": "[−0.011, +0.016]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/prothro: ibs b2s_cox - lme2_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.0023322098834274107,
+   "text": "+0.002"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/prothro: ibs b2s_cox - lme2_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.015357290465331548,
+    0.02002171023218637
+   ],
+   "text": "[−0.015, +0.020]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/prothro: ibs b2s_cox - fpca_cox/mean_diff",
+   "spec": "+.3f",
+   "value": -0.0026044701823407955,
+   "text": "−0.003"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/prothro: ibs b2s_cox - fpca_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.02188838837765096,
+    0.016679448012969368
+   ],
+   "text": "[−0.022, +0.017]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/aids: ibs b2s_cox - landmark_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.0004916992314674074,
+   "text": "+0.000"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/aids: ibs b2s_cox - landmark_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.002692140357148995,
+    0.0036755388200838094
+   ],
+   "text": "[−0.003, +0.004]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/aids: ibs b2s_cox - lme2_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.0022707932172200294,
+   "text": "+0.002"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/aids: ibs b2s_cox - lme2_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.0003741321604729753,
+    0.004915718594913034
+   ],
+   "text": "[−0.000, +0.005]"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/aids: ibs b2s_cox - fpca_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.003028966829605473,
+   "text": "+0.003"
+  },
+  {
+   "src": "reports/round13_summary.json/contrasts/aids: ibs b2s_cox - fpca_cox/ci95",
+   "spec": "+.3f",
+   "value": [
+    -0.0034055170873998238,
+    0.00946345074661077
+   ],
+   "text": "[−0.003, +0.009]"
+  },
+  {
+   "src": "reports/tables/r13_single_by_model.csv/dataset=pbc_E2,model=landmark_cox/ibs_mean",
+   "spec": ".3f",
+   "value": 0.1266597575236145,
+   "text": "0.127"
+  },
+  {
+   "src": "reports/tables/r13_single_by_model.csv/dataset=pbc_E2,model=b2s_cox/ibs_mean",
+   "spec": ".3f",
+   "value": 0.1499248781122393,
+   "text": "0.150"
+  },
+  {
+   "src": "reports/round21/analysis_summary.json/hypotheses/H_R21a/n_npaft_fits",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round21/analysis_summary.json/hypotheses/H_R21a/part2_mean_vs_cox",
+   "spec": "+.4f",
+   "value": -0.009499393076780382,
+   "text": "−0.0095"
+  },
+  {
+   "src": "reports/round21/analysis_summary.json/hypotheses/H_R21a/part2_mean_vs_waft",
+   "spec": "+.4f",
+   "value": 0.004397705415390957,
+   "text": "+0.0044"
+  },
+  {
+   "src": "reports/round21/analysis_summary.json/hypotheses/H_R21a/part3_dcal_pass",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/n",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/mean_diff",
+   "spec": "+.4f",
+   "value": -0.00958708819964088,
+   "text": "−0.0096"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.04749342559460665,
+    0.028319249195324886
+   ],
+   "text": "[−0.0475, +0.0283]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_npaft - landmark_cox/paired/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.03285932823600973,
+    0.013685151836727975
+   ],
+   "text": "[−0.0329, +0.0137]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/n_neg",
+   "spec": "d",
+   "value": 3,
+   "text": "3"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/n_pos",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/mean_diff",
+   "spec": "+.4f",
+   "value": -0.01608393208714538,
+   "text": "−0.0161"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.05054027729391608,
+    0.018372413119625324
+   ],
+   "text": "[−0.0505, +0.0184]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/paired/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.03723808180287207,
+    0.005070217628581307
+   ],
+   "text": "[−0.0372, +0.0051]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n_neg",
+   "spec": "d",
+   "value": 4,
+   "text": "4"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n_pos",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - lme2_cox/nb/n",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - lme2_cox/nb/mean_diff",
+   "spec": "+.4f",
+   "value": -0.01537528439510794,
+   "text": "−0.0154"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - lme2_cox/nb/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.05388784840305554,
+    0.023137279612839658
+   ],
+   "text": "[−0.0539, +0.0231]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - lme2_cox/paired/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.03901971157017993,
+    0.00826914277996405
+   ],
+   "text": "[−0.0390, +0.0083]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - lme2_cox/nb/n_neg",
+   "spec": "d",
+   "value": 4,
+   "text": "4"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - lme2_cox/nb/n_pos",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/n",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/mean_diff",
+   "spec": "+.4f",
+   "value": 0.003140645613346946,
+   "text": "+0.0031"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.005916335695367925,
+    0.012197626922061815
+   ],
+   "text": "[−0.0059, +0.0122]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_npaft - landmark_cox/paired/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.002405600090722064,
+    0.008686891317415955
+   ],
+   "text": "[−0.0024, +0.0087]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/n_neg",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_npaft - landmark_cox/nb/n_pos",
+   "spec": "d",
+   "value": 4,
+   "text": "4"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - landmark_cox/nb/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0013729791198455244,
+   "text": "−0.0014"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - landmark_cox/nb/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.024026793051409312,
+    0.02128083481171826
+   ],
+   "text": "[−0.0240, +0.0213]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - landmark_cox/paired/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.015245550334916562,
+    0.012499592095225514
+   ],
+   "text": "[−0.0152, +0.0125]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n_neg",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n_pos",
+   "spec": "d",
+   "value": 3,
+   "text": "3"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - lme2_cox/nb/n",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - lme2_cox/nb/mean_diff",
+   "spec": "+.4f",
+   "value": -0.006885380148573442,
+   "text": "−0.0069"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - lme2_cox/nb/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.03066663254596304,
+    0.016895872248816158
+   ],
+   "text": "[−0.0307, +0.0169]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - lme2_cox/paired/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.021448363603059364,
+    0.007677603305912479
+   ],
+   "text": "[−0.0214, +0.0077]"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - lme2_cox/nb/n_neg",
+   "spec": "d",
+   "value": 4,
+   "text": "4"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/contrasts/ibs_cond b2s_cox - lme2_cox/nb/n_pos",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/mean_diff",
+   "spec": "+.4f",
+   "value": -0.01608393208714538,
+   "text": "−0.0161"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/n_neg",
+   "spec": "d",
+   "value": 4,
+   "text": "4"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/cohort/obs_per_subject_median",
+   "spec": ".1f",
+   "value": 97.0,
+   "text": "97.0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/obs_per_subject_median",
+   "spec": ".1f",
+   "value": 1.0,
+   "text": "1.0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part2/heart_valve/cox/mean_shift",
+   "spec": "+.4f",
+   "value": 0.004601212668006,
+   "text": "+0.0046"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/gates/cox/n_confirmed",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part2/renal/cox/mean_shift",
+   "spec": "+.4f",
+   "value": 0.0,
+   "text": "+0.0000"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/gates/lnaft/n_confirmed",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part2/renal/lnaft/mean_shift",
+   "spec": "+.4f",
+   "value": 0.0023061522245960307,
+   "text": "+0.0023"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/gates/npaft/n_confirmed",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part2/renal/npaft/mean_shift",
+   "spec": "+.4f",
+   "value": 0.004157923570654393,
+   "text": "+0.0042"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/gates/cox/n_confirmed",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part2/heart_valve/cox/mean_shift",
+   "spec": "+.4f",
+   "value": 0.004601212668006,
+   "text": "+0.0046"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/gates/lnaft/n_confirmed",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part2/heart_valve/lnaft/mean_shift",
+   "spec": "+.4f",
+   "value": 0.0034890597607124484,
+   "text": "+0.0035"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/gates/npaft/n_confirmed",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part2/heart_valve/npaft/mean_shift",
+   "spec": "+.4f",
+   "value": 0.0032820172305702334,
+   "text": "+0.0033"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/npaft/replacement_rate_mean",
+   "spec": ".2f",
+   "value": 0.7818181818181819,
+   "text": "0.78"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/npaft/n_rollback",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/npaft/ibs_cond_before_mean",
+   "spec": ".4f",
+   "value": 0.15429309404252015,
+   "text": "0.1543"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/npaft/ibs_cond_after_mean",
+   "spec": ".4f",
+   "value": 0.15295819099715188,
+   "text": "0.1530"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part3/renal/npaft/mean_change",
+   "spec": "+.4f",
+   "value": -0.001334903045368252,
+   "text": "−0.0013"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/cox/replacement_rate_mean",
+   "spec": ".2f",
+   "value": 0.7090909090909091,
+   "text": "0.71"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/cox/n_rollback",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/cox/ibs_cond_before_mean",
+   "spec": ".4f",
+   "value": 0.15038173564804724,
+   "text": "0.1504"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/renal/symbolic/cox/ibs_cond_after_mean",
+   "spec": ".4f",
+   "value": 0.1492318143032267,
+   "text": "0.1492"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part3/renal/cox/mean_change",
+   "spec": "+.4f",
+   "value": -0.001149921344820498,
+   "text": "−0.0011"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/npaft/replacement_rate_mean",
+   "spec": ".2f",
+   "value": 0.8,
+   "text": "0.80"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/npaft/n_rollback",
+   "spec": "d",
+   "value": 4,
+   "text": "4"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/npaft/ibs_cond_before_mean",
+   "spec": ".4f",
+   "value": 0.15937747274377745,
+   "text": "0.1594"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/npaft/ibs_cond_after_mean",
+   "spec": ".4f",
+   "value": 0.15918638089511997,
+   "text": "0.1592"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part3/heart_valve/npaft/mean_change",
+   "spec": "+.4f",
+   "value": -0.0001910918486574792,
+   "text": "−0.0002"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/cox/replacement_rate_mean",
+   "spec": ".2f",
+   "value": 0.4545454545454545,
+   "text": "0.45"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/cox/n_rollback",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/cox/ibs_cond_before_mean",
+   "spec": ".4f",
+   "value": 0.1491156743341419,
+   "text": "0.1491"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/cohorts/heart_valve/symbolic/cox/ibs_cond_after_mean",
+   "spec": ".4f",
+   "value": 0.14919444383422284,
+   "text": "0.1492"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/H_R22b/part3/heart_valve/cox/mean_change",
+   "spec": "+.4f",
+   "value": 7.876950008091077e-05,
+   "text": "+0.0001"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_cox/ibs",
+   "spec": ".4f",
+   "value": 0.08854030869306946,
+   "text": "0.0885"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_cox/harrell_c",
+   "spec": ".3f",
+   "value": 0.8725596877944637,
+   "text": "0.873"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_cox/uno_c",
+   "spec": ".3f",
+   "value": 0.8771277586867503,
+   "text": "0.877"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/b2s_cox",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_waft/ibs",
+   "spec": ".4f",
+   "value": 0.08700761343813783,
+   "text": "0.0870"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_waft/harrell_c",
+   "spec": ".3f",
+   "value": 0.8743244058452083,
+   "text": "0.874"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_waft/uno_c",
+   "spec": ".3f",
+   "value": 0.8790191736115218,
+   "text": "0.879"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/b2s_waft",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_lnaft/ibs",
+   "spec": ".4f",
+   "value": 0.08497128282634978,
+   "text": "0.0850"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_lnaft/harrell_c",
+   "spec": ".3f",
+   "value": 0.8736982942202571,
+   "text": "0.874"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_lnaft/uno_c",
+   "spec": ".3f",
+   "value": 0.8792048382857736,
+   "text": "0.879"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/b2s_lnaft",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_npaft/ibs",
+   "spec": ".4f",
+   "value": 0.08335786930037062,
+   "text": "0.0834"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_npaft/harrell_c",
+   "spec": ".3f",
+   "value": 0.8779548203506513,
+   "text": "0.878"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_npaft/uno_c",
+   "spec": ".3f",
+   "value": 0.8835809146457121,
+   "text": "0.884"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/b2s_npaft",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_anchor_npaft_cross/ibs",
+   "spec": ".4f",
+   "value": 0.08368047925622152,
+   "text": "0.0837"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_anchor_npaft_cross/harrell_c",
+   "spec": ".3f",
+   "value": 0.8776306485777494,
+   "text": "0.878"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_anchor_npaft_cross/uno_c",
+   "spec": ".3f",
+   "value": 0.8832391641235933,
+   "text": "0.883"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/b2s_anchor_npaft_cross",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/landmark_cox/ibs",
+   "spec": ".4f",
+   "value": 0.10201720128196805,
+   "text": "0.1020"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/landmark_cox/harrell_c",
+   "spec": ".3f",
+   "value": 0.8381758211882154,
+   "text": "0.838"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/landmark_cox/uno_c",
+   "spec": ".3f",
+   "value": 0.8432691188455348,
+   "text": "0.843"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/landmark_cox",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/sum_aft/ibs",
+   "spec": ".4f",
+   "value": 0.0862694785300124,
+   "text": "0.0863"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/sum_aft/harrell_c",
+   "spec": ".3f",
+   "value": 0.8683700351620616,
+   "text": "0.868"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/sum_aft/uno_c",
+   "spec": ".3f",
+   "value": 0.8744743449095977,
+   "text": "0.874"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/sum_aft",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/fpca_aft/ibs",
+   "spec": ".4f",
+   "value": 0.0878296846720538,
+   "text": "0.0878"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/fpca_aft/harrell_c",
+   "spec": ".3f",
+   "value": 0.8614376313367453,
+   "text": "0.861"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/fpca_aft/uno_c",
+   "spec": ".3f",
+   "value": 0.8671166723688412,
+   "text": "0.867"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/dcal_pass/fpca_aft",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/b2s_npaft/ibs",
+   "spec": ".4f",
+   "value": 0.08335786930037062,
+   "text": "0.0834"
+  },
+  {
+   "src": "reports/round22/analysis_summary.json/fd003/means/landmark_cox/ibs",
+   "spec": ".4f",
+   "value": 0.10201720128196805,
+   "text": "0.1020"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/ibs/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.07636583649448979,
+   "text": "0.0764"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/harrell_c/b2s_npaft",
+   "spec": ".3f",
+   "value": 0.8669288375316292,
+   "text": "0.867"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/dcal_pass/b2s_npaft",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/ibs/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.08639166694756555,
+   "text": "0.0864"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/harrell_c/b2s_npaft",
+   "spec": ".3f",
+   "value": 0.8548134118272079,
+   "text": "0.855"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/dcal_pass/b2s_npaft",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/ibs/landmark_cox",
+   "spec": ".4f",
+   "value": 0.09469632839650834,
+   "text": "0.0947"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/harrell_c/landmark_cox",
+   "spec": ".3f",
+   "value": 0.8349346472096286,
+   "text": "0.835"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/dcal_pass/landmark_cox",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/ibs/landmark_cox",
+   "spec": ".4f",
+   "value": 0.10025348296838596,
+   "text": "0.1003"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/harrell_c/landmark_cox",
+   "spec": ".3f",
+   "value": 0.8266166185817394,
+   "text": "0.827"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/dcal_pass/landmark_cox",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/ibs/stack",
+   "spec": ".4f",
+   "value": 0.07633725738720233,
+   "text": "0.0763"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/harrell_c/stack",
+   "spec": ".3f",
+   "value": 0.8666227401010816,
+   "text": "0.867"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/dcal_pass/stack",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/ibs/stack",
+   "spec": ".4f",
+   "value": 0.08649087161445299,
+   "text": "0.0865"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/harrell_c/stack",
+   "spec": ".3f",
+   "value": 0.8527872452351846,
+   "text": "0.853"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/dcal_pass/stack",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/ibs/sum_aft",
+   "spec": ".4f",
+   "value": 0.08211217032603293,
+   "text": "0.0821"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/harrell_c/sum_aft",
+   "spec": ".3f",
+   "value": 0.8564487820141716,
+   "text": "0.856"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/dcal_pass/sum_aft",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/ibs/sum_aft",
+   "spec": ".4f",
+   "value": 0.0977867845274795,
+   "text": "0.0978"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/harrell_c/sum_aft",
+   "spec": ".3f",
+   "value": 0.8320006970327573,
+   "text": "0.832"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/dcal_pass/sum_aft",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/ibs/fpca_aft",
+   "spec": ".4f",
+   "value": 0.08755573839769396,
+   "text": "0.0876"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/means/harrell_c/fpca_aft",
+   "spec": ".3f",
+   "value": 0.846767590370981,
+   "text": "0.847"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/dcal_pass/fpca_aft",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/ibs/fpca_aft",
+   "spec": ".4f",
+   "value": 0.09967240024941484,
+   "text": "0.0997"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/means/harrell_c/fpca_aft",
+   "spec": ".3f",
+   "value": 0.8303193476085093,
+   "text": "0.830"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/dcal_pass/fpca_aft",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - landmark_cox/n",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.018330491902018554,
+   "text": "−0.0183"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.02654551422606049,
+    -0.010115469577976622
+   ],
+   "text": "[−0.0265, −0.0101]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - landmark_cox/n_neg",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - landmark_cox/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - sum_aft/n",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - sum_aft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.005746333831543144,
+   "text": "−0.0057"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - sum_aft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.010552725130705102,
+    -0.0009399425323811878
+   ],
+   "text": "[−0.0106, −0.0009]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - sum_aft/n_neg",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - sum_aft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - fpca_aft/n",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - fpca_aft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.011189901903204156,
+   "text": "−0.0112"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - fpca_aft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.015944822053253548,
+    -0.0064349817531547645
+   ],
+   "text": "[−0.0159, −0.0064]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - fpca_aft/n_neg",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/contrasts/b2s_npaft - fpca_aft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - landmark_cox/n",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.01386181602082041,
+   "text": "−0.0139"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.025274886539155782,
+    -0.0024487455024850384
+   ],
+   "text": "[−0.0253, −0.0024]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - landmark_cox/n_neg",
+   "spec": "d",
+   "value": 9,
+   "text": "9"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - landmark_cox/n_pos",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - sum_aft/n",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - sum_aft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.011395117579913959,
+   "text": "−0.0114"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - sum_aft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.02073174679239631,
+    -0.002058488367431605
+   ],
+   "text": "[−0.0207, −0.0021]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - sum_aft/n_neg",
+   "spec": "d",
+   "value": 9,
+   "text": "9"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - sum_aft/n_pos",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - fpca_aft/n",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - fpca_aft/mean_diff",
+   "spec": "+.4f",
+   "value": -0.01328073330184929,
+   "text": "−0.0133"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - fpca_aft/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.024373068740801418,
+    -0.00218839786289716
+   ],
+   "text": "[−0.0244, −0.0022]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - fpca_aft/n_neg",
+   "spec": "d",
+   "value": 10,
+   "text": "10"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/contrasts/b2s_npaft - fpca_aft/n_pos",
+   "spec": "d",
+   "value": 0,
+   "text": "0"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - b2s_npaft_sparse3/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - b2s_npaft_sparse3/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0286937383674686,
+   "text": "−0.0287"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - b2s_npaft_sparse3/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.0467818611039864,
+    -0.0106056156309508
+   ],
+   "text": "[−0.0468, −0.0106]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - b2s_npaft_sparse3/n_neg",
+   "spec": "d",
+   "value": 19,
+   "text": "19"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - b2s_npaft_sparse3/n_pos",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft_sparse3 - landmark_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft_sparse3 - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": 0.021651656236638294,
+   "text": "+0.0217"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft_sparse3 - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    0.003350027586507747,
+    0.039953284886768844
+   ],
+   "text": "[+0.0034, +0.0400]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft_sparse3 - landmark_cox/n_neg",
+   "spec": "d",
+   "value": 1,
+   "text": "1"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft_sparse3 - landmark_cox/n_pos",
+   "spec": "d",
+   "value": 19,
+   "text": "19"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - landmark_cox/n",
+   "spec": "d",
+   "value": 20,
+   "text": "20"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.007042082130830307,
+   "text": "−0.0070"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.023928890545475368,
+    0.009844726283814755
+   ],
+   "text": "[−0.0239, +0.0098]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - landmark_cox/n_neg",
+   "spec": "d",
+   "value": 13,
+   "text": "13"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - landmark_cox/n_pos",
+   "spec": "d",
+   "value": 7,
+   "text": "7"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/c_contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.03199419032200067,
+   "text": "+0.032"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/c_contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.3f",
+   "value": 0.02819679324546851,
+   "text": "+0.028"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD002/dcal_pass/b2s_npaft",
+   "spec": "d",
+   "value": 2,
+   "text": "2"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/cm/FD004/dcal_pass/b2s_npaft",
+   "spec": "d",
+   "value": 5,
+   "text": "5"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/means/ibs_cond/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.1498079463153515,
+   "text": "0.1498"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/means/ibs_cond/b2s_npaft_sparse3",
+   "spec": ".4f",
+   "value": 0.17850168468282007,
+   "text": "0.1785"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/visits_median",
+   "spec": ".0f",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/means/ibs_cond/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.13820359380484085,
+   "text": "0.1382"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/means/ibs_cond/landmark_cox",
+   "spec": ".4f",
+   "value": 0.13888648162343617,
+   "text": "0.1389"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/means/ibs_cond/stack",
+   "spec": ".4f",
+   "value": 0.1357682897276653,
+   "text": "0.1358"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/contrasts/stack - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0031181918957708943,
+   "text": "−0.0031"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/contrasts/stack - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.014089408835915222,
+    0.007853025044373433
+   ],
+   "text": "[−0.0141, +0.0079]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0006828878185953645,
+   "text": "−0.0007"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E2/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.017877122407318966,
+    0.016511346770128235
+   ],
+   "text": "[−0.0179, +0.0165]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/visits_median",
+   "spec": ".0f",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/means/ibs_cond/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.126385732297959,
+   "text": "0.1264"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/means/ibs_cond/landmark_cox",
+   "spec": ".4f",
+   "value": 0.1299950004188501,
+   "text": "0.1300"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/means/ibs_cond/stack",
+   "spec": ".4f",
+   "value": 0.12484135462008986,
+   "text": "0.1248"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/contrasts/stack - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.005153645798760205,
+   "text": "−0.0052"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/contrasts/stack - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.018711436104793425,
+    0.008404144507273018
+   ],
+   "text": "[−0.0187, +0.0084]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.003609268120891073,
+   "text": "−0.0036"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/pbc_E1/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.021825858897511305,
+    0.014607322655729157
+   ],
+   "text": "[−0.0218, +0.0146]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/visits_median",
+   "spec": ".0f",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/means/ibs_cond/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.21669102610168672,
+   "text": "0.2167"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/means/ibs_cond/landmark_cox",
+   "spec": ".4f",
+   "value": 0.21087716951186705,
+   "text": "0.2109"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/means/ibs_cond/stack",
+   "spec": ".4f",
+   "value": 0.2137066530454038,
+   "text": "0.2137"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/contrasts/stack - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": 0.002829483533536757,
+   "text": "+0.0028"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/contrasts/stack - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.004734238200835325,
+    0.01039320526790884
+   ],
+   "text": "[−0.0047, +0.0104]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": 0.005813856589819659,
+   "text": "+0.0058"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/prothro/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.004718433036181906,
+    0.016346146215821224
+   ],
+   "text": "[−0.0047, +0.0163]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/visits_median",
+   "spec": ".0f",
+   "value": 3.0,
+   "text": "3"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/means/ibs_cond/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.17532144653525222,
+   "text": "0.1753"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/means/ibs_cond/landmark_cox",
+   "spec": ".4f",
+   "value": 0.17399505043288394,
+   "text": "0.1740"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/means/ibs_cond/stack",
+   "spec": ".4f",
+   "value": 0.17383299871015503,
+   "text": "0.1738"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/contrasts/stack - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.00016205172272891895,
+   "text": "−0.0002"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/contrasts/stack - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.005794524557885451,
+    0.005470421112427613
+   ],
+   "text": "[−0.0058, +0.0055]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": 0.0013263961023682893,
+   "text": "+0.0013"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/aids/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.006219424836669173,
+    0.008872217041405752
+   ],
+   "text": "[−0.0062, +0.0089]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/visits_median",
+   "spec": ".0f",
+   "value": 97.0,
+   "text": "97"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/means/ibs_cond/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.1498079463153515,
+   "text": "0.1498"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/means/ibs_cond/landmark_cox",
+   "spec": ".4f",
+   "value": 0.1568500284461818,
+   "text": "0.1569"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/means/ibs_cond/stack",
+   "spec": ".4f",
+   "value": 0.1491135437747188,
+   "text": "0.1491"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/stack - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.007736484671462959,
+   "text": "−0.0077"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/stack - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.021769720161141672,
+    0.006296750818215753
+   ],
+   "text": "[−0.0218, +0.0063]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.007042082130830307,
+   "text": "−0.0070"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/renal/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.023928890545475368,
+    0.009844726283814755
+   ],
+   "text": "[−0.0239, +0.0098]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/visits_median",
+   "spec": ".0f",
+   "value": 1.0,
+   "text": "1"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/means/ibs_cond/b2s_npaft",
+   "spec": ".4f",
+   "value": 0.13877359317497054,
+   "text": "0.1388"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/means/ibs_cond/landmark_cox",
+   "spec": ".4f",
+   "value": 0.13665606004376513,
+   "text": "0.1367"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/means/ibs_cond/stack",
+   "spec": ".4f",
+   "value": 0.13533114422584874,
+   "text": "0.1353"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/contrasts/stack - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": -0.0013249158179164,
+   "text": "−0.0013"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/contrasts/stack - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.020896661930080287,
+    0.018246830294247486
+   ],
+   "text": "[−0.0209, +0.0182]"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/contrasts/b2s_npaft - landmark_cox/mean_diff",
+   "spec": "+.4f",
+   "value": 0.0021175331312053777,
+   "text": "+0.0021"
+  },
+  {
+   "src": "reports/round23/analysis_summary.json/clinical/heart_valve/contrasts/b2s_npaft - landmark_cox/ci95",
+   "spec": "+.4f",
+   "value": [
+    -0.021316187788290853,
+    0.02555125405070161
+   ],
+   "text": "[−0.0213, +0.0256]"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/0/channel",
+   "spec": "s",
+   "value": "log bili",
+   "text": "log bili"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/0/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/0/formula",
+   "spec": "s",
+   "value": "0.0664907*softplus(7.85335*x + 3.67257) + -0.400435",
+   "text": "0.0664907*softplus(7.85335*x + 3.67257) + -0.400435"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/0/r2_val",
+   "spec": ".4f",
+   "value": 0.9974867029954331,
+   "text": "0.9975"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/0/share",
+   "spec": ".2f",
+   "value": 0.2713481630043495,
+   "text": "0.27"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/1/channel",
+   "spec": "s",
+   "value": "log bili",
+   "text": "log bili"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/1/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/1/formula",
+   "spec": "s",
+   "value": "0.873117*sin(0.604565*x + -0.705121) + 0.331042",
+   "text": "0.873117*sin(0.604565*x + -0.705121) + 0.331042"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/1/r2_val",
+   "spec": ".4f",
+   "value": 0.9968682037330103,
+   "text": "0.9969"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/1/share",
+   "spec": ".2f",
+   "value": 0.24607238842886056,
+   "text": "0.25"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/2/channel",
+   "spec": "s",
+   "value": "albumin",
+   "text": "albumin"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/2/stage",
+   "spec": "s",
+   "value": "pysr",
+   "text": "pysr"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/2/formula",
+   "spec": "s",
+   "value": "x*(x - 1*(-0.8958103))*0.05707035*tanh(sin(x - 1*0.3166966))",
+   "text": "x*(x - 1*(-0.8958103))*0.05707035*tanh(sin(x - 1*0.3166966))"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/2/r2_val",
+   "spec": ".4f",
+   "value": 0.9993913259617998,
+   "text": "0.9994"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/2/share",
+   "spec": ".2f",
+   "value": 0.1622055317702725,
+   "text": "0.16"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/3/channel",
+   "spec": "s",
+   "value": "platelet",
+   "text": "platelet"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/3/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/3/formula",
+   "spec": "s",
+   "value": "-0.19994*softplus(0.0438834*x + -12.6488) + 0.0541648",
+   "text": "-0.19994*softplus(0.0438834*x + -12.6488) + 0.0541648"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/3/r2_val",
+   "spec": ".4f",
+   "value": 0.9991830812597868,
+   "text": "0.9992"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/3/share",
+   "spec": ".2f",
+   "value": 0.15251750978013376,
+   "text": "0.15"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E2/baseline/0",
+   "spec": "s",
+   "value": "age",
+   "text": "age"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/4/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/4/formula",
+   "spec": "s",
+   "value": "-0.284646*softplus(0.280064*x + -17.5709) + -0.0609961",
+   "text": "-0.284646*softplus(0.280064*x + -17.5709) + -0.0609961"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/4/r2_val",
+   "spec": ".4f",
+   "value": 0.9936863604042445,
+   "text": "0.9937"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E2/formulas_split0/4/share",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/0/channel",
+   "spec": "s",
+   "value": "log bili",
+   "text": "log bili"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/0/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/0/formula",
+   "spec": "s",
+   "value": "0.0814239*softplus(6.30322*x + 3.65564) + -0.418803",
+   "text": "0.0814239*softplus(6.30322*x + 3.65564) + -0.418803"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/0/r2_val",
+   "spec": ".4f",
+   "value": 0.9974490184088691,
+   "text": "0.9974"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/0/share",
+   "spec": ".2f",
+   "value": 0.25122637709603257,
+   "text": "0.25"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/1/channel",
+   "spec": "s",
+   "value": "log bili",
+   "text": "log bili"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/1/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/1/formula",
+   "spec": "s",
+   "value": "0.0641378*softplus(6.8961*x + 4.19721) + -0.44711",
+   "text": "0.0641378*softplus(6.8961*x + 4.19721) + -0.44711"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/1/r2_val",
+   "spec": ".4f",
+   "value": 0.9978087827582588,
+   "text": "0.9978"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/1/share",
+   "spec": ".2f",
+   "value": 0.21853967351276818,
+   "text": "0.22"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/2/channel",
+   "spec": "s",
+   "value": "platelet",
+   "text": "platelet"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/2/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/2/formula",
+   "spec": "s",
+   "value": "-0.176997*softplus(0.045381*x + -15.3275) + 0.0120166",
+   "text": "-0.176997*softplus(0.045381*x + -15.3275) + 0.0120166"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/2/r2_val",
+   "spec": ".4f",
+   "value": 0.9958269714907411,
+   "text": "0.9958"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/2/share",
+   "spec": ".2f",
+   "value": 0.09739180652522648,
+   "text": "0.10"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/pbc_E1/baseline/0",
+   "spec": "s",
+   "value": "age",
+   "text": "age"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/3/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/3/formula",
+   "spec": "s",
+   "value": "0.75958*gaussian(-0.053767*x + 3.46064) + -0.60234",
+   "text": "0.75958*gaussian(-0.053767*x + 3.46064) + -0.60234"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/3/r2_val",
+   "spec": ".4f",
+   "value": 0.9986894528623323,
+   "text": "0.9987"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/pbc_E1/formulas_split0/3/share",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/0/channel",
+   "spec": "s",
+   "value": "prothrombin index",
+   "text": "prothrombin index"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/0/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/0/formula",
+   "spec": "s",
+   "value": "-0.126149*softplus(0.150285*x + -12.5427) + 0.0713763",
+   "text": "-0.126149*softplus(0.150285*x + -12.5427) + 0.0713763"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/0/r2_val",
+   "spec": ".4f",
+   "value": 0.9956048035032011,
+   "text": "0.9956"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/0/share",
+   "spec": ".2f",
+   "value": 0.5311140435209415,
+   "text": "0.53"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/1/channel",
+   "spec": "s",
+   "value": "prothrombin index",
+   "text": "prothrombin index"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/1/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/1/formula",
+   "spec": "s",
+   "value": "0.366361*softplus(0.053295*x + -4.74823) + -0.110088",
+   "text": "0.366361*softplus(0.053295*x + -4.74823) + -0.110088"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/1/r2_val",
+   "spec": ".4f",
+   "value": 0.9980973213192478,
+   "text": "0.9981"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/1/share",
+   "spec": ".2f",
+   "value": 0.46888595647905845,
+   "text": "0.47"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/prothro/baseline/0",
+   "spec": "s",
+   "value": "prednisone",
+   "text": "prednisone"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/2/stage",
+   "spec": "s",
+   "value": "linear",
+   "text": "linear"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/2/formula",
+   "spec": "s",
+   "value": "0.563702*x + 0.0159156",
+   "text": "0.563702*x + 0.0159156"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/2/r2_val",
+   "spec": ".4f",
+   "value": 1.0,
+   "text": "1.0000"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/prothro/formulas_split0/2/share",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/0/channel",
+   "spec": "s",
+   "value": "sqrt CD4",
+   "text": "sqrt CD4"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/0/stage",
+   "spec": "s",
+   "value": "library",
+   "text": "library"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/0/formula",
+   "spec": "s",
+   "value": "-1.03429*tanh(-0.139629*x + 1.42946) + 0.644688",
+   "text": "-1.03429*tanh(-0.139629*x + 1.42946) + 0.644688"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/0/r2_val",
+   "spec": ".4f",
+   "value": 0.9996141920891248,
+   "text": "0.9996"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/0/share",
+   "spec": ".2f",
+   "value": 0.9992234865862643,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round14/cohort_summary.json/aids/baseline/2",
+   "spec": "s",
+   "value": "prevOI_AIDS",
+   "text": "prevOI_AIDS"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/1/stage",
+   "spec": "s",
+   "value": "linear",
+   "text": "linear"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/1/formula",
+   "spec": "s",
+   "value": "0.681901*x + -0.233717",
+   "text": "0.681901*x + -0.233717"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/1/r2_val",
+   "spec": ".4f",
+   "value": 1.0,
+   "text": "1.0000"
+  },
+  {
+   "src": "reports/round13_summary.json/prune_symbolic/aids/formulas_split0/1/share",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/r2_mean",
+   "spec": ".3f",
+   "value": 0.9861087820818725,
+   "text": "0.986"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/cos_mean",
+   "spec": ".3f",
+   "value": 0.9929837746600102,
+   "text": "0.993"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/direction",
+   "spec": "s",
+   "value": "increasing",
+   "text": "increasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log bili/frac_aligned",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/albumin/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/albumin/r2_mean",
+   "spec": ".3f",
+   "value": 0.9655495681323255,
+   "text": "0.966"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/albumin/cos_mean",
+   "spec": ".3f",
+   "value": 0.9540292570011639,
+   "text": "0.954"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/albumin/direction",
+   "spec": "s",
+   "value": "decreasing",
+   "text": "decreasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/albumin/frac_aligned",
+   "spec": ".2f",
+   "value": 0.9,
+   "text": "0.90"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log alk.phos/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log alk.phos/r2_mean",
+   "spec": ".3f",
+   "value": 0.7795178786262451,
+   "text": "0.780"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log alk.phos/cos_mean",
+   "spec": ".3f",
+   "value": 0.28740303660744904,
+   "text": "0.287"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log ast/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log ast/r2_mean",
+   "spec": ".3f",
+   "value": 0.6356529723868125,
+   "text": "0.636"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log ast/cos_mean",
+   "spec": ".3f",
+   "value": 0.12005608572139305,
+   "text": "0.120"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/platelet/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/platelet/r2_mean",
+   "spec": ".3f",
+   "value": 0.7709542576714096,
+   "text": "0.771"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/platelet/cos_mean",
+   "spec": ".3f",
+   "value": 0.833794557942263,
+   "text": "0.834"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log protime/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log protime/r2_mean",
+   "spec": ".3f",
+   "value": 0.9073144873558174,
+   "text": "0.907"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log protime/cos_mean",
+   "spec": ".3f",
+   "value": 0.486754490193069,
+   "text": "0.487"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log protime/direction",
+   "spec": "s",
+   "value": "increasing",
+   "text": "increasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb2s_cox/log protime/frac_aligned",
+   "spec": ".2f",
+   "value": 0.81,
+   "text": "0.81"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log bili/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log bili/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log bili/cos_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log bili/direction",
+   "spec": "s",
+   "value": "increasing",
+   "text": "increasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log bili/frac_aligned",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/albumin/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/albumin/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/albumin/cos_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/albumin/direction",
+   "spec": "s",
+   "value": "decreasing",
+   "text": "decreasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/albumin/frac_aligned",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log alk.phos/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log alk.phos/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log alk.phos/cos_mean",
+   "spec": ".3f",
+   "value": 0.5430303030303031,
+   "text": "0.543"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log ast/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log ast/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log ast/cos_mean",
+   "spec": ".3f",
+   "value": 0.96,
+   "text": "0.960"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/platelet/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/platelet/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/platelet/cos_mean",
+   "spec": ".3f",
+   "value": 0.7721212121212121,
+   "text": "0.772"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log protime/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log protime/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log protime/cos_mean",
+   "spec": ".3f",
+   "value": 0.7721212121212121,
+   "text": "0.772"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log protime/direction",
+   "spec": "s",
+   "value": "increasing",
+   "text": "increasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/pbc_E2%2Fb1_fpca1_cox/log protime/frac_aligned",
+   "spec": ".2f",
+   "value": 0.94,
+   "text": "0.94"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb2s_cox/prothrombin index/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb2s_cox/prothrombin index/r2_mean",
+   "spec": ".3f",
+   "value": 0.8319067383715502,
+   "text": "0.832"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb2s_cox/prothrombin index/cos_mean",
+   "spec": ".3f",
+   "value": 0.7741879596103681,
+   "text": "0.774"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb2s_cox/prothrombin index/direction",
+   "spec": "s",
+   "value": "decreasing",
+   "text": "decreasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb2s_cox/prothrombin index/frac_aligned",
+   "spec": ".2f",
+   "value": 0.72,
+   "text": "0.72"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb1_fpca1_cox/prothrombin index/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb1_fpca1_cox/prothrombin index/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb1_fpca1_cox/prothrombin index/cos_mean",
+   "spec": ".3f",
+   "value": 0.9208080808080809,
+   "text": "0.921"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb1_fpca1_cox/prothrombin index/direction",
+   "spec": "s",
+   "value": "decreasing",
+   "text": "decreasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/prothro%2Fb1_fpca1_cox/prothrombin index/frac_aligned",
+   "spec": ".2f",
+   "value": 0.98,
+   "text": "0.98"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb2s_cox/sqrt CD4/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb2s_cox/sqrt CD4/r2_mean",
+   "spec": ".3f",
+   "value": 0.9854879753838512,
+   "text": "0.985"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb2s_cox/sqrt CD4/cos_mean",
+   "spec": ".3f",
+   "value": 0.9925983574541655,
+   "text": "0.993"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb2s_cox/sqrt CD4/direction",
+   "spec": "s",
+   "value": "decreasing",
+   "text": "decreasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb2s_cox/sqrt CD4/frac_aligned",
+   "spec": ".2f",
+   "value": 0.99,
+   "text": "0.99"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb1_fpca1_cox/sqrt CD4/n_fits",
+   "spec": "d",
+   "value": 100,
+   "text": "100"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb1_fpca1_cox/sqrt CD4/r2_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb1_fpca1_cox/sqrt CD4/cos_mean",
+   "spec": ".3f",
+   "value": 1.0,
+   "text": "1.000"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb1_fpca1_cox/sqrt CD4/direction",
+   "spec": "s",
+   "value": "decreasing",
+   "text": "decreasing"
+  },
+  {
+   "src": "reports/round13_summary.json/stability/aids%2Fb1_fpca1_cox/sqrt CD4/frac_aligned",
+   "spec": ".2f",
+   "value": 1.0,
+   "text": "1.00"
+  },
+  {
+   "src": "docs/references_journal_main.md/cui2021/Year",
+   "spec": "s",
+   "value": "2021",
+   "text": "2021"
+  },
+  {
+   "src": "docs/references_journal_main.md/knottenbelt2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/jose2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/mastroleo2026/Year",
+   "spec": "s",
+   "value": "2026",
+   "text": "2026"
+  },
+  {
+   "src": "docs/references_journal_main.md/boulitsakis2026/Year",
+   "spec": "s",
+   "value": "2026",
+   "text": "2026"
+  },
+  {
+   "src": "docs/references_journal_main.md/lundin2025/Year",
+   "spec": "s",
+   "value": "2025",
+   "text": "2025"
+  },
+  {
+   "src": "docs/references_journal_main.md/vanhouwelingen2007/Year",
+   "spec": "s",
+   "value": "2007",
+   "text": "2007"
+  },
+  {
+   "src": "docs/references_journal_main.md/vanhouwelingen2012/Year",
+   "spec": "s",
+   "value": "2012",
+   "text": "2012"
+  },
+  {
+   "src": "docs/references_journal_main.md/putter2022/Year",
+   "spec": "s",
+   "value": "2022",
+   "text": "2022"
+  },
+  {
+   "src": "docs/references_journal_main.md/wulfsohn1997/Year",
+   "spec": "s",
+   "value": "1997",
+   "text": "1997"
+  },
+  {
+   "src": "docs/references_journal_main.md/rizopoulos2010/Year",
+   "spec": "s",
+   "value": "2010",
+   "text": "2010"
+  },
+  {
+   "src": "docs/references_journal_main.md/rizopoulos2011/Year",
+   "spec": "s",
+   "value": "2011",
+   "text": "2011"
+  }
+ ]
+}
