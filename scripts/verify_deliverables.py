@@ -18,7 +18,7 @@ REP = ROOT / "reports"
 res = {}
 
 
-FINAL_RUN = "final_full_suite_round23"
+FINAL_RUN = "final_full_suite_round24"
 
 
 def norm(s):
@@ -56,9 +56,12 @@ MS16_SECTIONS = ["5. Phase 2: pre-registered methodological revisions (Rounds 15
                  "5.2 Symbolic summaries: functional distillation (H-R15a, H-R16a)",
                  "5.3 A landmark-anchored functional model (H-R15b, H-R16b)",
                  # Round 23 (D162): the Round-23 journal main manuscript is the embedded one
-                 "4.3 Where the functional model helps (Round 23)"]
+                 "4.3 Where the functional model helps (Round 23)",
+                 # Round 24 (D165): the Round-24 journal main manuscript is the embedded one
+                 "4.4 Comparison with a Bayesian joint model (Round 24)"]
 res["pdf_has_manuscript_sections"] = all(s in T for s in MS_SECTIONS + MS16_SECTIONS)
 res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 3)) and all(
+    re.search(rf"\bR24\.{k}\s", T) for k in range(1, 11)) and all(
     re.search(rf"\bR23\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR22\.{k}\s", T) for k in range(1, 12)) and all(
     re.search(rf"\bR21\.{k}\s", T) for k in range(1, 11)) and all(
@@ -126,7 +129,8 @@ for tpl, vf in (("report_template_round2.md", "report_values_round2.json"),
                 ("report_template_round20.md", "report_values_round20.json"),
                 ("report_template_round21.md", "report_values_round21.json"),
                 ("report_template_round22.md", "report_values_round22.json"),
-                ("report_template_round23.md", "report_values_round23.json")):
+                ("report_template_round23.md", "report_values_round23.json"),
+                ("report_template_round24.md", "report_values_round24.json")):
     vals2 = json.loads((REP / vf).read_text())
     used2 = set(re.findall(r"\{\{V:([A-Za-z0-9_\-]+)\}\}", (REP / tpl).read_text()))
     res[f"{tpl}_values_used"] = len(used2)
@@ -335,9 +339,37 @@ ledj23 = json.loads((REP / "manuscript_values_journal_main_round23.json").read_t
 textsj23 = {e["text"] for e in ledj23["values"] if re.search(r"\d", e["text"]) and e["spec"] != "s"}
 res["journal23_values_checked_in_report_pdf"] = len(textsj23)
 res["journal23_values_missing_in_report_pdf"] = sorted(x for x in textsj23 if norm(x) not in T)[:50]
-rev25 = REP / "final_research_prototype_report_rev25.pdf"          # round 23: the current revision's copy
-res["rev25_copy_identical"] = rev25.exists() and hashlib.sha256(rev25.read_bytes()).hexdigest() == \
+# Round 24 (D165): the Round-24 Supplementary Material and journal main manuscript, as for Round 23; the revision-26 copy
+import verify_manuscript_round24 as VM24  # noqa: E402
+vm24 = dict(ledger=VM24.W.check_ledger(), rerender=VM24.check_rerender(), numbers=VM24.W.check_numbers(),
+            citations=VM24.W.check_citations(), sections=VM24.W.check_sections(),
+            pdf=VM24.W.check_pdf(pdf=VM24.W.PDF, md=VM24.W.MD, sections=VM24.W.REQUIRED_SECTIONS, n_figures=len(VM24.FIGURES)))
+vm24["pdf"]["passed"] = vm24["pdf"]["passed"] and vm24["pdf"].get("images", 0) >= len(VM24.FIGURES)
+res["manuscript24_checks"] = {k: v["passed"] for k, v in vm24.items()}
+res["manuscript24_pdf_pages"] = vm24["pdf"].get("pages")
+ms24_pages = sorted((REP / "logs/manuscript24_pages").glob("page-*.png"))
+res["manuscript24_page_renders"] = len(ms24_pages)
+res["manuscript24_blank_pages"] = [p.name for p in ms24_pages if (np.asarray(Image.open(p).convert("L")) < 200).mean() < 0.002]
+import verify_manuscript_journal_main_round24 as VMJ24  # noqa: E402
+vmj24 = dict(ledger=VMJ24.W.check_ledger(), rerender=VMJ24.check_rerender(), numbers=VMJ24.W.check_numbers(),
+             citations=VMJ24.W.check_citations(), sections=VMJ24.W.check_sections(), supplement=VMJ24.check_supplement(),
+             references=VMJ24.check_references(),
+             pdf=VMJ24.W.check_pdf(pdf=VMJ24.W.PDF, md=VMJ24.W.MD, sections=VMJ24.W.REQUIRED_SECTIONS, n_figures=len(VMJ24.FIGURES)))
+vmj24["pdf"]["passed"] = vmj24["pdf"]["passed"] and vmj24["pdf"].get("images", 0) >= len(VMJ24.FIGURES) and \
+    VMJ24.PAGES[0] <= vmj24["pdf"].get("pages", 0) <= VMJ24.PAGES[1]
+res["journal24_checks"] = {k: v["passed"] for k, v in vmj24.items()}
+res["journal24_pdf_pages"] = vmj24["pdf"].get("pages")
+msj24_pages = sorted((REP / "logs/manuscript_journal24_pages").glob("page-*.png"))
+res["journal24_page_renders"] = len(msj24_pages)
+res["journal24_blank_pages"] = [p.name for p in msj24_pages if (np.asarray(Image.open(p).convert("L")) < 200).mean() < 0.002]
+ledj24 = json.loads((REP / "manuscript_values_journal_main_round24.json").read_text())
+textsj24 = {e["text"] for e in ledj24["values"] if re.search(r"\d", e["text"]) and e["spec"] != "s"}
+res["journal24_values_checked_in_report_pdf"] = len(textsj24)
+res["journal24_values_missing_in_report_pdf"] = sorted(x for x in textsj24 if norm(x) not in T)[:50]
+rev26 = REP / "final_research_prototype_report_rev26.pdf"          # round 24: the current revision's copy
+res["rev26_copy_identical"] = rev26.exists() and hashlib.sha256(rev26.read_bytes()).hexdigest() == \
     hashlib.sha256(pdf.read_bytes()).hexdigest()
+res["rev25_kept"] = (REP / "final_research_prototype_report_rev25.pdf").exists()
 res["rev24_kept"] = (REP / "final_research_prototype_report_rev24.pdf").exists()
 res["rev23_kept"] = (REP / "final_research_prototype_report_rev23.pdf").exists()
 res["rev22_kept"] = (REP / "final_research_prototype_report_rev22.pdf").exists()
@@ -363,7 +395,11 @@ ok = (res["pdf_exists"] and res["pdf_opens"] and res["pdf_text_chars"] > 20000 a
       and all(chk) and not not_run and not res["commands_missing_log_file"] and res["experiment_csv_rows_equal_jsonl"]
       and res["pdf_has_manuscript_sections"] and all(res["manuscript_checks"].values())
       and len(ms_pages) == res["manuscript_pdf_pages"] and not res["manuscript_blank_pages"]
-      and not res["manuscript_values_missing_in_report_pdf"] and res["rev25_copy_identical"] and res["rev24_kept"]
+      and not res["manuscript_values_missing_in_report_pdf"] and res["rev26_copy_identical"] and res["rev25_kept"] and res["rev24_kept"]
+      and all(res["manuscript24_checks"].values())
+      and len(ms24_pages) == res["manuscript24_pdf_pages"] and not res["manuscript24_blank_pages"]
+      and all(res["journal24_checks"].values()) and len(msj24_pages) == res["journal24_pdf_pages"]
+      and not res["journal24_blank_pages"] and not res["journal24_values_missing_in_report_pdf"]
       and res["rev23_kept"] and all(res["manuscript23_checks"].values())
       and len(ms23_pages) == res["manuscript23_pdf_pages"] and not res["manuscript23_blank_pages"]
       and all(res["journal23_checks"].values()) and len(msj23_pages) == res["journal23_pdf_pages"]
