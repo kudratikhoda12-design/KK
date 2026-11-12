@@ -1,5 +1,8 @@
 {
  "n_records": 120,
+ "n_ok": 117,
+ "n_fit_failed": 3,
+ "n_partitions_paired": 120,
  "mismatched_partitions": [],
  "failures": [
   {
@@ -164,6 +167,7 @@
    "jm_seconds_median": 479.1,
    "rhat_max_median": 1.11060774673526,
    "n_rhat_above_1_1": 11,
+   "jm_failed_partitions": 0,
    "contrasts": {
     "b2s_npaft - jm": {
      "n": 20,
@@ -317,6 +321,7 @@
    "jm_seconds_median": 476.85,
    "rhat_max_median": 1.10491741323025,
    "n_rhat_above_1_1": 11,
+   "jm_failed_partitions": 0,
    "contrasts": {
     "b2s_npaft - jm": {
      "n": 20,
@@ -470,6 +475,7 @@
    "jm_seconds_median": 79.6,
    "rhat_max_median": 1.0053193915837801,
    "n_rhat_above_1_1": 0,
+   "jm_failed_partitions": 0,
    "contrasts": {
     "b2s_npaft - jm": {
      "n": 20,
@@ -623,6 +629,7 @@
    "jm_seconds_median": 95.05,
    "rhat_max_median": 1.0393025222172252,
    "n_rhat_above_1_1": 3,
+   "jm_failed_partitions": 0,
    "contrasts": {
     "b2s_npaft - jm": {
      "n": 20,
@@ -776,6 +783,7 @@
    "jm_seconds_median": 733.9,
    "rhat_max_median": 1.04198215327041,
    "n_rhat_above_1_1": 4,
+   "jm_failed_partitions": 1,
    "contrasts": {
     "b2s_npaft - jm": {
      "n": 19,
@@ -929,6 +937,7 @@
    "jm_seconds_median": 75.45,
    "rhat_max_median": 1.1676103838265601,
    "n_rhat_above_1_1": 13,
+   "jm_failed_partitions": 2,
    "contrasts": {
     "b2s_npaft - jm": {
      "n": 18,

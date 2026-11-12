@@ -1,0 +1,125 @@
+"""Round 24 (D165): verification of the Round-24 journal main manuscript (docs/manuscript_journal_main_round24.md) and
+its PDF. The Round-23 journal verification (scripts/verify_manuscript_journal_main_round23.py) is kept unchanged.
+
+The Round-14 verifier's checks, through scripts/verify_manuscript_round24.py loaded as a separate module instance and
+pointed at the journal files (ledger, rerender, numbers, citations, sections, PDF), plus three checks of its own:
+
+  supplement   every logged (source, format, text) triple of the main manuscript occurs in the verified ledger of the
+               Supplementary Material (reports/manuscript_values_round24.json)
+  references   every row of docs/references_journal_main.md is identical to its row in docs/references_round22.md
+  length       (with --pdf) the compiled PDF has 18 to 22 pages, the length the owner asked for
+
+The literal registry is the subset of the Round-24 registry whose contexts occur in the journal template, plus the
+journal's own entries. Result: reports/manuscript_verification_journal_main_round24.json.
+"""
+import argparse
+import importlib.util
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+_spec = importlib.util.spec_from_file_location("verify_manuscript_journal_v24", ROOT / "scripts/verify_manuscript_round24.py")
+V24 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(V24)
+W = V24.W
+
+SUPP_LEDGER = ROOT / "reports/manuscript_values_round24.json"
+SUPP_REFS = ROOT / "docs/references_round22.md"
+PAGES = (18, 22)
+W.MD = ROOT / "docs/manuscript_journal_main_round24.md"
+W.TPL = ROOT / "docs/manuscript_journal_main_round24_template.md"
+W.LEDGER = ROOT / "reports/manuscript_values_journal_main_round24.json"
+W.PDF = ROOT / "reports/manuscript_journal_main_round24.pdf"
+W.OUT = ROOT / "reports/manuscript_verification_journal_main_round24.json"
+W.REFS = ROOT / "docs/references_journal_main.md"
+W.REQUIRED_SECTIONS = ["Abstract", "Keywords", "1. Introduction", "2. Methods", "3. Simulation results",
+                       "4. Real-data results", "4.3 Where the functional model helps",
+                       "4.4 Comparison with a Bayesian joint model", "5. Discussion", "5.2 Where simpler landmark models suffice",
+                       "5.3 Relation to prior work", "5.4 Limitations", "5.5 Conclusions", "Declarations", "References", "Appendix. Number provenance"]
+FIGURES = ["ms14_r13_effects_pbc_E2_b2s_cox_a.png"]
+W.FIGURES = FIGURES
+D, CONV = W.D, W.CONV
+_tpl = re.sub(r"\s+", " ", W._strip(W.TPL.read_text())) if W.TPL.exists() else ""
+W.LITERALS = [e for e in W.LITERALS if e[1] in _tpl]      # the inherited entries this template uses
+W.LITERALS += [
+    # journal-only contexts (design constants of D156 and conventions)
+    ("0", "split 0; S4.3", CONV, None),            # split index
+    ("95", ", 95% CI", CONV, None),
+    ("95", "corrected 95% interval", CONV, None),
+    ("0", "both intervals below 0; H-R23a", CONV, None),
+    # Round-24 contexts (D163 margin; conventions)
+    ("0", "with an interval below 0 (H-R24a supported)", CONV, None),
+    ("0", "minus the joint model\nincluded 0, but".replace("\n", " "), CONV, None),
+    ("0.005", "above the registered +0.005, so non-inferiority was not shown (H-R24b", "docs/round24_preregistration.md",
+     "≤ +0.005 (the Round-20/21/23 margin)"),
+]
+W.BUILDER_LITERALS = [e for e in W.BUILDER_LITERALS if e[1] in re.sub(r"\s+", " ", W.MD.read_text())] if W.MD.exists() else []
+W.BUILDER_LITERALS += [
+    ("95", "joint model (NB 95% CI)", CONV, None),
+    # Round-21 criteria typed by the builder in Table 13 (D154)
+    ("0.055", "IBS ≤ 0.055 and Harrell C ≥ 0.88", D, "IBS ≤ 0.055 and Harrell C ≥ 0.88"),
+    ("0.88", "IBS ≤ 0.055 and Harrell C ≥ 0.88", D, "IBS ≤ 0.055 and Harrell C ≥ 0.88"),
+    ("0.01", "Harrell C ≥ Cox − 0.01", D, "C ≥ Cox − 0.01"),
+]
+
+
+def check_rerender():
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import manuscript_journal_main_round24 as M
+    M.B._cache.clear()
+    text = M.render(W.TPL.read_text())
+    led = json.loads(W.LEDGER.read_text())
+    same_md = text == W.MD.read_text()
+    same_led = [dict(src=e["src"], spec=e["spec"], text=e["text"]) for e in M.LEDGER] == \
+               [dict(src=e["src"], spec=e["spec"], text=e["text"]) for e in led["values"]]
+    return dict(passed=same_md and same_led, manuscript_identical=same_md, ledger_identical=same_led)
+
+
+def check_supplement():
+    supp = {(e["src"], e["spec"], e["text"]) for e in json.loads(SUPP_LEDGER.read_text())["values"]}
+    vals = json.loads(W.LEDGER.read_text())["values"]
+    jr, sr = str(W.REFS.relative_to(ROOT)) + "/", str(SUPP_REFS.relative_to(ROOT)) + "/"
+
+    def key(e):   # reference-list values: the journal rows are checked identical to the supplement's (check_references)
+        src = sr + e["src"][len(jr):] if e["src"].startswith(jr) else e["src"]
+        return (src, e["spec"], e["text"])
+    missing = [dict(src=e["src"], spec=e["spec"], text=e["text"]) for e in vals if key(e) not in supp]
+    return dict(passed=not missing and len(vals) > 0, n_values=len(vals), not_in_supplement=missing[:20])
+
+
+def _rows(path):
+    out = {}
+    for line in Path(path).read_text().splitlines():
+        c = [x.strip() for x in line.strip().strip("|").split("|")]
+        if line.startswith("|") and len(c) > 1 and c[0] not in ("Key", "") and not set(c[0]) <= set("-"):
+            out[c[0]] = line.strip()
+    return out
+
+
+def check_references():
+    j, s = _rows(W.REFS), _rows(SUPP_REFS)
+    bad = sorted(k for k, v in j.items() if s.get(k) != v)
+    return dict(passed=bool(j) and not bad, n_rows=len(j), differing_or_unknown=bad)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--pdf", action="store_true")
+    a = ap.parse_args(argv)
+    res = dict(ledger=W.check_ledger(), rerender=check_rerender(), numbers=W.check_numbers(), citations=W.check_citations(),
+               sections=W.check_sections(), supplement=check_supplement(), references=check_references())
+    if a.pdf:
+        p = W.check_pdf(pdf=W.PDF, md=W.MD, sections=W.REQUIRED_SECTIONS, n_figures=len(FIGURES))
+        p["page_range"] = list(PAGES)
+        p["passed"] = p["passed"] and p.get("images", 0) >= len(FIGURES) and PAGES[0] <= p.get("pages", 0) <= PAGES[1]
+        res["pdf"] = p
+    res["ALL_PASS"] = all(v["passed"] for v in res.values() if isinstance(v, dict))
+    W.OUT.write_text(json.dumps(res, indent=1, ensure_ascii=False))
+    print(json.dumps(res, indent=1, ensure_ascii=False))
+    return 0 if res["ALL_PASS"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

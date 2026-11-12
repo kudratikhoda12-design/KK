@@ -72,7 +72,10 @@ def _rhat(Rd, agg):
 
 def main():
     R, mismatch, jm_all = merged()
-    s = dict(n_records=len(jm_all), mismatched_partitions=mismatch, failures=failures(jm_all), cohorts={})
+    s = dict(n_records=len(jm_all), n_ok=sum(r.get("status") == "ok" for r in jm_all),
+             n_fit_failed=sum(r.get("status") == "fit_failed" for r in jm_all),
+             n_partitions_paired=sum(len(v) for v in R.values()),
+             mismatched_partitions=mismatch, failures=failures(jm_all), cohorts={})
     for ds in CLIN:
         Rd = R.get(ds, {})
         c = dict(n_splits=len(Rd), visits_median=float(np.median([r["visits_median"] for r in Rd.values()])) if Rd else None,
@@ -83,6 +86,7 @@ def main():
                               for f in ("lin", "ns2")},
                  jm_seconds_median=float(np.median([r["jm_seconds"] for r in Rd.values() if r["jm_seconds"]])) if Rd else None,
                  rhat_max_median=_rhat(Rd, np.median), n_rhat_above_1_1=_rhat(Rd, lambda v: int(np.sum(np.array(v) > 1.1))),
+                 jm_failed_partitions=int(sum(1 for r in Rd.values() if r["jm_status"] != "ok")),
                  contrasts={}, c_contrasts={})
         for a, b in CONTRASTS:
             c["contrasts"][f"{a} - jm"] = A23.contrast(Rd, a, b, "ibs_cond", N_SPLITS)
