@@ -830,14 +830,14 @@
   {
    "src": "reports/report_values_round23.json/n_tests",
    "spec": "s",
-   "value": "362",
-   "text": "362"
+   "value": "376",
+   "text": "376"
   },
   {
    "src": "reports/report_values_round23.json/passed",
    "spec": "s",
-   "value": "340",
-   "text": "340"
+   "value": "355",
+   "text": "355"
   },
   {
    "src": "reports/report_values_round23.json/failed",
@@ -854,8 +854,8 @@
   {
    "src": "reports/report_values_round23.json/skipped",
    "spec": "s",
-   "value": "3",
-   "text": "3"
+   "value": "2",
+   "text": "2"
   },
   {
    "src": "reports/round12_summary.json/H_R12/n",

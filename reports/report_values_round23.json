@@ -1,5 +1,5 @@
 {
- "git_head": "92d4bfb",
+ "git_head": "fac6cdb",
  "n_records": "140",
  "n_ok": "140",
  "n_failed": "0",
@@ -19,9 +19,9 @@
  "j_refs": "40",
  "j_title": "Functional Kolmogorov–Arnold networks for survival prediction from longitudinal trajectories: interpretable effects, safe symbolic distillation, conditional landmark anchoring and semiparametric AFT robustness",
  "j_check": "verification ALL_PASS",
- "n_tests": "362",
- "passed": "340",
+ "n_tests": "376",
+ "passed": "355",
  "failed": "3",
- "skipped": "3",
+ "skipped": "2",
  "xfailed": "16"
 }

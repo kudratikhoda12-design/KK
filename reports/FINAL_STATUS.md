@@ -1,13 +1,13 @@
 # Final status: KAN-FAE research prototype, Round 24 (2026-11-10)
 
-Everything is committed locally on `claude/blissful-faraday-2unozw`; **nothing pushed** (owner instruction).
+Everything is committed on `claude/blissful-faraday-2unozw` and **pushed to the remote** (owner instruction of 2026-11-14, D166).
 Round 24 adds the missing standard comparator: a Bayesian joint model (JMbayes2, project-local R in `.rlocal/`) on the
 six clinical cohorts and the Round-23 partitions. Plan `docs/round24_preregistration.md` (D163, committed before the
 run); results `docs/round24_results.md` (D164).
 Report: `reports/final_research_prototype_report.pdf` = `reports/final_research_prototype_report_rev26.pdf` (revision 26,
-673 pages: Part A = Round 24 and its manuscripts; Part B = revision 25; earlier parts = earlier revisions).
-Supplementary Material: `docs/manuscript_round24.md`, `reports/manuscript_round24.pdf` (61 pages, Rounds 1–24; Section 5.14).
-Journal main manuscript: `docs/manuscript_journal_main_round24.md`, `reports/manuscript_journal_main_round24.pdf` (21 pages; Section 4.4).
+676 pages, corrected and rebuilt on 2026-11-14: Part A = Round 24 and its manuscripts; Part B = revision 25; earlier parts = earlier revisions).
+Supplementary Material: `docs/manuscript_round24.md`, `reports/manuscript_round24.pdf` (62 pages, Rounds 1–24; Section 5.14).
+Journal main manuscript: `docs/manuscript_journal_main_round24.md`, `reports/manuscript_journal_main_round24.pdf` (22 pages; Section 4.4; rewritten for outside readers, D166).
 The Round-23 manuscripts and report revision 25 are kept unchanged.
 
 | Item | Result |
@@ -19,6 +19,7 @@ The Round-23 manuscripts and report revision 25 are kept unchanged.
 | Convergence | Max association Rhat > 1.1 on many pbc and heart_valve partitions (11/20, 11/20, 13/18); reported, not excluded |
 | Not done | C-MAPSS joint model (not a joint-model setting); other joint-model specifications; deep dynamic models |
 | D165 | Both manuscripts and the report updated (renal caveat stated wherever the result is); both manuscript verifications ALL_PASS; `scripts/verify_deliverables.py` ALL_CHECKS_PASS |
+| D166 | Journal manuscript rewritten for outside readers (all 49 value placeholders, 23 tables, 40 citations and every verdict statement unchanged); Supplementary cleaned of decision identifiers; report test tables corrected (they had shown the previous suite's counts); `scripts/verify_deliverables.py` ALL_CHECKS_PASS with a new guard on the test counts |
 | Tests | `final_full_suite_round24`: 369 passed, 3 failed (CK-6c, the 4f gate's original R1 and CK-6d, kept visible as before), 16 xfailed, 2 skipped |
 
 # Round 23 status (2026-11-10), historical

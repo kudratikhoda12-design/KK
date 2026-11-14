@@ -41,7 +41,7 @@ def t_r24_hyp():
               f"{V(b + '/per_cohort/' + ds + '/mean_diff', '+.4f')}, upper {V(b + '/per_cohort/' + ds + '/upper', '+.4f')}",
               yn(f"{b}/per_cohort/{ds}/met")] for ds, lab in CLIN]
     rows.append(["H-R24b", "all six cohorts", "", verdict(b + "/supported")])
-    return md_table(["Hypothesis", "Criterion (D163)", "Result", "Verdict"], rows)
+    return md_table(["Hypothesis", "Criterion (registered before the run)", "Result", "Verdict"], rows)
 
 
 def t_r24_ibs():
@@ -79,6 +79,24 @@ def t_tests():
 
 
 B.TABLES.update(r24_hyp=t_r24_hyp, r24_ibs=t_r24_ibs, r24_c=t_r24_c, tests=t_tests)
+
+# Wording of labels inside tables inherited from the earlier builders: decision-log identifiers are replaced by plain
+# descriptions (label text only; no value is touched, and the earlier manuscripts, built by their own module instances,
+# are unchanged).
+RELABEL = (("Criterion (D160)", "Criterion (registered before the run)"), ("D133 gate", "original gate"))
+
+
+def _relabel(fn):
+    def g():
+        t = fn()
+        for a, b in RELABEL:
+            t = t.replace(a, b)
+        return t
+    return g
+
+
+for _k in list(B.TABLES):
+    B.TABLES[_k] = _relabel(B.TABLES[_k])
 render, TITLE, LEDGER, CITED, resolve = B.render, B.TITLE, B.LEDGER, B.CITED, B.resolve
 CM = M23.CM
 

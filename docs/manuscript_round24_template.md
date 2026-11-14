@@ -1,11 +1,15 @@
-<p class="small">Manuscript draft, Round 24 (D163–D165; supersedes the Round-23 draft, which is kept unchanged, as are
-the Round-14 and Round-16 to Round-22 drafts). It serves as the Supplementary Material of the Round-24 journal main manuscript
-(<code>reports/manuscript_journal_main_round24.pdf</code>). Generated from saved records by <code>scripts/manuscript_round24.py</code>; every number
-below is read from a record and logged with its source in <code>reports/manuscript_values_round24.json</code> (Appendix A). <b>Draft for the owner's review: not peer reviewed; authors, affiliations, funding and competing
-interests to be completed by the owner.</b></p>
+<p class="small"><b>Supplementary Material: the full study record. Draft, not peer reviewed.</b> Author names,
+affiliations, funding and competing interests are to be completed before submission. Every number below is read from a
+saved result and logged with its source (Appendix A).</p>
 
-**Authors:** [to be completed by the owner]  
-**Status:** draft manuscript of a pre-registered empirical study; no novelty claim (D111).
+**Authors:** [to be completed]  
+**Status:** draft record of a pre-registered empirical study; no novelty claim is made.
+
+**How to read this record.** The study proceeded in numbered rounds, each with a plan registered before its seeds or
+data were used. Hypothesis labels carry the round number (H-R20a is hypothesis a of Round 20). Sections 3 and 4 report
+the primary simulation study and the first real-data analyses; Section 5 reports the later rounds in order. "Untouched"
+data are data that no earlier round had used; the main paper calls them held out. Labels beginning with CK are
+acceptance checks of the software, written with fixed thresholds before the simulation was run.
 
 ## Abstract
 
@@ -28,7 +32,7 @@ pre-registered multi-part criteria, a distillation refit for the symbolic summar
 model that adds the last observed values to B2-S, a two-way gate that can fall back to B2-S, and both tools in a
 log-normal KAN-AFT; the last round added a semiparametric functional KAN-AFT whose error law is estimated by
 Kaplan–Meier, and a confirmation of anchoring in both halves of the validation split; later rounds applied the
-locked versions of these methods to the real data sets and to two cohorts not used before. Round 23
+frozen versions of these methods to the real data sets and to two cohorts not used before. Round 23
 asked where the functional model helps: on two untouched C-MAPSS engine data sets with long sensor histories, by
 thinning long renal histories to three visits, and by blending the functional model with landmark Cox on six clinical
 cohorts with new partitions. The last round (Round 24) added the standard comparator for dynamic prediction, a
@@ -69,7 +73,7 @@ set, for Cox and both AFT models (H-R20b supported; S-Sparse bound for Cox {{V:r
 On the real data (Round 21) the semiparametric KAN-AFT was finite, D-calibrated and close to the other B2-S models, but
 on the primary PBC endpoint it did not match the Weibull KAN-AFT ({{V:reports/round21/analysis_summary.json/hypotheses/H_R21a/part2_mean_vs_waft|+.4f}} in
 mean conditional IBS; H-R21a not supported), and cross-confirmed anchoring never cost more than the registered margin
-on any clinical data set (H-R21b supported). On two cohorts not used before (Round 22) the locked models were again
+on any clinical data set (H-R21b supported). On two cohorts not used before (Round 22) the frozen models were again
 close to the baselines, with every interval including 0, and anchoring and distillation met their margins, but one
 baseline fit failed, so the registered all-finite criterion was not met (H-R22b not supported); in simulation the
 semiparametric KAN-AFT was better than all three parametric KAN models under a bimodal error law, and than the Cox
@@ -169,7 +173,7 @@ A targeted (not systematic) literature review was completed before any functiona
 | B3: stacked landmark supermodel with KAN effects | Landmark supermodel {{CP:vanhouwelingen2012}}; JM-KAN {{CP:lundin2025}} | Partly covered by JM-KAN, whose design could not be compared from its abstract |
 | KAN-FAE | Functional autoencoders {{CP:wu2024}}; KAN survival models | Serves as the motivating negative result |
 
-**Claim policy (D111).** We make no novelty or "first" claim; that would require a systematic review including the
+**Claim policy.** We make no novelty or "first" claim; that would require a systematic review including the
 full texts of JM-KAN, F-KAN and KAPLAN. We claim no superiority where an interval includes 0 or where the comparator
 was not validated. The contributions are: (i) a pre-registered empirical comparison of functional KAN survival models
 with AFCM and other functional methods; (ii) a measured evaluation of shape recovery, channel selection, symbolic
@@ -266,9 +270,9 @@ which we did with unconstrained L-BFGS.
 
 **Methodological finding.** In the simulation (Section 3.6) the substituted model **without** refit reproduced the
 pruned model's shapes, whereas the unconstrained refit drifted far from them, and in a few fits a formula left its
-domain (for example the logarithm of a negative argument) and produced non-finite risks. The owner therefore fixed,
+domain (for example the logarithm of a negative argument) and produced non-finite risks. We therefore fixed,
 before the real-data study, that the **primary** symbolic model is the substituted model without refit; the refitted
-model is reported as secondary (D128). The real data confirmed the pattern (Section 4.3). Phase 2 tested a
+model is reported as secondary. The real data confirmed the pattern (Section 4.3). Phase 2 tested a
 constrained refit (Section 5.2).
 
 ### 2.7 Metrics and statistical analysis
@@ -299,7 +303,7 @@ constrained refit (Section 5.2).
 Every round was registered in a decision log before its seeds were used, and every run, including failures, is
 reported. Twelve acceptance tests (CK-1 to CK-12) with fixed thresholds and seeds were written before the simulation;
 failures were recorded and never converted by changing a seed or threshold. Five failed at first and led to recorded
-owner decisions (repaired simulator and shape metric, convergence-based CoxKAN check, channel-level pruning score,
+decisions recorded by the investigators (repaired simulator and shape metric, convergence-based CoxKAN check, channel-level pruning score,
 a stronger misspecification check), after which all but the AFCM check passed. The test suite at the end of
 Round 23:
 
@@ -730,11 +734,11 @@ was applied to the saved Round-15 gate grids: it would have reduced the S-Sparse
 from {{V:reports/round16/dev/gate_rule_on_round15_records.json/sparse/old_all_off|d}} to
 {{V:reports/round16/dev/gate_rule_on_round15_records.json/sparse/new_all_off|d}}, because in the others "all off" was
 strictly better on the validation data, so a repeat failure of the second part was anticipated
-and recorded (D138, D139).
+and recorded.
 
 In Round 16 the S-Last part held again ({{V:reports/round16_summary.json/family_b/H_R16b/part1_ci95|+.4f}}), and the non-cliff rule kept
 trajectory channels more often on S-Last (every channel off in {{V:reports/round16_summary.json/family_b/last/gate_all_off/b2s_anchor_cox_noncliff|d}}
-replicates, against {{V:reports/round16_summary.json/family_b/last/gate_all_off/b2s_anchor_cox_d133|d}} under the D133 rule) without
+replicates, against {{V:reports/round16_summary.json/family_b/last/gate_all_off/b2s_anchor_cox_d133|d}} under the original rule) without
 changing the curve error. On S-Sparse, however, both rules switched every channel off in only
 {{V:reports/round16_summary.json/family_b/sparse/gate_all_off/b2s_anchor_cox_noncliff|d}} replicate and made identical decisions, and the
 anchored model was still slightly worse than B2-S Cox
@@ -757,7 +761,7 @@ and whether the Phase-2 tools carry over to a KAN-AFT. The two-way gate (Section
 model itself, so a replicate in which anchoring is not chosen contributes a difference of exactly 0. The tolerance
 last_tol was chosen by a rule fixed before the development runs, on already-used Round-16 seeds for Cox
 ({{V:reports/round17/dev_summary.json/last_tol/cox|g}}) and on those seeds plus development seeds for the log-normal AFT
-({{V:reports/round17/dev_summary.json/last_tol/aft|g}}, the largest value of the grid); the registration was locked afterwards (D141).
+({{V:reports/round17/dev_summary.json/last_tol/aft|g}}, the largest value of the grid); the registration was fixed afterwards.
 
 **Table 24. Development check** (already-used seeds; the two-way model at last_tol 0 and at the chosen value; in-sample,
 since last_tol was chosen on these replicates).
@@ -862,7 +866,7 @@ the confirmation decision still holds up against the usual B2-S trained on the w
 model is refitted on the whole validation set once anchoring is confirmed and the full-validation B2-S is used
 otherwise (Section 5.1). The design, two refit variants, a margin rule and a go/no-go rule were fixed before a
 development check on the already-used Round-18 seeds. The check failed its go/no-go rule, so **no formal test was run:
-H-R19a and H-R19b are untested**, and their fresh seeds remain unused (D147, D148).
+H-R19a and H-R19b are untested**, and their fresh seeds remain unused.
 
 **Table 32. Round-19 development check** (already-used Round-18 seeds; estimator − B2-S trained on the whole validation
 set; each refit variant at margin 0 and at the margin its rule chose; in-sample).
@@ -888,7 +892,7 @@ the Round-18 confirmation compared the anchored candidate with a single B2-S mem
 in one direction only; against B2-S trained on the whole validation set it did not keep Cox within the S-Sparse margin
 (Section 5.6). Round 20 tested NP-KAN-AFT and the two-half cross-confirmation (Section 5.1). Two development stages on
 the already-used Round-18 seeds fixed the NP-KAN-AFT objective and the margins by rules set before the runs, and the
-hypotheses were then tested on fresh seeds (D150, D151).
+hypotheses were then tested on fresh seeds.
 
 **Development.** The smoothed Gehan objective had the lower average curve error over S-Sparse and S-Misspec
 ({{V:reports/round20/devA_summary.json/objective_score/rank_km|.4f}} against {{V:reports/round20/devA_summary.json/objective_score/bj_km|.4f}} for Buckley–James) and was chosen
@@ -956,11 +960,11 @@ data; the Round-20 methods were (Section 5.9).
 
 ### 5.9 Round-20 methods on real data (H-R21a, H-R21b, H-R21c)
 
-Round 21 applied the locked Round-20 methods to the real data: the semiparametric KAN-AFT (smoothed Gehan objective),
+Round 21 applied the frozen Round-20 methods to the real data: the semiparametric KAN-AFT (smoothed Gehan objective),
 the log-normal KAN-AFT and the two-half cross-confirmed anchor (margins as Round 20), on the same five outer splits of
-the four clinical cohorts as Rounds 13 and 15, and on C-MAPSS FD001 Option B as in Section 4.6 (D153). The data and
+the four clinical cohorts as Rounds 13 and 15, and on C-MAPSS FD001 Option B as in Section 4.6. The data and
 splits had been used before, so this is an application of fixed methods to known data, not a test on fresh data, and
-with five splits the comparisons are non-degradation and integrity checks rather than tests of superiority (D111). The
+with five splits the comparisons are non-degradation and integrity checks rather than tests of superiority. The
 Round-21 B2-S Cox and Weibull ensembles reproduced the Round-13 records exactly, and fixed-μ distillation was recorded
 as a diagnostic.
 
@@ -1017,7 +1021,7 @@ mean conditional IBS by less than 0.001, as in simulation (Section 5.2).
 ### 5.10 AFCM smoothing by marginal likelihood (Round 15 development check; CK-6d, Round 22)
 
 To repair the comparator, smoothing parameters were chosen by a Laplace approximate marginal likelihood (LAML, with
-the Breslow observed information) instead of validation loss. The registered pass rule (D134) required the CK-6c
+the Breslow observed information) instead of validation loss. The registered pass rule required the CK-6c
 criterion, φ₁ below 0.15 and φ₂ below 0.10, on all three seeds 22, 914, 966 before seed 24 would be used.
 
 **Table 47. AFCM variants on the development seeds (Round 15).**
@@ -1027,7 +1031,7 @@ criterion, φ₁ below 0.15 and φ₂ below 0.10, on all three seeds 22, 914, 96
 LAML improved seed 22 but not enough, and was worse than validation selection on seeds 914 and 966; no variant met
 the criterion on every seed, and seed 24 was not used in Round 15.
 
-Round 22 (D156) replaced the shared penalty by one penalty per channel and direction (a trajectory penalty λ_x and a
+Round 22 replaced the shared penalty by one penalty per channel and direction (a trajectory penalty λ_x and a
 time penalty λ_t for each channel), estimated by the Fellner–Schall update of the Laplace marginal likelihood
 {{CP:wood2017}} from the common-λ LAML grid optimum, in the spirit of REML smoothing-parameter estimation
 {{CP:wood2011}}. R and mgcv were not available, so the estimator is our Python implementation; the default AFCM fit is
@@ -1053,12 +1057,12 @@ given data set (an interpretation, not a tested finding).
 
 ### 5.11 Untouched external cohorts and C-MAPSS FD003 (H-R22b)
 
-Round 22 applied the locked Round-21 models, without any tuning beyond the Round-21 protocol, to two longitudinal
+Round 22 applied the frozen Round-21 models, without any tuning beyond the Round-21 protocol, to two longitudinal
 cohorts that no earlier round had used, both from the R package joineRML {{CP:hickey2018}}: `renal` (kidney
 transplant recipients, glomerular filtration rate and haematocrit, graft failure; {{CP:rizopoulos2011}}) and
 `heart.valve` (aortic valve replacement, log left-ventricular mass index and log valve gradient, death; {{CP:lim2008}}),
 each at a one-year landmark, and to C-MAPSS FD003 Option B, which had been analysed in Round 3 and is therefore not
-untouched (D156). The models were the four B2-S families, the cross-confirmed anchors with the Round-20 margins and
+untouched. The models were the four B2-S families, the cross-confirmed anchors with the Round-20 margins and
 fixed-μ distillation of the seed-0 NP-KAN-AFT and Cox members, against landmark Cox, FPCA Cox, the two-stage
 mixed-effects Cox model and the summary Cox and random survival forest models, on five outer splits per cohort
 (Table 51). The criteria were fixed before the run (Table 50).
@@ -1076,13 +1080,13 @@ anchor and distilled model gave finite metrics and survival predictions on every
 except one: the summary Cox model did not converge on heart-valve split {{V:reports/round22/results_lane3.jsonl/job_name=real_heart_valve_3/split|d}} (the lifelines fitter
 stopped with a convergence error), so its heart-valve row in Table 52 averages four splits. Part 1 of H-R22b required
 every model and baseline record to be finite, so **H-R22b is not supported** (Table 50), although parts 2 and 3 were
-met; the failed fit is reported as it occurred and was not refitted with another penalty (D158).
+met; the failed fit is reported as it occurred and was not refitted with another penalty.
 
 On renal the B2-S Weibull AFT had the lowest mean conditional IPCW IBS ({{V:reports/round22/analysis_summary.json/cohorts/renal/means/b2s_waft/ibs_cond|.4f}})
 and FPCA Cox the highest Harrell C ({{V:reports/round22/analysis_summary.json/cohorts/renal/means/fpca_cox/harrell_c|.3f}}); on heart valve FPCA Cox
 ({{V:reports/round22/analysis_summary.json/cohorts/heart_valve/means/fpca_cox/ibs_cond|.4f}}) and the B2-S log-normal AFT
 ({{V:reports/round22/analysis_summary.json/cohorts/heart_valve/means/b2s_lnaft/ibs_cond|.4f}}) had the lowest means (Table 52). Every Nadeau–Bengio and
-every plain interval in Table 53 includes 0; five splits cannot support claims of superiority (D111). The renal
+every plain interval in Table 53 includes 0; five splits cannot support claims of superiority. The renal
 histories were much denser than the heart-valve ones (median {{V:reports/round22/analysis_summary.json/cohorts/renal/cohort/obs_per_subject_median|.1f}}
 against {{V:reports/round22/analysis_summary.json/cohorts/heart_valve/cohort/obs_per_subject_median|.1f}} visits before the landmark; Table 51), and B2-S
 Cox was below landmark Cox by {{V:reports/round22/analysis_summary.json/cohorts/renal/contrasts/ibs_cond b2s_cox - landmark_cox/nb/mean_diff|+.4f}} on renal
@@ -1124,7 +1128,7 @@ cross-confirmed version, the highest Harrell C ({{V:reports/round22/analysis_sum
 and both parametric KAN-AFT models were below landmark Cox on every split, but of their Nadeau–Bengio intervals only
 that of the Weibull AFT excluded 0 ({{V:reports/round22/analysis_summary.json/fd003/contrasts/ibs b2s_waft - landmark_cox/nb/ci95|+.4f}}), and no
 interval against B2-S Cox excluded 0 (Table 57). D-calibration passed on at most one split for any model and on none
-for the baselines. FD003 had been analysed in Round 3, so these comparisons are not an untouched test (D156).
+for the baselines. FD003 had been analysed in Round 3, so these comparisons are not an untouched test.
 
 ### 5.12 NP-KAN-AFT under three further error laws (H-R22c)
 
@@ -1132,7 +1136,7 @@ Round 20 tested NP-KAN-AFT under log-normal errors only. Round 22 added three er
 S-Misspec design (log T = 1 − η/1.5 + ε): a symmetric bimodal normal mixture, which no parametric family in the
 comparison can represent; a Student t law with three degrees of freedom (heavy tails); and a logistic law, close to the
 normal. Each law had {{V:reports/round22/analysis_summary.json/sims/bimodal/n|d}} fresh replicates of n = 1,000 with 30% censoring, and the four B2-S families were fitted as
-three-seed ensembles (D156). H-R22c required NP-KAN-AFT to be better than all three parametric models under the
+three-seed ensembles. H-R22c required NP-KAN-AFT to be better than all three parametric models under the
 bimodal law, and better than Cox and Weibull and no more than 0.005 worse than log-normal under the other two
 (Table 50).
 
@@ -1160,12 +1164,12 @@ the real cohorts above NP-KAN-AFT showed no corresponding advantage (Section 5.1
 
 The earlier rounds left one pattern unexplained: on the clinical cohorts landmark Cox was as good as any functional
 model, while on renal, which has long histories, and on FD003 the functional models had lower mean error, without an
-interval that excluded 0. Round 23 (D160) tested that pattern directly, with more splits, because the Nadeau–Bengio
+interval that excluded 0. Round 23 tested that pattern directly, with more splits, because the Nadeau–Bengio
 correction makes five splits too few to detect differences of this size. **(a)** C-MAPSS FD002 and FD004, which no
 earlier round had used, have six operating conditions; the sensors were z-scored within each condition (k-means with
 six clusters on the training engines' operating settings) and windowed as in FD003 Option B (30-cycle windows, every 20
 cycles to bound the cost of the quadratic rank loss), with ten engine splits each. NP-KAN-AFT was fitted at a fixed
-setting (learning rate 3e-3, weight decay 1e-4, three seeds; D160) and compared with landmark Cox on the last raw or
+setting (learning rate 3e-3, weight decay 1e-4, three seeds) and compared with landmark Cox on the last raw or
 the last smoothed sensor values, whichever had the lower validation IBS, and with the summary and FPCA Weibull AFT
 models. **(b)** On renal (median {{V:reports/round23/analysis_summary.json/clinical/renal/visits_median|.0f}} visits before the landmark) the same NP-KAN-AFT was refitted after
 thinning every history to three visits (first, middle and last). **(c)** A blend S = w S_landmark + (1 − w) S_NP, with
@@ -1230,7 +1234,7 @@ better than landmark Cox, and blending the two did not give a safe gain that the
 ### 5.14 A Bayesian joint model as comparator (H-R24a, H-R24b)
 
 Up to Round 23 no joint model had been fitted, because R was not available; the two-stage mixed-effects Cox model stood
-in for that class. Round 24 (D163) installed R in a project-local environment and fitted a Bayesian multivariate joint
+in for that class. Round 24 installed R in a project-local environment and fitted a Bayesian multivariate joint
 model (`JMbayes2`; {{CP:rizopoulos2011}}) on the six clinical cohorts and the same twenty partitions as Round 23
 (k = 5 to 24), so that its results pair with the Round-23 NP-KAN-AFT, landmark Cox and blend records partition by
 partition; a partition was paired only if the cohort size, test-set size and test events agreed, and all
@@ -1258,8 +1262,8 @@ partitions and the interval excluded 0 (**H-R24a supported**; Table 67). That re
 renal the joint model was also worse than landmark Cox ({{V:reports/round24/analysis_summary.json/cohorts/renal/contrasts/landmark_cox - jm/mean_diff|+.4f}},
 interval {{V:reports/round24/analysis_summary.json/cohorts/renal/contrasts/landmark_cox - jm/ci95|+.4f}}), passed D-calibration on
 {{V:reports/round24/analysis_summary.json/cohorts/renal/dcal_pass/jm|d}} partition against {{V:reports/round24/analysis_summary.json/cohorts/renal/dcal_pass/b2s_npaft|d}} and
-{{V:reports/round24/analysis_summary.json/cohorts/renal/dcal_pass/landmark_cox|d}} for NP-KAN-AFT and landmark Cox, and had a lower mean Harrell C, with an interval that included 0 (
-{{V:reports/round24/analysis_summary.json/cohorts/renal/means/harrell_c/jm|.3f}} against {{V:reports/round24/analysis_summary.json/cohorts/renal/means/harrell_c/b2s_npaft|.3f}}). Renal patients have a
+{{V:reports/round24/analysis_summary.json/cohorts/renal/dcal_pass/landmark_cox|d}} for NP-KAN-AFT and landmark Cox, and had a lower mean Harrell C, with an interval that included 0
+({{V:reports/round24/analysis_summary.json/cohorts/renal/means/harrell_c/jm|.3f}} against {{V:reports/round24/analysis_summary.json/cohorts/renal/means/harrell_c/b2s_npaft|.3f}}). Renal patients have a
 median of {{V:reports/round24/analysis_summary.json/cohorts/renal/visits_median|.0f}} visits before the landmark, and a straight-line or smooth-mean trajectory
 with a subject-specific intercept and slope follows such long histories poorly; the result shows that this
 pre-specified joint model fits renal poorly, not that NP-KAN-AFT is better than a well-specified joint model.
@@ -1320,7 +1324,7 @@ histories the pre-specified joint model was the weakest of the three.
    endpoint (H-R21a not supported), and cross-confirmed anchoring stayed within its margin on every cohort (H-R21b).
    Under error laws that no parametric family in the comparison represents (a bimodal mixture) it was clearly better
    than all three parametric KAN models, and its advantage shrank as the law approached the normal (H-R22c).
-8. **The locked methods transferred to new cohorts without gain.** On two cohorts not used in any earlier round they
+8. **The frozen methods transferred to new cohorts without gain.** On two cohorts not used in any earlier round they
    stayed close to the baselines, and anchoring and distillation stayed within their margins; the registered test
    still failed, because one baseline fit did not converge (H-R22b). A per-channel marginal-likelihood AFCM met the
    development rule but failed on the held-out seed, so the AFCM comparator remains unvalidated (CK-6d).
@@ -1353,7 +1357,7 @@ to work we could read only in abstract.
 - **Phase 2 was motivated post hoc.** The Round-15 to Round-17 revisions were designed after looking at earlier
   rounds' failures (on other seeds), tested on one simulator, and the Round-16 and Round-17 changes were not run on
   real data; the Round-15 real-data analyses used the same data that motivated the anchored design. Round 21 ran the
-  locked Round-20 methods and the fixed-μ distillation on the real data, on the same splits as Rounds 13 and 15, so
+  frozen Round-20 methods and the fixed-μ distillation on the real data, on the same splits as Rounds 13 and 15, so
   those results are an application to known data rather than a fresh test.
 - **Tolerances tuned on few seeds.** Round 17's last_tol values were chosen on the already-used Round-16 replicates (and
   development seeds for S-Misspec); the Cox value did not transfer to fresh seeds (H-R17a), and the AFT value
@@ -1436,8 +1440,8 @@ These negative, equivalence and trade-off findings, with the full record behind 
   data repository. Checksums are in `reports/run_manifest.json`.
 - **Code availability.** The repository contains all code, tests, decision logs and records.
 - **Use of AI tools.** The code, analyses and this draft were produced with an AI coding assistant (Claude Code)
-  working under the owner's recorded decisions; every number was generated from saved records.
-- **Authors' contributions, funding, competing interests, ethics.** To be completed by the owner. The data sets are
+  working under the investigators' recorded decisions; every number was generated from saved records.
+- **Authors' contributions, funding, competing interests, ethics.** To be completed before submission. The data sets are
   public and de-identified.
 
 ## References

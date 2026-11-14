@@ -1,13 +1,13 @@
 {
  "pdf_exists": true,
  "pdf_opens": true,
- "pdf_pages": 673,
- "pdf_text_chars": 4693279,
+ "pdf_pages": 676,
+ "pdf_text_chars": 4723265,
  "pdf_no_placeholders": true,
  "pdf_has_manuscript_sections": true,
  "pdf_has_part1_sections": true,
  "pdf_has_all_17_sections": true,
- "page_renders": 673,
+ "page_renders": 676,
  "blank_pages": [],
  "md_3dp_numbers": 918,
  "md_numbers_missing_in_pdf": [],
@@ -40,7 +40,7 @@
  "report_template_round23.md_values_used": 25,
  "report_template_round24.md_values_used": 24,
  "P0_summary_values_in_pdf": "21/21",
- "tests_reported": 362,
+ "tests_reported": 391,
  "tests_without_log_evidence": [],
  "final_suite_counts_round1": {
   "passed": 148,
@@ -54,6 +54,8 @@
   "skipped": 2,
   "xfailed": 16
  },
+ "report_test_counts_match_final_suite": true,
+ "report_suite_table_has_final_run": true,
  "final_suite_failures": [
   "tests/test_learnability_fa4f.py::test_R1_oracle_features_head",
   "tests/test_round12b_ck.py::test_CK6c_repaired_afcm_identifiable_rise",
@@ -211,8 +213,8 @@
   "sections": true,
   "pdf": true
  },
- "manuscript24_pdf_pages": 61,
- "manuscript24_page_renders": 61,
+ "manuscript24_pdf_pages": 62,
+ "manuscript24_page_renders": 62,
  "manuscript24_blank_pages": [],
  "journal24_checks": {
   "ledger": true,
@@ -224,8 +226,8 @@
   "references": true,
   "pdf": true
  },
- "journal24_pdf_pages": 21,
- "journal24_page_renders": 21,
+ "journal24_pdf_pages": 22,
+ "journal24_page_renders": 22,
  "journal24_blank_pages": [],
  "journal24_values_checked_in_report_pdf": 491,
  "journal24_values_missing_in_report_pdf": [],
@@ -241,7 +243,7 @@
  "rev17_kept": true,
  "rev16_kept": true,
  "report_blank_pages_by_text": [],
- "commands_logged": 448,
+ "commands_logged": 456,
  "commands_missing_log_file": [],
  "experiment_csv_rows_equal_jsonl": true,
  "experiment_records": 2393,

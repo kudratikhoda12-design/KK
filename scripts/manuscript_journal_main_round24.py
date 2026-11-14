@@ -41,38 +41,44 @@ def yn(src):
 
 
 def t_j_hyp():
-    rows = [["H1", "framing (b)", "KAN-FAE − MLP-FAE, survival-curve error (simulation)", "KAN-FAE worse"],
-            ["H-R12", "Round 12", "B2-S Cox − AFCM V3, identifiable RISE (simulation)", "inconclusive"],
-            ["H-R15a / H-R16a", "Rounds 15–16", "symbolic distillation refit finite and shape-preserving",
+    """Table 1. The 'Topic' column names the part of the study in words (the Supplementary Material is organised by the
+    registration labels, which are kept in the first column)."""
+    rows = [["H1", "KAN blocks inside a functional autoencoder", "KAN autoencoder − MLP autoencoder, survival-curve error "
+             "(simulation)", "KAN autoencoder worse"],
+            ["H-R12", "Shape recovery", "B2-S Cox − AFCM, identifiable RISE (simulation)", "inconclusive"],
+            ["H-R15a / H-R16a", "Symbolic distillation", "distillation refit finite and shape-preserving "
+             "(first version / fixed-penalty version)",
              f"{yn('reports/round15_summary.json/family_a/H_R15a/supported')} / {yn('reports/round16_summary.json/family_a/H_R16a/supported')}"],
-            ["H-R15b / H-R16b", "Rounds 15–16", "landmark-anchored B2-S: gain when the last value carries the risk, "
-             "no loss otherwise", f"{yn('reports/round15_summary.json/family_b/H_R15b/supported')} / "
-                                  f"{yn('reports/round16_summary.json/family_b/H_R16b/supported')}"],
-            ["H-R17a / H-R17b", "Round 17", "two-way gated anchoring (Cox / log-normal KAN-AFT)",
+            ["H-R15b / H-R16b", "Landmark anchoring", "always-anchored B2-S: gain when the last value carries the risk, "
+             "no loss otherwise (two tests)", f"{yn('reports/round15_summary.json/family_b/H_R15b/supported')} / "
+                                             f"{yn('reports/round16_summary.json/family_b/H_R16b/supported')}"],
+            ["H-R17a / H-R17b", "Landmark anchoring", "anchoring gated on the validation loss (Cox / log-normal KAN-AFT)",
              f"{yn('reports/round17_summary.json/H_R17a/supported')} / {yn('reports/round17_summary.json/H_R17b/supported')}"],
-            ["H-R18a / H-R18b", "Round 18", "anchoring decided on a confirmation split (Cox / log-normal KAN-AFT)",
+            ["H-R18a / H-R18b", "Landmark anchoring", "anchoring decided on a confirmation split (Cox / log-normal KAN-AFT)",
              f"{yn('reports/round18_summary.json/H_R18a/supported')} / {yn('reports/round18_summary.json/H_R18b/supported')}"],
-            ["H-R20a", "Round 20", "NP-KAN-AFT under log-normal errors, against Cox and Weibull",
+            ["H-R20a", "Error-law robustness", "NP-KAN-AFT under log-normal errors, against Cox and Weibull",
              yn("reports/round20_summary.json/H_R20a/supported")],
-            ["H-R20b", "Round 20", "cross-confirmed anchoring against full-validation B2-S (three families)",
-             yn("reports/round20_summary.json/H_R20b/supported")],
-            ["H-R21a / H-R21b / H-R21c", "Round 21", "Round-20 methods on four clinical cohorts and C-MAPSS FD001",
+            ["H-R20b", "Landmark anchoring", "cross-confirmed anchoring against B2-S trained on the whole validation set "
+             "(three model families)", yn("reports/round20_summary.json/H_R20b/supported")],
+            ["H-R21a / H-R21b / H-R21c", "Clinical cohorts", "the fixed methods on four clinical cohorts and C-MAPSS FD001",
              " / ".join(yn(f"reports/round21/analysis_summary.json/hypotheses/H_R21{x}/supported") for x in "abc")],
-            ["H-R22a", "Round 22", "B2-S Cox − per-channel REML AFCM (run only if CK-6d passed)", "not run (CK-6d failed)"],
-            ["H-R22b", "Round 22", "untouched cohorts: every fit finite, anchoring and distillation within their margins",
+            ["H-R22a", "Shape recovery", "B2-S Cox − AFCM with per-channel marginal-likelihood smoothing (to be run only "
+             "if that AFCM passed its acceptance check)", "not run (acceptance check failed)"],
+            ["H-R22b", "Held-out cohorts", "every fit finite, anchoring and distillation within their margins",
              yn("reports/round22/analysis_summary.json/H_R22b/supported")],
-            ["H-R22c", "Round 22", "NP-KAN-AFT under bimodal, t₃ and logistic errors",
+            ["H-R22c", "Error-law robustness", "NP-KAN-AFT under bimodal, t₃ and logistic errors",
              yn("reports/round22/analysis_summary.json/H_R22c/supported")],
-            ["H-R23a", "Round 23", "NP-KAN-AFT better than landmark Cox on untouched C-MAPSS FD002 and FD004",
+            ["H-R23a", "Long histories", "NP-KAN-AFT better than landmark Cox on held-out C-MAPSS FD002 and FD004",
              yn(f"{A23}/H_R23a/supported")],
-            ["H-R23b", "Round 23", "renal: thinning histories to three visits makes NP-KAN-AFT worse",
+            ["H-R23b", "Long histories", "renal: thinning histories to three visits makes NP-KAN-AFT worse",
              yn(f"{A23}/H_R23b/supported")],
-            ["H-R23c (i) / (ii)", "Round 23", "blend with landmark Cox: non-inferior on every clinical cohort / better on renal",
-             f"{yn(A23 + '/H_R23c/part_i/supported')} / {yn(A23 + '/H_R23c/part_ii/supported')}"],
-            ["H-R24a", "Round 24", "renal: NP-KAN-AFT better than a Bayesian joint model", yn(f"{A24}/H_R24a/supported")],
-            ["H-R24b", "Round 24", "NP-KAN-AFT non-inferior to the joint model on every clinical cohort",
+            ["H-R23c (i) / (ii)", "Long histories", "blend with landmark Cox: non-inferior on every clinical cohort / "
+             "better on renal", f"{yn(A23 + '/H_R23c/part_i/supported')} / {yn(A23 + '/H_R23c/part_ii/supported')}"],
+            ["H-R24a", "Joint-model comparison", "renal: NP-KAN-AFT better than a Bayesian joint model",
+             yn(f"{A24}/H_R24a/supported")],
+            ["H-R24b", "Joint-model comparison", "NP-KAN-AFT non-inferior to the joint model on every clinical cohort",
              yn(f"{A24}/H_R24b/supported")]]
-    return md_table(["Hypothesis", "Stage", "Question", "Verdict"], rows)
+    return md_table(["Hypothesis", "Topic", "Question", "Verdict"], rows)
 
 
 def t_j_real13():
@@ -138,6 +144,27 @@ def t_j_r24():
 
 
 B.TABLES.update(j_hyp=t_j_hyp, j_real13=t_j_real13, j_ext=t_j_ext, j_r23_cm=t_j_r23_cm, j_r23_con=t_j_r23_con, j_r24=t_j_r24)
+
+# Journal wording of labels inside tables inherited from the Supplementary Material's builders: only label text is
+# replaced (study-internal stage names -> plain descriptions); no value is touched, and every value is still logged and
+# checked against the Supplementary Material's ledger.
+RELABEL = (("(Round-12a AFCM)", "(earlier AFCM version)"), ("raw (Round-11) RISE", "RISE without the identifiability projection"),
+           ("| Round 15 | Round 16 |", "| Initial test | Follow-up test |"),
+           ("(R15: μ by validation; R16: μ = 10, NaN-safe)", "(initial: μ by validation; follow-up: μ = 10, NaN-safe)"),
+           ("anchored, D133 gate", "anchored, original gate"), ("(not validated, CK-6c)", "(not validated)"))
+
+
+def _relabel(fn):
+    def g():
+        t = fn()
+        for a, b in RELABEL:
+            t = t.replace(a, b)
+        return t
+    return g
+
+
+for _k in ("hr12", "sadd", "distill", "anchor"):
+    B.TABLES[_k] = _relabel(B.TABLES[_k])
 render, TITLE, LEDGER, CITED, resolve = B.render, B.TITLE, B.LEDGER, B.CITED, B.resolve
 
 

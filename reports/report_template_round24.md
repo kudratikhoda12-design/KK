@@ -1,6 +1,6 @@
 <p class="small">Research prototype report, revision 26 · generated from saved records by
 <code>scripts/build_report_round24.py</code> · git <code>{{V:git_head}}</code> (local branch
-<code>claude/blissful-faraday-2unozw</code>, <b>not pushed</b>) · status: <b>research prototype; both manuscripts are
+<code>claude/blissful-faraday-2unozw</code>, pushed to the remote on the owner's instruction of 2026-11-14) · status: <b>research prototype; both manuscripts are
 drafts for the owner's review, not peer reviewed; no novelty claim</b>. Part A is Round 24: a Bayesian joint model
 (JMbayes2) fitted as the standard dynamic-prediction comparator on the six clinical cohorts and the Round-23 partitions
 (D163–D165). Part A continues with the Round-24 journal main manuscript, embedded, and the verification of both Round-24
@@ -13,7 +13,7 @@ is revision 25's Part A (Round 23 and the Round-23 journal manuscript); Parts C�
 
 | Item | Result |
 |---|---|
-| Owner instruction | "yes install R and fit the joint model" (2026-11-10); then "yes update the manuscript and send me the PDFs" (2026-11-12) |
+| Owner instruction | "yes install R and fit the joint model" (2026-11-10); then "yes update the manuscript and send me the PDFs" (2026-11-12); then, on 2026-11-14, push the branch, rewrite the manuscripts for outside readers and correct two bookkeeping items in this report (D166) |
 | Design (D163) | Registered before any formal fit: a Bayesian multivariate joint model (per-marker mixed models on the training subjects' full histories, Cox submodel with delayed entry at the landmark, current-value association; straight-line or spline-mean trajectory chosen on validation; 3 chains × 6,500 iterations) on the six clinical cohorts and the Round-23 partitions 5–24, paired with the Round-23 NP-KAN-AFT, landmark Cox and blend records |
 | Execution | {{V:n_records}} jobs: {{V:n_ok}} gave a joint model, {{V:n_failed}} recorded fit failures (not refitted); no relaunch |
 | H-R24a (renal) | **{{V:hA}}** ({{V:a_diff}}); caveat: on renal the joint model was also worse than landmark Cox ({{V:a_lc}}) and passed D-calibration on {{V:a_dcal}} partitions (Section R24.3) |
@@ -36,6 +36,15 @@ is revision 25's Part A (Round 23 and the Round-23 journal manuscript); Parts C�
   these fits were kept and the problem is reported as a limitation.
 - **Manuscripts.** The Supplementary Material gains Section 5.14 (Tables 66–68); the journal paper gains Section 4.4
   and Table 21, and its limitations now name the single joint-model specification instead of "no joint model".
+- **Rewrite for outside readers (D166).** The journal paper was rewritten in plain terms: study-internal vocabulary
+  (round numbers, decision identifiers, "owner", "untouched", "locked") was replaced by descriptions, the hypotheses
+  keep their registration labels, and the pre-registration is stated to be internal (a time-stamped decision log, not a
+  public registry). Every logged value, every table and every verdict statement is unchanged, and both verifications
+  pass. The Supplementary Material keeps its round-by-round structure, gains a short reader's note and loses the
+  decision identifiers.
+- **Correction to this report (D166).** Revision 26 as first issued showed the previous suite's test counts in
+  Section 0.1 and an empty table in Section R24.9, because the test records had not been compiled into the tables the
+  report reads. They now show `final_full_suite_round24`, and the deliverable check fails if the two ever differ.
 
 # Part A: Round 24
 
@@ -91,7 +100,7 @@ is revision 25's Part A (Round 23 and the Round-23 journal manuscript); Parts C�
 
 {{T:ms_verification}}
 
-## R24.8 Decisions (D163–D165)
+## R24.8 Decisions (D163–D166)
 
 {{T:decisions}}
 

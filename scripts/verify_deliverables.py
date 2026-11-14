@@ -58,7 +58,7 @@ MS16_SECTIONS = ["5. Phase 2: pre-registered methodological revisions (Rounds 15
                  # Round 23 (D162): the Round-23 journal main manuscript is the embedded one
                  "4.3 Where the functional model helps (Round 23)",
                  # Round 24 (D165): the Round-24 journal main manuscript is the embedded one
-                 "4.4 Comparison with a Bayesian joint model (Round 24)"]
+                 "4.4 Comparison with a Bayesian joint model"]
 res["pdf_has_manuscript_sections"] = all(s in T for s in MS_SECTIONS + MS16_SECTIONS)
 res["pdf_has_part1_sections"] = all(f"0.{k} " in T for k in range(1, 3)) and all(
     re.search(rf"\bR24\.{k}\s", T) for k in range(1, 11)) and all(
@@ -156,6 +156,12 @@ res["final_suite_counts_round1"] = {o: sum(r["outcome"] == o for r in final) for
 final2 = [r for r in recs if r["run_id"] == FINAL_RUN]
 res["final_suite_run"] = FINAL_RUN
 res["final_suite_counts"] = {o: sum(r["outcome"] == o for r in final2) for o in ("passed", "failed", "skipped", "xfailed")}
+# Round 24 correction (D166): the report's own test counts and suite table must come from FINAL_RUN (revision 26 was first
+# built before scripts/compile_test_results.py had been run, so it showed the previous run's counts and an empty table)
+_rv = json.loads((REP / "report_values_round24.json").read_text())
+res["report_test_counts_match_final_suite"] = bool(final2) and int(_rv["n_tests"]) == len(final2) and all(
+    int(_rv[o]) == res["final_suite_counts"][o] for o in ("passed", "failed", "skipped", "xfailed"))
+res["report_suite_table_has_final_run"] = f"| {FINAL_RUN} |" in (REP / "final_research_prototype_report.md").read_text()
 # round 3: the failures allowed are exactly the revised gate's (reported as R2/R1 FAILED); everything else must pass
 res["final_suite_failures"] = sorted(r["nodeid"] for r in final2 if r["outcome"] == "failed")
 res["final_suite_only_failure_is_R2"] = set(res["final_suite_failures"]) <= {
@@ -389,7 +395,8 @@ jl = sum(1 for l in (REP / "experiment_results.jsonl").read_text().splitlines() 
 res["experiment_csv_rows_equal_jsonl"] = len(csv) == jl
 res["experiment_records"] = jl
 
-ok = (res["pdf_exists"] and res["pdf_opens"] and res["pdf_text_chars"] > 20000 and res["pdf_no_placeholders"]
+ok = (res["report_test_counts_match_final_suite"] and res["report_suite_table_has_final_run"]
+      and res["pdf_exists"] and res["pdf_opens"] and res["pdf_text_chars"] > 20000 and res["pdf_no_placeholders"]
       and res["pdf_has_all_17_sections"] and res["pdf_has_part1_sections"] and not res["round2_values_missing_in_pdf"]
       and res["final_suite_only_failure_is_R2"] and not blank and not missing and not res["report_values_missing_in_pdf"]
       and all(chk) and not not_run and not res["commands_missing_log_file"] and res["experiment_csv_rows_equal_jsonl"]

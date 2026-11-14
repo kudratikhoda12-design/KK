@@ -53,49 +53,41 @@ symbolic distillation, conditional landmark anchoring and semiparametric
 AFT robustness</h1>
 </header>
 <p class="small">
-Journal main manuscript (Round 24, D165; updates the Round-23 version,
-which is kept unchanged). Generated from saved records by
-<code>scripts/manuscript_journal_main_round24.py</code>; every number is
-read from a record, logged with its source in
-<code>reports/manuscript_values_journal_main_round24.json</code> and
-required to be identical to a verified value of the Supplementary
-Material (<code>reports/manuscript_round24.pdf</code>). <b>Draft for the
-owner’s review: not peer reviewed; authors, affiliations, funding and
-competing interests to be completed by the owner.</b>
+<b>Draft manuscript, not peer reviewed.</b> Author names, affiliations,
+funding and competing interests are to be completed before submission.
 </p>
-<p><strong>Authors:</strong> [to be completed by the owner]<br />
-<strong>Status:</strong> draft of a pre-registered empirical study; no
-novelty claim is made (D111).<br />
-<strong>Supplementary Material:</strong> the cumulative study manuscript
-(<code>reports/manuscript_round24.pdf</code>, “S”); section and table
+<p><strong>Authors:</strong> [to be completed]<br />
+<strong>Supplementary Material:</strong> the full study record (“S”),
+with every pre-registered analysis and all tables; section and table
 numbers prefixed with S refer to it.</p>
 <h2 id="abstract">Abstract</h2>
-<p><strong>Background.</strong> Clinical and engineering risk prediction
-often rests on covariates measured repeatedly over time.
-Kolmogorov–Arnold networks (KANs) replace network weights by learnable
-univariate functions and have been adapted to survival analysis with
-static covariates (Knottenbelt et al., 2025; Jose et al., 2025). Applied
-directly to trajectories, a single-layer functional KAN under the Cox
-loss has the model form of the additive functional Cox model (AFCM) (Cui
-et al., 2021), so its value has to be shown empirically: in the
-readability of its effects, in the tools it supports, and in honest
-comparisons with simpler models.</p>
+<p><strong>Background.</strong> Risk prediction in chronic disease and
+in engineered systems often rests on covariates measured repeatedly over
+time. Kolmogorov–Arnold networks (KANs) replace network weights by
+learnable univariate functions that can be inspected, and have been
+adapted to survival analysis with static covariates (Knottenbelt et al.,
+2025; Jose et al., 2025). Applied directly to trajectories, a
+single-layer functional KAN under the Cox loss has the model form of the
+additive functional Cox model (AFCM) (Cui et al., 2021), so its value
+has to be shown empirically: in the readability of its effects, in the
+tools it supports, and in fair comparisons with simpler models.</p>
 <p><strong>Methods.</strong> We studied functional KAN survival models
 whose edges act on the trajectories themselves (a separable bivariate
 layer, B2-S) under Cox, Weibull, log-normal and semiparametric
 accelerated failure time (AFT) losses, the last with an error law
-estimated by Kaplan–Meier (NP-KAN-AFT). Three tools were added and
-tested in pre-registered rounds on fresh simulation seeds: a
-fixed-weight symbolic distillation refit, a landmark anchor that adds
-the last observed values and is kept only if confirmed in both halves of
-the validation split, and the semiparametric error law. Comparators were
+estimated by Kaplan–Meier (NP-KAN-AFT). Three additions were each tested
+against pre-registered criteria on new simulation seeds: a symbolic
+distillation refit with a fixed penalty, a landmark anchor that adds the
+last observed values and is kept only if confirmed in both halves of the
+validation split, and the semiparametric error law. Comparators were
 AFCM, FPCA Cox, a two-stage mixed-effects Cox model, summary-based
 models, landmark Cox and, on the clinical cohorts, a Bayesian
-multivariate joint model. Real-data analyses covered four clinical
-cohorts used in earlier rounds, two untouched joineRML cohorts and four
-C-MAPSS engine data sets, two of them untouched; a final round tested
-where the functional model helps, with more splits, by thinning long
-histories and by blending the functional model with landmark Cox.</p>
+multivariate joint model. Real-data analyses covered six clinical
+cohorts and four C-MAPSS engine data sets; two of the cohorts and two of
+the engine data sets were held out until the methods had been fixed. A
+final set of analyses asked where the functional model helps, using more
+data splits, histories thinned to a few visits and a blend of the
+functional model with landmark Cox.</p>
 <p><strong>Results.</strong> The confirmatory comparison with AFCM was
 inconclusive (B2-S Cox − AFCM in identifiable shape error +0.0065, 95%
 CI [−0.0506, +0.0635]), and AFCM could not be validated even with
@@ -106,35 +98,36 @@ and preserved the shapes. Cross-confirmed anchoring kept the gain when
 the last value carried the risk and stayed within the registered margin
 otherwise (S-Sparse bound for Cox +0.0036). NP-KAN-AFT was better than
 Cox and Weibull models under log-normal errors (−0.0135 and −0.0150 in
-survival-curve error). Under a bimodal error law NP-KAN-AFT was better
-than all three parametric KAN models in every replicate (−0.0423 against
+survival-curve error). Under a bimodal error law it was better than all
+three parametric KAN models in every replicate (−0.0423 against
 log-normal), and under heavy-tailed and logistic laws better than the
-Cox and Weibull models (H-R22c supported). On two untouched cohorts
-anchoring and distillation met their margins, but one baseline fit did
-not converge, so the registered all-finite criterion failed (H-R22b not
-supported). On every clinical cohort, no functional model was clearly
-better than landmark Cox on the last observed values, and a blend of the
-two did not meet its non-inferiority margin (H-R23c not supported). On
-two untouched engine data sets with long sensor histories NP-KAN-AFT had
-lower integrated Brier score than landmark Cox (−0.0183 and −0.0139,
-both intervals below 0; H-R23a supported), and on the clinical cohort
-with the longest histories thinning them to three visits made it clearly
-worse (H-R23b supported). A pre-specified Bayesian joint model fitted on
-the same clinical partitions was not better than NP-KAN-AFT on any
-cohort; NP-KAN-AFT was better on renal (−0.0439; H-R24a supported),
-where the joint model fitted poorly, and non-inferiority to the joint
-model was not shown elsewhere (H-R24b not supported).</p>
+Cox and Weibull models (H-R22c supported). On the two held-out clinical
+cohorts anchoring and distillation met their margins, but one baseline
+fit did not converge, so the registered criterion that every fit be
+finite failed (H-R22b not supported). On every clinical cohort, no
+functional model was clearly better than landmark Cox on the last
+observed values, and a blend of the two did not meet its non-inferiority
+margin (H-R23c not supported). On the two held-out engine data sets,
+which have long sensor histories, NP-KAN-AFT had a lower integrated
+Brier score than landmark Cox (−0.0183 and −0.0139, both intervals below
+0; H-R23a supported), and on the clinical cohort with the longest
+histories thinning them to three visits made it clearly worse (H-R23b
+supported). A pre-specified Bayesian joint model fitted on the same
+clinical partitions was not better than NP-KAN-AFT on any cohort;
+NP-KAN-AFT was better on renal (−0.0439; H-R24a supported), where the
+joint model fitted poorly, and non-inferiority to the joint model was
+not shown elsewhere (H-R24b not supported).</p>
 <p><strong>Conclusions.</strong> Functional KANs give readable nonlinear
 trajectory effects, and the three tools make them safe to summarise, to
-anchor and to use without choosing an error law; on small clinical
+anchor and to use without choosing an error law. On small clinical
 cohorts with few visits a landmark model on the last values is as good
-as the functional model and a Bayesian joint model, while on long, dense
-histories the functional model was better on untouched data, and without
+as the functional model and a Bayesian joint model; on long, dense
+histories the functional model was better on held-out data, and without
 that history it was worse.</p>
 <h2 id="keywords">Keywords</h2>
-<p>Kolmogorov–Arnold networks; functional data; survival analysis;
-landmarking; accelerated failure time; symbolic regression;
-interpretability; pre-registration.</p>
+<p>Kolmogorov–Arnold networks; functional data analysis; survival
+analysis; longitudinal covariates; landmarking; accelerated failure time
+model; symbolic regression; interpretability; pre-registration.</p>
 <h2 id="introduction">1. Introduction</h2>
 <p>Risk models for chronic disease and for engineered systems
 increasingly use longitudinal covariates: repeated laboratory values,
@@ -159,19 +152,22 @@ parametrisation of AFCM rather than a new model class, so any
 contribution must come from what the parametrisation enables and must be
 shown against strong comparators, including those that do not use
 trajectories at all.</p>
-<p>This paper reports a sequence of pre-registered studies
+<p>This paper reports a sequence of pre-registered analyses
 (Supplementary Section S2.8) organised around one thesis:
 <strong>functional KANs provide interpretable nonlinear survival
 modelling from longitudinal trajectories, with safe symbolic
 distillation, conditional landmark anchoring and semiparametric AFT
-robustness, and the same studies show where simpler landmark models
-suffice.</strong> Each part of the thesis was tested by a registered
-hypothesis with fixed criteria (Table 1), and the negative and
-inconclusive results are reported alongside the positive ones.</p>
+robustness, and the same analyses show where simpler landmark models
+suffice.</strong> Each part of the thesis was tested by a hypothesis
+with criteria fixed in advance (Table 1), and the negative and
+inconclusive results are reported alongside the positive ones.
+Hypotheses keep the labels under which they were registered (for example
+H-R20a), so that each can be traced to its plan and to its full results
+in the Supplementary Material.</p>
 <p><strong>Table 1. Pre-registered hypotheses and their
 verdicts.</strong> Criteria, seeds and analyses were fixed before each
-run; details in the Supplementary Material (H1 and H-R12: S3; Rounds
-15–24: S5).</p>
+run; details in the Supplementary Material (H1 and H-R12: S3; all later
+hypotheses: S5).</p>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -182,7 +178,7 @@ run; details in the Supplementary Material (H1 and H-R12: S3; Rounds
 <thead>
 <tr class="header">
 <th>Hypothesis</th>
-<th>Stage</th>
+<th>Topic</th>
 <th>Question</th>
 <th>Verdict</th>
 </tr>
@@ -190,110 +186,114 @@ run; details in the Supplementary Material (H1 and H-R12: S3; Rounds
 <tbody>
 <tr class="odd">
 <td>H1</td>
-<td>framing (b)</td>
-<td>KAN-FAE − MLP-FAE, survival-curve error (simulation)</td>
-<td>KAN-FAE worse</td>
+<td>KAN blocks inside a functional autoencoder</td>
+<td>KAN autoencoder − MLP autoencoder, survival-curve error
+(simulation)</td>
+<td>KAN autoencoder worse</td>
 </tr>
 <tr class="even">
 <td>H-R12</td>
-<td>Round 12</td>
-<td>B2-S Cox − AFCM V3, identifiable RISE (simulation)</td>
+<td>Shape recovery</td>
+<td>B2-S Cox − AFCM, identifiable RISE (simulation)</td>
 <td>inconclusive</td>
 </tr>
 <tr class="odd">
 <td>H-R15a / H-R16a</td>
-<td>Rounds 15–16</td>
-<td>symbolic distillation refit finite and shape-preserving</td>
+<td>Symbolic distillation</td>
+<td>distillation refit finite and shape-preserving (first version /
+fixed-penalty version)</td>
 <td>not supported / supported</td>
 </tr>
 <tr class="even">
 <td>H-R15b / H-R16b</td>
-<td>Rounds 15–16</td>
-<td>landmark-anchored B2-S: gain when the last value carries the risk,
-no loss otherwise</td>
+<td>Landmark anchoring</td>
+<td>always-anchored B2-S: gain when the last value carries the risk, no
+loss otherwise (two tests)</td>
 <td>not supported / not supported</td>
 </tr>
 <tr class="odd">
 <td>H-R17a / H-R17b</td>
-<td>Round 17</td>
-<td>two-way gated anchoring (Cox / log-normal KAN-AFT)</td>
+<td>Landmark anchoring</td>
+<td>anchoring gated on the validation loss (Cox / log-normal
+KAN-AFT)</td>
 <td>not supported / supported</td>
 </tr>
 <tr class="even">
 <td>H-R18a / H-R18b</td>
-<td>Round 18</td>
+<td>Landmark anchoring</td>
 <td>anchoring decided on a confirmation split (Cox / log-normal
 KAN-AFT)</td>
 <td>supported / supported</td>
 </tr>
 <tr class="odd">
 <td>H-R20a</td>
-<td>Round 20</td>
+<td>Error-law robustness</td>
 <td>NP-KAN-AFT under log-normal errors, against Cox and Weibull</td>
 <td>supported</td>
 </tr>
 <tr class="even">
 <td>H-R20b</td>
-<td>Round 20</td>
-<td>cross-confirmed anchoring against full-validation B2-S (three
-families)</td>
+<td>Landmark anchoring</td>
+<td>cross-confirmed anchoring against B2-S trained on the whole
+validation set (three model families)</td>
 <td>supported</td>
 </tr>
 <tr class="odd">
 <td>H-R21a / H-R21b / H-R21c</td>
-<td>Round 21</td>
-<td>Round-20 methods on four clinical cohorts and C-MAPSS FD001</td>
+<td>Clinical cohorts</td>
+<td>the fixed methods on four clinical cohorts and C-MAPSS FD001</td>
 <td>not supported / supported / not supported</td>
 </tr>
 <tr class="even">
 <td>H-R22a</td>
-<td>Round 22</td>
-<td>B2-S Cox − per-channel REML AFCM (run only if CK-6d passed)</td>
-<td>not run (CK-6d failed)</td>
+<td>Shape recovery</td>
+<td>B2-S Cox − AFCM with per-channel marginal-likelihood smoothing (to
+be run only if that AFCM passed its acceptance check)</td>
+<td>not run (acceptance check failed)</td>
 </tr>
 <tr class="odd">
 <td>H-R22b</td>
-<td>Round 22</td>
-<td>untouched cohorts: every fit finite, anchoring and distillation
-within their margins</td>
+<td>Held-out cohorts</td>
+<td>every fit finite, anchoring and distillation within their
+margins</td>
 <td>not supported</td>
 </tr>
 <tr class="even">
 <td>H-R22c</td>
-<td>Round 22</td>
+<td>Error-law robustness</td>
 <td>NP-KAN-AFT under bimodal, t₃ and logistic errors</td>
 <td>supported</td>
 </tr>
 <tr class="odd">
 <td>H-R23a</td>
-<td>Round 23</td>
-<td>NP-KAN-AFT better than landmark Cox on untouched C-MAPSS FD002 and
+<td>Long histories</td>
+<td>NP-KAN-AFT better than landmark Cox on held-out C-MAPSS FD002 and
 FD004</td>
 <td>supported</td>
 </tr>
 <tr class="even">
 <td>H-R23b</td>
-<td>Round 23</td>
+<td>Long histories</td>
 <td>renal: thinning histories to three visits makes NP-KAN-AFT
 worse</td>
 <td>supported</td>
 </tr>
 <tr class="odd">
 <td>H-R23c (i) / (ii)</td>
-<td>Round 23</td>
+<td>Long histories</td>
 <td>blend with landmark Cox: non-inferior on every clinical cohort /
 better on renal</td>
 <td>not supported / not supported</td>
 </tr>
 <tr class="even">
 <td>H-R24a</td>
-<td>Round 24</td>
+<td>Joint-model comparison</td>
 <td>renal: NP-KAN-AFT better than a Bayesian joint model</td>
 <td>supported</td>
 </tr>
 <tr class="odd">
 <td>H-R24b</td>
-<td>Round 24</td>
+<td>Joint-model comparison</td>
 <td>NP-KAN-AFT non-inferior to the joint model on every clinical
 cohort</td>
 <td>not supported</td>
@@ -330,9 +330,9 @@ ties (Efron, 1977) and the Breslow baseline (Breslow, 1974).
 <strong>Parametric KAN-AFT.</strong> log T = μ + η + σε with Weibull or
 log-normal ε. <strong>NP-KAN-AFT.</strong> The location η is fitted by a
 smoothed Gehan rank objective and the error law is the Kaplan–Meier
-estimate (Kaplan &amp; Meier, 1958) of the training residuals, the
-classical semiparametric AFT model with a functional KAN location; it
-needs no choice of error family (S5.7).</p>
+estimate (Kaplan &amp; Meier, 1958) of the training residuals. This is
+the classical semiparametric AFT model with a functional KAN location;
+it needs no choice of error family (S5.7).</p>
 <h3 id="symbolic-distillation">2.3 Symbolic distillation</h3>
 <p>Edges of the pruned model are fitted by a linear function, a library
 of affine-wrapped elementary functions and symbolic regression (Cranmer,
@@ -355,33 +355,40 @@ unchanged (<strong>cross-confirmation</strong>, S5.7). The fallback is
 exact by construction, which was checked on every split.</p>
 <h3 id="comparators-and-evaluation">2.5 Comparators and evaluation</h3>
 <p>Comparators were AFCM (a Python re-implementation with
-validation-chosen smoothing; S2.4), FPCA Cox (Kong et al., 2018), a
-two-stage linear mixed-effects Cox model (Laird &amp; Ware, 1982), Cox
-and random survival forest (Ishwaran et al., 2008) models on trajectory
-summaries, landmark Cox on the last values (van Houwelingen, 2007) and,
-on the clinical cohorts, a Bayesian multivariate joint model (Rizopoulos
-and Ghosh, 2011) (Section 4.4). In simulation the primary measures were
-the identifiable relative integrated squared error of the functional
-effect (RISE) and the survival-curve error against the oracle; on real
-data the inverse-probability-of-censoring weighted integrated Brier
-score (Graf et al., 1999) (conditional on the covariates for the
-clinical cohorts), Harrell’s and Uno’s concordance (Harrell et al.,
-1982; Uno et al., 2011) and D-calibration (Haider et al., 2020).
-Simulation contrasts were paired over replicates, with equivalence by
-two one-sided tests (Schuirmann, 1987); real-data contrasts used five
-outer splits by subject and the Nadeau–Bengio corrected interval (Nadeau
-&amp; Bengio, 2003). Only the hypotheses of Table 1 are
-confirmatory.</p>
+validation-chosen smoothing, whose final version is labelled V3 in the
+tables; S2.4), FPCA Cox (Kong et al., 2018), a two-stage linear
+mixed-effects Cox model (Laird &amp; Ware, 1982), Cox and random
+survival forest (Ishwaran et al., 2008) models on trajectory summaries,
+landmark Cox on the last values (van Houwelingen, 2007) and, on the
+clinical cohorts, a Bayesian multivariate joint model (Rizopoulos and
+Ghosh, 2011) (Section 4.4). In simulation the primary measures were the
+identifiable relative integrated squared error of the functional effect
+(RISE) and the survival-curve error against the oracle; on real data the
+inverse-probability-of-censoring weighted integrated Brier score (Graf
+et al., 1999) (IBS; conditional on the covariates for the clinical
+cohorts), Harrell’s and Uno’s concordance (Harrell et al., 1982; Uno et
+al., 2011) and D-calibration (Haider et al., 2020). Simulation contrasts
+were paired over replicates, with equivalence by two one-sided tests
+(Schuirmann, 1987); real-data contrasts used outer splits by subject and
+the Nadeau–Bengio corrected interval (Nadeau &amp; Bengio, 2003), which
+widens the interval to allow for the overlap between training sets. Only
+the hypotheses of Table 1 are confirmatory.</p>
 <h3 id="pre-registration-and-verification">2.6 Pre-registration and
 verification</h3>
-<p>Every round was registered in a decision log before its seeds or data
-were used, with the hypotheses, criteria, seeds, models and analysis
-fixed; development work used seeds or data sets set aside for it, and
-every run, including failed ones, is reported. Acceptance tests with
-fixed thresholds were written before the simulation, and a failure was
-never converted by changing a seed or a threshold (S2.8). Every number
-in this paper and in the Supplementary Material is rendered from the
-saved records and checked by an independent script (Appendix).</p>
+<p>The work proceeded in stages: an initial simulation comparison with
+AFCM, revisions of the methods that were each re-tested on new seeds,
+applications to clinical cohorts, analyses of held-out cohorts and
+engine data, and a comparison with a Bayesian joint model. Before the
+seeds or data of a stage were used, its hypotheses, criteria, seeds,
+models and analysis were written down and committed to the study’s
+version-controlled decision log. The registration was therefore internal
+and time-stamped, not deposited in a public registry. Method development
+used seeds or data sets set aside for it, and every run, including
+failed ones, is reported. Acceptance tests with fixed thresholds were
+written before the simulation, and a failure was never converted by
+changing a seed or a threshold (S2.8). Every number in this paper and in
+the Supplementary Material is rendered from the saved results and
+checked by an independent script (Appendix).</p>
 <h2 id="simulation-results">3. Simulation results</h2>
 <h3 id="design">3.1 Design</h3>
 <p>The simulator generates three channels per subject on [0, 1] (a
@@ -391,14 +398,16 @@ effect of the first channel and a time-varying effect of the second:</p>
 <ul>
 <li><strong>S-Add:</strong> η = ∫sin(πX₁(t)/2)dt + ∫tanh(X₂(t))(1 + t)dt
 + 0.3z₁ − 0.3z₂, Weibull proportional hazards (shape 1.5), so the Cox
-model is correctly specified. φ₁ is time-homogeneous, φ₂ time-varying.
-Variants add sparse visits (S-Sparse), risk carried by the last values
-(S-Last), and non-proportional hazards through an AFT location with
-non-Weibull errors (S-Misspec). Every confirmatory test used seeds not
-used before (S3.1, S5.1). The identifiable RISE projects out directions
-of the effect that no subject’s trajectory can reveal, so that a model
-is not penalised for a component the data cannot identify (S2.7).</li>
+model is correctly specified. φ₁ is time-homogeneous, φ₂
+time-varying.</li>
 </ul>
+<p>Variants add sparse visits (S-Sparse), risk carried by the last
+values (S-Last), and non-proportional hazards through an AFT location
+with non-Weibull errors (S-Misspec). Every confirmatory test used seeds
+that no earlier analysis had used (S3.1, S5.1). The identifiable RISE
+projects out directions of the effect that no subject’s trajectory can
+reveal, so that a model is not penalised for a component the data cannot
+identify (S2.7).</p>
 <h3 id="nonlinear-effects-b2-s-against-afcm">3.2 Nonlinear effects: B2-S
 against AFCM</h3>
 <p><strong>Table 2. Confirmatory test H-R12 and sensitivity
@@ -442,7 +451,7 @@ V3</strong></td>
 <td>0.0634</td>
 </tr>
 <tr class="even">
-<td>Sensitivity: B2-S Cox − AFCM V0 (Round-12a AFCM)</td>
+<td>Sensitivity: B2-S Cox − AFCM V0 (earlier AFCM version)</td>
 <td>0.1785</td>
 <td>0.3578</td>
 <td>−0.1793</td>
@@ -464,7 +473,7 @@ V3</strong></td>
 <td>0.326</td>
 </tr>
 <tr class="even">
-<td>Sensitivity: raw (Round-11) RISE</td>
+<td>Sensitivity: RISE without the identifiability projection</td>
 <td>0.1798</td>
 <td>0.1742</td>
 <td>+0.0056</td>
@@ -498,8 +507,8 @@ V3</strong></td>
 </tr>
 </tbody>
 </table>
-<p>B2-S and AFCM V3 recovered the nonlinear shapes to a similar degree
-and could not be separated: the confidence interval included 0 and
+<p>B2-S and AFCM recovered the nonlinear shapes to a similar degree and
+could not be separated: the confidence interval included 0 and
 equivalence within ±0.05 was not shown, so H-R12 is
 <strong>inconclusive</strong> (Table 2). Both were far better than
 models linear in functional principal component scores (Table 3).</p>
@@ -581,7 +590,7 @@ functional shape).</p>
 <td>0%</td>
 </tr>
 <tr class="even">
-<td>AFCM V3 (not validated, CK-6c)</td>
+<td>AFCM V3 (not validated)</td>
 <td>0.1720</td>
 <td>0.245</td>
 <td>0.099</td>
@@ -684,22 +693,25 @@ functional shape).</p>
 </table>
 <p>The functional models also had lower survival-curve error than the
 two-stage and summary models, and B2-S and AFCM did not differ in curve
-error. The AFCM re-implementation failed its own single-fit acceptance
-check; replacing its shared penalty by per-channel penalties estimated
-by a Fellner–Schall update of the Laplace marginal likelihood (Wood,
-2011; Wood and Fasiolo, 2017) passed three development seeds but failed
-on the held-out seed (φ₁ 0.170; S5.10), so the confirmatory re-test was
-not run and AFCM remains an unvalidated comparator.</p>
+error. The comparison has a weakness on the comparator’s side: our AFCM
+re-implementation failed its own single-fit acceptance check. Replacing
+its shared penalty by per-channel penalties estimated by a
+Fellner–Schall update of the Laplace marginal likelihood (Wood, 2011;
+Wood and Fasiolo, 2017) passed on the three seeds used to develop it but
+failed on the held-out seed (φ₁ 0.170; S5.10), so the planned
+confirmatory re-test was not run and AFCM remains an unvalidated
+comparator.</p>
 <h3 id="safe-symbolic-distillation">3.3 Safe symbolic distillation</h3>
 <p>Distillation with a fixed penalty weight, the domain guard and the
 fallback was finite in all 40 refits and preserved the pruned shapes
-(S-Add RISE difference −0.0004; H-R16a supported), whereas its
-validation-tuned predecessor had failed (H-R15a). It carried over to the
-log-normal KAN-AFT (H-R17b, part 1). The refit is safe because it is
-strongly anchored to the pruned model, and for the same reason it does
-not improve prediction over substitution alone.</p>
+(S-Add RISE difference −0.0004; H-R16a supported), whereas an earlier
+version that tuned the penalty weight on validation had failed (H-R15a).
+The refit carried over to the log-normal KAN-AFT (H-R17b, part 1). It is
+safe because it is strongly anchored to the pruned model, and for the
+same reason it does not improve prediction over substitution alone.</p>
 <p><strong>Table 4. Identifiable RISE of the symbolic models</strong>
-(B2-S Cox, seed-0 member; S5.2).</p>
+(B2-S Cox, first ensemble member; initial and follow-up tests;
+S5.2).</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -709,8 +721,8 @@ not improve prediction over substitution alone.</p>
 <thead>
 <tr class="header">
 <th>Model (identifiable RISE, mean over replicates)</th>
-<th>Round 15</th>
-<th>Round 16</th>
+<th>Initial test</th>
+<th>Follow-up test</th>
 </tr>
 </thead>
 <tbody>
@@ -730,7 +742,7 @@ not improve prediction over substitution alone.</p>
 <td>1.214</td>
 </tr>
 <tr class="even">
-<td>S-Add, distillation (R15: μ by validation; R16: μ = 10,
+<td>S-Add, distillation (initial: μ by validation; follow-up: μ = 10,
 NaN-safe)</td>
 <td>0.262</td>
 <td>0.221</td>
@@ -751,7 +763,7 @@ NaN-safe)</td>
 <td>3.539</td>
 </tr>
 <tr class="even">
-<td>S-Sparse, distillation (R15: μ by validation; R16: μ = 10,
+<td>S-Sparse, distillation (initial: μ by validation; follow-up: μ = 10,
 NaN-safe)</td>
 <td>0.455</td>
 <td>0.369</td>
@@ -768,11 +780,12 @@ cost reliably (H-R17a), and deciding on a single confirmation split
 halved the data available to each model (S5.5–S5.6). Cross-confirmation
 on both halves of the validation split, against three-seed B2-S
 ensembles trained on the whole validation set, met every registered
-criterion for Cox, log-normal KAN-AFT and NP-KAN-AFT on fresh seeds
+criterion for Cox, log-normal KAN-AFT and NP-KAN-AFT on new seeds
 (H-R20b; Table 6), mainly by anchoring less often: on S-Sparse the Cox
 model anchored in 1 of 20 replicates.</p>
 <p><strong>Table 5. Survival-curve error of the always-anchored
-model</strong> (Rounds 15 and 16; S5.3).</p>
+model</strong> (initial and follow-up tests; the two gates are two rules
+for switching the anchor off; S5.3).</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -782,8 +795,8 @@ model</strong> (Rounds 15 and 16; S5.3).</p>
 <thead>
 <tr class="header">
 <th>Model (survival-curve error, mean over replicates)</th>
-<th>Round 15</th>
-<th>Round 16</th>
+<th>Initial test</th>
+<th>Follow-up test</th>
 </tr>
 </thead>
 <tbody>
@@ -803,7 +816,7 @@ model</strong> (Rounds 15 and 16; S5.3).</p>
 <td>0.1685</td>
 </tr>
 <tr class="even">
-<td>S-Last, anchored, D133 gate</td>
+<td>S-Last, anchored, original gate</td>
 <td>0.1683</td>
 <td>0.1688</td>
 </tr>
@@ -828,7 +841,7 @@ model</strong> (Rounds 15 and 16; S5.3).</p>
 <td>0.1072</td>
 </tr>
 <tr class="odd">
-<td>S-Sparse, anchored, D133 gate</td>
+<td>S-Sparse, anchored, original gate</td>
 <td>0.0869</td>
 <td>0.0820</td>
 </tr>
@@ -839,8 +852,8 @@ model</strong> (Rounds 15 and 16; S5.3).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Table 6. Round-20 hypotheses: NP-KAN-AFT (H-R20a) and
-cross-confirmed anchoring (H-R20b)</strong> (fresh seeds; survival-curve
+<p><strong>Table 6. Hypotheses on NP-KAN-AFT (H-R20a) and
+cross-confirmed anchoring (H-R20b)</strong> (new seeds; survival-curve
 error).</p>
 <table>
 <colgroup>
@@ -920,8 +933,8 @@ B2-S Cox (−0.0049), but not under log-logistic errors (Table 7), because
 the location was still fitted under the wrong likelihood. NP-KAN-AFT
 removes that dependence by fitting the location with a rank
 objective.</p>
-<p><strong>Table 7. Error misspecification in Round 12</strong>
-(S-Misspec; 20 replicates per error law).</p>
+<p><strong>Table 7. Error misspecification with residual
+calibration</strong> (S-Misspec; 20 replicates per error law).</p>
 <table style="width:100%;">
 <colgroup>
 <col style="width: 16%" />
@@ -1008,8 +1021,8 @@ objective.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Table 8. NP-KAN-AFT on fresh seeds in Round 20</strong>
-(survival-curve error).</p>
+<p><strong>Table 8. NP-KAN-AFT on new seeds</strong> (survival-curve
+error).</p>
 <table>
 <colgroup>
 <col style="width: 20%" />
@@ -1117,8 +1130,8 @@ objective.</p>
 <p>Under log-normal errors NP-KAN-AFT was better than B2-S Cox in 20 of
 20 replicates and better than the Weibull KAN-AFT in 20 (H-R20a), but
 not shown to be better than the correctly specified log-normal model
-(−0.0010). Round 22 tested three further error laws, each with mean 0
-and SD 0.5 and twenty fresh replicates (H-R22c; Table 9).</p>
+(−0.0010). A further simulation tested three more error laws, each with
+mean 0 and SD 0.5 and twenty new replicates (H-R22c; Table 9).</p>
 <p><strong>Table 9. NP-KAN-AFT against the parametric B2-S models under
 three further error laws</strong> (survival-curve error, paired t over
 replicates).</p>
@@ -1225,24 +1238,27 @@ the log-normal model under the logistic law, which is close to the
 normal (−0.0034, upper bound −0.0010; S5.12).</p>
 <h2 id="real-data-results">4. Real-data results</h2>
 <h3 id="cohorts">4.1 Cohorts</h3>
-<p>Four clinical cohorts were analysed in earlier rounds: PBC with six
+<p>Four clinical cohorts were used throughout the study: PBC with six
 laboratory channels and two endpoints (Murtaugh et al., 1994; Fleming
 &amp; Harrington, 1991), <code>prothro</code> and <code>aids</code>
 (Rizopoulos, 2010; Andersen et al., 1993; Guo &amp; Carlin, 2004). Two
-cohorts from joineRML (Hickey et al., 2018) were used for the first time
-in Round 22: <code>renal</code> (glomerular filtration rate and
-haematocrit after kidney transplantation, graft failure; (Rizopoulos and
-Ghosh, 2011)) and <code>heart.valve</code> (left-ventricular mass index
-and valve gradient after aortic valve replacement, death; (Lim et al.,
-2008)). C-MAPSS turbofan data (Saxena et al., 2008) served for
-calibration (FD001, and FD003, which had been analysed in an early round
-and so is not untouched); FD002 and FD004, with six operating conditions
-each, were not used before Round 23. Up to Round 22 all real-data
-comparisons are exploratory, on five outer splits per cohort, stratified
-on the event, with the history up to a single landmark used as input and
-the residual time after it as outcome; Round 23 used ten engine splits
-and twenty new clinical partitions (Section 4.3).</p>
-<p><strong>Table 10. The earlier clinical cohorts at their
+further cohorts from joineRML (Hickey et al., 2018) were held out until
+the methods had been fixed: <code>renal</code> (glomerular filtration
+rate and haematocrit after kidney transplantation, graft failure;
+(Rizopoulos and Ghosh, 2011)) and <code>heart.valve</code>
+(left-ventricular mass index and valve gradient after aortic valve
+replacement, death; (Lim et al., 2008)). C-MAPSS turbofan data (Saxena
+et al., 2008) supplied engine-degradation histories: FD001 and FD003
+were used to examine calibration (FD003 had also been analysed at an
+early stage, so it does not count as held out), and FD002 and FD004,
+with six operating conditions each, were held out until the long-history
+analysis of Section 4.3. Except where a registered hypothesis is named,
+the real-data comparisons are exploratory. They use five outer splits
+per cohort, stratified on the event, with the history up to a single
+landmark as input and the residual time after it as outcome; the
+analyses of Sections 4.3 and 4.4 use ten engine splits and twenty new
+clinical partitions.</p>
+<p><strong>Table 10. The four clinical cohorts at their
 landmarks</strong> (descriptive).</p>
 <table style="width:100%;">
 <colgroup>
@@ -1298,7 +1314,7 @@ landmarks</strong> (descriptive).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Table 11. The untouched joineRML cohorts at the one-year
+<p><strong>Table 11. The two held-out joineRML cohorts at the one-year
 landmark.</strong></p>
 <table style="width:100%;">
 <colgroup>
@@ -1344,9 +1360,9 @@ landmark.</strong></p>
 </table>
 <h3 id="prediction-against-simpler-models">4.2 Prediction against
 simpler models</h3>
-<p><strong>Table 12. B2-S Cox minus three baselines on the earlier
-clinical cohorts</strong> (integrated Brier score; mean and
-Nadeau–Bengio corrected 95% interval over the outer splits).</p>
+<p><strong>Table 12. B2-S Cox minus three baselines on the four clinical
+cohorts</strong> (integrated Brier score; mean and Nadeau–Bengio
+corrected 95% interval over the outer splits).</p>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1390,15 +1406,16 @@ Nadeau–Bengio corrected 95% interval over the outer splits).</p>
 </tbody>
 </table>
 <p>No functional or KAN model was clearly better than the simple
-baselines on the earlier cohorts: every interval in Table 12 includes 0,
-and on PBC landmark Cox had the lowest mean integrated Brier score
-(0.127 against 0.150 for B2-S Cox). The locked Round-20 methods behaved
-in the same way: NP-KAN-AFT was finite and D-calibrated but did not
-match the Weibull KAN-AFT on the primary PBC endpoint (H-R21a not
-supported), and cross-confirmed anchoring never cost more than the
-registered margin (H-R21b supported; S5.9; Table 13).</p>
-<p><strong>Table 13. Round-21 hypotheses</strong> (the four earlier
-clinical cohorts and C-MAPSS FD001; criteria fixed before the run).</p>
+baselines on these cohorts: every interval in Table 12 includes 0, and
+on PBC landmark Cox had the lowest mean integrated Brier score (0.127
+against 0.150 for B2-S Cox). The methods fixed after the simulation
+tests behaved in the same way: NP-KAN-AFT was finite and D-calibrated
+but did not match the Weibull KAN-AFT on the primary PBC endpoint
+(H-R21a not supported), and cross-confirmed anchoring never cost more
+than the registered margin (H-R21b supported; S5.9; Table 13).</p>
+<p><strong>Table 13. Hypotheses for the fixed methods on the four
+clinical cohorts and C-MAPSS FD001</strong> (criteria fixed before the
+run).</p>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -1461,7 +1478,7 @@ Harrell C ≥ 0.88</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Table 14. Untouched cohorts: functional models against
+<p><strong>Table 14. Held-out cohorts: functional models against
 landmark Cox and the two-stage mixed-effects Cox model</strong>
 (conditional integrated Brier score; Nadeau–Bengio corrected and plain
 95% intervals over five splits).</p>
@@ -1535,7 +1552,7 @@ landmark Cox and the two-stage mixed-effects Cox model</strong>
 </tr>
 </tbody>
 </table>
-<p>On the untouched cohorts every interval in Table 14 includes 0. On
+<p>On the held-out cohorts every interval in Table 14 includes 0. On
 renal several functional models had lower mean conditional IBS than
 landmark Cox (B2-S Cox −0.0161, lower on 4 of five splits); renal
 patients had a median of 97.0 visits before the landmark against 1.0 for
@@ -1546,7 +1563,7 @@ anchor on at most one split per family and cohort and cost at most
 16), so parts 2 and 3 of H-R22b were met. Part 1 was not: the summary
 Cox baseline did not converge on one heart-valve split, so
 <strong>H-R22b is not supported</strong> as registered (S5.11).</p>
-<p><strong>Table 15. Cross-confirmed anchoring on the untouched
+<p><strong>Table 15. Cross-confirmed anchoring on the held-out
 cohorts</strong> (H-R22b part 2).</p>
 <table style="width:100%;">
 <colgroup>
@@ -1618,8 +1635,9 @@ cohorts</strong> (H-R22b part 2).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Table 16. Fixed-μ symbolic distillation on the untouched
-cohorts</strong> (H-R22b part 3; seed-0 member of each ensemble).</p>
+<p><strong>Table 16. Symbolic distillation with a fixed penalty weight
+on the held-out cohorts</strong> (H-R22b part 3; first member of each
+ensemble).</p>
 <table style="width:100%;">
 <colgroup>
 <col style="width: 14%" />
@@ -1680,8 +1698,8 @@ cohorts</strong> (H-R22b part 3; seed-0 member of each ensemble).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Table 17. C-MAPSS FD003 Option B</strong> (means over five
-engine splits; descriptive).</p>
+<p><strong>Table 17. C-MAPSS FD003</strong> (means over five engine
+splits; descriptive).</p>
 <table>
 <thead>
 <tr class="header">
@@ -1754,24 +1772,25 @@ engine splits; descriptive).</p>
 <p>On FD003 NP-KAN-AFT had the lowest mean IBS (0.0834, against 0.1020
 for landmark Cox), but D-calibration passed on at most one split for any
 model (S5.11).</p>
-<h3 id="where-the-functional-model-helps-round-23">4.3 Where the
-functional model helps (Round 23)</h3>
-<p>Earlier rounds suggested a pattern that no interval could confirm:
-functional models had lower mean error than landmark Cox on renal, whose
-patients had long histories, and on FD003, but not on the cohorts with
-few visits. Round 23 tested this directly, with more splits, because the
-Nadeau–Bengio correction leaves five splits with little power (S5.13).
-On FD002 and FD004 the sensors were z-scored within each operating
-condition and windowed as for FD003; NP-KAN-AFT, at one fixed setting to
-bound its cost, was compared with landmark Cox on the last raw or
-smoothed sensor values (whichever had the lower validation error) and
-with the summary and FPCA Weibull AFT models, over ten engine splits. On
-renal, NP-KAN-AFT was refitted after thinning every history to three
-visits. On all six clinical cohorts, a blend of the two survival curves,
-with its weight chosen on validation, was compared with landmark Cox.
-The clinical analyses used twenty new partitions of data analysed
-before, so they are re-analyses.</p>
-<p><strong>Table 18. Untouched C-MAPSS FD002 and FD004</strong> (means
+<h3 id="where-the-functional-model-helps">4.3 Where the functional model
+helps</h3>
+<p>The analyses above suggested a pattern that no interval could
+confirm: functional models had lower mean error than landmark Cox on
+renal, whose patients had long histories, and on FD003, but not on the
+cohorts with few visits. We therefore tested the pattern directly, with
+more splits, because the Nadeau–Bengio correction leaves five splits
+with little power (S5.13). On FD002 and FD004 the sensors were z-scored
+within each operating condition and windowed as for FD003; NP-KAN-AFT,
+at one fixed setting to bound its cost, was compared with landmark Cox
+on the last raw or smoothed sensor values (whichever had the lower
+validation error) and with the summary and FPCA Weibull AFT models, over
+ten engine splits. On renal, NP-KAN-AFT was refitted after thinning
+every history to three visits. On all six clinical cohorts, a blend of
+the two survival curves, with its weight chosen on validation, was
+compared with landmark Cox. The clinical analyses used twenty new
+partitions of data analysed before, so they are re-analyses and not
+tests on held-out data.</p>
+<p><strong>Table 18. Held-out C-MAPSS FD002 and FD004</strong> (means
 over ten engine splits).</p>
 <table style="width:100%;">
 <colgroup>
@@ -1842,8 +1861,9 @@ over ten engine splits).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Table 19. Round-23 contrasts</strong> (test IBS for C-MAPSS,
-conditional IBS for renal; Nadeau–Bengio corrected 95% intervals).</p>
+<p><strong>Table 19. Contrasts for the long-history analyses</strong>
+(test IBS for C-MAPSS, conditional IBS for renal; Nadeau–Bengio
+corrected 95% intervals).</p>
 <table>
 <colgroup>
 <col style="width: 20%" />
@@ -2019,23 +2039,23 @@ intervals).</p>
 </tr>
 </tbody>
 </table>
-<h3 id="comparison-with-a-bayesian-joint-model-round-24">4.4 Comparison
-with a Bayesian joint model (Round 24)</h3>
+<h3 id="comparison-with-a-bayesian-joint-model">4.4 Comparison with a
+Bayesian joint model</h3>
 <p>Joint models are the reference method for dynamic prediction from
-longitudinal markers, and none had been fitted in the earlier rounds.
-Round 24 fitted a Bayesian multivariate joint model
-(<code>JMbayes2</code>) on the six clinical cohorts and the Round-23
+longitudinal markers. We fitted a Bayesian multivariate joint model
+(<code>JMbayes2</code>) on the six clinical cohorts and the same twenty
 partitions, so that it pairs partition by partition with the NP-KAN-AFT
 and landmark Cox results (S5.14). It was fitted on the training
 subjects’ full observed histories: a linear mixed model per marker, with
 a straight-line or natural-spline mean trajectory chosen on validation
 and a subject-specific intercept and slope, linked by the current marker
-values to a Cox submodel with delayed entry at the landmark; test
+values to a Cox submodel with delayed entry at the landmark. Test
 subjects received its dynamic prediction from their history up to the
-landmark. Failed fits were recorded and not refitted, and C-MAPSS, where
-every engine window is an event, was not analysed.</p>
+landmark. Failed fits were recorded and not refitted. C-MAPSS, where
+every engine window is an event, is not a joint-model setting and was
+not analysed.</p>
 <p><strong>Table 21. The joint model on the clinical cohorts</strong>
-(mean conditional IBS over the Round-23 partitions; Nadeau–Bengio
+(mean conditional IBS over the twenty partitions; Nadeau–Bengio
 corrected 95% intervals; S5.14).</p>
 <table>
 <colgroup>
@@ -2151,8 +2171,8 @@ substituted without refit, reproduced the model on every data set
 (S4.3), so each leading effect can be reported as a short formula in the
 original units (Table 22).</p>
 <p><strong>Table 22. Accepted formulas carrying a large share of their
-layer’s score</strong> (PBC and the other earlier cohorts, split 0;
-S4.3).</p>
+layer’s score</strong> (PBC and the other three clinical cohorts, split
+0; S4.3).</p>
 <table style="width:100%;">
 <colgroup>
 <col style="width: 16%" />
@@ -2494,26 +2514,27 @@ safe. Landmark anchoring helps when the last value carries the risk and,
 used conditionally with cross-confirmation, costs little when it does
 not. Estimating the AFT error law by Kaplan–Meier removes the need to
 choose an error family, and helps most when no parametric family fits
-the error law. On untouched engine data with long sensor histories the
+the error law. On held-out engine data with long sensor histories the
 functional KAN-AFT predicted better than a landmark model and two-stage
 AFT models, and without its long history it was worse than a landmark
 model. A standard Bayesian joint model was not better than the
 functional model or landmark Cox on the clinical cohorts.</p>
 <h3 id="where-simpler-landmark-models-suffice">5.2 Where simpler
 landmark models suffice</h3>
-<p>On every clinical cohort, including the two untouched ones, no
+<p>On every clinical cohort, including the two held-out ones, no
 functional model was clearly better than landmark Cox on the last
-observed values, and on the earlier cohorts landmark Cox often had the
-lowest mean. These cohorts have a few hundred subjects and, in most of
-them, one to three visits before the landmark, so the most recent value
-carries most of what a curve could add. Round 23 tested this reading:
-with long, dense sensor histories the functional model was better than
-landmark Cox on untouched data, and thinning the longest clinical
-histories to three visits made it worse than landmark Cox. A functional
-model therefore earns its cost when the history of the trajectory
-carries the risk; with few visits, a landmark model on the last values
-is the sensible choice, and blending the two did not give a gain that
-small validation sets could confirm.</p>
+observed values, and on the four cohorts used throughout landmark Cox
+often had the lowest mean. These cohorts have a few hundred subjects
+and, in most of them, one to three visits before the landmark, so the
+most recent value carries most of what a curve could add. The
+long-history analyses tested this reading: with long, dense sensor
+histories the functional model was better than landmark Cox on held-out
+data, and thinning the longest clinical histories to three visits made
+it worse than landmark Cox. A functional model therefore earns its cost
+when the history of the trajectory carries the risk; with few visits, a
+landmark model on the last values is the sensible choice, and blending
+the two did not give a gain that small validation sets could
+confirm.</p>
 <h3 id="relation-to-prior-work">5.3 Relation to prior work</h3>
 <p>The additive functional Cox model (Cui et al., 2021) already offers
 the model form of a single-layer functional CoxKAN, and our inconclusive
@@ -2536,19 +2557,20 @@ use with a functional KAN location and its robustness across error
 laws.</p>
 <h3 id="limitations">5.4 Limitations</h3>
 <p>The AFCM comparator could not be validated, so H-R12 cannot
-distinguish the two models. The Phase-2 tools were designed after
-earlier failures and tuned on few seeds, although each was then tested
-on fresh ones. The simulation has one data-generating design. The real
-cohorts are small and five splits cannot power superiority claims; FD003
-is not untouched and the heart-valve cohort has about one visit per
-patient before the landmark. In Round 23 NP-KAN-AFT was fitted at one
-fixed setting on C-MAPSS to bound its cost and was poorly calibrated
-there; the clinical partitions re-analyse known data, and the thinning
-test used one cohort. Only one joint-model specification was fitted, its
-sampler mixed poorly on many partitions and it fitted renal poorly; no
-deep dynamic model was fitted, and our literature review was targeted
-rather than systematic, so we make no claim of novelty. Full limitations
-are listed in S6.3.</p>
+distinguish the two models. The three tools were designed after earlier
+versions had failed and were tuned on few seeds, although each was then
+tested on new ones. The simulation has one data-generating design. The
+pre-registration was internal, in a time-stamped decision log, not in a
+public registry. The real cohorts are small and five splits cannot power
+superiority claims; FD003 was not held out, and the heart-valve cohort
+has about one visit per patient before the landmark. On FD002 and FD004
+NP-KAN-AFT was fitted at one fixed setting to bound its cost and was
+poorly calibrated; the twenty clinical partitions re-analyse data used
+before, and the thinning test used one cohort. Only one joint-model
+specification was fitted, its sampler mixed poorly on many partitions
+and it fitted renal poorly; no deep dynamic model was fitted, and our
+literature review was targeted rather than systematic, so we make no
+claim of novelty. Full limitations are listed in S6.3.</p>
 <h3 id="conclusions">5.5 Conclusions</h3>
 <p>Functional KANs are a workable, interpretable way to model nonlinear
 effects of longitudinal trajectories on survival. With a strongly
@@ -2556,7 +2578,7 @@ anchored distillation refit, cross-confirmed landmark anchoring and a
 Kaplan–Meier error law, they can be summarised safely, adapt to whether
 the last value or the trajectory carries the risk, and avoid choosing an
 AFT error family. They were not better than simpler landmark models on
-small clinical cohorts with few visits, but were better on untouched
+small clinical cohorts with few visits, but were better on held-out
 engine data with long sensor histories, and the pre-registered record of
 where they help and where they do not is the contribution.</p>
 <h2 id="declarations">Declarations</h2>
@@ -2565,21 +2587,20 @@ where they help and where they do not is the contribution.</p>
 package <code>survival</code>), <code>aids</code> and
 <code>prothro</code> (JM), <code>renal</code> and
 <code>heart.valve</code> (joineRML) from CRAN; C-MAPSS FD001 to FD004
-from the NASA prognostics data repository; checksums in
-<code>reports/run_manifest.json</code>.</li>
-<li><strong>Code availability.</strong> All code, tests,
-pre-registrations, decision logs and records are in one repository.</li>
-<li><strong>Supplementary Material.</strong> The cumulative study
-manuscript (<code>reports/manuscript_round24.pdf</code>), with every
-pre-registered round, all tables and the number-provenance
+from the NASA prognostics data repository; file checksums are recorded
+with the code.</li>
+<li><strong>Code availability.</strong> All code, tests, pre-registered
+plans, decision logs and saved results are in one repository.</li>
+<li><strong>Supplementary Material.</strong> The full study record, with
+every pre-registered analysis, all tables and the number-provenance
 appendix.</li>
 <li><strong>Use of AI tools.</strong> The code, analyses and this draft
 were produced with an AI coding assistant (Claude Code) working under
-the owner’s recorded decisions; every number was generated from saved
-records.</li>
+the investigators’ recorded decisions; every number was generated from
+saved results.</li>
 <li><strong>Authors’ contributions, funding, competing interests,
-ethics.</strong> To be completed by the owner. The data sets are public
-and de-identified.</li>
+ethics.</strong> To be completed before submission. The data sets are
+public and de-identified.</li>
 </ul>
 <h2 id="references">References</h2>
 <ul>
@@ -2728,17 +2749,17 @@ Statistical Association</em> 100(470):577–590.
 doi:10.1198/016214504000001745</li>
 </ul>
 <h2 id="appendix.-number-provenance">Appendix. Number provenance</h2>
-<p><code>scripts/manuscript_journal_main_round24.py</code> renders this
-paper from <code>docs/manuscript_journal_main_round24_template.md</code>
-with the Supplementary Material’s builder, loaded as a separate module
-instance. Every number is read from a saved record and logged in
-<code>reports/manuscript_values_journal_main_round24.json</code>;
-<code>scripts/verify_manuscript_journal_main_round24.py</code> (also run
-by <code>tests/test_manuscript_journal_main_round24.py</code>) requires
-every logged value to be identical, in source, format and text, to a
-value of the verified Supplementary Material, re-renders the paper,
-checks every other number against a registered design constant, checks
-citations and sections, and checks the compiled PDF (page count and no
-blank page).</p>
+<p>No number in this paper was typed by hand. The paper is rendered from
+a text template by a script that reads each value from the saved results
+and logs it with its source. A second, independent script re-reads every
+logged value and requires it to be identical, in source, format and
+text, to a value of the verified Supplementary Material; re-renders the
+paper and compares it with this version; checks every remaining number
+against a design constant in the pre-registered plans; and checks the
+citations, the sections and the compiled PDF. The scripts and logs are
+<code>scripts/manuscript_journal_main_round24.py</code>,
+<code>scripts/verify_manuscript_journal_main_round24.py</code>,
+<code>tests/test_manuscript_journal_main_round24.py</code> and
+<code>reports/manuscript_values_journal_main_round24.json</code>.</p>
 </body>
 </html>
