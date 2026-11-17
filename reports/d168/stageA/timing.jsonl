@@ -1,0 +1,1 @@
+{"dataset": "stageC_design_dev11", "seed": 11, "n": 1000, "n_train": 600, "n_test": 200, "role": "development timing only", "b2s_cox": {"seconds": 245.0, "mean_id": 0.21455141083556492}, "reference": {"seconds": 28.4, "status": "ok", "outer_conv": "full convergence", "mean_id": 0.17034887433351711}, "front_seconds": 0.5, "seconds_total": 274.8}

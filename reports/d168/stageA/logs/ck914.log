@@ -1,0 +1,4 @@
+/home/user/KK/src/kanfae/models/afcm_constrained.py:144: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return dict(objective=float(obj), grad_max_abs=float(np.max(np.abs(g))),
+ck914 ok 201.7 
