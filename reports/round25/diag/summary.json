@@ -1,0 +1,90 @@
+{
+ "seed": 22,
+ "role": "historical diagnostic reproduction of a development seed (not fresh, not confirmatory)",
+ "n_train": 1200,
+ "n_events": 843.0,
+ "n_coef": 302,
+ "shapes_now": {
+  "phi1": {
+   "rise_id": 0.5343819523283145,
+   "rise_raw": 0.5351331024648923
+  },
+  "phi2": {
+   "rise_id": 0.15821608245316623,
+   "rise_raw": 0.1659736614795688
+  }
+ },
+ "shapes_saved": {
+  "phi1": {
+   "rise_id": 0.1411963988810092,
+   "rise_raw": 0.1413669650463372
+  },
+  "phi2": {
+   "rise_id": 0.0571357890288414,
+   "rise_raw": 0.05680232849832328
+  }
+ },
+ "rise_id_abs_diff": {
+  "phi1": 0.3931855534473053,
+  "phi2": 0.10108029342432484
+ },
+ "lp_python": -5031.901826107099,
+ "objective_python": 5.989504389079433,
+ "grad_python_max_abs": 0.10633734795478281,
+ "r": {
+  "status": "ok",
+  "lp_survival_coxph": -5031.9018261071,
+  "lp_own_efron": -5031.90182610711,
+  "lp_python": -5031.9018261071,
+  "lp_abs_diff_coxph": 1.81898940354586e-12,
+  "lp_abs_diff_own": 7.27595761418343e-12,
+  "penalised_grad_max_abs": 0.106337347954807,
+  "penalised_grad_l2": 0.467923694237143,
+  "score_max_abs_unpenalised": 0.00949506283304172,
+  "basis_max_abs_diff": 2.22044604925031e-16,
+  "basis_dim": [
+   201,
+   10
+  ],
+  "versions": {
+   "R": "R version 4.4.3 (2025-02-28)",
+   "survival": "3.8.12",
+   "splines": "4.4.3"
+  }
+ },
+ "seconds": {
+  "data": 10.4,
+  "fit": 7.2,
+  "r_check": 4.2,
+  "total": 22.2
+ },
+ "budget_seconds": 300,
+ "within_budget": true,
+ "lam_x": [
+  1.2942427345055069e-05,
+  4.055327573744428e-05,
+  0.1378440855377227
+ ],
+ "lam_t": [
+  22802.13205237173,
+  0.02137342970878062,
+  1405.0658634223375
+ ],
+ "postprocessing_no_new_fit": {
+  "grad_max_abs_by_block": {
+   "channel1": 0.1063373479547828,
+   "channel2": 0.004605508021753191,
+   "channel3": 0.0842970556452363,
+   "scalar_covariates": 0.009495062833042666
+  },
+  "newton_decrement_objective_gap": 0.05469136883770407,
+  "objective": 5.98950438907944,
+  "gap_in_log_partial_likelihood_units": 46.10482393018453,
+  "newton_step_max_abs_coef": 3.0300401308157086,
+  "coef_max_abs": 2.834926062854401,
+  "eta_change_sd": 0.27582803921635185,
+  "eta_sd": 0.6217456344027958,
+  "cond_H": 43338490579.50979
+ },
+ "restoration_note": "Reconstructed on 2026-11-17 from the console output of the 2026-11-15 run (session transcript) after the container was replaced and the unpushed audit commit 873d0f8 was lost. 'seed' and 'role' are the script's constants (the first printed lines were truncated in the console capture); lam_x / lam_t are the values the script reads from reports/round22/dev/results_afcmdev_22.jsonl (the run did not print them). The exported inputs for R (design.csv, y_d.csv, beta.csv, penalty.csv, basis_*.csv, r_inputs.json; about 11 MB) were not recoverable; r_result.json's content is the 'r' block above. Running scripts/diag_round25_afcm_mechanics.py regenerates them; it was not re-run, to keep to the one-run limit."
+}
