@@ -6,3 +6,6 @@ data/raw/
 data/processed/
 *.egg-info/
 .rlocal/
+
+# D170: per-replicate exported Stage-C data (SHA-256 of each file is in the result records)
+reports/d168/stageC/data/
