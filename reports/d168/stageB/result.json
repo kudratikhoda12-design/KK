@@ -1,0 +1,60 @@
+{
+ "stage": "B",
+ "decision": "D169",
+ "seed": 6001,
+ "n": 2000,
+ "n_train": 1200,
+ "n_test": 400,
+ "git_head": "4e3f475afb163768f51642776615eeedafb2fafe",
+ "frozen_sha256": {
+  "scripts/afcm_mgcv.R": "cacacfe61670851e36962cdd4f35122044b74c49eac8cf807fd17c4bc657f6c9",
+  "src/kanfae/models/afcm_mgcv.py": "5bb26016cc3edaf2032aba84526c23df4c19e55e9fae4d15e6b1a181707b45a7"
+ },
+ "smoothing_lambda": 1e-06,
+ "tied_event_times_train": 0,
+ "reference_info": {
+  "status": "ok",
+  "seconds": 33.7505626678467,
+  "warnings": [],
+  "method": "REML",
+  "outer_conv": "full convergence",
+  "outer_iter": 8,
+  "outer_grad_max_abs": 0.000860625519045755,
+  "sp": [
+   38053.4344889835,
+   0.854325239238159,
+   41494.7297023437,
+   12.1454320237107,
+   2.37415067208863,
+   25.3710758684916
+  ],
+  "edf_total": 22.1153334865542,
+  "reml": 4953.49897243621,
+  "n_coef": 272,
+  "gamma": [
+   0.289864796930568,
+   -0.188136212469707
+  ],
+  "versions": {
+   "R": "R version 4.4.3 (2025-02-28)",
+   "mgcv": "1.9.5"
+  }
+ },
+ "limits": {
+  "phi1": 0.15,
+  "phi2": 0.1
+ },
+ "shapes": {
+  "phi1": {
+   "rise_id": 0.12779453614606104,
+   "rise_raw": 0.12859804629219357
+  },
+  "phi2": {
+   "rise_id": 0.02035327809785217,
+   "rise_raw": 0.020283699891095044
+  }
+ },
+ "passed": true,
+ "seconds": 38.8,
+ "verdict": "PASS"
+}
