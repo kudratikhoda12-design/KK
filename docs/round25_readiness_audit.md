@@ -361,3 +361,89 @@ No seed has been assigned or consumed. Each study would be registered, with its 
 
 **Stopping point.** The audit ends here. No further training, MCMC, confirmatory experiment or manuscript change has
 been started. The findings are presented for the owner's review and approval.
+
+---
+
+# Addendum (D168, 2026-11-17): corrections after the owner's review
+
+The sections above are kept as written on 2026-11-15. Where this addendum corrects them, the addendum takes
+precedence. The staged AFCM protocol is in `docs/d168_afcm_reference_protocol.md` and the proposed manuscript wording
+in `docs/d168_journal_wording_proposal.md`.
+
+## A1. Loss and restoration of this audit
+
+The session's container was replaced between 2026-11-15 and 2026-11-17. The original audit commit (`873d0f8`) had not
+been pushed, on the owner's instruction, and was lost together with the git-ignored `.venv/` and `.rlocal/`
+environments and the session scratch files (including the downloaded `mgcv` source and the article text). The audit,
+the two diagnostic scripts, decision D167 and ledger row L54 were restored on 2026-11-17 from the session record,
+exactly as written (commit `5c9e6f8`). `reports/round25/diag/summary.json` was rebuilt from the diagnostic's console
+output; the exported diagnostic inputs (about 11 MB of CSV files) could not be recovered, and the diagnostic was
+**not** re-run, to keep to the one-run limit. Running `scripts/diag_round25_afcm_mechanics.py` would regenerate them.
+
+## A2. AFCM sources: corrected investigation
+
+Section 2.1 said the article page links no code repository. That was incomplete: the author maintains a public
+repository, `ecui1/AFCM`. What has and has not been inspected:
+
+| Category | What | Inspected? |
+|---|---|---|
+| Public repository | `README.md` (says the repository "contains the code to implement 'Additive Functional Cox Model (Cui et al. 2021)'", lists `vignette_fcm.pdf` and a private `NHANES.rds`, and refers to the online supplements for other files) | **yes** (raw URL) |
+| Public repository | `vignette_fcm.pdf`, 5 pages, "Fitting functional Cox models in R using mgcv package" (2/9/2021) | **yes**: contains the exact `gam()` calls for AFCM |
+| Runnable source scripts | the full reproduction code (`vignette_afcm.Rmd`, `process_data.R`) | **no**: not in the repository (raw URLs return 404) and the publisher download routes were not accessible |
+| Publisher's supplementary files | `vignette_afcm.Rmd`, `vignette_afcm.html`, `process_data.R`, `supplementary_materials.pdf` | **no** |
+| Methods in the paper | author manuscript PMC8664082 | yes (2026-11-15) |
+| Our re-implementation | `src/kanfae/models/afcm.py` | yes |
+
+So the exact AFCM model specification is now known from the author's own material, but the author's **complete
+runnable source code has not been obtained**, and no AFCM fit has been run with `mgcv`.
+
+## A3. Corrections to the implementation comparison (Section 2.2)
+
+- **Time basis.** The author's own example on a non-periodic [0, 1] domain uses `bs = c("cr", "cr")`; the cyclic `cc`
+  basis appears only in the 24-hour NHANES application. The appropriate reference for our non-periodic histories is
+  therefore `cr` in both margins with `k = c(10, 10)`, not a cyclic basis.
+- **Identifiability.** `ti(tmat, X, ..., mc = c(FALSE, TRUE))` imposes a centring constraint on the x margin **during
+  fitting**. Our identifiable RISE removes the unidentified component **after** fitting, for scoring only. These are
+  not equivalent: penalties couple the components, and the unconstrained parametrisation leaves near-null directions
+  held only by a 10⁻⁶ ridge, consistent with (but not proven to cause) the ill-conditioning found in Section 3.
+  `mgcv`'s constraint is pooled over subjects and grid points, which matches the paper's per-s constraint (11) closely
+  only after the quantile transformation; this will be measured, not assumed (protocol, step A5).
+- **Smoothing parameters.** For the Cox family `mgcv` 1.9-5 forces REML (the Laplace marginal likelihood) whatever
+  `method` is passed (`R/mgcv.r`, lines 1853–1856).
+- **Ties.** `cox.ph` uses Peto's approximation (equal to the Breslow form of the partial likelihood); our code uses Efron.
+  The simulated times are continuous, so ties have probability zero and do not affect a simulation comparison (to be
+  verified per data set). They would affect real-data fits with tied times, such as the Round-13 AFCM V3 rows.
+
+## A4. Correction about seed 22
+
+Section 3 described seed 22 as "a development seed already used in Rounds 15 and 22". It was also, and first, the
+**CK-6c acceptance seed** of Round 12b (`tests/test_round12b_ck.py`, `SEEDS = {"CK-6c": 22}`), on which the Python V3
+AFCM failed its acceptance limits. Its use in the Round-25 diagnostic remains a historical diagnostic reproduction; it
+changes no CK-6c record.
+
+## A5. Renal: exact chronology (corrects Section 7, item 2, and Section 6, item 9)
+
+Section 7 said that "no real data set with long, dense histories was held out; renal is the only real long-history
+cohort and it was re-analysed." That is **wrong as stated**. The correct chronology:
+
+| When | What was done with renal | Status of the result |
+|---|---|---|
+| Before 2026-11-06 | Not loaded, fitted or examined; the loaders were added with the Round-22 plan | — |
+| Round 22 (plan D156 committed 2026-11-06 before any use; outcome D158, 2026-11-07) | **First analysis.** Fixed Round-21 methods ("locked models, no tuning beyond the Round-21 protocol"), landmark 1 year, outer splits 0–4. Registered hypothesis H-R22b concerned integrity (every fit finite; anchoring and distillation within their margins), not superiority; the comparison with landmark Cox was registered as descriptive | **Held-out evaluation of fixed methods.** Descriptive: NP-KAN-AFT − landmark Cox −0.0096 [−0.0475, +0.0283] (lower on 3 of 5 splits); B2-S Cox − landmark Cox −0.0161 [−0.0505, +0.0184] (4 of 5); intervals include 0 |
+| Round 23 (plan D160, 2026-11-09) | New outer partitions 5–24 of the same cohort; NP-KAN-AFT refitted on full and three-visit histories (H-R23b), blend with landmark Cox (H-R23c (ii)); the analysis was motivated by the Round-22 pattern | **Re-analysis of data already seen.** H-R23b supported (full − three visits −0.0287 [−0.0468, −0.0106]); H-R23c (ii) not supported; NP-KAN-AFT − landmark Cox −0.0070 [−0.0239, +0.0098] |
+| Round 24 (plan D163, 2026-11-10) | Joint model fitted on the Round-23 partitions; NP-KAN-AFT and landmark Cox results reused from Round 23 | **Re-analysis / exploratory comparison** with a new comparator (H-R24a supported, with the caveat that the joint model fitted renal poorly) |
+
+Correct statement: **renal is one real cohort with long histories that was held out until the Round-21 methods were
+fixed and first evaluated with them in Round 22 (five splits, intervals including 0); every later renal result is a
+re-analysis of the same cohort.** Renal is one cohort, not several independent confirmations. Heart valve has the
+same chronology but about one visit per patient before the landmark.
+
+## A6. Revised estimates
+
+- Section 9, Study A: the replicate count is now derived in the protocol (Section 6.3): **110** pairs proposed (90%
+  power for equivalence within ±0.05 with the Round-12 SD inflated by 25%), **66** the minimum supported; "about 60"
+  is superseded. A fresh acceptance seed (6001) and Stage-C seeds (6100 onward) were checked unused.
+- Section 9, Study B: with the Round-24 run time measured correctly (about 2.6 h wall), the joint-model diagnostic
+  study is estimated at **8–10 h wall** on four lanes, not 12–15 h.
+- Any execution first requires rebuilding the Python and R environments (A1), which installs packages and needs
+  approval.
